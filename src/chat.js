@@ -385,9 +385,6 @@ const ChatEngine = (() => {
 
   /* --- optional LLM upgrade --- */
   async function llm(text) {
-    const cfg = DB.getSetting('ai', {});
-    if (!cfg.key) return null;
-    const base = (cfg.base || 'https://api.openai.com/v1').replace(/\/$/, '');
     const langName = { id:'Indonesian', en:'English', zh:'Simplified Chinese', hi:'Hindi' }[S.lang] || 'Indonesian';
     const sys = `You are Cimo, a warm best friend inside CraveMood (a Makassar food app). Reply ONLY in ${langName}.
 Be human: 2-4 short sentences, casual, specific, never preachy. Reflect what the user feels before advising.
@@ -395,6 +392,25 @@ Remember the conversation: reference earlier details naturally. Ask at most one 
 Never say you are an AI. Never list bullet points. User name: ${S.name || 'unknown'}. Current mood: ${S.mood}.
 If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, es pisang ijo, pisang epe, jalangkote, mie titi).`;
     const msgs = [{ role: 'system', content: sys }].concat(HISTORY.slice(-14));
+
+    /* 1) server proxy — the API key stays on the server, never in the browser */
+    if (location.protocol !== 'file:') {
+      try {
+        const c1 = new AbortController();
+        const t1 = setTimeout(() => c1.abort(), 16000);
+        const r1 = await fetch('api/ai', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: msgs }), signal: c1.signal,
+        });
+        clearTimeout(t1);
+        if (r1.ok) { const j1 = await r1.json(); if (j1.ok && j1.text) return j1.text; }
+      } catch (e) { /* fall through */ }
+    }
+
+    /* 2) local key — only for the developer machine or a static deploy */
+    const cfg = DB.getSetting('ai', {}) || {};
+    if (!cfg.key) return null;
+    const base = (cfg.base || 'https://api.openai.com/v1').replace(/\/$/, '');
     try {
       const c = new AbortController();
       const t = setTimeout(() => c.abort(), 16000);

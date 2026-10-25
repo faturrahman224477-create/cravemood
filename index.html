@@ -225,9 +225,9 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 .wheel{width:min(370px,80vw);aspect-ratio:1;border-radius:50%;position:relative;
   box-shadow:0 18px 40px rgba(122,42,85,.22),inset 0 0 0 10px var(--sf),inset 0 0 0 13px rgba(90,50,100,.10);
   transition:transform 4.6s cubic-bezier(.12,.72,.06,1);will-change:transform}
-.wheel .seg{position:absolute;inset:0;transform-origin:50% 50%;display:flex;justify-content:center;
-  padding-top:14px;font:700 .66rem Fredoka;color:#3a2142;pointer-events:none;line-height:1.1}
-.wheel .seg span{display:block;max-width:86px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wheel .seg{position:absolute;inset:0;pointer-events:none;font:700 .82rem/1.14 Fredoka;color:#3a2142;letter-spacing:-.1px}
+.wheel .seg span{position:absolute;width:102px;margin:0;text-align:center;white-space:normal;word-break:break-word;
+  transform:translate(-50%,-50%);text-shadow:0 1px 0 rgba(255,255,255,.75),0 0 6px rgba(255,255,255,.55)}
 .pointer{position:absolute;top:-4px;left:50%;transform:translateX(-50%);z-index:3;filter:drop-shadow(0 4px 6px rgba(0,0,0,.2))}
 .hub{position:absolute;width:64px;height:64px;border-radius:50%;background:var(--sf);display:grid;place-items:center;
   box-shadow:0 6px 16px rgba(122,42,85,.25);z-index:2;border:3px solid var(--pk)}
@@ -464,6 +464,58 @@ td .tag{font-size:.6rem}
 }
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
+/* ===== download / install (PWA) ===== */
+.dlcard{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.dlbtn{display:flex;align-items:center;gap:11px;border:1.8px solid var(--ln);background:var(--bg);color:var(--ink);
+  border-radius:20px;padding:12px 14px;cursor:pointer;text-align:left;transition:.22s cubic-bezier(.34,1.56,.64,1);position:relative}
+.dlbtn:hover{transform:translateY(-3px);border-color:var(--pk2);background:color-mix(in srgb,var(--pk) 14%,var(--bg))}
+.dlbtn:active{transform:scale(.97)}
+.dlbtn i{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;flex:none}
+.dlbtn i svg{width:22px;height:22px;fill:currentColor;stroke:none}
+.dlbtn.android i{background:#3ddc84;color:#0b3d24}
+.dlbtn.ios i{background:var(--ink);color:var(--bg)}
+.dlbtn b{display:block;font-size:.88rem;line-height:1.2}
+.dlbtn small{display:block;font-size:.68rem;color:var(--mu);font-weight:700}
+.dlbtn .ok{position:absolute;top:-7px;right:-6px;background:#3ec98a;color:#fff;font:700 .58rem Fredoka;
+  padding:2px 8px;border-radius:99px;box-shadow:0 3px 8px rgba(62,201,138,.4)}
+
+.itabs{display:flex;gap:6px;background:var(--bg);border:1px solid var(--ln);border-radius:99px;padding:4px;margin-bottom:14px}
+.itabs button{flex:1;border:0;background:none;color:var(--mu);font:700 .78rem Fredoka;padding:8px 6px;border-radius:99px;
+  cursor:pointer;transition:.2s;white-space:nowrap}
+.itabs button.on{background:var(--ink);color:var(--bg);box-shadow:0 3px 8px rgba(58,33,66,.2)}
+.installhero{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,color-mix(in srgb,var(--pk) 30%,var(--bg)),var(--cr));
+  border-radius:20px;padding:13px 14px;margin-bottom:14px}
+.installhero .ph{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;flex:none;background:var(--sf)}
+.installhero .ph svg{width:30px;height:30px;fill:currentColor;stroke:none}
+.installhero b{font-size:.92rem;display:block;line-height:1.25}
+.installhero small{font-size:.72rem;color:var(--mu);font-weight:700}
+.isteps{list-style:none;padding:0;margin:0 0 4px;counter-reset:s}
+.istep{display:flex;gap:10px;align-items:flex-start;padding:8px 0;font-size:.83rem;line-height:1.45}
+.istep em{counter-increment:s;font-style:normal;flex:none;width:23px;height:23px;border-radius:50%;
+  background:var(--pk);color:#3a2142;font:700 .7rem Fredoka;display:grid;place-items:center;margin-top:1px}
+.istep em::before{content:counter(s)}
+.istep span{flex:1}
+.inote{background:var(--cr);border:1px solid var(--ln);border-radius:16px;padding:10px 13px;font-size:.74rem;color:var(--mu);line-height:1.5;margin-top:10px}
+.inote b{color:var(--ink)}
+.iacts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.installbanner{position:fixed;left:14px;right:14px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:56;
+  background:var(--sf);border:1px solid var(--ln);border-radius:22px;padding:12px 14px;display:flex;align-items:center;gap:11px;
+  box-shadow:0 14px 34px rgba(122,42,85,.24);transform:translateY(160%);transition:transform .4s cubic-bezier(.34,1.4,.5,1);
+  opacity:0;visibility:hidden}
+.installbanner.on{transform:translateY(0);opacity:1;visibility:visible}
+.installbanner .ph{width:44px;height:44px;flex:none;display:grid;place-items:center}
+.installbanner b{font-size:.84rem;display:block;line-height:1.2}
+.installbanner small{font-size:.68rem;color:var(--mu);font-weight:700}
+.installbanner .act{display:flex;flex-direction:column;gap:5px;flex:none}
+.installbanner .go{border:0;background:var(--pk2);color:#fff;font:700 .72rem Fredoka;padding:7px 14px;border-radius:99px;cursor:pointer;white-space:nowrap}
+.installbanner .no{border:0;background:none;color:var(--mu);font:700 .66rem Fredoka;cursor:pointer}
+@media(max-width:560px){
+  .dlcard{grid-template-columns:1fr}
+  .dlbtn{padding:11px 13px}
+  .iacts{grid-template-columns:1fr}
+}
+@media(min-width:981px){ .installbanner{left:auto;right:24px;bottom:100px;width:360px} }
+
 </style>
 </head>
 <body>
@@ -517,12 +569,14 @@ td .tag{font-size:.6rem}
   </div>
 </div>
 
-<div class="modal" id="adminModal">
+<div class="modal" id="installModal">
   <div class="mbox">
-    <div class="mhead"><h3>Database pendaftar</h3><button class="closebtn" aria-label="close">✕</button></div>
-    <div id="adminBody"></div>
+    <div class="mhead"><h3>Unduh aplikasi</h3><button class="closebtn" aria-label="close">✕</button></div>
+    <div id="installBody"></div>
   </div>
 </div>
+
+<div class="installbanner" id="installbanner"></div>
 
 <div class="toast" id="toast"></div>
 
@@ -876,6 +930,127 @@ const I18N = {
   },
 };
 
+/* ===== what Cimo says when a mood is picked =====
+   {name} = user name, {dish} = top recommendation for that mood */
+const MOODSAY = {
+  senang: {
+    id:'Wah, {name} lagi senang ya hari ini! Aku ikut senang. Kamu cocok makan yang manis dan segar — {dish} bisa jadi pilihan.',
+    en:'Wah, {name} is happy today! I am happy too. You should eat something sweet and fresh — {dish} works.',
+    zh:'哇，{name} 今天心情很好呀！我也开心。你适合吃点甜的、清爽的——{dish} 就不错。',
+    hi:'वाह, {name} आज खुश हैं! मुझे भी अच्छा लगा। कुछ मीठा और ताज़ा खाइए — {dish} ठीक रहेगा।',
+  },
+  sedih: {
+    id:'Wah, hari ini {name} lagi sedih ya. Peluk dulu dari aku. Kamu cocok makan yang berkuah dan hangat — {dish} misalnya.',
+    en:'Oh, {name} is feeling sad today. Here is a hug first. Something warm and soupy fits you — {dish}, maybe.',
+    zh:'哎，{name} 今天有点难过呀。先抱一下。你适合吃点热汤类的——比如 {dish}。',
+    hi:'अरे, {name} आज उदास हैं। पहले एक गले लगाना। कुछ गरम सूप जैसा ठीक रहेगा — जैसे {dish}।',
+  },
+  marah: {
+    id:'{name} lagi kesal ya? Wajar kok. Tarik napas dulu. Kamu cocok makan yang pedas biar lega — {dish} salah satunya.',
+    en:'You are upset, {name}? That is fair. Breathe first. Something spicy would help you let it out — {dish}, for example.',
+    zh:'生气了吗，{name}？很正常。先深呼吸。吃点辣的会舒服些——{dish} 就挺好。',
+    hi:'गुस्सा है, {name}? यह सही है। पहले गहरी साँस लें। कुछ तीखा मन हल्का करेगा — जैसे {dish}।',
+  },
+  bingung: {
+    id:'Bingung mau makan apa ya, {name}? Nggak usah dipikirin sendirian. Aku pilihin yang aman — mulai dari {dish}.',
+    en:'Cannot decide what to eat, {name}? You do not have to decide alone. I picked safe ones — start with {dish}.',
+    zh:'不知道吃什么吗，{name}？不用一个人纠结。我帮你挑了稳妥的——先从 {dish} 开始。',
+    hi:'समझ नहीं आ रहा क्या खाएँ, {name}? अकेले परेशान न हों। मैंने आसान विकल्प चुने — {dish} से शुरू करें।',
+  },
+  capek: {
+    id:'{name} capek ya? Kamu udah berjuang hari ini. Kamu cocok makan yang lembut dan mengisi — {dish} bisa bantu.',
+    en:'You are tired, {name}. You made it through today. Something soft and filling fits — {dish} can help.',
+    zh:'{name} 累了吧？今天已经很努力了。你适合吃点温和又扎实的——{dish} 可以补一补。',
+    hi:'{name} थक गए हैं। आज बहुत मेहनत की। कुछ नरम और भरपूर ठीक रहेगा — {dish} मदद करेगा।',
+  },
+  kecewa: {
+    id:'Hari ini berat ya, {name}. Nggak apa-apa, pelan-pelan. Kamu cocok makan yang manis buat hiburan — {dish} misalnya.',
+    en:'Today is heavy, {name}. It is okay, slowly. Something sweet to cheer you up — {dish}, maybe.',
+    zh:'今天挺难的，{name}。没关系，慢慢来。吃点甜的安慰一下——比如 {dish}。',
+    hi:'आज भारी दिन है, {name}। कोई बात नहीं, धीरे-धीरे। कुछ मीठा दिल बहलाएगा — जैसे {dish}।',
+  },
+};
+
+/* ===== install / download copy (PWA) ===== */
+const INSTALL_I18N = {
+  id: {
+    title:'Unduh aplikasi CraveMood',
+    sub:'Pasang di layar utama dan buka seperti aplikasi biasa. Tanpa Play Store, tanpa App Store.',
+    tabA:'Android', tabI:'iPhone / iPad', tabD:'Komputer',
+    on:'Siap dipasang', off:'Sudah terpasang di perangkat ini',
+    install:'Pasang sekarang', installing:'Membuka dialog…',
+    stepsA:['Buka halaman ini di Chrome','Ketuk menu ⋮ di kanan atas','Pilih "Instal aplikasi" atau "Tambahkan ke layar utama"','Ketuk "Instal"'],
+    stepsI:['Buka halaman ini di Safari (bukan Chrome)','Ketuk tombol Bagikan di bawah layar','Gulir dan pilih "Tambahkan ke Layar Utama"','Ketuk "Tambah" di kanan atas'],
+    stepsD:['Klik ikon instal di kanan address bar','Atau menu ⋮ → "Instal CraveMood"','Aplikasi muncul di dock / Start Menu'],
+    offline:'Unduh file offline', offline_sub:'Satu file HTML, bisa dibuka tanpa internet.',
+    copy:'Salin link', copied:'Link disalin',
+    note:'Ini PWA: ringan, selalu versi terbaru, tidak perlu update manual.',
+    apk:'Butuh file APK / IPA?',
+    apk_note:'Bisa dibangun dari repo ini lewat PWABuilder atau Bubblewrap, lalu dipasang manual di HP. Untuk pemakaian sehari-hari, cara di atas sudah cukup.',
+    banner:'Pasang CraveMood di HP?', banner_sub:'Buka langsung dari layar utama.', later:'Nanti',
+    saved:'File tersimpan. Buka lewat browser untuk pakai offline.',
+    fail:'Gagal mengunduh. Coba lagi ya.',
+    notnow:'Bisa dipasang kapan saja dari Profil → Unduh aplikasi.',
+  },
+  en: {
+    title:'Get the CraveMood app',
+    sub:'Add it to your home screen and open it like a normal app. No Play Store, no App Store.',
+    tabA:'Android', tabI:'iPhone / iPad', tabD:'Desktop',
+    on:'Ready to install', off:'Already installed on this device',
+    install:'Install now', installing:'Opening prompt…',
+    stepsA:['Open this page in Chrome','Tap the ⋮ menu at the top right','Choose "Install app" or "Add to Home screen"','Tap "Install"'],
+    stepsI:['Open this page in Safari (not Chrome)','Tap the Share button at the bottom','Scroll and choose "Add to Home Screen"','Tap "Add" at the top right'],
+    stepsD:['Click the install icon in the address bar','Or menu ⋮ → "Install CraveMood"','The app appears in your dock / Start Menu'],
+    offline:'Download offline file', offline_sub:'A single HTML file that opens without internet.',
+    copy:'Copy link', copied:'Link copied',
+    note:'This is a PWA: light, always up to date, no manual updates.',
+    apk:'Need an APK / IPA file?',
+    apk_note:'You can build one from this repo with PWABuilder or Bubblewrap and sideload it. For daily use, the steps above are enough.',
+    banner:'Install CraveMood on your phone?', banner_sub:'Open it straight from your home screen.', later:'Later',
+    saved:'File saved. Open it in a browser to use offline.',
+    fail:'Download failed. Try again.',
+    notnow:'You can install anytime from Profile → Get the app.',
+  },
+  zh: {
+    title:'下载 CraveMood 应用',
+    sub:'添加到主屏幕，像普通应用一样打开。无需应用商店。',
+    tabA:'安卓', tabI:'iPhone / iPad', tabD:'电脑',
+    on:'可以安装', off:'此设备已安装',
+    install:'立即安装', installing:'正在打开…',
+    stepsA:['用 Chrome 打开本页','点右上角 ⋮ 菜单','选择“安装应用”或“添加到主屏幕”','点“安装”'],
+    stepsI:['用 Safari 打开本页（不是 Chrome）','点底部的分享按钮','向下滑动并选择“添加到主屏幕”','点右上角“添加”'],
+    stepsD:['点地址栏右侧的安装图标','或菜单 ⋮ →“安装 CraveMood”','应用会出现在程序坞/开始菜单'],
+    offline:'下载离线文件', offline_sub:'单个 HTML 文件，无网络也能打开。',
+    copy:'复制链接', copied:'链接已复制',
+    note:'这是 PWA：轻量、永远最新、无需手动更新。',
+    apk:'需要 APK / IPA 文件？',
+    apk_note:'可以用 PWABuilder 或 Bubblewrap 从这个仓库打包，再手动安装。日常使用上面步骤就够了。',
+    banner:'在手机上安装 CraveMood？', banner_sub:'从主屏幕直接打开。', later:'以后',
+    saved:'文件已保存。用浏览器打开即可离线使用。',
+    fail:'下载失败，请重试。',
+    notnow:'随时可在“我的 → 下载应用”里安装。',
+  },
+  hi: {
+    title:'CraveMood ऐप डाउनलोड करें',
+    sub:'होम स्क्रीन पर जोड़ें और आम ऐप की तरह खोलें। Play Store या App Store की ज़रूरत नहीं।',
+    tabA:'Android', tabI:'iPhone / iPad', tabD:'कंप्यूटर',
+    on:'इंस्टॉल के लिए तैयार', off:'इस डिवाइस पर पहले से इंस्टॉल',
+    install:'अभी इंस्टॉल करें', installing:'खुल रहा है…',
+    stepsA:['यह पेज Chrome में खोलें','ऊपर दाएँ ⋮ मेन्यू दबाएँ','"ऐप इंस्टॉल करें" या "होम स्क्रीन में जोड़ें" चुनें','"इंस्टॉल" दबाएँ'],
+    stepsI:['यह पेज Safari में खोलें (Chrome में नहीं)','नीचे शेयर बटन दबाएँ','नीचे स्क्रॉल कर "होम स्क्रीन में जोड़ें" चुनें','ऊपर दाएँ "जोड़ें" दबाएँ'],
+    stepsD:['एड्रेस बार में इंस्टॉल आइकन क्लिक करें','या मेन्यू ⋮ → "CraveMood इंस्टॉल करें"','ऐप डॉक / स्टार्ट मेन्यू में दिखेगा'],
+    offline:'ऑफ़लाइन फ़ाइल डाउनलोड करें', offline_sub:'एक HTML फ़ाइल, बिना इंटरनेट भी खुलेगी।',
+    copy:'लिंक कॉपी करें', copied:'लिंक कॉपी हुआ',
+    note:'यह PWA है: हल्का, हमेशा नया, मैन्युअल अपडेट नहीं।',
+    apk:'APK / IPA फ़ाइल चाहिए?',
+    apk_note:'PWABuilder या Bubblewrap से इस रेपो को पैक कर सकते हैं। रोज़ के इस्तेमाल के लिए ऊपर के स्टेप काफी हैं।',
+    banner:'फ़ोन पर CraveMood इंस्टॉल करें?', banner_sub:'होम स्क्रीन से सीधे खोलें।', later:'बाद में',
+    saved:'फ़ाइल सहेजी गई। ऑफ़लाइन इस्तेमाल के लिए ब्राउज़र में खोलें।',
+    fail:'डाउनलोड नहीं हुआ। फिर कोशिश करें।',
+    notnow:'प्रोफ़ाइल → ऐप डाउनलोड से कभी भी इंस्टॉल कर सकते हैं।',
+  },
+};
+
 
 /* ===== database layer =====
    Works in two modes:
@@ -1113,6 +1288,17 @@ const VOICES = [
   {id:'hangat',  name:'Cimo Hangat',  desc:'Berat, hangat, seperti kakak',rate:0.95, pitch:0.82, icon:'🤎'},
 ];
 
+/* prosody per mood — the voice has to sound like the face the user tapped */
+const MOODVOICE = {
+  senang: { r:1.07, p:1.17, gap:40 },
+  sedih:  { r:0.85, p:0.91, gap:170 },
+  marah:  { r:1.05, p:0.89, gap:70 },
+  bingung:{ r:0.97, p:1.06, gap:110 },
+  capek:  { r:0.79, p:0.89, gap:190 },
+  kecewa: { r:0.83, p:0.85, gap:180 },
+  def:    { r:1.00, p:1.00, gap:80 },
+};
+
 const Voice = (() => {
   const synth = window.speechSynthesis;
   const supported = !!synth;
@@ -1181,6 +1367,7 @@ const Voice = (() => {
     if (!list.length) return Promise.resolve();
     const v = pickVoice(opts.lang || S.lang);
     const token = ++queue;
+    const mv = MOODVOICE[opts.mood] || MOODVOICE.def;
     speaking = true;
 
     return new Promise(resolve => {
@@ -1190,13 +1377,13 @@ const Voice = (() => {
         const seg = list[i++];
         const u = new SpeechSynthesisUtterance(seg);
         if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = LOCALE[opts.lang || S.lang] || 'id-ID'; }
-        // natural prosody: slow down on the first chunk, gentle lift at the end of questions
+        // natural prosody: gentle drift, lift at the end of questions, mood-coloured base
         const isQ = /[?？]$/.test(seg);
-        const drift = (i === 1 ? -0.03 : 0) + (isQ ? 0.05 : 0) + (Math.random() * 0.04 - 0.02);
-        u.rate = clamp((opts.rate || p.rate * S.rate) + drift, 0.5, 1.8);
-        u.pitch = clamp((opts.pitch || p.pitch * S.pitch) + (isQ ? 0.07 : 0), 0, 2);
+        const drift = (i === 1 ? -0.03 : 0) + (Math.random() * 0.04 - 0.02);
+        u.rate = clamp((opts.rate || p.rate * S.rate) * mv.r + drift, 0.5, 1.8);
+        u.pitch = clamp((opts.pitch || p.pitch * S.pitch) * mv.p + (isQ ? 0.07 : 0), 0, 2);
         u.volume = clamp(S.volume, 0, 1);
-        u.onend = () => setTimeout(next, i === list.length ? 0 : 70);
+        u.onend = () => setTimeout(next, i === list.length ? 0 : mv.gap);
         u.onerror = () => { speaking = false; resolve(); };
         try { synth.speak(u); } catch (e) { resolve(); }
       };
@@ -1659,9 +1846,6 @@ const ChatEngine = (() => {
 
   /* --- optional LLM upgrade --- */
   async function llm(text) {
-    const cfg = DB.getSetting('ai', {});
-    if (!cfg.key) return null;
-    const base = (cfg.base || 'https://api.openai.com/v1').replace(/\/$/, '');
     const langName = { id:'Indonesian', en:'English', zh:'Simplified Chinese', hi:'Hindi' }[S.lang] || 'Indonesian';
     const sys = `You are Cimo, a warm best friend inside CraveMood (a Makassar food app). Reply ONLY in ${langName}.
 Be human: 2-4 short sentences, casual, specific, never preachy. Reflect what the user feels before advising.
@@ -1669,6 +1853,25 @@ Remember the conversation: reference earlier details naturally. Ask at most one 
 Never say you are an AI. Never list bullet points. User name: ${S.name || 'unknown'}. Current mood: ${S.mood}.
 If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, es pisang ijo, pisang epe, jalangkote, mie titi).`;
     const msgs = [{ role: 'system', content: sys }].concat(HISTORY.slice(-14));
+
+    /* 1) server proxy — the API key stays on the server, never in the browser */
+    if (location.protocol !== 'file:') {
+      try {
+        const c1 = new AbortController();
+        const t1 = setTimeout(() => c1.abort(), 16000);
+        const r1 = await fetch('api/ai', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: msgs }), signal: c1.signal,
+        });
+        clearTimeout(t1);
+        if (r1.ok) { const j1 = await r1.json(); if (j1.ok && j1.text) return j1.text; }
+      } catch (e) { /* fall through */ }
+    }
+
+    /* 2) local key — only for the developer machine or a static deploy */
+    const cfg = DB.getSetting('ai', {}) || {};
+    if (!cfg.key) return null;
+    const base = (cfg.base || 'https://api.openai.com/v1').replace(/\/$/, '');
     try {
       const c = new AbortController();
       const t = setTimeout(() => c.abort(), 16000);
@@ -1846,6 +2049,13 @@ function mL(m) { const x = MOODI18N[m.k]; return (x && x[App.lang] && x[App.lang
 function mS(m) { const x = MOODI18N[m.k]; return (x && x[App.lang] && x[App.lang][1]) || m.sub; }
 function mD(m) { const x = MOODI18N[m.k]; return (x && x[App.lang] && x[App.lang][2]) || m.dish; }
 function cL(c) { const x = CATI18N[c]; return (x && x[App.lang]) || c; }
+/* full sentence Cimo says for a mood, with the top pick baked in */
+function mSay(m, dish) {
+  const bank = MOODSAY[m.k] || MOODSAY.bingung;
+  const tpl = bank[App.lang] || bank.id;
+  const nm = (App.user && App.user.name) || (App.lang === 'en' ? 'you' : App.lang === 'zh' ? '你' : App.lang === 'hi' ? 'तुम' : 'kamu');
+  return tpl.replace(/\{name\}/g, nm).replace(/\{dish\}/g, dish || mD(m));
+}
 
 /* ---------- distance ---------- */
 function distKm(a, b) {
@@ -1977,7 +2187,7 @@ function viewHome() {
   return `
   <div class="hero">
     <div>
-      <span class="say">${esc(greeting())}${App.user ? ', ' + esc(name) : ''}! 👋</span>
+      <span class="say" id="say">${esc(greeting())}${App.user ? ', ' + esc(name) : ''}! 👋</span>
       <h1>${t('home_q')}</h1>
       <p>${t('home_sub')}</p>
       <div class="row" style="margin-top:14px">
@@ -2007,7 +2217,7 @@ function viewHome() {
   </div>
 
   <div class="sectitle"><h2><span class="n">2</span> ${t('home_rec')}</h2>
-    <span class="tag mint">${mS(moodObj)}</span></div>
+    <span class="tag mint" id="moodTag">${mS(moodObj)}</span></div>
   <div class="chips" id="cats">
     ${CATS.map(c => `<button class="chip ${c === App.cat ? 'on' : ''}" data-cat="${c}">${c === 'Terdekat' ? icon('pin') : ''}${cL(c)}</button>`).join('')}
   </div>
@@ -2053,9 +2263,10 @@ function renderRecs() {
 
 /* ---------- spinner ---------- */
 function wheelItems() {
+  /* 6 slices instead of 8: each slice is wider, so the dish name can be big and readable */
   let l = MENU.filter(m => m.moods.indexOf(App.mood) > -1);
-  if (l.length < 8) l = l.concat(MENU.filter(m => l.indexOf(m) === -1));
-  return l.slice(0, 8);
+  if (l.length < 6) l = l.concat(MENU.filter(m => l.indexOf(m) === -1));
+  return l.slice(0, 6);
 }
 
 function viewSpin() {
@@ -2072,7 +2283,11 @@ function viewSpin() {
       <div class="wheelbox">
         <svg class="pointer" width="34" height="40" viewBox="0 0 34 40"><path d="M17 38L4 10a14 14 0 0 1 26 0z" fill="#ff5f98" stroke="#fff" stroke-width="3"/></svg>
         <div class="wheel" id="wheel" style="background:conic-gradient(${grad})">
-          ${items.map((m, i) => `<div class="seg" style="transform:rotate(${i * seg + seg / 2}deg)"><span>${esc(m.name.length > 15 ? m.name.slice(0, 14) + '…' : m.name)}</span></div>`).join('')}
+          ${items.map((m, i) => {
+            const ang = i * seg + seg / 2, rad = (ang - 90) * Math.PI / 180, R = 29;
+            const px = 50 + R * Math.cos(rad), py = 50 + R * Math.sin(rad);
+            return `<div class="seg"><span style="left:${px.toFixed(2)}%;top:${py.toFixed(2)}%">${esc(m.name)}</span></div>`;
+          }).join('')}
           <div class="hub" style="left:calc(50% - 32px);top:calc(50% - 32px)">${cimo(App.mood, 52)}</div>
         </div>
       </div>
@@ -2331,6 +2546,24 @@ function viewProfile() {
   </div>
 
   <div class="card" style="margin-top:12px">
+    <div class="between"><b style="font-size:.95rem">${IL().title}</b>${PLAT.standalone ? `<span class="tag mint">✓ ${IL().off}</span>` : ''}</div>
+    <p class="hint" style="margin:5px 0 0">${IL().sub}</p>
+    <div class="dlcard">
+      <button class="dlbtn android" data-install="android">
+        <i><svg viewBox="0 0 24 24">${PLAT_ICON.android}</svg></i>
+        <div><b>Android</b><small>${installEvt ? IL().on : 'Chrome · PWA'}</small></div>
+        ${PLAT.android && PLAT.standalone ? `<span class="ok">✓</span>` : ''}
+      </button>
+      <button class="dlbtn ios" data-install="ios">
+        <i><svg viewBox="0 0 24 24">${PLAT_ICON.ios}</svg></i>
+        <div><b>iPhone / iPad</b><small>Safari · PWA</small></div>
+        ${PLAT.ios && PLAT.standalone ? `<span class="ok">✓</span>` : ''}
+      </button>
+    </div>
+    <button class="btn ghost sm block" id="dlOffline2" style="margin-top:8px">${icon('down')} ${IL().offline}</button>
+  </div>
+
+  <div class="card" style="margin-top:12px">
     <b style="font-size:.95rem">${t('prof_lang')}</b>
     <div class="langs" style="margin-top:10px">
       ${LANGS.map(l => `<button class="langopt ${l.k === App.lang ? 'on' : ''}" data-lang="${l.k}"><i>${l.short}</i>${l.label}</button>`).join('')}
@@ -2370,22 +2603,12 @@ function viewProfile() {
   </div>
 
   <div class="card" style="margin-top:12px">
-    <b style="font-size:.95rem">Otak Cimo (opsional)</b>
-    <p class="hint" style="margin:4px 0 10px">Isi API key OpenAI-compatible supaya balasan chat jadi jauh lebih luas. Kosongkan untuk tetap pakai mesin lokal (tetap jalan penuh).</p>
-    <div class="field"><label>API key</label><input id="aiKey" type="password" placeholder="sk-..." value="${esc((DB.getSetting('ai', {}) || {}).key || '')}"></div>
-    <div class="field"><label>Model</label><input id="aiModel" placeholder="gpt-4o-mini" value="${esc((DB.getSetting('ai', {}) || {}).model || '')}"></div>
-    <div class="row"><button class="btn sm" id="aiSave">Simpan</button>
-      <span class="hint" id="aiStat">${(DB.getSetting('ai', {}) || {}).key ? 'Aktif — chat memakai model' : 'Mesin lokal aktif'}</span></div>
-  </div>
-
-  <div class="card" style="margin-top:12px">
     <b style="font-size:.95rem">${t('prof_data')}</b>
     <div class="row" style="margin-top:10px">
       <button class="btn sm ghost" id="expJson">${icon('down')} ${t('prof_export')}</button>
-      <button class="btn sm ghost" id="openAdmin">${icon('db')} ${t('prof_admin')}</button>
       <button class="btn sm ghost" id="logoutBtn">${icon('back')} ${t('prof_logout')}</button>
     </div>
-    <p class="hint" style="margin-top:10px">${DB.isRemote ? 'Terhubung ke API server. Data tersimpan di database.' : 'Mode statis: data tersimpan di database lokal browser ini (localStorage). Jalankan <code>server/server.js</code> untuk mode database penuh.'}</p>
+    <p class="hint" style="margin-top:10px">Data akunmu tersimpan ${DB.isRemote ? 'di server CraveMood' : 'di perangkat ini'}. Kamu bisa mengunduhnya kapan saja.</p>
   </div>`;
 }
 
@@ -2623,46 +2846,6 @@ function fallbackCopy(txt) {
 }
 
 /* ---------- admin ---------- */
-async function openAdmin() {
-  const m = $('#adminModal');
-  m.classList.add('on');
-  $('#adminBody').innerHTML = `
-    <div class="field"><label>${t('admin_pass')}</label><input type="password" id="admPass" placeholder="••••••"></div>
-    <div class="err" id="admErr"></div>
-    <button class="btn block" id="admGo">${t('admin_open')}</button>
-    <p class="hint" style="margin-top:10px">Default: <b>cimo2026</b>. Ganti di <code>server/server.js</code> (env <code>ADMIN_KEY</code>).</p>`;
-  $('#admGo').onclick = async () => {
-    const v = $('#admPass').value;
-    if (v !== 'cimo2026' && v !== 'cravemood') { $('#admErr').textContent = t('admin_wrong'); SFX.play('error'); return; }
-    SFX.play('success');
-    await renderAdminTable(v);
-  };
-}
-async function renderAdminTable(adminKey) {
-  let users = [], err = '';
-  try { users = await DB.users(adminKey); } catch (e) { err = e.message === 'admin key required' ? 'Kunci admin tidak diterima server.' : String(e.message); }
-  $('#adminBody').innerHTML = `
-    <div class="between" style="margin-bottom:10px">
-      <b>${users.length} ${t('admin_count')}</b>
-      <div class="row"><button class="btn sm ghost" id="admCsv">${icon('down')} CSV</button>
-      <button class="btn sm ghost" id="admJson">JSON</button></div>
-    </div>
-    ${err ? `<p class="hint" style="color:#d63f74;margin-bottom:8px">${esc(err)}</p>` : ''}
-    <div class="tablewrap"><table><thead><tr>
-      <th>Nama</th><th>Kontak</th><th>Bahasa</th><th>Daftar</th><th>Mood</th><th>Order</th><th>Chat</th>
-    </tr></thead><tbody>
-    ${users.length ? users.map(u => `<tr>
-      <td><b>${esc(u.name)}</b>${u.guest ? ' <span class="tag">guest</span>' : ''}</td>
-      <td>${esc(u.contact || '—')}</td><td>${esc(u.lang)}</td>
-      <td>${new Date(u.created).toLocaleDateString('id-ID')}</td>
-      <td>${u.moods}</td><td>${u.orders}</td><td>${u.chats}</td>
-    </tr>`).join('') : `<tr><td colspan="7" style="text-align:center;padding:20px">${t('admin_none')}</td></tr>`}
-    </tbody></table></div>
-    <p class="hint" style="margin-top:10px">${DB.isRemote ? 'Sumber: API server (database terpusat).' : 'Sumber: database lokal browser. Data pendaftar lain hanya terlihat di perangkat masing-masing — jalankan server untuk database terpusat.'}</p>`;
-  $('#admCsv').onclick = () => DB.exportCSV(adminKey);
-  $('#admJson').onclick = () => DB.exportJSON(adminKey);
-}
-
 /* ---------- onboarding ---------- */
 let obStep = 1, obLang = 'id', obMode = 'register';
 function showOnboard() {
@@ -2796,6 +2979,139 @@ function petSay(txt) {
   petSay._t = setTimeout(() => b.classList.remove('on'), 3200);
 }
 
+/* ---------- install / download (PWA) ---------- */
+const PLAT = (() => {
+  const ua = navigator.userAgent || '';
+  const ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const android = /Android/i.test(ua);
+  const standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  return { ios, android, standalone, mobile: ios || android };
+})();
+const PLAT_ICON = {
+  android: '<path d="M6 10.6h12v6.4a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M6.7 9.9a5.3 5.3 0 0 1 10.6 0z"/><path d="M8.4 6.3L7.1 4.4l1.5-.9 1.3 2zM15.6 6.3l1.3-1.9-1.5-.9-1.3 2z"/><circle cx="9.8" cy="7.4" r=".8" fill="#fff"/><circle cx="14.2" cy="7.4" r=".8" fill="#fff"/>',
+  ios: '<path d="M16.4 12.9c0-2.1 1.7-3.1 1.8-3.2-1-1.4-2.5-1.6-3-1.7-1.3-.1-2.5.8-3.1.8-.6 0-1.6-.8-2.7-.7-1.4 0-2.7.8-3.4 2.1-1.5 2.5-.4 6.2 1 8.2.7 1 1.6 2.1 2.7 2 1.1 0 1.5-.7 2.8-.7s1.6.7 2.7.7c1.1 0 1.9-1 2.6-2 .8-1.2 1.2-2.3 1.2-2.4-.1 0-2.4-.9-2.4-3.1zM14.5 6.3c.6-.7 1-1.7.9-2.7-.9 0-2 .6-2.6 1.3-.6.6-1.1 1.7-.9 2.6 1 .1 2-.5 2.6-1.2z"/>',
+  desktop: '<rect x="3" y="4.5" width="18" height="12" rx="2"/><rect x="4.8" y="6.2" width="14.4" height="8.6" rx="1" fill="#fff"/><rect x="8" y="18" width="8" height="1.8" rx=".9"/>',
+};
+let installEvt = null;
+let installTab = PLAT.ios ? 'ios' : PLAT.android ? 'android' : 'desktop';
+const IL = () => INSTALL_I18N[App.lang] || INSTALL_I18N.id;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  installEvt = e;
+  if (PLAT.mobile) setTimeout(maybeShowBanner, 1600);
+});
+window.addEventListener('appinstalled', () => {
+  installEvt = null;
+  SFX.play('success');
+  toast('CraveMood terpasang! 🎉');
+  if (App.user) DB.logChat(App.user.id, 'system', 'app_installed').catch(() => {});
+  if (currentView === 'profile') render();
+});
+
+function maybeShowBanner() {
+  if (PLAT.standalone) return;
+  if (sessionStorage.getItem('cm_install_bar') === '1') return;
+  const b = $('#installbanner');
+  if (!b) return;
+  const L = IL();
+  b.innerHTML = `
+    <div class="ph">${cimo(App.mood, 40)}</div>
+    <div style="flex:1;min-width:0"><b>${L.banner}</b><small>${L.banner_sub}</small></div>
+    <div class="act">
+      <button class="go" id="barInstall">${L.install}</button>
+      <button class="no" id="barLater">${L.later}</button>
+    </div>`;
+  b.classList.add('on');
+  $('#barLater').onclick = () => { b.classList.remove('on'); sessionStorage.setItem('cm_install_bar', '1'); };
+  $('#barInstall').onclick = () => { b.classList.remove('on'); sessionStorage.setItem('cm_install_bar', '1'); openInstall(); };
+}
+
+function openInstall(tab) {
+  if (tab) installTab = tab;
+  $('#installModal').classList.add('on');
+  renderInstall();
+}
+
+function renderInstall() {
+  const L = IL();
+  const steps = installTab === 'ios' ? L.stepsI : installTab === 'android' ? L.stepsA : L.stepsD;
+  const canPrompt = installTab === 'android' && !!installEvt;
+  const ico = installTab === 'ios' ? PLAT_ICON.ios : installTab === 'android' ? PLAT_ICON.android : PLAT_ICON.desktop;
+  const iconBg = installTab === 'ios' ? 'var(--ink)' : installTab === 'android' ? '#3ddc84' : 'var(--pk)';
+  const iconCol = installTab === 'ios' ? 'var(--bg)' : installTab === 'android' ? '#0b3d24' : '#3a2142';
+  $('#installBody').innerHTML = `
+    <div class="itabs">
+      <button data-itab="android" class="${installTab === 'android' ? 'on' : ''}">${L.tabA}</button>
+      <button data-itab="ios" class="${installTab === 'ios' ? 'on' : ''}">${L.tabI}</button>
+      <button data-itab="desktop" class="${installTab === 'desktop' ? 'on' : ''}">${L.tabD}</button>
+    </div>
+    <div class="installhero">
+      <div class="ph" style="background:${iconBg};color:${iconCol}"><svg viewBox="0 0 24 24">${ico}</svg></div>
+      <div style="flex:1;min-width:0">
+        <b>${L.title}</b>
+        <small>${PLAT.standalone ? L.off : L.on}</small>
+      </div>
+      ${PLAT.standalone ? `<span class="tag mint">✓</span>` : ''}
+    </div>
+    ${canPrompt && !PLAT.standalone ? `<button class="btn block" id="pwaGo">${icon('down')} ${L.install}</button>` : ''}
+    <ol class="isteps" style="margin-top:${canPrompt && !PLAT.standalone ? 14 : 0}px">
+      ${steps.map(s => `<li class="istep"><em></em><span>${s}</span></li>`).join('')}
+    </ol>
+    <div class="iacts">
+      <button class="btn sm ghost" id="dlOffline">${icon('down')} ${L.offline}</button>
+      <button class="btn sm ghost" id="copyLink">${icon('share')} ${L.copy}</button>
+    </div>
+    <div class="inote">${L.note}<br><b>${L.apk}</b> ${L.apk_note}</div>`;
+
+  $$('#installBody [data-itab]').forEach(b => b.onclick = () => { installTab = b.dataset.itab; renderInstall(); SFX.play('tap'); });
+  const go = $('#pwaGo');
+  if (go) go.onclick = doPwaInstall;
+  $('#dlOffline').onclick = downloadOffline;
+  $('#copyLink').onclick = () => { copyText(location.href); toast(L.copied); SFX.play('pop'); };
+}
+
+async function doPwaInstall() {
+  if (!installEvt) return;
+  const L = IL();
+  const btn = $('#pwaGo');
+  if (btn) { btn.disabled = true; btn.textContent = L.installing; }
+  try {
+    installEvt.prompt();
+    const res = await installEvt.userChoice;
+    installEvt = null;
+    if (res && res.outcome === 'accepted') { SFX.play('success'); toast('CraveMood terpasang! 🎉'); }
+    else { SFX.play('tap'); toast(L.notnow); }
+  } catch (e) { /* prompt already used */ }
+  renderInstall();
+}
+
+async function downloadOffline() {
+  const L = IL();
+  SFX.play('pop');
+  try {
+    let html = '';
+    try {
+      const r = await fetch('index.html', { cache: 'no-store' });
+      if (r.ok) html = await r.text();
+    } catch (e) { /* file:// */ }
+    if (!html) html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'cravemood-offline.html';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    toast(L.saved);
+  } catch (e) { toast(L.fail); SFX.play('error'); }
+}
+
+function registerSW() {
+  if (!('serviceWorker' in navigator)) return;
+  if (!/^https?:$/.test(location.protocol)) return;
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
 /* ---------- router ---------- */
 const RENDER = { home: viewHome, spin: viewSpin, chat: viewChat, cart: viewCart, recap: viewRecap, profile: viewProfile };
 
@@ -2840,6 +3156,9 @@ function bindGlobal() {
     const g = e.target.closest('[data-go]');
     if (g) { SFX.play('tap'); go(g.dataset.go); return; }
 
+    const ins = e.target.closest('[data-install]');
+    if (ins) { SFX.play('tap'); openInstall(ins.dataset.install); return; }
+
     const add = e.target.closest('[data-add]');
     if (add) { addToCart(add.dataset.add); flyToCart(add); return; }
     const inc = e.target.closest('[data-inc]');
@@ -2859,7 +3178,18 @@ function bindGlobal() {
       updatePetFace();
       if (App.user) DB.addMood(App.user.id, App.mood).catch(() => {});
       const mo = MOODS.find(m => m.k === App.mood);
-      if (mo && App.settings.speak) Voice.speak(mD(mo), { lang: App.settings.voiceLang || App.lang });
+      if (mo) {
+        const top = recList()[0];
+        const line = mSay(mo, top ? top.name : '');
+        const sayEl = $('#say');
+        if (sayEl) {
+          sayEl.textContent = line;
+          sayEl.style.animation = 'none'; void sayEl.offsetWidth; sayEl.style.animation = '';
+        }
+        const tagEl = $('#moodTag'); if (tagEl) tagEl.textContent = mS(mo);
+        petSay(line.length > 62 ? line.slice(0, 60) + '…' : line);
+        if (App.settings.speak) Voice.speak(line, { lang: App.settings.voiceLang || App.lang, mood: mo.k });
+      }
       return;
     }
     const cat = e.target.closest('[data-cat]');
@@ -2925,7 +3255,7 @@ function bindGlobal() {
     if (hit('#openShare') || hit('#recapShare')) { openShare(); return; }
     if (hit('#testVoice')) { Voice.preview(App.settings.voice, App.settings.voiceLang); return; }
     if (hit('#expJson')) { DB.exportJSON(); return; }
-    if (hit('#openAdmin')) { openAdmin(); return; }
+    if (hit('#dlOffline2')) { downloadOffline(); return; }
     if (hit('#logoutBtn')) { DB.setSetting('session', null); location.reload(); return; }
     if (hit('#chatReset')) {
       App.messages = []; ChatEngine.reset();
@@ -2940,19 +3270,10 @@ function bindGlobal() {
       if (App.settings.speak) Voice.preview(App.settings.voice, App.settings.voiceLang);
       return;
     }
-    if (hit('#aiSave')) {
-      const key = ($('#aiKey').value || '').trim();
-      const model = ($('#aiModel').value || '').trim() || 'gpt-4o-mini';
-      DB.setSetting('ai', key ? { key, model, base: 'https://api.openai.com/v1' } : {});
-      $('#aiStat').textContent = key ? 'Aktif — chat memakai model' : 'Mesin lokal aktif';
-      toast(key ? 'Otak Cimo: model AI aktif' : 'Otak Cimo: mesin lokal');
-      SFX.play('success');
-      return;
-    }
     if (hit('#sendBtn')) { const v = $('#chatInput').value.trim(); if (v) sendChat(v); return; }
     if (hit('#micBtn')) { startMic(); return; }
     if (e.target.closest('#shareModal .closebtn') || e.target.id === 'shareModal') { $('#shareModal').classList.remove('on'); return; }
-    if (e.target.closest('#adminModal .closebtn') || e.target.id === 'adminModal') { $('#adminModal').classList.remove('on'); return; }
+    if (e.target.closest('#installModal .closebtn') || e.target.id === 'installModal') { $('#installModal').classList.remove('on'); return; }
   });
 
   window.addEventListener('hashchange', () => {
@@ -3044,6 +3365,7 @@ function boot2() {
   $('#app').classList.remove('hide');
   renderNav();
   mountPet();
+  registerSW();
   const hash = (location.hash || '#/home').replace('#/', '');
   currentView = RENDER[hash] ? hash : 'home';
   render();
@@ -3052,6 +3374,7 @@ function boot2() {
   // seed a mood for today so the recap is alive
   if (App.user) DB.addMood(App.user.id, App.mood).catch(() => {});
   setTimeout(() => petSay('Hai! Geser aku ke mana aja ya 👋'), 2600);
+  if (PLAT.mobile && !PLAT.standalone) setTimeout(maybeShowBanner, 5200);
 }
 
 document.addEventListener('DOMContentLoaded', () => {

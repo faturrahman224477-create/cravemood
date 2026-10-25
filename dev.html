@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#241529">
+<title>CraveMood · Developer Console</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23241529'/%3E%3Cellipse cx='32' cy='36' rx='22' ry='20' fill='%23f27aa8'/%3E%3Cellipse cx='30' cy='34' rx='20.5' ry='18.5' fill='%23ffa9c9'/%3E%3Cellipse cx='24' cy='34' rx='3.4' ry='4.4' fill='%232f2a6b'/%3E%3Cellipse cx='40' cy='34' rx='3.4' ry='4.4' fill='%232f2a6b'/%3E%3Cpath d='M28 42q4 4 8 0' fill='none' stroke='%232f2a6b' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ===== CraveMood — design tokens from the mockup ===== */
+:root{
+  --bg:#fff7fa; --ink:#3a2142; --mu:#7d6683; --sf:#fff; --ln:rgba(90,50,100,.14);
+  --cr:#fff8ef; --pk:#ffb6d0; --pkb:#ff8fb8; --pk2:#ff5f98; --plum:#4a2a5e;
+  --le:#f4f87f; --sk:#9fd6ff; --pe:#ffb98a; --mi:#a8ecd6; --li:#dccbff; --gd:#ffc800;
+  --sh:0 10px 30px rgba(122,42,85,.10); --sh2:0 4px 0 rgba(122,42,85,.10);
+  --r:24px; --r2:18px; --nav:264px;
+}
+[data-theme=dark]{
+  --bg:#241529; --ink:#fff0f7; --mu:#d3b9cd; --sf:#35223b; --ln:rgba(255,255,255,.14);
+  --cr:#2f1e35; --sh:0 10px 30px rgba(0,0,0,.35); --sh2:0 4px 0 rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:400 15px/1.6 Nunito,system-ui,-apple-system,"Segoe UI",sans-serif;
+  background-image:radial-gradient(rgba(255,182,208,.42) 2px,transparent 2.6px);
+  background-size:30px 30px; background-attachment:fixed;
+  -webkit-font-smoothing:antialiased; overscroll-behavior-y:none;
+}
+h1,h2,h3,h4,b,button,.f{font-family:Fredoka,Nunito,sans-serif}
+h1,h2,h3,h4,p{margin:0}
+a{color:inherit}
+button{font-family:inherit}
+::selection{background:var(--pk);color:#3a2142}
+.hide{display:none!important}
+/* inline icon primitive — every icon() call gets a sane size */
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
+.btn .ic{width:17px;height:17px}
+.link .ic{width:15px;height:15px}
+
+/* ===== shell ===== */
+.sidebar{
+  position:fixed; left:0; top:0; bottom:0; width:var(--nav); background:var(--sf);
+  border-right:1px solid var(--ln); padding:22px 16px; display:flex; flex-direction:column; gap:6px; z-index:40;
+}
+.brand{display:flex;align-items:center;gap:8px;padding:4px 10px 18px}
+.lg{font:700 1.55rem/1 Fredoka;display:inline-flex;align-items:center;gap:4px;letter-spacing:-.4px}
+.lg mark{background:#ff9ec5;color:#3a2142;padding:1px 9px 4px;border-radius:11px;transform:rotate(-3deg);
+  box-shadow:0 4px 0 #f27aa8,0 8px 14px rgba(242,122,168,.32)}
+.lg small{font:700 .58rem/1 Fredoka;letter-spacing:.18em;opacity:.5;text-transform:uppercase;margin-left:2px}
+.navbtn{
+  display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;color:var(--mu);
+  padding:11px 13px;border-radius:15px;cursor:pointer;font:600 .95rem Fredoka;text-align:left;
+  transition:.22s cubic-bezier(.34,1.56,.64,1);position:relative;
+}
+.navbtn svg{width:21px;height:21px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.navbtn:hover{background:color-mix(in srgb,var(--pk) 22%,transparent);color:var(--ink);transform:translateX(2px)}
+.navbtn.on{background:var(--ink);color:var(--bg);box-shadow:0 6px 14px rgba(58,33,66,.22)}
+.navbtn .bdg{margin-left:auto;background:var(--pk2);color:#fff;font:700 .7rem Fredoka;min-width:20px;height:20px;
+  border-radius:99px;display:grid;place-items:center;padding:0 6px}
+.navbtn.on .bdg{background:var(--pk);color:#3a2142}
+.sidefoot{margin-top:auto;border-top:1px solid var(--ln);padding-top:14px;display:flex;flex-direction:column;gap:8px}
+.minicard{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#ffe7f0,#fff3e8);border-radius:18px;padding:10px 12px}
+[data-theme=dark] .minicard{background:linear-gradient(135deg,#4a2a5e,#3a2142)}
+.minicard b{font-size:.86rem;display:block;line-height:1.2}
+.minicard small{font-size:.7rem;color:var(--mu);font-weight:700}
+
+main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
+.shell{max-width:1120px;margin:0 auto}
+.topbar{display:none}
+
+/* ===== generic ===== */
+.view{display:none}
+.view.on{display:block;animation:vin .34s cubic-bezier(.22,1,.36,1)}
+@keyframes vin{from{opacity:0;transform:translateY(12px)}}
+.pagetitle{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.pagetitle h1{font-size:clamp(1.5rem,3vw,2.05rem);letter-spacing:-.5px}
+.pagetitle p{color:var(--mu);font-size:.92rem;margin-top:3px}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:20px;box-shadow:var(--sh2)}
+.card.tight{padding:14px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.muted{color:var(--mu)}
+.sm{font-size:.8rem}
+.xs{font-size:.72rem}
+
+.btn{
+  border:0;background:var(--pk2);color:#fff;font:700 .95rem Fredoka;padding:12px 24px;border-radius:99px;cursor:pointer;
+  box-shadow:0 5px 0 #d63f74;transition:.16s cubic-bezier(.34,1.56,.64,1);display:inline-flex;align-items:center;gap:8px;justify-content:center;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 0 #d63f74}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #d63f74}
+.btn.ghost{background:transparent;color:var(--ink);border:1.6px solid var(--ln);box-shadow:none}
+.btn.ghost:hover{border-color:var(--pkb);background:color-mix(in srgb,var(--pk) 16%,transparent);transform:none}
+.btn.plum{background:var(--plum);box-shadow:0 5px 0 #2a1634}
+.btn.plum:hover{box-shadow:0 6px 0 #2a1634}
+.btn.plum:active{box-shadow:0 1px 0 #2a1634}
+.btn.sm{padding:8px 16px;font-size:.82rem;box-shadow:0 4px 0 #d63f74}
+.btn.sm:active{transform:translateY(3px);box-shadow:0 1px 0 #d63f74}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
+.btn.block{width:100%}
+.iconbtn{border:1px solid var(--ln);background:var(--sf);color:var(--ink);width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;cursor:pointer;transition:.2s}
+.iconbtn:hover{background:color-mix(in srgb,var(--pk) 26%,transparent)}
+.iconbtn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+.tag{display:inline-flex;align-items:center;gap:4px;font:700 .66rem Fredoka;padding:3px 10px;border-radius:99px;background:var(--cr);color:var(--ink)}
+.bdg{background:var(--pk2);color:#fff;font:700 .62rem Fredoka;min-width:18px;height:18px;border-radius:99px;display:grid;place-items:center;padding:0 5px;line-height:1}
+.tag.pink{background:#f08fb4;color:#fff}
+.tag.dark{background:var(--ink);color:var(--bg)}
+.tag.mint{background:#b7e3d0}
+.tag.gold{background:#ffe6a8}
+
+/* ===== onboarding ===== */
+.onboard{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:20px;
+  background:radial-gradient(ellipse 90% 40% at 50% 18%,rgba(255,255,255,.92),rgba(255,255,255,0) 70%),linear-gradient(180deg,#ffe3ec,#ffd9e6 55%,#ffe8d8)}
+[data-theme=dark] .onboard{background:radial-gradient(ellipse 90% 40% at 50% 18%,rgba(255,158,197,.18),transparent 70%),linear-gradient(180deg,#2b1830,#241529)}
+.onboard .box{width:min(430px,100%);text-align:center}
+.onboard .cimo{width:180px;margin:0 auto -20px;cursor:pointer;position:relative;z-index:2;filter:drop-shadow(0 10px 16px rgba(122,42,85,.16))}
+.onboard .cimo svg{width:100%;height:auto}
+.onboard h2{font-size:1.7rem;letter-spacing:-.4px}
+.onboard p.sub{color:var(--mu);font-size:.88rem;margin:6px 0 18px}
+.onboard .sheetbox{background:var(--sf);border-radius:30px;padding:20px 20px 24px;box-shadow:0 24px 60px rgba(122,42,85,.22);text-align:left}
+.field{margin-bottom:12px}
+.field label{display:block;font:700 .76rem Fredoka;color:var(--mu);margin:0 0 5px 4px;letter-spacing:.02em}
+.field input,.field select,.field textarea{
+  width:100%;border:1.8px solid var(--ln);background:var(--bg);color:var(--ink);border-radius:14px;
+  padding:11px 14px;font:600 .9rem Nunito;outline:none;transition:.18s
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pk2);background:var(--sf);box-shadow:0 0 0 4px color-mix(in srgb,var(--pk) 32%,transparent)}
+.field textarea{resize:vertical;min-height:70px}
+.langs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.langopt{display:flex;align-items:center;gap:8px;border:1.8px solid var(--ln);background:var(--bg);border-radius:14px;padding:9px 11px;cursor:pointer;font:700 .84rem Fredoka;transition:.18s}
+.langopt:hover{border-color:var(--pkb)}
+.langopt.on{border-color:var(--pk2);background:color-mix(in srgb,var(--pk) 22%,var(--sf));box-shadow:0 3px 0 color-mix(in srgb,var(--pk2) 40%,transparent)}
+.langopt i{font-style:normal;font-size:1.05rem}
+.hint{font-size:.72rem;color:var(--mu);line-height:1.45}
+.err{color:#d63f74;font-size:.75rem;font-weight:700;margin-top:4px;min-height:1em}
+
+/* ===== beranda ===== */
+.hero{position:relative;overflow:hidden;border-radius:32px;padding:24px 26px;display:grid;grid-template-columns:1.15fr .85fr;gap:10px;align-items:center;
+  background:linear-gradient(135deg,#ffe3ec,#ffd9e6 55%,#ffe8d8);border:1px solid var(--ln)}
+[data-theme=dark] .hero{background:linear-gradient(135deg,#3d2347,#33203a 55%,#3a2434)}
+.hero .say{display:inline-block;background:var(--sf);border-radius:16px 16px 16px 5px;padding:8px 15px;font:700 .84rem Fredoka;
+  box-shadow:0 4px 0 rgba(122,42,85,.12);animation:say .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes say{from{transform:scale(.85);opacity:0}}
+.hero h1{font-size:clamp(1.5rem,3.2vw,2.2rem);line-height:1.1;margin:12px 0 6px;letter-spacing:-.5px}
+.hero h1 em{font-style:normal;color:var(--pk2)}
+.hero p{color:var(--mu);font-size:.9rem;max-width:330px}
+.hero .cimobox{display:grid;place-items:center;position:relative}
+.hero .cimobox .halo{position:absolute;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.75),transparent 70%);animation:pulseHalo 4s ease-in-out infinite}
+@keyframes pulseHalo{50%{transform:scale(1.08);opacity:.7}}
+.hero .cimobox svg{position:relative;cursor:pointer;filter:drop-shadow(0 14px 18px rgba(122,42,85,.18))}
+.hero .cimobox svg.hop{animation:hop .62s cubic-bezier(.3,1.7,.5,1)}
+@keyframes hop{30%{transform:translateY(-26px) scaleY(1.07)}60%{transform:translateY(0) scaleY(.92)}}
+.float{animation:flt 3.4s ease-in-out infinite}
+@keyframes flt{50%{transform:translateY(-8px)}}
+
+.sectitle{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:26px 0 12px}
+.sectitle h2{font-size:1.12rem;display:flex;align-items:center;gap:8px}
+.sectitle h2 span.n{width:24px;height:24px;border-radius:50%;background:var(--pk);color:#3a2142;font:700 .74rem Fredoka;display:grid;place-items:center}
+.sectitle .link{background:none;border:0;color:var(--pk2);font:700 .82rem Fredoka;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+
+.moods{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.mood{background:color-mix(in srgb,var(--c) 26%,var(--sf));border:2px solid var(--ln);border-radius:20px;padding:10px 4px 8px;cursor:pointer;text-align:center;
+  transition:.26s cubic-bezier(.34,1.56,.64,1);color:var(--ink);position:relative;overflow:hidden}
+.mood:hover{transform:translateY(-5px) rotate(-1deg);border-color:var(--c)}
+.mood.on{border-color:var(--c);box-shadow:0 7px 0 color-mix(in srgb,var(--c) 60%,transparent);transform:translateY(-4px)}
+.mood .face{display:grid;place-items:center;height:56px}
+.mood b{font-size:.78rem;display:block;line-height:1.2}
+.mood.on::after{content:"";position:absolute;inset:0;border-radius:18px;background:color-mix(in srgb,var(--c) 16%,transparent);pointer-events:none}
+
+.locbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--sf);border:1px solid var(--ln);border-radius:99px;padding:7px 8px 7px 16px;margin:16px 0 4px}
+.locbar svg{width:17px;height:17px;stroke:var(--pk2);fill:none;stroke-width:2.2;flex:none}
+.locbar select{border:0;background:transparent;color:var(--ink);font:700 .84rem Nunito;outline:none;flex:1;min-width:140px;cursor:pointer}
+.locbar .dist{font:700 .72rem Fredoka;background:var(--cr);padding:5px 12px;border-radius:99px;color:var(--mu)}
+
+.chips{display:flex;gap:7px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1.6px solid var(--ln);background:var(--sf);color:var(--mu);font:700 .78rem Fredoka;
+  padding:7px 15px;border-radius:99px;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+.chip:hover{border-color:var(--pkb);color:var(--ink)}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip i{width:9px;height:9px;border-radius:50%;display:block}
+
+.recs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.rec{background:var(--sf);border:1px solid var(--ln);border-radius:26px;overflow:hidden;position:relative;
+  transition:.28s cubic-bezier(.34,1.56,.64,1);display:flex;flex-direction:column}
+.rec:hover{transform:translateY(-6px);box-shadow:0 18px 34px rgba(122,42,85,.16)}
+.rec .pic{height:150px;display:grid;place-items:center;position:relative;overflow:hidden}
+.rec .pic > svg{height:104px;width:auto;transition:.4s cubic-bezier(.34,1.56,.64,1)}
+.rec:hover .pic > svg{transform:scale(1.08) rotate(-3deg)}
+.rec .pic .cimomini{position:absolute;left:7px;bottom:3px;opacity:.95;line-height:0}
+.rec .pic .cimomini svg{width:28px;height:auto}
+.rec .pic .badge{position:absolute;top:9px;left:9px}
+.rec .body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:3px;flex:1}
+.rec h4{font-size:1rem;line-height:1.2}
+.rec .stall{font-size:.74rem;color:var(--mu);font-weight:700;display:flex;align-items:center;gap:3px}
+.rec .meta{font-size:.7rem;color:var(--mu);display:flex;gap:6px;flex-wrap:wrap}
+.rec .meta b{color:#e8a300;font-weight:700}
+.rec .price{margin-top:auto;padding-top:9px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.rec .price b{font:700 .84rem Fredoka;color:var(--pk2)}
+.addbtn{border:1.8px solid var(--pk2);background:var(--sf);color:var(--pk2);font:700 .74rem Fredoka;padding:6px 13px;
+  border-radius:99px;cursor:pointer;transition:.18s;white-space:nowrap}
+.addbtn:hover{background:var(--pk2);color:#fff}
+.addbtn:active{transform:scale(.9)}
+.step{display:inline-flex;align-items:center;background:var(--pk2);border-radius:99px;color:#fff;overflow:hidden}
+.step button{border:0;background:none;color:#fff;font:700 1rem Fredoka;width:27px;height:27px;cursor:pointer;line-height:1}
+.step button:hover{background:rgba(0,0,0,.12)}
+.step i{font-style:normal;font-weight:800;min-width:16px;text-align:center;font-size:.76rem}
+
+.empty{text-align:center;padding:34px 16px;color:var(--mu)}
+.empty .big{width:110px;margin:0 auto 8px;opacity:.85}
+
+/* ===== spinner ===== */
+.spinwrap{display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:center}
+.wheelbox{position:relative;display:grid;place-items:center;padding:8px}
+.wheel{width:min(370px,80vw);aspect-ratio:1;border-radius:50%;position:relative;
+  box-shadow:0 18px 40px rgba(122,42,85,.22),inset 0 0 0 10px var(--sf),inset 0 0 0 13px rgba(90,50,100,.10);
+  transition:transform 4.6s cubic-bezier(.12,.72,.06,1);will-change:transform}
+.wheel .seg{position:absolute;inset:0;pointer-events:none;font:700 .82rem/1.14 Fredoka;color:#3a2142;letter-spacing:-.1px}
+.wheel .seg span{position:absolute;width:102px;margin:0;text-align:center;white-space:normal;word-break:break-word;
+  transform:translate(-50%,-50%);text-shadow:0 1px 0 rgba(255,255,255,.75),0 0 6px rgba(255,255,255,.55)}
+.pointer{position:absolute;top:-4px;left:50%;transform:translateX(-50%);z-index:3;filter:drop-shadow(0 4px 6px rgba(0,0,0,.2))}
+.hub{position:absolute;width:64px;height:64px;border-radius:50%;background:var(--sf);display:grid;place-items:center;
+  box-shadow:0 6px 16px rgba(122,42,85,.25);z-index:2;border:3px solid var(--pk)}
+.spininfo h2{font-size:1.5rem;letter-spacing:-.4px;margin-bottom:6px}
+.spininfo p{color:var(--mu);font-size:.9rem;margin-bottom:14px}
+.spinres{display:flex;gap:12px;align-items:center;background:var(--cr);border-radius:20px;padding:12px;margin-top:14px;animation:say .45s cubic-bezier(.34,1.56,.64,1)}
+.spinres .pic{width:74px;height:74px;border-radius:16px;display:grid;place-items:center;flex:none}
+.history{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.history span{font:700 .68rem Fredoka;background:var(--sf);border:1px solid var(--ln);border-radius:99px;padding:4px 10px;color:var(--mu)}
+
+/* ===== chat ===== */
+.chatwrap{display:grid;grid-template-rows:auto 1fr auto;height:calc(100vh - 200px);min-height:460px;
+  background:var(--sf);border:1px solid var(--ln);border-radius:30px;overflow:hidden;box-shadow:var(--sh)}
+.chathead{display:flex;align-items:center;gap:11px;padding:13px 16px;border-bottom:1px solid var(--ln);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--pk) 26%,var(--sf)),var(--sf))}
+.chathead .av{width:44px;height:44px;border-radius:50%;background:#fff3f8;display:grid;place-items:center;flex:none;position:relative;border:1px solid var(--ln)}
+[data-theme=dark] .chathead .av{background:#4a2a5e}
+.chathead .av .dot{position:absolute;right:0;bottom:0;width:11px;height:11px;border-radius:50%;background:#3ec98a;border:2px solid var(--sf)}
+.chathead b{font-size:.98rem;display:block;line-height:1.2}
+.chathead small{font-size:.72rem;color:var(--mu);font-weight:700}
+.chatbody{overflow-y:auto;padding:16px 16px 6px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.chatbody::-webkit-scrollbar{width:7px}
+.chatbody::-webkit-scrollbar-thumb{background:var(--ln);border-radius:99px}
+.day{text-align:center;font:700 .68rem Fredoka;color:var(--mu);margin:4px 0}
+.msg{display:flex;gap:8px;align-items:flex-end;max-width:88%;animation:msgIn .32s cubic-bezier(.22,1,.36,1)}
+@keyframes msgIn{from{opacity:0;transform:translateY(9px) scale(.97)}}
+.msg.me{margin-left:auto;flex-direction:row-reverse}
+.msg .av{width:30px;height:30px;border-radius:50%;background:#fff3f8;display:grid;place-items:center;flex:none;overflow:hidden}
+[data-theme=dark] .msg .av{background:#4a2a5e}
+.bub{background:var(--cr);border-radius:18px 18px 18px 5px;padding:9px 14px;font-size:.875rem;line-height:1.55;
+  box-shadow:0 2px 0 rgba(122,42,85,.06);white-space:pre-wrap;word-break:break-word}
+[data-theme=dark] .bub{background:#42294b}
+.msg.me .bub{background:var(--plum);color:#fff;border-radius:18px 18px 5px 18px}
+.bub .em{font-size:1.05rem;vertical-align:-.1em}
+.typing{display:flex;gap:4px;padding:12px 15px;background:var(--cr);border-radius:18px 18px 18px 5px;width:max-content}
+[data-theme=dark] .typing{background:#42294b}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--mu);animation:tp 1.1s infinite}
+.typing i:nth-child(2){animation-delay:.16s}.typing i:nth-child(3){animation-delay:.32s}
+@keyframes tp{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+.quick{display:flex;gap:6px;overflow-x:auto;padding:6px 14px 8px;scrollbar-width:none}
+.quick::-webkit-scrollbar{display:none}
+.quick button{flex:none;border:1.5px solid var(--ln);background:var(--sf);color:var(--mu);font:700 .74rem Fredoka;
+  padding:6px 13px;border-radius:99px;cursor:pointer;transition:.18s}
+.quick button:hover{border-color:var(--pk2);color:var(--pk2)}
+.composer{display:flex;gap:8px;padding:10px 14px 14px;border-top:1px solid var(--ln);align-items:flex-end;background:var(--sf)}
+.composer .inp{flex:1;display:flex;align-items:flex-end;background:var(--bg);border:1.8px solid var(--ln);border-radius:22px;padding:5px 6px 5px 14px;transition:.18s}
+.composer .inp:focus-within{border-color:var(--pk2);box-shadow:0 0 0 4px color-mix(in srgb,var(--pk) 26%,transparent)}
+.composer textarea{flex:1;border:0;background:none;color:var(--ink);font:600 .9rem Nunito;resize:none;outline:none;
+  padding:7px 0;max-height:110px;line-height:1.45}
+.composer .send{width:38px;height:38px;border-radius:50%;border:0;background:var(--pk2);color:#fff;display:grid;place-items:center;cursor:pointer;flex:none;transition:.2s}
+.composer .send:hover{transform:scale(1.06)}
+.composer .send:disabled{opacity:.4;cursor:default;transform:none}
+.composer .mic{width:38px;height:38px;border-radius:50%;border:1.6px solid var(--ln);background:var(--sf);color:var(--ink);display:grid;place-items:center;cursor:pointer;flex:none;transition:.2s}
+.composer .mic.on{background:#ff4d6d;color:#fff;border-color:#ff4d6d;animation:micPulse 1.2s infinite}
+@keyframes micPulse{50%{box-shadow:0 0 0 8px rgba(255,77,109,.2)}}
+.composer svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ===== cart / pesanan ===== */
+.cartitem{display:flex;gap:12px;align-items:center;padding:11px;border-radius:20px;border:1px solid var(--ln);margin-bottom:9px;background:var(--bg)}
+.cartitem .pic{width:62px;height:62px;border-radius:16px;display:grid;place-items:center;flex:none}
+.cartitem .pic svg{height:44px}
+.cartitem .inf{flex:1;min-width:0}
+.cartitem b{font-size:.9rem;display:block;line-height:1.25}
+.cartitem small{display:block;font-size:.72rem;color:var(--mu);font-weight:700}
+.cartitem .pr{font:700 .8rem Fredoka;color:var(--pk2);margin-top:2px}
+.totline{display:flex;justify-content:space-between;align-items:baseline;font:700 1.02rem Fredoka;margin:14px 0 2px}
+.plats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.plat{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--bg);border:2px solid var(--ln);
+  border-radius:18px;padding:12px 4px;cursor:pointer;font:700 .72rem Fredoka;color:var(--ink);transition:.2s}
+.plat:hover{transform:translateY(-3px)}
+.plat.on{border-color:var(--pc);box-shadow:0 5px 0 color-mix(in srgb,var(--pc) 45%,transparent)}
+.plat i{width:38px;height:38px;border-radius:12px;display:grid;place-items:center}
+.plat svg{width:22px;height:22px}
+.plat u{text-decoration:none;font-size:.62rem;color:#3ec98a}
+
+/* ===== share ===== */
+.sharegrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:8px}
+.shareacts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.shareacts .btn{padding:10px 8px;font-size:.78rem;box-shadow:0 4px 0 rgba(214,63,116,.9);white-space:nowrap;overflow:hidden}
+.shareacts .btn.ghost{box-shadow:none}
+.soc{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;cursor:pointer;font:700 .68rem Fredoka;color:var(--ink)}
+.soc i{width:52px;height:52px;border-radius:18px;display:grid;place-items:center;transition:.22s cubic-bezier(.34,1.56,.64,1);box-shadow:0 5px 12px rgba(0,0,0,.14)}
+.soc:hover i{transform:translateY(-5px) scale(1.06)}
+.soc svg{width:25px;height:25px}
+.preview{width:100%;max-width:250px;border-radius:20px;box-shadow:0 14px 30px rgba(122,42,85,.2);display:block;margin:0 auto}
+
+/* ===== recap ===== */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+.stats>div{padding:12px 6px;border-radius:20px;background:var(--bg);border:1px solid var(--ln)}
+.stats b{display:block;font-size:1.6rem;color:var(--pk2);line-height:1.1}
+.stats span{font-size:.7rem;color:var(--mu);font-weight:700}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:12px}
+.cal .wd{text-align:center;font:700 .64rem Fredoka;color:var(--mu);padding-bottom:2px}
+.cd{aspect-ratio:1;border-radius:12px;background:var(--bg);display:grid;place-items:center;position:relative;
+  font-size:.6rem;font-weight:800;color:var(--mu);border:1px solid transparent;transition:.2s}
+.cd:hover{transform:scale(1.12);z-index:2}
+.cd.today{border-color:var(--pk2);box-shadow:0 0 0 2px color-mix(in srgb,var(--pk) 40%,transparent)}
+.cd span{position:absolute;top:2px;left:5px}
+.cd .mini{width:62%}
+.bars{margin-top:6px}
+.bar{display:flex;align-items:center;gap:9px;margin:7px 0;font:700 .76rem Fredoka}
+.bar .tr{flex:1;background:var(--bg);border-radius:99px;height:9px;overflow:hidden}
+.bar .tr i{display:block;height:9px;border-radius:99px;transition:width .7s cubic-bezier(.22,1,.36,1)}
+
+/* ===== profil / settings ===== */
+.avatar-lg{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,#ffe7f0,#fff3e8);display:grid;place-items:center;margin:0 auto 8px;border:3px solid var(--sf);box-shadow:0 8px 20px rgba(122,42,85,.18)}
+[data-theme=dark] .avatar-lg{background:linear-gradient(135deg,#4a2a5e,#3a2142)}
+.setrow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0;border-bottom:1px solid var(--ln);flex-wrap:wrap}
+.setrow:last-child{border-bottom:0}
+.setrow .lbl b{font-size:.9rem;display:block}
+.setrow .lbl small{font-size:.72rem;color:var(--mu)}
+.setrow select{max-width:230px;min-width:150px;border:1.8px solid var(--ln);background:var(--bg);color:var(--ink);
+  border-radius:12px;padding:8px 12px;font:700 .82rem Nunito;outline:none;cursor:pointer}
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:99px;background:var(--ln);outline:none;width:150px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--pk2);
+  border:3px solid var(--sf);box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--pk2);border:3px solid var(--sf);cursor:pointer}
+.switch{position:relative;width:46px;height:26px;flex:none}
+.switch input{opacity:0;width:0;height:0}
+.switch span{position:absolute;inset:0;background:var(--ln);border-radius:99px;cursor:pointer;transition:.24s}
+.switch span:before{content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;left:3px;top:3px;transition:.24s;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.switch input:checked+span{background:var(--pk2)}
+.switch input:checked+span:before{transform:translateX(20px)}
+.voicecard{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:8px}
+.vopt{border:1.8px solid var(--ln);background:var(--bg);border-radius:16px;padding:10px 11px;cursor:pointer;text-align:left;transition:.2s;color:var(--ink)}
+.vopt:hover{border-color:var(--pkb);transform:translateY(-2px)}
+.vopt.on{border-color:var(--pk2);background:color-mix(in srgb,var(--pk) 20%,var(--sf));box-shadow:0 4px 0 color-mix(in srgb,var(--pk2) 30%,transparent)}
+.vopt b{font-size:.82rem;display:block}
+.vopt small{font-size:.66rem;color:var(--mu);font-weight:700}
+.vopt .wave{display:flex;gap:2px;align-items:flex-end;height:14px;margin-top:5px}
+.vopt .wave i{width:3px;border-radius:2px;background:var(--pkb);opacity:.7}
+
+/* ===== table / admin ===== */
+.tablewrap{overflow-x:auto;border-radius:16px;border:1px solid var(--ln)}
+table{width:100%;border-collapse:collapse;font-size:.78rem;min-width:560px}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--ln);white-space:nowrap}
+th{font:700 .68rem Fredoka;text-transform:uppercase;letter-spacing:.06em;color:var(--mu);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+tbody tr:hover{background:color-mix(in srgb,var(--pk) 10%,transparent)}
+td .tag{font-size:.6rem}
+
+/* ===== floating cimo (draggable) ===== */
+.pet{position:fixed;right:26px;bottom:26px;width:74px;height:74px;z-index:60;cursor:grab;touch-action:none;
+  filter:drop-shadow(0 10px 16px rgba(122,42,85,.28));transition:filter .2s}
+.pet:active{cursor:grabbing}
+.pet.drag{filter:drop-shadow(0 18px 26px rgba(122,42,85,.4))}
+.pet svg{pointer-events:none}
+.pet .bubble{position:absolute;right:64px;top:2px;background:var(--sf);border:1px solid var(--ln);border-radius:14px 14px 4px 14px;
+  padding:6px 11px;font:700 .72rem Fredoka;white-space:nowrap;box-shadow:0 6px 14px rgba(122,42,85,.16);opacity:0;transform:scale(.8);transition:.25s;pointer-events:none}
+.pet .bubble.on{opacity:1;transform:scale(1)}
+.pet .hintdot{position:absolute;right:-2px;top:-2px;width:16px;height:16px;border-radius:50%;background:var(--pk2);border:2px solid var(--sf);animation:micPulse 2s infinite}
+
+/* ===== cart bar ===== */
+.cartbar{position:fixed;left:50%;transform:translate(-50%,140%);bottom:20px;
+  width:min(520px,calc(100% - 28px));background:var(--ink);color:var(--bg);border-radius:99px;padding:8px 8px 8px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 14px 30px rgba(0,0,0,.3);z-index:55;
+  transition:transform .38s cubic-bezier(.34,1.4,.5,1),opacity .28s;font:700 .82rem Fredoka;
+  opacity:0;visibility:hidden;pointer-events:none}
+.cartbar.on{transform:translate(-50%,0);opacity:1;visibility:visible;pointer-events:auto}
+.cartbar button{border:0;background:var(--pk);color:#3a2142;font:700 .78rem Fredoka;padding:9px 16px;border-radius:99px;cursor:pointer}
+
+/* ===== toast / modal / sheet ===== */
+.toast{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-140%);
+  background:var(--ink);color:var(--bg);padding:10px 20px;border-radius:99px;font:700 .8rem Fredoka;z-index:95;
+  box-shadow:0 10px 26px rgba(0,0,0,.28);transition:transform .34s cubic-bezier(.34,1.4,.5,1),opacity .3s;
+  max-width:90vw;text-align:center;opacity:0;pointer-events:none}
+.toast.on{transform:translate(-50%,0);opacity:1}
+.modal{position:fixed;inset:0;background:rgba(38,18,44,.5);backdrop-filter:blur(3px);z-index:80;display:none;align-items:center;justify-content:center;padding:16px}
+.modal.on{display:flex}
+.modal .mbox{background:var(--bg);border-radius:30px;width:min(520px,100%);max-height:92vh;overflow:auto;
+  padding:22px;box-shadow:0 30px 70px rgba(0,0,0,.35);animation:pop .4s cubic-bezier(.34,1.5,.5,1)}
+.modal .mbox.wide{width:min(760px,100%)}
+#adminModal .mbox{width:min(760px,100%)}
+#adminModal table{min-width:620px;font-size:.74rem}
+#adminModal th,#adminModal td{padding:8px 9px}
+@keyframes pop{from{transform:scale(.9);opacity:0}}
+.modal .mhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.modal .mhead h3{font-size:1.15rem}
+.closebtn{border:0;background:var(--cr);width:32px;height:32px;border-radius:50%;cursor:pointer;color:var(--ink);font-size:1rem;display:grid;place-items:center;flex:none}
+
+/* ===== mobile nav ===== */
+.tabbar{display:none;position:fixed;left:0;right:0;bottom:0;background:var(--sf);border-top:1px solid var(--ln);
+  padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));z-index:50;justify-content:space-around}
+.tabbar button{flex:1;border:0;background:none;color:var(--mu);display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:6px 2px;font:700 .58rem Fredoka;cursor:pointer;border-radius:14px;position:relative;transition:.2s}
+.tabbar button svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button.on{color:var(--pk2)}
+.tabbar button.on svg{fill:color-mix(in srgb,var(--pk2) 18%,transparent)}
+.tabbar .bdg{position:absolute;top:2px;right:50%;transform:translateX(16px);background:var(--pk2);color:#fff;
+  font:700 .55rem Fredoka;min-width:15px;height:15px;border-radius:99px;display:grid;place-items:center;padding:0 4px}
+
+/* ===== responsive ===== */
+@media(max-width:1080px){
+  .moods{grid-template-columns:repeat(3,1fr)}
+  .recs{grid-template-columns:repeat(2,1fr)}
+  .spinwrap{grid-template-columns:1fr;gap:16px}
+  .wheel{width:min(300px,70vw)}
+}
+@media(max-width:980px){
+  :root{--nav:0px}
+  .sidebar{display:none}
+  .tabbar{display:flex}
+  main{margin-left:0;padding:12px 14px 120px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 2px 12px}
+  .topbar .lg{font-size:1.3rem}
+  .hero{grid-template-columns:1fr;text-align:center;padding:20px 18px}
+  .hero p{margin:0 auto}
+  .hero .cimobox{order:-1}
+  .hero .cimobox .halo{width:180px;height:180px}
+  .chatwrap{height:calc(100vh - 172px);min-height:420px;border-radius:24px}
+  .cartbar{left:14px;right:92px;width:auto;transform:translateY(140%);bottom:calc(70px + env(safe-area-inset-bottom,0px));padding:7px 7px 7px 14px;font-size:.74rem}
+  .cartbar.on{transform:translateY(0)}
+  .cartbar button{padding:8px 12px;font-size:.7rem;white-space:nowrap}
+  #cbt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pet{bottom:calc(70px + env(safe-area-inset-bottom,0px));right:10px;width:56px;height:56px;opacity:.94}
+  .sharegrid{grid-template-columns:repeat(5,1fr);gap:6px}
+  .soc i{width:46px;height:46px;border-radius:15px}
+  .topbar .bdg{font-size:.55rem;min-width:16px;height:16px}
+}
+@media(max-width:560px){
+  .recs{grid-template-columns:1fr}
+  .moods{grid-template-columns:repeat(3,1fr);gap:8px}
+  .mood .face{height:48px}
+  .sharegrid{grid-template-columns:repeat(5,1fr)}
+  .soc{font-size:.58rem}
+  .soc i{width:42px;height:42px}
+  .langs{grid-template-columns:1fr}
+  .plats{grid-template-columns:1fr;gap:6px}
+  .plat{flex-direction:row;justify-content:flex-start;padding:10px 12px;gap:10px}
+  .stats b{font-size:1.3rem}
+  .setrow{gap:8px}
+  .setrow select{max-width:100%;flex:1}
+  input[type=range]{width:120px}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ===== download / install (PWA) ===== */
+.dlcard{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.dlbtn{display:flex;align-items:center;gap:11px;border:1.8px solid var(--ln);background:var(--bg);color:var(--ink);
+  border-radius:20px;padding:12px 14px;cursor:pointer;text-align:left;transition:.22s cubic-bezier(.34,1.56,.64,1);position:relative}
+.dlbtn:hover{transform:translateY(-3px);border-color:var(--pk2);background:color-mix(in srgb,var(--pk) 14%,var(--bg))}
+.dlbtn:active{transform:scale(.97)}
+.dlbtn i{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;flex:none}
+.dlbtn i svg{width:22px;height:22px;fill:currentColor;stroke:none}
+.dlbtn.android i{background:#3ddc84;color:#0b3d24}
+.dlbtn.ios i{background:var(--ink);color:var(--bg)}
+.dlbtn b{display:block;font-size:.88rem;line-height:1.2}
+.dlbtn small{display:block;font-size:.68rem;color:var(--mu);font-weight:700}
+.dlbtn .ok{position:absolute;top:-7px;right:-6px;background:#3ec98a;color:#fff;font:700 .58rem Fredoka;
+  padding:2px 8px;border-radius:99px;box-shadow:0 3px 8px rgba(62,201,138,.4)}
+
+.itabs{display:flex;gap:6px;background:var(--bg);border:1px solid var(--ln);border-radius:99px;padding:4px;margin-bottom:14px}
+.itabs button{flex:1;border:0;background:none;color:var(--mu);font:700 .78rem Fredoka;padding:8px 6px;border-radius:99px;
+  cursor:pointer;transition:.2s;white-space:nowrap}
+.itabs button.on{background:var(--ink);color:var(--bg);box-shadow:0 3px 8px rgba(58,33,66,.2)}
+.installhero{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,color-mix(in srgb,var(--pk) 30%,var(--bg)),var(--cr));
+  border-radius:20px;padding:13px 14px;margin-bottom:14px}
+.installhero .ph{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;flex:none;background:var(--sf)}
+.installhero .ph svg{width:30px;height:30px;fill:currentColor;stroke:none}
+.installhero b{font-size:.92rem;display:block;line-height:1.25}
+.installhero small{font-size:.72rem;color:var(--mu);font-weight:700}
+.isteps{list-style:none;padding:0;margin:0 0 4px;counter-reset:s}
+.istep{display:flex;gap:10px;align-items:flex-start;padding:8px 0;font-size:.83rem;line-height:1.45}
+.istep em{counter-increment:s;font-style:normal;flex:none;width:23px;height:23px;border-radius:50%;
+  background:var(--pk);color:#3a2142;font:700 .7rem Fredoka;display:grid;place-items:center;margin-top:1px}
+.istep em::before{content:counter(s)}
+.istep span{flex:1}
+.inote{background:var(--cr);border:1px solid var(--ln);border-radius:16px;padding:10px 13px;font-size:.74rem;color:var(--mu);line-height:1.5;margin-top:10px}
+.inote b{color:var(--ink)}
+.iacts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.installbanner{position:fixed;left:14px;right:14px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:56;
+  background:var(--sf);border:1px solid var(--ln);border-radius:22px;padding:12px 14px;display:flex;align-items:center;gap:11px;
+  box-shadow:0 14px 34px rgba(122,42,85,.24);transform:translateY(160%);transition:transform .4s cubic-bezier(.34,1.4,.5,1);
+  opacity:0;visibility:hidden}
+.installbanner.on{transform:translateY(0);opacity:1;visibility:visible}
+.installbanner .ph{width:44px;height:44px;flex:none;display:grid;place-items:center}
+.installbanner b{font-size:.84rem;display:block;line-height:1.2}
+.installbanner small{font-size:.68rem;color:var(--mu);font-weight:700}
+.installbanner .act{display:flex;flex-direction:column;gap:5px;flex:none}
+.installbanner .go{border:0;background:var(--pk2);color:#fff;font:700 .72rem Fredoka;padding:7px 14px;border-radius:99px;cursor:pointer;white-space:nowrap}
+.installbanner .no{border:0;background:none;color:var(--mu);font:700 .66rem Fredoka;cursor:pointer}
+@media(max-width:560px){
+  .dlcard{grid-template-columns:1fr}
+  .dlbtn{padding:11px 13px}
+  .iacts{grid-template-columns:1fr}
+}
+@media(min-width:981px){ .installbanner{left:auto;right:24px;bottom:100px;width:360px} }
+
+</style>
+<style>
+/* ===== developer console ===== */
+body{background-image:none;background:var(--bg)}
+.devwrap{display:flex;min-height:100vh}
+.devside{position:fixed;left:0;top:0;bottom:0;width:236px;background:var(--plum);color:#fff;padding:20px 14px;
+  display:flex;flex-direction:column;gap:4px;z-index:40}
+.devside .brand{padding:2px 8px 16px;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.devside .lg{color:#fff}
+.devside .lg mark{background:#ff9ec5;color:#3a2142}
+.devside .tagline{font:700 .6rem Fredoka;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.45);margin:6px 0 0 3px}
+.dnav{display:flex;align-items:center;gap:10px;border:0;background:none;color:rgba(255,255,255,.62);font:600 .86rem Fredoka;
+  padding:10px 12px;border-radius:13px;cursor:pointer;text-align:left;transition:.2s;width:100%}
+.dnav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.dnav:hover{background:rgba(255,255,255,.08);color:#fff}
+.dnav.on{background:var(--pk);color:#3a2142;font-weight:700}
+.dnav .n{margin-left:auto;font-size:.68rem;opacity:.7}
+.dsidefoot{margin-top:auto;display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,.14);padding-top:12px}
+.dsidefoot a,.dsidefoot button{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.6);text-decoration:none;
+  font:700 .74rem Fredoka;background:none;border:0;padding:8px 10px;border-radius:10px;cursor:pointer;text-align:left}
+.dsidefoot a:hover,.dsidefoot button:hover{background:rgba(255,255,255,.08);color:#fff}
+.devmain{margin-left:236px;flex:1;padding:24px 28px 60px;max-width:1180px}
+.devhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.devhead h1{font-size:1.5rem;letter-spacing:-.4px}
+.devhead p{color:var(--mu);font-size:.84rem}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:5px 12px;font:700 .7rem Fredoka;
+  background:var(--cr);border:1px solid var(--ln);color:var(--ink)}
+.pill i{width:7px;height:7px;border-radius:50%;background:#3ec98a;display:block}
+.pill.off i{background:#d63f74}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--sf);border:1px solid var(--ln);border-radius:18px;padding:13px 15px}
+.kpi b{display:block;font-size:1.55rem;line-height:1.1;color:var(--ink)}
+.kpi small{font-size:.68rem;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:.05em}
+.kpi.acc b{color:var(--pk2)}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dcard{background:var(--sf);border:1px solid var(--ln);border-radius:20px;padding:16px}
+.dcard h3{font-size:.9rem;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.dbar{display:flex;align-items:center;gap:8px;margin:6px 0;font:700 .72rem Fredoka}
+.dbar .lbl{width:74px;flex:none;display:flex;align-items:center;gap:5px}
+.dbar .tr{flex:1;height:8px;border-radius:99px;background:var(--bg);overflow:hidden}
+.dbar .tr i{display:block;height:8px;border-radius:99px}
+.dbar .v{width:26px;text-align:right;font-size:.68rem;color:var(--mu)}
+.spark{display:flex;align-items:flex-end;gap:4px;height:74px;margin-top:6px}
+.spark i{flex:1;background:linear-gradient(180deg,var(--pk),var(--pk2));border-radius:5px 5px 3px 3px;min-height:3px;position:relative}
+.spark i:hover{filter:brightness(1.1)}
+.searchrow{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.searchrow input{flex:1;min-width:160px;border:1.8px solid var(--ln);background:var(--bg);color:var(--ink);
+  border-radius:12px;padding:9px 13px;font:600 .82rem Nunito;outline:none}
+.searchrow input:focus{border-color:var(--pk2)}
+.dtable{max-height:60vh;overflow:auto;border-radius:14px;border:1px solid var(--ln)}
+.dtable table{min-width:640px;font-size:.74rem}
+.dtable th{position:sticky;top:0;z-index:2;background:var(--bg)}
+.dtable td{white-space:nowrap}
+.dtable td.wrap{white-space:normal;max-width:340px;min-width:200px}
+.gate{max-width:380px;margin:12vh auto;background:var(--sf);border:1px solid var(--ln);border-radius:26px;padding:26px;
+  box-shadow:0 24px 60px rgba(122,42,85,.18);text-align:center}
+.gate .cimo{width:110px;margin:0 auto -4px}
+.gate h2{font-size:1.25rem;margin-bottom:4px}
+.gate p{color:var(--mu);font-size:.8rem;margin-bottom:16px}
+.gate input{width:100%;border:1.8px solid var(--ln);background:var(--bg);color:var(--ink);border-radius:13px;
+  padding:11px 14px;font:600 .9rem Nunito;outline:none;text-align:center;letter-spacing:.2em}
+.gate input:focus{border-color:var(--pk2)}
+.mini{font-size:.68rem;color:var(--mu)}
+.airow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:900px){
+  .devside{display:none}
+  .devmain{margin-left:0;padding:16px 14px 60px}
+  .dgrid{grid-template-columns:1fr}
+  .airow{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="devwrap">
+  <aside class="devside" id="devside"></aside>
+  <main class="devmain">
+    <div class="devhead">
+      <div>
+        <h1>Developer Console</h1>
+        <p id="devsub">Kelola data, pengguna, dan otak Cimo.</p>
+      </div>
+      <div class="row" id="devheadright"></div>
+    </div>
+    <div id="gate"></div>
+    <div id="console" class="hide"></div>
+  </main>
+</div>
+<script>
+/* ===== Cimo mascot (SVG) — ported 1:1 from the design mockup ===== */
+const MOODC = {
+  def:    ['#ffa9c9', '#f27aa8'],
+  senang: ['#eef26b', '#c9d445'],
+  sedih:  ['#8fd3ff', '#5eb0ee'],
+  marah:  ['#ffac78', '#f2864c'],
+  capek:  ['#f3f6fc', '#cfd5e6'],
+  kecewa: ['#ecd7ab', '#cdb27e'],
+  bingung:['#9fead0', '#68cdaa'],
+};
+const MOODLBL = {def:'Cimo', senang:'Senang', sedih:'Sedih', marah:'Marah', capek:'Capek', kecewa:'Kecewa', bingung:'Bingung'};
+let _cu = 0;
+
+function cimo(mood, size, peek, costume) {
+  mood = MOODC[mood] ? mood : 'def';
+  size = size || 120;
+  const [a, b] = MOODC[mood], g = 'c' + (_cu++), k = '#2f2a6b';
+  const eye = (x, ry, py) => {
+    ry = ry === undefined ? 14 : ry; py = py || 0;
+    return `<ellipse cx="${x}" cy="${88 + py}" rx="12" ry="${ry}" fill="${k}"/><circle cx="${x + 4}" cy="${82 + py}" r="4.6" fill="#fff"/><circle cx="${x - 3}" cy="${95 + py}" r="2.2" fill="#fff"/>`;
+  };
+  const st = (d, w) => `<path d="${d}" fill="none" stroke="${k}" stroke-width="${w || 4}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  let e = eye(76) + eye(124), x = '', mo = st('M90 110Q100 119 110 110');
+  const TY = {def:0, senang:0, sedih:4, marah:2, capek:0, kecewa:6, bingung:0};
+  x += `<g transform="translate(0 ${TY[mood]})">` + st('M60 74l-6-4M64 69l-3-6M140 74l6-4M136 69l3-6', 3) + '</g>';
+
+  if (mood === 'senang') {
+    mo = '<path d="M84 106Q100 134 116 106Z" fill="#7a2a55"/><ellipse cx="100" cy="122" rx="8" ry="4.5" fill="#ff8fa8"/>';
+    x += '<path d="M24 40l3 8 8 3-8 3-3 8-3-8-8-3 8-3zM168 30l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" fill="#ffc800"/>';
+  }
+  if (mood === 'sedih') {
+    e = eye(76, 15, 4) + eye(124, 15, 4);
+    x += '<path d="M64 108q-6 10 0 13q6-3 0-13z" fill="#fff" opacity=".9"/>';
+    mo = st('M88 122Q100 110 112 122');
+  }
+  if (mood === 'marah') {
+    e = eye(76, 11, 2) + eye(124, 11, 2);
+    x += '<path d="M150 34l12 12M162 34l-12 12" stroke="#ff4d4d" stroke-width="4.5" stroke-linecap="round"/>';
+    mo = st('M88 121Q100 112 112 121');
+  }
+  if (mood === 'capek') {
+    e += `<rect x="62" y="68" width="28" height="20" fill="${a}"/><rect x="110" y="68" width="28" height="20" fill="${a}"/>` + st('M62 88h28M110 88h28');
+    mo = st('M91 119h18');
+    x += '<path d="M72 12v16M86 6v22M100 4v24M114 6v22M128 12v16" stroke="#8a8fa8" stroke-width="2.5" stroke-linecap="round"/>';
+  }
+  if (mood === 'kecewa') {
+    e = eye(76, 12, 6) + eye(124, 12, 6);
+    x += '<path d="M154 50q-6 10 0 13q6-3 0-13z" fill="#bfe6ff" stroke="#6db6f3" stroke-width="2"/>';
+    mo = st('M89 121Q100 113 111 121');
+  }
+  if (mood === 'bingung') {
+    e = eye(76, 14) + eye(124, 10, -2);
+    x += '<g fill="none" stroke="#2fae8a" stroke-width="3" stroke-linecap="round"><path d="M36 38a8 8 0 1 1 8 8a4 4 0 1 1-4-4"/><path d="M160 36a8 8 0 1 1 8 8a4 4 0 1 1-4-4"/></g><text x="92" y="28" font-size="28" font-weight="700" fill="#2fae8a" font-family="Fredoka,sans-serif">?</text>';
+    mo = st('M86 117q7-8 14 0t14 0');
+  }
+  const core = `<ellipse cx="100" cy="96" rx="70" ry="62" fill="${b}"/><g clip-path="url(#${g})"><ellipse cx="93" cy="89" rx="68" ry="60" fill="${a}"/></g><ellipse cx="62" cy="56" rx="15" ry="8" transform="rotate(-28 62 56)" fill="#fff" opacity=".55"/><circle cx="82" cy="45" r="3.4" fill="#fff" opacity=".55"/><ellipse cx="52" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><ellipse cx="148" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><g fill="#fff" opacity=".6"><circle cx="146" cy="130" r="2"/><circle cx="156" cy="124" r="1.6"/><circle cx="52" cy="132" r="1.8"/><circle cx="62" cy="138" r="1.5"/></g>${e}${x}${mo}`;
+  const defs = `<defs><clipPath id="${g}"><ellipse cx="100" cy="96" rx="70" ry="62"/></clipPath><clipPath id="${g}c"><rect x="-10" y="0" width="220" height="138"/></clipPath></defs>`;
+
+  let body;
+  if (peek) {
+    const hd = cx => `<circle cx="${cx}" cy="139" r="15" fill="${a}" stroke="${b}" stroke-width="1.6"/><circle cx="${cx - 5}" cy="133" r="3.2" fill="#fff" opacity=".5"/>`;
+    body = `<svg viewBox="0 18 200 142" width="${size}" style="overflow:visible" role="img" aria-label="Cimo mengintip ${mood}">${defs}<g clip-path="url(#${g}c)">${core}</g>${hd(38)}${hd(162)}</svg>`;
+  } else {
+    body = `<svg viewBox="0 0 200 185" width="${size}" role="img" aria-label="Cimo ${mood}">${defs}<ellipse cx="100" cy="173" rx="56" ry="7" fill="#3a2142" opacity=".1"/><ellipse cx="78" cy="159" rx="17" ry="9" fill="${b}"/><ellipse cx="122" cy="159" rx="17" ry="9" fill="${b}"/><ellipse cx="32" cy="106" rx="12" ry="14" transform="rotate(-20 32 106)" fill="${a}"/><ellipse cx="168" cy="100" rx="12" ry="14" transform="rotate(20 168 100)" fill="${a}"/>${core}</svg>`;
+  }
+  if (!costume) return body;
+  // costume overlay
+  const dk = MOODC[mood][1], g2 = 'k' + (_cu++);
+  let o = '';
+  if (costume === 'crown') o += `<path d="M68 46L72 20L88 34L100 12L112 34L128 20L132 46Z" fill="#ffd25e" stroke="#e0a82e" stroke-width="3" stroke-linejoin="round"/><circle cx="72" cy="20" r="4" fill="#ff8fb8"/><circle cx="100" cy="12" r="4.5" fill="#8fd3ff"/><circle cx="128" cy="20" r="4" fill="#ff8fb8"/>`;
+  if (costume === 'koki') o += `<g stroke="${dk}" stroke-width="2.5"><circle cx="72" cy="26" r="16" fill="#fff"/><circle cx="100" cy="16" r="20" fill="#fff"/><circle cx="128" cy="26" r="16" fill="#fff"/></g><rect x="64" y="30" width="72" height="19" rx="5" fill="#fff" stroke="${dk}" stroke-width="2.5"/><path d="M78 126H122L100 150Z" fill="#ff8fb8"/>`;
+  if (costume === 'batik') o += `<g clip-path="url(#${g2})"><path d="M24 132Q100 152 176 132V176H24Z" fill="#7a4a2a"/><path d="M24 132Q100 152 176 132" fill="none" stroke="#e0b25a" stroke-width="3.5"/></g>`;
+  return `<div style="position:relative;display:inline-block;line-height:0">${body}<svg viewBox="0 0 200 185" width="${size}" style="position:absolute;left:0;top:0"><defs><clipPath id="${g2}"><ellipse cx="100" cy="96" rx="70" ry="62"/></clipPath></defs>${o}</svg></div>`;
+}
+
+/* standalone SVG for canvas export */
+function cimoSVG(mood, size) {
+  const s = cimo(mood, size || 300).replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
+  return s;
+}
+
+/* ===== food illustrations (from mockup) ===== */
+const FOODART = {
+  soup: '<ellipse cx="40" cy="26" rx="30" ry="8" fill="#a65a2e"/><path d="M8 26Q10 54 40 54Q70 54 72 26Z" fill="#fff8ef" stroke="#e6d6c8" stroke-width="2"/><ellipse cx="40" cy="25" rx="28" ry="6.5" fill="#c77a3e"/><circle cx="30" cy="24" r="2.4" fill="#5fb36a"/><circle cx="44" cy="26" r="2" fill="#e9b24c"/><circle cx="52" cy="23" r="2.6" fill="#5fb36a"/><circle cx="38" cy="27" r="1.8" fill="#e9b24c"/><path d="M28 15q-4 4 0 8M40 11q-4 4 0 8M52 15q-4 4 0 8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/>',
+  drink: '<path d="M22 10H58L54 54Q40 58 26 54Z" fill="#fff" stroke="#e6d6c8" stroke-width="2"/><path d="M23.5 18H56.5L55.3 30H24.7Z" fill="#7fd58f"/><path d="M24.7 30H55.3L54.4 42H25.6Z" fill="#fff4f8"/><path d="M25.6 42H54.4L53.6 53Q40 57 26.4 53Z" fill="#ff8fb8"/><circle cx="34" cy="24" r="3.5" fill="#f4e04e"/><circle cx="46" cy="26" r="3.5" fill="#f4e04e"/><path d="M48 14L58 2" stroke="#ff5f98" stroke-width="3" stroke-linecap="round"/>',
+  plate: '<ellipse cx="40" cy="38" rx="34" ry="16" fill="#fff" stroke="#e6d6c8" stroke-width="2"/><ellipse cx="40" cy="36" rx="25" ry="10" fill="#f1f1ec"/><ellipse cx="34" cy="34" rx="14" ry="6" fill="#e0a23c" transform="rotate(-14 34 34)"/><ellipse cx="48" cy="38" rx="12" ry="5" fill="#cf8b2c" transform="rotate(10 48 38)"/><path d="M26 32l8 3M32 30l8 3M44 36l7 3" stroke="#8a4b1e" stroke-width="1.6" stroke-linecap="round"/><path d="M52 30q6-4 10 2q-4 6-10 2z" fill="#e8505b"/>',
+  snack: '<ellipse cx="40" cy="46" rx="30" ry="7" fill="#fff" stroke="#e6d6c8" stroke-width="2"/><path d="M12 42Q16 14 40 14Q64 14 68 42Z" fill="#e5a547"/><path d="M12 42Q16 20 40 20" fill="none" stroke="#f6c96b" stroke-width="3"/><path d="M16 42l3-5M26 42l3-9M36 42l2-10M46 42l-1-10M56 42l-3-9M64 42l-3-5" stroke="#b9772a" stroke-width="2" stroke-linecap="round"/><circle cx="62" cy="48" r="4" fill="#e8505b"/>',
+  sweet: '<circle cx="40" cy="34" r="20" fill="#ffb6d0"/><circle cx="40" cy="34" r="13" fill="#fff0f6"/><path d="M40 20c-4-6-12-2-9 4l9 9 9-9c3-6-5-10-9-4z" fill="#ff5f98"/><circle cx="24" cy="52" r="3" fill="#ffc800"/><circle cx="56" cy="54" r="2.4" fill="#ff8fb8"/>',
+  rice: '<path d="M12 40Q14 16 40 16Q66 16 68 40Z" fill="#fff8ef" stroke="#e6d6c8" stroke-width="2"/><path d="M12 40H68Q66 54 40 54Q14 54 12 40Z" fill="#f2e3c9" stroke="#e6d6c8" stroke-width="2"/><circle cx="32" cy="30" r="3" fill="#e8a33c"/><circle cx="46" cy="26" r="2.6" fill="#5fb36a"/><circle cx="42" cy="36" r="2.4" fill="#e8505b"/>',
+};
+const art = (kind, h) => `<svg viewBox="0 0 80 62" height="${h}" style="display:block;overflow:visible">${FOODART[kind] || FOODART.plate}</svg>`;
+
+/* ===== icons ===== */
+const ICON = {
+  home:'<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>',
+  wheel:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/>',
+  chat:'<path d="M21 12a8 8 0 0 1-8 8H8l-4 3V12a8 8 0 0 1 8-8h1a8 8 0 0 1 8 8z"/><circle cx="9" cy="12" r=".9" fill="currentColor" stroke="none"/><circle cx="13" cy="12" r=".9" fill="currentColor" stroke="none"/><circle cx="17" cy="12" r=".9" fill="currentColor" stroke="none"/>',
+  bag:'<path d="M6 8h12l-1 12H7z"/><path d="M9.5 8a2.5 2.5 0 0 1 5 0"/>',
+  recap:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/>',
+  pin:'<path d="M12 21s6-5.5 6-11a6 6 0 0 0-12 0c0 5.5 6 11 6 11z"/><circle cx="12" cy="10" r="2.2"/>',
+  send:'<path d="M4 12l16-8-6 8 6 8z"/>',
+  mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+  close:'<path d="M6 6l12 12M18 6L6 18"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
+  spark:'<path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>',
+  volume:'<path d="M11 5L6 9H3v6h3l5 4z"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2 2 2 0 1 1-4 0 1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 15a2 2 0 1 1 0-4 1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 10 4.6a2 2 0 1 1 4 0 1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 21 11a2 2 0 1 1 0 4z"/>',
+  share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-4M8.6 13.4l6.8 4"/>',
+  down:'<path d="M12 3v12M7 11l5 5 5-5M4 20h16"/>',
+  check:'<path d="M5 13l4 4L19 7"/>',
+  trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  minus:'<path d="M5 12h14"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/>',
+  heart:'<path d="M12 20s-7-4.4-7-9.4A3.6 3.6 0 0 1 12 8a3.6 3.6 0 0 1 7 2.6c0 5-7 9.4-7 9.4z"/>',
+  db:'<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+  reset:'<path d="M4 4v6h6"/><path d="M20 12a8 8 0 1 1-2.3-5.7L20 10"/>',
+};
+const icon = (n, cls) => `<svg class="ic ${cls || ''}" viewBox="0 0 24 24">${ICON[n] || ''}</svg>`;
+
+/* social icons */
+const SOC = {
+  ig: ['linear-gradient(135deg,#f9a03f,#e1306c,#7f4fd6)', '<rect x="4" y="4" width="16" height="16" rx="4.6" fill="none" stroke="#fff" stroke-width="1.9"/><circle cx="12" cy="12" r="3.6" fill="none" stroke="#fff" stroke-width="1.9"/><circle cx="17" cy="7" r="1.2" fill="#fff"/>'],
+  wa: ['linear-gradient(135deg,#5ce27a,#128c4b)', '<path d="M12 4a8 8 0 0 0-6.9 12l-1 3.9 4-1A8 8 0 1 0 12 4z" fill="none" stroke="#fff" stroke-width="1.9"/><path d="M9.2 8.6c.3 0 .5.1.7.5l.6 1.3c.1.3 0 .5-.2.7l-.4.4c.5 1 1.3 1.7 2.2 2.1l.4-.5c.2-.2.4-.3.7-.2l1.3.6c.3.1.4.4.4.7 0 .8-.7 1.5-1.5 1.5-2.4 0-5.3-2.8-5.3-5.2 0-.8.6-1.4 1.4-1.4z" fill="#fff"/>'],
+  tg: ['linear-gradient(135deg,#5ec6f5,#1c7fd6)', '<path d="M20 5L3.5 11.4l4.6 1.5L20 5zM8.1 12.9l.4 4.6 2.2-2.6M20 5l-3.4 12.6-4.3-3.2" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/>'],
+  x: ['#111', '<path d="M5 5l6.4 8.2L5.4 19h2.3l4.8-4.7 3.6 4.7H19l-6.7-8.6L18.6 5h-2.3l-4.4 4.3L8.3 5z" fill="#fff"/>'],
+  fb: ['linear-gradient(135deg,#5b9bf8,#1b4ea8)', '<path d="M14.5 8.5h2V5.6h-2.4c-2 0-3.3 1.3-3.3 3.4v1.7H8.4v3h2.4V20h3.2v-6.3h2.3l.4-3h-2.7V9.4c0-.6.2-.9.9-.9z" fill="#fff"/>'],
+};
+
+
+/* ===== data: streets, menu, moods, i18n ===== */
+
+const STREETS = [
+  {id:'pendidikan', name:'Jalan Raya Pendidikan', lat:-5.1613, lng:119.4390, area:'Rappocini'},
+  {id:'mapala',     name:'Jalan Mapala',          lat:-5.1540, lng:119.4480, area:'Panakkukang'},
+  {id:'ngawing',    name:'Jalan Yusuf Daeng Ngawing', lat:-5.1495, lng:119.4410, area:'Mamajang'},
+  {id:'hertasning', name:'Jalan Hertasning',      lat:-5.1700, lng:119.4370, area:'Panakkukang'},
+  {id:'mariolo',    name:'Jalan Tidung Mariolo',  lat:-5.1450, lng:119.4350, area:'Mamajang'},
+  {id:'emmysaelan', name:'Jalan Monumen Emmy Saelan', lat:-5.1520, lng:119.4300, area:'Tamalate'},
+  {id:'tidungraya', name:'Jalan Tidung Raya',     lat:-5.1420, lng:119.4330, area:'Mamajang'},
+];
+
+const MOODS = [
+  {k:'senang',  c:'#c9d445', face:'senang',  label:'Senang',  sub:'Cerah & bersemangat', dish:'Menu manis, segar, ringan'},
+  {k:'sedih',   c:'#5eb0ee', face:'sedih',   label:'Sedih',   sub:'Hangat & menenangkan', dish:'Yang berkuah dan hangat'},
+  {k:'marah',   c:'#f2864c', face:'marah',   label:'Marah',   sub:'Bertenaga & pedas',    dish:'Pedas, gurih, bertenaga'},
+  {k:'bingung', c:'#68cdaa', face:'bingung', label:'Bingung', sub:'Bantu putuskan',       dish:'Tiga pilihan aman'},
+  {k:'capek',   c:'#cfd5e6', face:'capek',   label:'Capek',   sub:'Pelan & mengisi',      dish:'Isi tenaga, lembut'},
+  {k:'kecewa',  c:'#cdb27e', face:'kecewa',  label:'Kecewa',  sub:'Dihibur pelan',        dish:'Manis penghibur'},
+];
+
+const CATS = ['Semua','Terdekat','Snack','Heavy Meal','Beverage','Viral'];
+
+/* mood + category translations: [label, sub, dish] */
+const MOODI18N = {
+  senang: { en:['Happy','Bright & upbeat','Sweet, fresh, light'], zh:['开心','明亮有活力','甜的、清爽、轻食'], hi:['खुश','उजला और ऊर्जावान','मीठा, ताज़ा, हल्का'] },
+  sedih:  { en:['Sad','Warm & soothing','Warm soup & broth'], zh:['难过','温暖安抚','热汤和汤面'], hi:['उदास','गरम और सुकून','गरम सूप'] },
+  marah:  { en:['Angry','Fiery & bold','Spicy and hearty'], zh:['生气','有劲带辣','辣的、够味'], hi:['गुस्सा','तेज़ और दमदार','तीखा और भरपूर'] },
+  bingung:{ en:['Confused','Help me decide','Three safe picks'], zh:['纠结','帮你决定','三个稳妥选择'], hi:['उलझन','फैसला आसान','तीन आसान विकल्प'] },
+  capek:  { en:['Tired','Slow & refuel','Filling and gentle'], zh:['疲惫','慢慢补充能量','扎实又温和'], hi:['थका','आराम और ऊर्जा','भरपूर और हल्का'] },
+  kecewa: { en:['Let down','Gentle comfort','Sweet comfort food'], zh:['失望','温柔安慰','甜的安慰'], hi:['निराश','हल्का सुकून','मीठा सुकून'] },
+};
+const CATI18N = {
+  Semua:{en:'All',zh:'全部',hi:'सब'}, Terdekat:{en:'Nearest',zh:'最近',hi:'पास'},
+  Snack:{en:'Snack',zh:'小吃',hi:'स्नैक'}, 'Heavy Meal':{en:'Main',zh:'主食',hi:'मुख्य भोजन'},
+  Beverage:{en:'Drinks',zh:'饮料',hi:'पेय'}, Viral:{en:'Viral',zh:'爆款',hi:'वायरल'},
+};
+
+/* street index = where the stall is */
+const MENU = [
+  {id:'coto',    name:'Coto Makassar',           stall:'Coto Daeng Tata',      st:0, r:4.8, lo:25000, hi:32000, cat:'Heavy Meal', art:'soup',  moods:['sedih','capek','kecewa'], viral:1, d:'Kuah kacang hangat, daging empuk, dimakan dengan ketupat.'},
+  {id:'konro',   name:'Sup Konro',               stall:'Konro Daeng Ramli',    st:1, r:4.7, lo:42000, hi:50000, cat:'Heavy Meal', art:'soup',  moods:['sedih','capek'], d:'Iga bakar berkuah kaya rempah. Berat tapi menenangkan.'},
+  {id:'saudara', name:'Sop Saudara',             stall:'Warung Bu Hajjah',     st:2, r:4.6, lo:25000, hi:30000, cat:'Heavy Meal', art:'soup',  moods:['sedih','capek'], d:'Kuah bening, isi lengkap, ringan di perut.'},
+  {id:'pallubasa',name:'Pallubasa',              stall:'Pallubasa Mak Tati',   st:3, r:4.7, lo:28000, hi:34000, cat:'Heavy Meal', art:'soup',  moods:['sedih','kecewa'], d:'Kuah kelapa gurih dengan parutan kelapa sangrai.'},
+  {id:'bakso',   name:'Bakso Urat Spesial',      stall:'Bakso Pak Kumis',      st:4, r:4.6, lo:15000, hi:22000, cat:'Heavy Meal', art:'soup',  moods:['capek','sedih'], d:'Hangat, murah, cepat. Penyelamat malam panjang.'},
+  {id:'palekko', name:'Ayam Palekko',            stall:'Palekko Daeng Rani',   st:0, r:4.8, lo:30000, hi:38000, cat:'Heavy Meal', art:'plate', moods:['marah','senang'], viral:1, d:'Pedas asam khas Bugis. Bikin berkeringat, bikin lega.'},
+  {id:'dabu',    name:'Ikan Bakar Dabu-dabu',    stall:'Seafood Paotere Jaya', st:5, r:4.7, lo:38000, hi:48000, cat:'Heavy Meal', art:'plate', moods:['marah','senang'], d:'Sambal dabu-dabu segar di atas ikan bakar.'},
+  {id:'konrobakar',name:'Konro Bakar Pedas',     stall:'Konro Daeng Ramli',    st:1, r:4.8, lo:45000, hi:55000, cat:'Heavy Meal', art:'plate', moods:['marah'], viral:1, d:'Iga bakar oles bumbu pedas manis. Berat, memuaskan.'},
+  {id:'geprek',  name:'Ayam Geprek Level 3',     stall:'Geprek Bara',          st:2, r:4.5, lo:16000, hi:22000, cat:'Heavy Meal', art:'plate', moods:['marah','capek'], d:'Murah, pedas, cepat. Cocok kalau lagi kesal.'},
+  {id:'taichan', name:'Sate Taichan',            stall:'Sate Taichan 46',      st:3, r:4.6, lo:24000, hi:32000, cat:'Heavy Meal', art:'plate', moods:['marah','bingung'], d:'Sate ayam tanpa kecap, sambal pedas menyengat.'},
+  {id:'nasi',    name:'Nasi Goreng Kampung',     stall:'Nasi Goreng Pak Iwan', st:4, r:4.5, lo:18000, hi:24000, cat:'Heavy Meal', art:'rice',  moods:['bingung','capek'], d:'Aman, gurih, porsinya pas. Nggak pernah salah.'},
+  {id:'naskun',  name:'Nasi Kuning Makassar',    stall:'Nasi Kuning Mak Rina', st:2, r:4.7, lo:18000, hi:25000, cat:'Heavy Meal', art:'rice',  moods:['bingung','senang'], d:'Lengkap dengan lauk. Pilihan paling aman.'},
+  {id:'campur',  name:'Nasi Campur',             stall:'Dapur Mama Ani',       st:0, r:4.5, lo:20000, hi:27000, cat:'Heavy Meal', art:'rice',  moods:['bingung'], d:'Semua ada. Kalau nggak tahu mau apa, ambil ini.'},
+  {id:'mititi',  name:'Mie Titi',                stall:'Mie Titi Koh Ahong',   st:1, r:4.8, lo:28000, hi:35000, cat:'Heavy Meal', art:'plate', moods:['bingung','sedih'], viral:1, d:'Mie kering renyah dengan kuah kental. Ikon Makassar.'},
+  {id:'mikering',name:'Mie Kering Spesial',      stall:'Mie Kering Sinar Jaya',st:5, r:4.6, lo:25000, hi:32000, cat:'Heavy Meal', art:'plate', moods:['bingung'], d:'Renyah di luar, lembut di dalam.'},
+  {id:'jalang',  name:'Jalangkote',              stall:'Dapur Mama Ani',       st:0, r:4.6, lo:8000,  hi:12000, cat:'Snack',      art:'snack', moods:['bingung','senang','kecewa'], d:'Pastel goreng isi bihun pedas. Camilan wajib.'},
+  {id:'pisangepe',name:'Pisang Epe',             stall:'Kios Losari Manis',    st:6, r:4.7, lo:12000, hi:18000, cat:'Snack',      art:'sweet', moods:['kecewa','senang','sedih'], viral:1, d:'Pisang bakar gepeng, gula merah, sambal kacang.'},
+  {id:'pisanggoreng',name:'Pisang Goreng Keju',  stall:'Pisang Goreng Bu Rina',st:3, r:4.5, lo:10000, hi:16000, cat:'Snack',      art:'sweet', moods:['kecewa','senang'], d:'Hangat, manis, gurih. Penghibur paling murah.'},
+  {id:'barongko',name:'Barongko',                stall:'Kue Tradisional Hj. Nu',st:6,r:4.7, lo:8000,  hi:12000, cat:'Snack',      art:'sweet', moods:['kecewa','sedih'], d:'Puding pisang dibungkus daun. Lembut banget.'},
+  {id:'lapis',   name:'Kue Lapis Makassar',      stall:'Kue Tradisional Hj. Nu',st:6,r:4.6, lo:6000,  hi:10000, cat:'Snack',      art:'sweet', moods:['kecewa','senang'], d:'Manis legit, warnanya cantik. Cocok buat hati.'},
+  {id:'terbul',  name:'Terang Bulan Cokelat',    stall:'Terang Bulan Malam',   st:4, r:4.4, lo:15000, hi:25000, cat:'Snack',      art:'sweet', moods:['kecewa','senang','bingung'], d:'Malam-malam lapar mata? Ini jawabannya.'},
+  {id:'roti',    name:'Roti Bakar Srikaya',      stall:'Roti Bakar 88',        st:2, r:4.5, lo:12000, hi:18000, cat:'Snack',      art:'sweet', moods:['capek','kecewa'], d:'Roti hangat, srikaya wangi. Teman begadang.'},
+  {id:'espijo',  name:'Es Pisang Ijo',           stall:'Warung Daeng Sirua',   st:5, r:4.8, lo:15000, hi:22000, cat:'Beverage',   art:'drink', moods:['senang','kecewa','sedih'], viral:1, d:'Pisang hijau, bubur sumsum, sirup merah. Segar.'},
+  {id:'espallu', name:'Es Pallu Butung',         stall:'Es Pallu Butung Losari',st:6,r:4.7, lo:14000, hi:20000, cat:'Beverage',   art:'drink', moods:['senang','sedih'], d:'Manis, dingin, legit. Pelepas panas Makassar.'},
+  {id:'markisa', name:'Jus Markisa Segar',       stall:'Jus Buah Segar 21',    st:0, r:4.6, lo:12000, hi:18000, cat:'Beverage',   art:'drink', moods:['senang','marah'], d:'Asam manis, dingin, langsung menyegarkan.'},
+  {id:'kelapa',  name:'Es Kelapa Muda',          stall:'Es Kelapa Pak Daeng',  st:1, r:4.5, lo:10000, hi:15000, cat:'Beverage',   art:'drink', moods:['senang','marah'], d:'Alami, dingin, nggak bikin enek.'},
+  {id:'kopi',    name:'Kopi Susu Gula Aren',     stall:'Kopi Jalanan 09',      st:3, r:4.7, lo:15000, hi:23000, cat:'Beverage',   art:'drink', moods:['capek','bingung'], d:'Kafein plus manis. Buat kepala yang penuh.'},
+  {id:'teh',     name:'Teh Tarik Hangat',        stall:'Teh Tarik Sudirman',   st:4, r:4.4, lo:10000, hi:16000, cat:'Beverage',   art:'drink', moods:['sedih','capek'], d:'Hangat dan manis. Dipeluk dari dalam.'},
+  {id:'airjeruk',name:'Air Jeruk Hangat',        stall:'Warung Sehat Bu Ida',  st:2, r:4.5, lo:8000,  hi:12000, cat:'Beverage',   art:'drink', moods:['sedih','marah'], d:'Hangat, segar, bikin tenggorokan lega.'},
+  {id:'bubur',   name:'Bubur Ayam Spesial',      stall:'Bubur Pak Slamet',     st:5, r:4.6, lo:14000, hi:20000, cat:'Heavy Meal', art:'soup',  moods:['capek','sedih','kecewa'], d:'Lembut, hangat, gampang dicerna.'},
+];
+
+const CART_KEY = 'cravemood.cart.v1';
+
+/* ===== i18n ===== */
+const LANGS = [
+  {k:'id', label:'Bahasa Indonesia', short:'ID', native:'Indonesia', locale:'id-ID', hello:'Halo'},
+  {k:'en', label:'English',          short:'EN', native:'English',   locale:'en-US', hello:'Hello'},
+  {k:'zh', label:'中文 (Mandarin)',   short:'中', native:'中文',      locale:'zh-CN', hello:'你好'},
+  {k:'hi', label:'हिन्दी (Hindi)',    short:'हि', native:'हिन्दी',    locale:'hi-IN', hello:'नमस्ते'},
+];
+
+const I18N = {
+  id: {
+    tagline:'Makan sesuai moodmu', best_match:'Paling cocok', viral:'Viral', item:'item',
+    nav_home:'Beranda', nav_spin:'Cimo Spinner', nav_chat:'Cimo Live Chat', nav_cart:'Pesanan', nav_recap:'Recap Mood', nav_profile:'Profil',
+    on_title:'Kenalan dulu, yuk!', on_sub:'Aku Cimo. Aku bantu pilihin makanan sesuai perasaanmu hari ini.',
+    on_name:'Nama panggilan', on_name_ph:'Contoh: Aisyah', on_lang:'Bahasa', on_go:'Mulai sekarang',
+    on_guest:'Coba dulu sebagai tamu', on_acc:'Buat akun (opsional)', on_acc_sub:'Buat nyimpen recap & pesananmu. Boleh dilewati.',
+    on_email:'Email atau nomor WhatsApp', on_pass:'Kata sandi', on_reg:'Buat akun', on_skip:'Lewati', on_have:'Sudah punya akun? Masuk',
+    on_login:'Masuk', on_need_name:'Isi namamu dulu ya', on_need_cred:'Isi email dan kata sandi',
+    greet_morning:'Selamat pagi', greet_noon:'Selamat siang', greet_evening:'Selamat sore', greet_night:'Selamat malam',
+    home_q:'Lagi mood apa hari ini?', home_sub:'Pilih satu. Cimo langsung carikan yang pas.',
+    home_loc:'Lokasimu sekarang', home_rec:'Pilihan Cimo buatmu', home_spin:'Putar acak', home_all:'Lihat semua',
+    home_add:'Tambah', home_none:'Belum ada yang cocok. Coba Putar acak.',
+    spin_t:'Cimo Spinner Acak', spin_sub:'Nggak bisa mutusin? Biar roda yang milih. Kamu tinggal bilang cocok atau nggak.',
+    spin_go:'Putar roda', spin_again:'Putar lagi', spin_win:'Cimo pilih ini!', spin_hist:'Riwayat putaran',
+    spin_need:'Pilih mood dulu di Beranda biar putarannya lebih pas.',
+    chat_t:'Cimo Live Chat', chat_on:'Online · siap dengerin', chat_ph:'Cerita apa aja, aku dengerin…',
+    chat_quick:['Lagi capek banget','Aku lagi sedih','Mau makan apa ya?','Aku butuh teman cerita'],
+    cart_t:'Pesananmu', cart_empty:'Keranjangmu masih kosong. Yuk pilih makanan dulu.',
+    cart_total:'Perkiraan total', cart_plat:'Lanjut pesan lewat', cart_go:'Buka aplikasi', cart_share:'Bagikan pilihanku',
+    cart_note:'Harga adalah perkiraan per porsi. Total akhir (ongkir, biaya layanan, promo) dihitung di aplikasi platform.',
+    recap_t:'Recap Mood', recap_sub:'Perjalanan perasaanmu bulan ini.', recap_day:'Hari tercatat', recap_streak:'Hari beruntun', recap_top:'Mood terbanyak',
+    prof_t:'Profil', prof_acc:'Akun', prof_lang:'Bahasa aplikasi', prof_voice:'Suara Cimo', prof_sound:'Efek suara',
+    prof_sound_sub:'Bunyi klik saat menambah makanan', prof_design:'Desain Cimo', prof_admin:'Panel database', prof_data:'Data & cadangan',
+    prof_export:'Unduh data (JSON)', prof_logout:'Keluar', prof_saved:'Tersimpan',
+    voice_test:'Coba suara', voice_rate:'Kecepatan bicara', voice_pitch:'Intonasi', voice_vol:'Volume',
+    voice_5:'5 pilihan suara', voice_lang:'Bahasa suara',
+    share_t:'Bagikan ke sosial media', share_dl:'Unduh gambar', share_copy:'Salin caption', share_native:'Bagikan…',
+    add_ok:'ditambahkan ke keranjang', removed:'dihapus dari keranjang', copied:'Caption disalin',
+    admin_t:'Database pendaftar', admin_pass:'Kata sandi admin', admin_open:'Buka', admin_wrong:'Kata sandi salah',
+    admin_export:'Unduh CSV', admin_count:'pendaftar', admin_none:'Belum ada yang mendaftar.',
+    login_t:'Masuk', login_ok:'Selamat datang kembali', login_bad:'Email atau kata sandi salah',
+    reg_ok:'Akun dibuat. Selamat datang!', guest:'Tamu',
+  },
+  en: {
+    tagline:'Eat according to your mood', best_match:'Best match', viral:'Viral', item:'item',
+    nav_home:'Home', nav_spin:'Cimo Spinner', nav_chat:'Cimo Live Chat', nav_cart:'Order', nav_recap:'Mood Recap', nav_profile:'Profile',
+    on_title:'Let us get to know each other!', on_sub:'I am Cimo. I will pick food that fits how you feel today.',
+    on_name:'Nickname', on_name_ph:'e.g. Aisyah', on_lang:'Language', on_go:'Start now',
+    on_guest:'Try as guest', on_acc:'Create an account (optional)', on_acc_sub:'To keep your recap and orders. You can skip this.',
+    on_email:'Email or WhatsApp number', on_pass:'Password', on_reg:'Create account', on_skip:'Skip', on_have:'Already have an account? Sign in',
+    on_login:'Sign in', on_need_name:'Please enter your name', on_need_cred:'Enter email and password',
+    greet_morning:'Good morning', greet_noon:'Good afternoon', greet_evening:'Good evening', greet_night:'Good night',
+    home_q:'How are you feeling today?', home_sub:'Pick one. Cimo will find what fits.',
+    home_loc:'Your location', home_rec:'Cimo picks for you', home_spin:'Spin randomly', home_all:'See all',
+    home_add:'Add', home_none:'Nothing fits yet. Try the spinner.',
+    spin_t:'Cimo Random Spinner', spin_sub:'Cannot decide? Let the wheel choose. You just say yes or no.',
+    spin_go:'Spin the wheel', spin_again:'Spin again', spin_win:'Cimo picks this!', spin_hist:'Spin history',
+    spin_need:'Pick a mood on Home first for a better spin.',
+    chat_t:'Cimo Live Chat', chat_on:'Online · here to listen', chat_ph:'Tell me anything, I am listening…',
+    chat_quick:['I am so tired','I feel sad','What should I eat?','I need someone to talk to'],
+    cart_t:'Your order', cart_empty:'Your cart is empty. Pick some food first.',
+    cart_total:'Estimated total', cart_plat:'Continue on', cart_go:'Open app', cart_share:'Share my picks',
+    cart_note:'Prices are per-portion estimates. Final total (delivery, service fee, promo) is calculated in the platform app.',
+    recap_t:'Mood Recap', recap_sub:'Your feeling journey this month.', recap_day:'Days logged', recap_streak:'Day streak', recap_top:'Top mood',
+    prof_t:'Profile', prof_acc:'Account', prof_lang:'App language', prof_voice:'Cimo voice', prof_sound:'Sound effects',
+    prof_sound_sub:'Click sound when adding food', prof_design:'Cimo design', prof_admin:'Database panel', prof_data:'Data & backup',
+    prof_export:'Download data (JSON)', prof_logout:'Sign out', prof_saved:'Saved',
+    voice_test:'Test voice', voice_rate:'Speaking rate', voice_pitch:'Intonation', voice_vol:'Volume',
+    voice_5:'5 voice options', voice_lang:'Voice language',
+    share_t:'Share to social media', share_dl:'Download image', share_copy:'Copy caption', share_native:'Share…',
+    add_ok:'added to cart', removed:'removed from cart', copied:'Caption copied',
+    admin_t:'Registrant database', admin_pass:'Admin password', admin_open:'Open', admin_wrong:'Wrong password',
+    admin_export:'Download CSV', admin_count:'registrants', admin_none:'No registrants yet.',
+    login_t:'Sign in', login_ok:'Welcome back', login_bad:'Wrong email or password',
+    reg_ok:'Account created. Welcome!', guest:'Guest',
+  },
+  zh: {
+    tagline:'按心情吃饭', best_match:'最合适', viral:'爆款', item:'件',
+    nav_home:'首页', nav_spin:'Cimo 转盘', nav_chat:'Cimo 聊天', nav_cart:'订单', nav_recap:'心情回顾', nav_profile:'我的',
+    on_title:'先认识一下吧！', on_sub:'我是 Cimo。我会根据你今天的心情帮你选食物。',
+    on_name:'昵称', on_name_ph:'例如：小雅', on_lang:'语言', on_go:'开始使用',
+    on_guest:'先以访客身份试用', on_acc:'创建账号（可选）', on_acc_sub:'用于保存回顾和订单。可以跳过。',
+    on_email:'邮箱或 WhatsApp 号码', on_pass:'密码', on_reg:'创建账号', on_skip:'跳过', on_have:'已有账号？登录',
+    on_login:'登录', on_need_name:'请先填写名字', on_need_cred:'请填写邮箱和密码',
+    greet_morning:'早上好', greet_noon:'中午好', greet_evening:'下午好', greet_night:'晚上好',
+    home_q:'今天心情怎么样？', home_sub:'选一个，Cimo 马上帮你找。',
+    home_loc:'你现在的位置', home_rec:'Cimo 为你挑选', home_spin:'随机转', home_all:'查看全部',
+    home_add:'添加', home_none:'还没有合适的，试试转盘吧。',
+    spin_t:'Cimo 随机转盘', spin_sub:'选不出来？让转盘决定，你只要说好不好。',
+    spin_go:'转动转盘', spin_again:'再转一次', spin_win:'Cimo 选这个！', spin_hist:'转动记录',
+    spin_need:'先在首页选心情，转盘会更准。',
+    chat_t:'Cimo 实时聊天', chat_on:'在线 · 愿意听你说', chat_ph:'想说什么都可以，我在听…',
+    chat_quick:['我好累','我有点难过','我该吃什么？','我想找人聊聊'],
+    cart_t:'你的订单', cart_empty:'购物车还是空的，先选点吃的吧。',
+    cart_total:'预估总计', cart_plat:'继续在以下平台下单', cart_go:'打开应用', cart_share:'分享我的选择',
+    cart_note:'价格为每份预估价。最终总价（配送费、服务费、优惠）以平台应用为准。',
+    recap_t:'心情回顾', recap_sub:'这个月的心情轨迹。', recap_day:'记录天数', recap_streak:'连续天数', recap_top:'最常见心情',
+    prof_t:'我的', prof_acc:'账号', prof_lang:'应用语言', prof_voice:'Cimo 声音', prof_sound:'音效',
+    prof_sound_sub:'加入购物车时的点击音', prof_design:'Cimo 造型', prof_admin:'数据库面板', prof_data:'数据与备份',
+    prof_export:'下载数据 (JSON)', prof_logout:'退出', prof_saved:'已保存',
+    voice_test:'试听', voice_rate:'语速', voice_pitch:'语调', voice_vol:'音量',
+    voice_5:'5 种声音', voice_lang:'语音语言',
+    share_t:'分享到社交平台', share_dl:'下载图片', share_copy:'复制文案', share_native:'分享…',
+    add_ok:'已加入购物车', removed:'已从购物车移除', copied:'文案已复制',
+    admin_t:'注册数据库', admin_pass:'管理员密码', admin_open:'打开', admin_wrong:'密码错误',
+    admin_export:'下载 CSV', admin_count:'位注册者', admin_none:'还没有人注册。',
+    login_t:'登录', login_ok:'欢迎回来', login_bad:'邮箱或密码错误',
+    reg_ok:'账号已创建，欢迎！', guest:'访客',
+  },
+  hi: {
+    tagline:'अपने मूड के हिसाब से खाएं', best_match:'सबसे सही', viral:'वायरल', item:'आइटम',
+    nav_home:'होम', nav_spin:'Cimo स्पिनर', nav_chat:'Cimo चैट', nav_cart:'ऑर्डर', nav_recap:'मूड रिकैप', nav_profile:'प्रोफ़ाइल',
+    on_title:'पहले एक-दूसरे को जान लें!', on_sub:'मैं Cimo हूँ। आज आपका मन कैसा है, उसी हिसाब से खाना चुनूँगा।',
+    on_name:'नाम', on_name_ph:'जैसे: आयशा', on_lang:'भाषा', on_go:'शुरू करें',
+    on_guest:'मेहमान के रूप में देखें', on_acc:'खाता बनाएं (वैकल्पिक)', on_acc_sub:'रिकैप और ऑर्डर सहेजने के लिए। छोड़ सकते हैं।',
+    on_email:'ईमेल या WhatsApp नंबर', on_pass:'पासवर्ड', on_reg:'खाता बनाएं', on_skip:'छोड़ें', on_have:'पहले से खाता है? साइन इन',
+    on_login:'साइन इन', on_need_name:'पहले अपना नाम लिखें', on_need_cred:'ईमेल और पासवर्ड भरें',
+    greet_morning:'सुप्रभात', greet_noon:'नमस्कार', greet_evening:'शुभ संध्या', greet_night:'शुभ रात्रि',
+    home_q:'आज मन कैसा है?', home_sub:'एक चुनें। Cimo तुरंत चुन देगा।',
+    home_loc:'आपकी जगह', home_rec:'Cimo की पसंद', home_spin:'रैंडम घुमाएं', home_all:'सब देखें',
+    home_add:'जोड़ें', home_none:'अभी कुछ ठीक नहीं लगा। स्पिनर आज़माएं।',
+    spin_t:'Cimo रैंडम स्पिनर', spin_sub:'तय नहीं हो रहा? चक्र चुन ले। आप बस हाँ या ना कहें।',
+    spin_go:'चक्र घुमाएं', spin_again:'फिर घुमाएं', spin_win:'Cimo ने यह चुना!', spin_hist:'पिछले घुमाव',
+    spin_need:'पहले होम पर मूड चुनें, फिर स्पिन बेहतर होगा।',
+    chat_t:'Cimo लाइव चैट', chat_on:'ऑनलाइन · सुनने के लिए तैयार', chat_ph:'कुछ भी कहें, मैं सुन रहा हूँ…',
+    chat_quick:['मैं बहुत थक गया हूँ','मन उदास है','क्या खाऊँ?','किसी से बात करनी है'],
+    cart_t:'आपका ऑर्डर', cart_empty:'कार्ट खाली है। पहले कुछ चुनें।',
+    cart_total:'अनुमानित कुल', cart_plat:'आगे ऑर्डर करें', cart_go:'ऐप खोलें', cart_share:'मेरी पसंद शेयर करें',
+    cart_note:'कीमतें प्रति भाग अनुमानित हैं। अंतिम कुल (डिलीवरी, सेवा शुल्क, प्रोमो) प्लेटफ़ॉर्म ऐप में तय होगा।',
+    recap_t:'मूड रिकैप', recap_sub:'इस महीने की भावनाओं की यात्रा।', recap_day:'दर्ज दिन', recap_streak:'लगातार दिन', recap_top:'सबसे ज़्यादा मूड',
+    prof_t:'प्रोफ़ाइल', prof_acc:'खाता', prof_lang:'ऐप भाषा', prof_voice:'Cimo की आवाज़', prof_sound:'साउंड इफ़ेक्ट',
+    prof_sound_sub:'खाना जोड़ते समय क्लिक ध्वनि', prof_design:'Cimo डिज़ाइन', prof_admin:'डेटाबेस पैनल', prof_data:'डेटा और बैकअप',
+    prof_export:'डेटा डाउनलोड (JSON)', prof_logout:'साइन आउट', prof_saved:'सहेजा गया',
+    voice_test:'आवाज़ सुनें', voice_rate:'बोलने की गति', voice_pitch:'स्वर', voice_vol:'वॉल्यूम',
+    voice_5:'5 आवाज़ विकल्प', voice_lang:'आवाज़ की भाषा',
+    share_t:'सोशल मीडिया पर शेयर करें', share_dl:'तस्वीर डाउनलोड', share_copy:'कैप्शन कॉपी', share_native:'शेयर…',
+    add_ok:'कार्ट में जोड़ा गया', removed:'कार्ट से हटाया गया', copied:'कैप्शन कॉपी हुआ',
+    admin_t:'पंजीकरण डेटाबेस', admin_pass:'एडमिन पासवर्ड', admin_open:'खोलें', admin_wrong:'पासवर्ड गलत है',
+    admin_export:'CSV डाउनलोड', admin_count:'पंजीकृत', admin_none:'अभी कोई पंजीकृत नहीं।',
+    login_t:'साइन इन', login_ok:'वापसी पर स्वागत', login_bad:'ईमेल या पासवर्ड गलत',
+    reg_ok:'खाता बन गया। स्वागत!', guest:'मेहमान',
+  },
+};
+
+/* ===== what Cimo says when a mood is picked =====
+   {name} = user name, {dish} = top recommendation for that mood */
+const MOODSAY = {
+  senang: {
+    id:'Wah, {name} lagi senang ya hari ini! Aku ikut senang. Kamu cocok makan yang manis dan segar — {dish} bisa jadi pilihan.',
+    en:'Wah, {name} is happy today! I am happy too. You should eat something sweet and fresh — {dish} works.',
+    zh:'哇，{name} 今天心情很好呀！我也开心。你适合吃点甜的、清爽的——{dish} 就不错。',
+    hi:'वाह, {name} आज खुश हैं! मुझे भी अच्छा लगा। कुछ मीठा और ताज़ा खाइए — {dish} ठीक रहेगा।',
+  },
+  sedih: {
+    id:'Wah, hari ini {name} lagi sedih ya. Peluk dulu dari aku. Kamu cocok makan yang berkuah dan hangat — {dish} misalnya.',
+    en:'Oh, {name} is feeling sad today. Here is a hug first. Something warm and soupy fits you — {dish}, maybe.',
+    zh:'哎，{name} 今天有点难过呀。先抱一下。你适合吃点热汤类的——比如 {dish}。',
+    hi:'अरे, {name} आज उदास हैं। पहले एक गले लगाना। कुछ गरम सूप जैसा ठीक रहेगा — जैसे {dish}।',
+  },
+  marah: {
+    id:'{name} lagi kesal ya? Wajar kok. Tarik napas dulu. Kamu cocok makan yang pedas biar lega — {dish} salah satunya.',
+    en:'You are upset, {name}? That is fair. Breathe first. Something spicy would help you let it out — {dish}, for example.',
+    zh:'生气了吗，{name}？很正常。先深呼吸。吃点辣的会舒服些——{dish} 就挺好。',
+    hi:'गुस्सा है, {name}? यह सही है। पहले गहरी साँस लें। कुछ तीखा मन हल्का करेगा — जैसे {dish}।',
+  },
+  bingung: {
+    id:'Bingung mau makan apa ya, {name}? Nggak usah dipikirin sendirian. Aku pilihin yang aman — mulai dari {dish}.',
+    en:'Cannot decide what to eat, {name}? You do not have to decide alone. I picked safe ones — start with {dish}.',
+    zh:'不知道吃什么吗，{name}？不用一个人纠结。我帮你挑了稳妥的——先从 {dish} 开始。',
+    hi:'समझ नहीं आ रहा क्या खाएँ, {name}? अकेले परेशान न हों। मैंने आसान विकल्प चुने — {dish} से शुरू करें।',
+  },
+  capek: {
+    id:'{name} capek ya? Kamu udah berjuang hari ini. Kamu cocok makan yang lembut dan mengisi — {dish} bisa bantu.',
+    en:'You are tired, {name}. You made it through today. Something soft and filling fits — {dish} can help.',
+    zh:'{name} 累了吧？今天已经很努力了。你适合吃点温和又扎实的——{dish} 可以补一补。',
+    hi:'{name} थक गए हैं। आज बहुत मेहनत की। कुछ नरम और भरपूर ठीक रहेगा — {dish} मदद करेगा।',
+  },
+  kecewa: {
+    id:'Hari ini berat ya, {name}. Nggak apa-apa, pelan-pelan. Kamu cocok makan yang manis buat hiburan — {dish} misalnya.',
+    en:'Today is heavy, {name}. It is okay, slowly. Something sweet to cheer you up — {dish}, maybe.',
+    zh:'今天挺难的，{name}。没关系，慢慢来。吃点甜的安慰一下——比如 {dish}。',
+    hi:'आज भारी दिन है, {name}। कोई बात नहीं, धीरे-धीरे। कुछ मीठा दिल बहलाएगा — जैसे {dish}।',
+  },
+};
+
+/* ===== install / download copy (PWA) ===== */
+const INSTALL_I18N = {
+  id: {
+    title:'Unduh aplikasi CraveMood',
+    sub:'Pasang di layar utama dan buka seperti aplikasi biasa. Tanpa Play Store, tanpa App Store.',
+    tabA:'Android', tabI:'iPhone / iPad', tabD:'Komputer',
+    on:'Siap dipasang', off:'Sudah terpasang di perangkat ini',
+    install:'Pasang sekarang', installing:'Membuka dialog…',
+    stepsA:['Buka halaman ini di Chrome','Ketuk menu ⋮ di kanan atas','Pilih "Instal aplikasi" atau "Tambahkan ke layar utama"','Ketuk "Instal"'],
+    stepsI:['Buka halaman ini di Safari (bukan Chrome)','Ketuk tombol Bagikan di bawah layar','Gulir dan pilih "Tambahkan ke Layar Utama"','Ketuk "Tambah" di kanan atas'],
+    stepsD:['Klik ikon instal di kanan address bar','Atau menu ⋮ → "Instal CraveMood"','Aplikasi muncul di dock / Start Menu'],
+    offline:'Unduh file offline', offline_sub:'Satu file HTML, bisa dibuka tanpa internet.',
+    copy:'Salin link', copied:'Link disalin',
+    note:'Ini PWA: ringan, selalu versi terbaru, tidak perlu update manual.',
+    apk:'Butuh file APK / IPA?',
+    apk_note:'Bisa dibangun dari repo ini lewat PWABuilder atau Bubblewrap, lalu dipasang manual di HP. Untuk pemakaian sehari-hari, cara di atas sudah cukup.',
+    banner:'Pasang CraveMood di HP?', banner_sub:'Buka langsung dari layar utama.', later:'Nanti',
+    saved:'File tersimpan. Buka lewat browser untuk pakai offline.',
+    fail:'Gagal mengunduh. Coba lagi ya.',
+    notnow:'Bisa dipasang kapan saja dari Profil → Unduh aplikasi.',
+  },
+  en: {
+    title:'Get the CraveMood app',
+    sub:'Add it to your home screen and open it like a normal app. No Play Store, no App Store.',
+    tabA:'Android', tabI:'iPhone / iPad', tabD:'Desktop',
+    on:'Ready to install', off:'Already installed on this device',
+    install:'Install now', installing:'Opening prompt…',
+    stepsA:['Open this page in Chrome','Tap the ⋮ menu at the top right','Choose "Install app" or "Add to Home screen"','Tap "Install"'],
+    stepsI:['Open this page in Safari (not Chrome)','Tap the Share button at the bottom','Scroll and choose "Add to Home Screen"','Tap "Add" at the top right'],
+    stepsD:['Click the install icon in the address bar','Or menu ⋮ → "Install CraveMood"','The app appears in your dock / Start Menu'],
+    offline:'Download offline file', offline_sub:'A single HTML file that opens without internet.',
+    copy:'Copy link', copied:'Link copied',
+    note:'This is a PWA: light, always up to date, no manual updates.',
+    apk:'Need an APK / IPA file?',
+    apk_note:'You can build one from this repo with PWABuilder or Bubblewrap and sideload it. For daily use, the steps above are enough.',
+    banner:'Install CraveMood on your phone?', banner_sub:'Open it straight from your home screen.', later:'Later',
+    saved:'File saved. Open it in a browser to use offline.',
+    fail:'Download failed. Try again.',
+    notnow:'You can install anytime from Profile → Get the app.',
+  },
+  zh: {
+    title:'下载 CraveMood 应用',
+    sub:'添加到主屏幕，像普通应用一样打开。无需应用商店。',
+    tabA:'安卓', tabI:'iPhone / iPad', tabD:'电脑',
+    on:'可以安装', off:'此设备已安装',
+    install:'立即安装', installing:'正在打开…',
+    stepsA:['用 Chrome 打开本页','点右上角 ⋮ 菜单','选择“安装应用”或“添加到主屏幕”','点“安装”'],
+    stepsI:['用 Safari 打开本页（不是 Chrome）','点底部的分享按钮','向下滑动并选择“添加到主屏幕”','点右上角“添加”'],
+    stepsD:['点地址栏右侧的安装图标','或菜单 ⋮ →“安装 CraveMood”','应用会出现在程序坞/开始菜单'],
+    offline:'下载离线文件', offline_sub:'单个 HTML 文件，无网络也能打开。',
+    copy:'复制链接', copied:'链接已复制',
+    note:'这是 PWA：轻量、永远最新、无需手动更新。',
+    apk:'需要 APK / IPA 文件？',
+    apk_note:'可以用 PWABuilder 或 Bubblewrap 从这个仓库打包，再手动安装。日常使用上面步骤就够了。',
+    banner:'在手机上安装 CraveMood？', banner_sub:'从主屏幕直接打开。', later:'以后',
+    saved:'文件已保存。用浏览器打开即可离线使用。',
+    fail:'下载失败，请重试。',
+    notnow:'随时可在“我的 → 下载应用”里安装。',
+  },
+  hi: {
+    title:'CraveMood ऐप डाउनलोड करें',
+    sub:'होम स्क्रीन पर जोड़ें और आम ऐप की तरह खोलें। Play Store या App Store की ज़रूरत नहीं।',
+    tabA:'Android', tabI:'iPhone / iPad', tabD:'कंप्यूटर',
+    on:'इंस्टॉल के लिए तैयार', off:'इस डिवाइस पर पहले से इंस्टॉल',
+    install:'अभी इंस्टॉल करें', installing:'खुल रहा है…',
+    stepsA:['यह पेज Chrome में खोलें','ऊपर दाएँ ⋮ मेन्यू दबाएँ','"ऐप इंस्टॉल करें" या "होम स्क्रीन में जोड़ें" चुनें','"इंस्टॉल" दबाएँ'],
+    stepsI:['यह पेज Safari में खोलें (Chrome में नहीं)','नीचे शेयर बटन दबाएँ','नीचे स्क्रॉल कर "होम स्क्रीन में जोड़ें" चुनें','ऊपर दाएँ "जोड़ें" दबाएँ'],
+    stepsD:['एड्रेस बार में इंस्टॉल आइकन क्लिक करें','या मेन्यू ⋮ → "CraveMood इंस्टॉल करें"','ऐप डॉक / स्टार्ट मेन्यू में दिखेगा'],
+    offline:'ऑफ़लाइन फ़ाइल डाउनलोड करें', offline_sub:'एक HTML फ़ाइल, बिना इंटरनेट भी खुलेगी।',
+    copy:'लिंक कॉपी करें', copied:'लिंक कॉपी हुआ',
+    note:'यह PWA है: हल्का, हमेशा नया, मैन्युअल अपडेट नहीं।',
+    apk:'APK / IPA फ़ाइल चाहिए?',
+    apk_note:'PWABuilder या Bubblewrap से इस रेपो को पैक कर सकते हैं। रोज़ के इस्तेमाल के लिए ऊपर के स्टेप काफी हैं।',
+    banner:'फ़ोन पर CraveMood इंस्टॉल करें?', banner_sub:'होम स्क्रीन से सीधे खोलें।', later:'बाद में',
+    saved:'फ़ाइल सहेजी गई। ऑफ़लाइन इस्तेमाल के लिए ब्राउज़र में खोलें।',
+    fail:'डाउनलोड नहीं हुआ। फिर कोशिश करें।',
+    notnow:'प्रोफ़ाइल → ऐप डाउनलोड से कभी भी इंस्टॉल कर सकते हैं।',
+  },
+};
+
+
+/* ===== database layer =====
+   Works in two modes:
+   1. remote  — if a CraveMood API is reachable (server/server.js), all writes go there
+   2. local   — otherwise a JSON store in localStorage (default on GitHub Pages)
+   Schema is identical in both modes, see db/schema.sql
+*/
+const DB = (() => {
+  const KEY = 'cravemood.db.v1';
+  const SCHEMA = { v: 1, users: [], moods: [], orders: [], chats: [], spins: [], settings: {} };
+  let state = null, remote = false, base = '', ready = false;
+
+  const uid = () => 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+  function load() {
+    if (state) return state;
+    try {
+      const raw = localStorage.getItem(KEY);
+      state = raw ? Object.assign(clone(SCHEMA), JSON.parse(raw)) : clone(SCHEMA);
+    } catch (e) { state = clone(SCHEMA); }
+    if (!Array.isArray(state.users)) state.users = [];
+    return state;
+  }
+  function persist() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch (e) { console.warn('DB: quota', e); }
+  }
+
+  /* password hashing — SHA-256 when available, deterministic fallback otherwise */
+  async function hash(pw, salt) {
+    const txt = salt + '::' + pw + '::cravemood';
+    try {
+      if (window.crypto && crypto.subtle) {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(txt));
+        return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+    } catch (e) { /* insecure context */ }
+    let h1 = 0x811c9dc5, h2 = 0x01000193;
+    for (let i = 0; i < txt.length; i++) {
+      h1 ^= txt.charCodeAt(i); h1 = Math.imul(h1, 16777619) >>> 0;
+      h2 = Math.imul(h2 ^ txt.charCodeAt(i), 2654435761) >>> 0;
+    }
+    return 'fnv' + h1.toString(16) + h2.toString(16);
+  }
+
+  async function probe() {
+    base = (window.CRAVEMOOD_API || '').replace(/\/$/, '');
+    if (!base && location.protocol === 'file:') return false;
+    try {
+      const c = new AbortController();
+      const t = setTimeout(() => c.abort(), 1200);
+      const r = await fetch((base || '') + '/api/health', { signal: c.signal, cache: 'no-store' });
+      clearTimeout(t);
+      if (!r.ok) return false;
+      const j = await r.json();
+      return !!(j && j.ok);
+    } catch (e) { return false; }
+  }
+
+  async function api(path, body, key) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (key) headers['X-Admin-Key'] = key;
+    const r = await fetch(base + path, {
+      method: body ? 'POST' : 'GET',
+      headers: headers,
+      body: body ? JSON.stringify(body) : undefined,
+      cache: 'no-store',
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
+    return j;
+  }
+
+  /* ---- public API ---- */
+  return {
+    get isRemote() { return remote; },
+    get ready() { return ready; },
+
+    async init() {
+      remote = await probe();
+      ready = true;
+      return remote;
+    },
+
+    /* account */
+    async register({ name, contact, password, lang, guest }) {
+      if (remote) {
+        const j = await api('/api/register', { name, contact, password, lang, guest });
+        return j;
+      }
+      const s = load();
+      const c = String(contact || '').trim().toLowerCase();
+      if (!guest && s.users.some(u => (u.contact || '').toLowerCase() === c)) {
+        return { ok: false, error: 'exists' };
+      }
+      const salt = Math.random().toString(36).slice(2, 10);
+      const u = {
+        id: uid(), name: String(name || '').trim().slice(0, 40),
+        contact: c, lang: lang || 'id', salt,
+        pw: guest ? '' : await hash(password || '', salt),
+        guest: !!guest,
+        created: new Date().toISOString(),
+        last_seen: new Date().toISOString(),
+        moods: 0, orders: 0, chats: 0, spins: 0,
+      };
+      s.users.push(u); persist();
+      return { ok: true, user: pub(u) };
+    },
+
+    async login({ contact, password }) {
+      if (remote) return api('/api/login', { contact, password });
+      const s = load();
+      const c = String(contact || '').trim().toLowerCase();
+      const u = s.users.find(x => (x.contact || '').toLowerCase() === c && !x.guest);
+      if (!u) return { ok: false, error: 'bad' };
+      const h = await hash(password || '', u.salt);
+      if (h !== u.pw) return { ok: false, error: 'bad' };
+      u.last_seen = new Date().toISOString(); persist();
+      return { ok: true, user: pub(u) };
+    },
+
+    async me(id) {
+      if (!id) return null;
+      if (remote) {
+        try { const j = await api('/api/me?id=' + encodeURIComponent(id)); return j.ok ? j.user : null; }
+        catch (e) { return null; }
+      }
+      const u = load().users.find(x => x.id === id);
+      return u ? pub(u) : null;
+    },
+
+    async users(adminKey) {
+      if (remote) { const j = await api('/api/users', null, adminKey); return j.users || []; }
+      return load().users.map(pub);
+    },
+
+    async touch(id) {
+      if (remote) return;
+      const u = load().users.find(x => x.id === id);
+      if (u) { u.last_seen = new Date().toISOString(); persist(); }
+    },
+
+    /* activity */
+    async addMood(userId, mood, date) {
+      const d = date || new Date().toISOString().slice(0, 10);
+      if (remote) { try { await api('/api/mood', { userId, mood, date: d }); } catch (e) {} }
+      const s = load();
+      s.moods = s.moods.filter(m => !(m.user_id === userId && m.date === d));
+      s.moods.push({ user_id: userId, mood, date: d, at: new Date().toISOString() });
+      const u = s.users.find(x => x.id === userId); if (u) u.moods = (u.moods || 0) + 1;
+      persist();
+    },
+
+    async addOrder(userId, payload) {
+      if (remote) { try { await api('/api/order', Object.assign({ userId }, payload)); } catch (e) {} }
+      const s = load();
+      s.orders.push(Object.assign({ id: 'o_' + Date.now().toString(36), user_id: userId, at: new Date().toISOString() }, payload));
+      const u = s.users.find(x => x.id === userId); if (u) u.orders = (u.orders || 0) + 1;
+      persist();
+    },
+
+    async logChat(userId, role, text) {
+      const s = load();
+      s.chats.push({ user_id: userId, role, text: String(text).slice(0, 500), at: new Date().toISOString() });
+      if (s.chats.length > 800) s.chats = s.chats.slice(-800);
+      const u = s.users.find(x => x.id === userId); if (u) u.chats = (u.chats || 0) + 1;
+      persist();
+    },
+
+    async logSpin(userId, item) {
+      const s = load();
+      s.spins.push({ user_id: userId, item, at: new Date().toISOString() });
+      if (s.spins.length > 500) s.spins = s.spins.slice(-500);
+      const u = s.users.find(x => x.id === userId); if (u) u.spins = (u.spins || 0) + 1;
+      persist();
+    },
+
+    moodsOf(userId) {
+      return load().moods.filter(m => m.user_id === userId).map(m => ({ d: m.date, m: m.mood }));
+    },
+
+    /* settings blob (per device) */
+    getSetting(k, dflt) {
+      const s = load();
+      return (s.settings && s.settings[k] !== undefined) ? s.settings[k] : dflt;
+    },
+    setSetting(k, v) {
+      const s = load();
+      s.settings[k] = v; persist();
+    },
+
+    /* export */
+    dump() { return clone(load()); },
+    async exportJSON(adminKey) {
+      let data = null;
+      if (remote && adminKey) { try { data = await api('/api/export', null, adminKey); } catch (e) { data = null; } }
+      if (!data) data = load();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      dl(blob, 'cravemood-database-' + new Date().toISOString().slice(0, 10) + '.json');
+    },
+    async exportCSV(adminKey) {
+      const rows = await this.users(adminKey);
+      const head = ['id', 'name', 'contact', 'lang', 'guest', 'created', 'last_seen', 'moods', 'orders', 'chats', 'spins'];
+      const esc = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+      const csv = [head.join(',')].concat(rows.map(r => head.map(h => esc(r[h])).join(','))).join('\r\n');
+      dl(new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' }), 'cravemood-registrants.csv');
+    },
+  };
+
+  function pub(u) {
+    return {
+      id: u.id, name: u.name, contact: u.contact, lang: u.lang, guest: !!u.guest,
+      created: u.created, last_seen: u.last_seen,
+      moods: u.moods || 0, orders: u.orders || 0, chats: u.chats || 0, spins: u.spins || 0,
+    };
+  }
+  function dl(blob, name) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1200);
+  }
+})();
+
+
+/* ===== CraveMood · Developer Console ===== */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const nf = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const dt = s => { if (!s) return '—'; const d = new Date(s); return isNaN(d) ? '—' : d.toLocaleString('id-ID', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' }); };
+const dOnly = s => { if (!s) return '—'; const d = new Date(s); return isNaN(d) ? '—' : d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }); };
+
+const DC = { key: '', data: null, tab: 'overview', q: '', ai: { enabled: false, model: '' } };
+
+const NAV = [
+  ['overview', 'Ringkasan', '<path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/>'],
+  ['users', 'Pengguna', '<circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/>'],
+  ['moods', 'Mood', '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>'],
+  ['orders', 'Pesanan', '<path d="M6 8h12l-1 12H7z"/><path d="M9.5 8a2.5 2.5 0 0 1 5 0"/>'],
+  ['chats', 'Chat', '<path d="M21 12a8 8 0 0 1-8 8H8l-4 3V12a8 8 0 0 1 8-8h1a8 8 0 0 1 8 8z"/>'],
+  ['spins', 'Spinner', '<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>'],
+  ['ai', 'Otak Cimo', '<path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>'],
+  ['export', 'Database', '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>'],
+];
+
+/* ---------- boot ---------- */
+(async function boot() {
+  await DB.init();
+  renderSide();
+  renderHead();
+  const saved = sessionStorage.getItem('cm_dev_key');
+  if (saved && await tryLogin(saved, true)) return;
+  renderGate();
+})();
+
+function renderSide() {
+  $('#devside').innerHTML = `
+    <div class="brand">
+      <div class="lg"><span>Crave</span><mark>Mood</mark></div>
+      <div class="tagline">Developer</div>
+    </div>
+    ${NAV.map(([k, n, ic]) => `<button class="dnav" data-tab="${k}">
+      <svg viewBox="0 0 24 24">${ic}</svg><span>${n}</span><b class="n" id="nav-${k}"></b></button>`).join('')}
+    <div class="dsidefoot">
+      <a href="index.html" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9"><path d="M14 4h6v6M20 4l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>
+        Buka aplikasi publik</a>
+      <button id="devLogout">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9"><path d="M15 17l5-5-5-5M20 12H9M12 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h6"/></svg>
+        Keluar</button>
+    </div>`;
+  $$('#devside [data-tab]').forEach(b => b.onclick = () => { DC.tab = b.dataset.tab; DC.q = ''; render(); });
+  $('#devLogout').onclick = () => { sessionStorage.removeItem('cm_dev_key'); location.reload(); };
+}
+
+function renderHead() {
+  $('#devheadright').innerHTML = `
+    <span class="pill ${DB.isRemote ? '' : 'off'}"><i></i>${DB.isRemote ? 'Server DB' : 'Local DB'}</span>
+    <button class="btn sm ghost" id="devRefresh">Muat ulang</button>`;
+  const r = $('#devRefresh');
+  if (r) r.onclick = () => { load().then(() => toast('Data dimuat ulang')).catch(e => toast('Gagal: ' + e.message)); };
+}
+
+function toast(m) {
+  let el = $('#dtoast');
+  if (!el) { el = document.createElement('div'); el.id = 'dtoast'; el.className = 'toast'; document.body.appendChild(el); }
+  el.textContent = m; el.classList.add('on');
+  clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 2200);
+}
+
+/* ---------- gate ---------- */
+function renderGate() {
+  $('#gate').innerHTML = `
+    <div class="gate">
+      <div class="cimo">${cimo('def', 100)}</div>
+      <h2>Developer Console</h2>
+      <p>Masukkan kunci admin untuk membuka database.</p>
+      <input id="devKey" type="password" placeholder="••••••" autocomplete="current-password">
+      <div class="err" id="devErr"></div>
+      <button class="btn block" id="devGo" style="margin-top:8px">Buka console</button>
+      <p class="mini" style="margin-top:12px">Default: <b>cimo2026</b> — ubah lewat env <code>ADMIN_KEY</code> di server.</p>
+    </div>`;
+  $('#devKey').onkeydown = e => { if (e.key === 'Enter') $('#devGo').click(); };
+  $('#devGo').onclick = async () => {
+    const k = $('#devKey').value.trim();
+    if (!k) return;
+    const ok = await tryLogin(k);
+    if (!ok) { $('#devErr').textContent = 'Kunci salah atau server menolak.'; }
+  };
+  setTimeout(() => $('#devKey') && $('#devKey').focus(), 120);
+}
+
+async function tryLogin(k, silent) {
+  if (DB.isRemote) {
+    try {
+      const r = await fetch('api/users', { headers: { 'X-Admin-Key': k }, cache: 'no-store' });
+      if (!r.ok) return false;
+    } catch (e) { return false; }
+  } else if (k !== 'cimo2026' && k !== 'cravemood') return false;
+  DC.key = k;
+  sessionStorage.setItem('cm_dev_key', k);
+  try { await load(); } catch (e) { if (!silent) toast('Gagal memuat: ' + e.message); return false; }
+  return true;
+}
+
+async function load() {
+  if (DB.isRemote) {
+    const r = await fetch('api/export?key=' + encodeURIComponent(DC.key), { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    DC.data = await r.json();
+    try {
+      const s = await fetch('api/ai/status', { cache: 'no-store' });
+      const j = await s.json(); DC.ai = { enabled: !!j.enabled, model: j.model || '' };
+    } catch (e) { DC.ai = { enabled: false, model: '' }; }
+  } else {
+    DC.data = DB.dump();
+    DC.ai = { enabled: false, model: '' };
+  }
+  ['users', 'moods', 'orders', 'chats', 'spins'].forEach(k => { if (!Array.isArray(DC.data[k])) DC.data[k] = []; });
+  $('#gate').innerHTML = '';
+  $('#console').classList.remove('hide');
+  render();
+}
+
+/* ---------- helpers ---------- */
+const uName = id => {
+  const u = (DC.data.users || []).find(x => x.id === id);
+  return u ? u.name : (id ? String(id).slice(0, 8) : '—');
+};
+const moodOf = k => (MOODS.find(m => m.k === k) || { label: k, c: '#ddd', face: 'def' });
+const dishOf = id => (MENU.find(m => m.id === id) || { name: id });
+
+function csv(rows, cols, name) {
+  const esc2 = v => '"' + String(v == null ? '' : (typeof v === 'object' ? JSON.stringify(v) : v)).replace(/"/g, '""') + '"';
+  const body = [cols.map(c => c.k).join(',')].concat(rows.map(r => cols.map(c => esc2(typeof c.v === 'function' ? c.v(r) : r[c.v || c.k])).join(','))).join('\r\n');
+  const blob = new Blob(['\ufeff' + body], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'cravemood-' + name + '-' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1200);
+  toast('CSV ' + name + ' diunduh');
+}
+function jsonDump() {
+  const blob = new Blob([JSON.stringify(DC.data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'cravemood-database-' + new Date().toISOString().slice(0, 10) + '.json';
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1200);
+  toast('Database JSON diunduh');
+}
+
+/* ---------- render ---------- */
+function render() {
+  $$('#devside [data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === DC.tab));
+  const c = $('#console');
+  const R = { overview: vOverview, users: vUsers, moods: vMoods, orders: vOrders, chats: vChats, spins: vSpins, ai: vAI, export: vExport };
+  c.innerHTML = (R[DC.tab] || vOverview)();
+  bind();
+  // sidebar counters
+  const n = k => $('#nav-' + k);
+  if (n('users')) n('users').textContent = (DC.data.users || []).length;
+  if (n('chats')) n('chats').textContent = (DC.data.chats || []).length;
+  if (n('orders')) n('orders').textContent = (DC.data.orders || []).length;
+}
+
+function vOverview() {
+  const d = DC.data, U = d.users || [];
+  const members = U.filter(u => !u.guest).length;
+  const days = {};
+  (d.moods || []).forEach(m => days[m.date] = (days[m.date] || 0) + 1);
+  const moodCount = {};
+  (d.moods || []).forEach(m => moodCount[m.mood] = (moodCount[m.mood] || 0) + 1);
+  const mxMood = Math.max(1, ...Object.values(moodCount));
+
+  // signups last 14 days
+  const today = new Date(); const series = [];
+  for (let i = 13; i >= 0; i--) {
+    const dt2 = new Date(today); dt2.setDate(today.getDate() - i);
+    const key = dt2.toISOString().slice(0, 10);
+    series.push({ key, n: U.filter(u => (u.created || '').slice(0, 10) === key).length });
+  }
+  const mxS = Math.max(1, ...series.map(s => s.n));
+
+  const spinCount = {};
+  (d.spins || []).forEach(s => spinCount[s.item] = (spinCount[s.item] || 0) + 1);
+  const topDish = Object.entries(spinCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+  return `
+  <div class="kpis">
+    <div class="kpi acc"><small>Pengguna</small><b>${nf(U.length)}</b></div>
+    <div class="kpi"><small>Member</small><b>${nf(members)}</b></div>
+    <div class="kpi"><small>Mood dicatat</small><b>${nf((d.moods || []).length)}</b></div>
+    <div class="kpi"><small>Chat</small><b>${nf((d.chats || []).length)}</b></div>
+    <div class="kpi"><small>Pesanan</small><b>${nf((d.orders || []).length)}</b></div>
+    <div class="kpi"><small>Putaran</small><b>${nf((d.spins || []).length)}</b></div>
+  </div>
+  <div class="dgrid">
+    <div class="dcard">
+      <h3>Pendaftar 14 hari terakhir</h3>
+      <div class="spark">${series.map(s => `<i style="height:${Math.max(4, (s.n / mxS) * 100)}%" title="${s.key}: ${s.n}"></i>`).join('')}</div>
+      <div class="mini" style="display:flex;justify-content:space-between;margin-top:6px">
+        <span>${series[0].key.slice(5)}</span><span>${series[series.length - 1].key.slice(5)}</span></div>
+    </div>
+    <div class="dcard">
+      <h3>Distribusi mood</h3>
+      ${MOODS.map(m => {
+        const v = moodCount[m.k] || 0;
+        return `<div class="dbar"><span class="lbl"><span style="width:18px;height:18px">${cimo(m.face, 16)}</span>${m.label}</span>
+          <div class="tr"><i style="width:${(v / mxMood) * 100}%;background:${m.c}"></i></div><span class="v">${v}</span></div>`;
+      }).join('')}
+    </div>
+    <div class="dcard">
+      <h3>Menu paling sering diputar</h3>
+      ${topDish.length ? topDish.map(([id, v]) => `<div class="dbar"><span class="lbl" style="width:120px">${esc(dishOf(id).name)}</span>
+        <div class="tr"><i style="width:${(v / topDish[0][1]) * 100}%;background:var(--pk2)"></i></div><span class="v">${v}</span></div>`).join('')
+        : '<p class="mini">Belum ada data putaran.</p>'}
+    </div>
+    <div class="dcard">
+      <h3>Status sistem</h3>
+      <div class="dbar"><span class="lbl" style="width:100px">Database</span><b style="font-size:.74rem">${DB.isRemote ? 'API server' : 'localStorage'}</b></div>
+      <div class="dbar"><span class="lbl" style="width:100px">Otak Cimo</span><b style="font-size:.74rem">${DC.ai.enabled ? 'AI aktif (' + esc(DC.ai.model) + ')' : 'Mesin lokal'}</b></div>
+      <div class="dbar"><span class="lbl" style="width:100px">Hari tercatat</span><b style="font-size:.74rem">${Object.keys(days).length}</b></div>
+      <button class="btn sm block" data-go="export" style="margin-top:10px">Unduh database</button>
+    </div>
+  </div>`;
+}
+
+function searchBar(ph) {
+  return `<div class="searchrow"><input id="dq" placeholder="${ph}" value="${esc(DC.q)}">
+    <button class="btn sm ghost" id="dqClear">Reset</button></div>`;
+}
+
+function vUsers() {
+  const q = DC.q.toLowerCase();
+  const rows = (DC.data.users || []).filter(u => !q || JSON.stringify(u).toLowerCase().includes(q))
+    .sort((a, b) => (b.created || '').localeCompare(a.created || ''));
+  return `<div class="dcard">
+    <h3>Pengguna terdaftar <span class="tag">${rows.length}</span></h3>
+    ${searchBar('Cari nama, kontak, bahasa…')}
+    <div class="row" style="margin-bottom:10px">
+      <button class="btn sm ghost" id="csvUsers">Unduh CSV</button>
+      <span class="mini">Termasuk tamu (guest).</span>
+    </div>
+    <div class="dtable"><table><thead><tr>
+      <th>Nama</th><th>Kontak</th><th>Bahasa</th><th>Status</th><th>Daftar</th><th>Terakhir</th><th>Mood</th><th>Chat</th><th>Order</th><th>Spin</th>
+    </tr></thead><tbody>
+      ${rows.length ? rows.map(u => `<tr>
+        <td><b>${esc(u.name)}</b></td>
+        <td>${esc(u.contact || '—')}</td>
+        <td>${esc(u.lang || 'id')}</td>
+        <td>${u.guest ? '<span class="tag">guest</span>' : '<span class="tag mint">member</span>'}</td>
+        <td>${dOnly(u.created)}</td><td>${dt(u.last_seen)}</td>
+        <td>${u.moods || 0}</td><td>${u.chats || 0}</td><td>${u.orders || 0}</td><td>${u.spins || 0}</td>
+      </tr>`).join('') : '<tr><td colspan="10" style="text-align:center;padding:22px">Belum ada pengguna.</td></tr>'}
+    </tbody></table></div>
+  </div>`;
+}
+
+function vMoods() {
+  const q = DC.q.toLowerCase();
+  const rows = (DC.data.moods || []).filter(m => !q || (uName(m.user_id) + m.mood + m.date).toLowerCase().includes(q))
+    .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  return `<div class="dcard">
+    <h3>Catatan mood <span class="tag">${rows.length}</span></h3>
+    ${searchBar('Cari nama, mood, tanggal…')}
+    <div class="row" style="margin-bottom:10px"><button class="btn sm ghost" id="csvMoods">Unduh CSV</button></div>
+    <div class="dtable"><table><thead><tr><th>Tanggal</th><th>Pengguna</th><th>Mood</th><th>Dicatat</th></tr></thead><tbody>
+      ${rows.length ? rows.slice(0, 500).map(m => `<tr>
+        <td>${esc(m.date)}</td><td>${esc(uName(m.user_id))}</td>
+        <td><span style="display:inline-flex;align-items:center;gap:5px"><span style="width:18px;height:18px">${cimo(moodOf(m.mood).face, 16)}</span>${esc(moodOf(m.mood).label)}</span></td>
+        <td>${dt(m.at)}</td></tr>`).join('') : '<tr><td colspan="4" style="text-align:center;padding:22px">Belum ada catatan mood.</td></tr>'}
+    </tbody></table></div>
+  </div>`;
+}
+
+function vOrders() {
+  const rows = (DC.data.orders || []).slice().sort((a, b) => (b.at || '').localeCompare(a.at || ''));
+  return `<div class="dcard">
+    <h3>Pesanan & klik platform <span class="tag">${rows.length}</span></h3>
+    <div class="row" style="margin-bottom:10px"><button class="btn sm ghost" id="csvOrders">Unduh CSV</button></div>
+    <div class="dtable"><table><thead><tr><th>Waktu</th><th>Pengguna</th><th>Jenis</th><th>Platform</th><th>Item</th></tr></thead><tbody>
+      ${rows.length ? rows.map(o => `<tr>
+        <td>${dt(o.at)}</td><td>${esc(uName(o.user_id))}</td><td>${esc(o.kind || '—')}</td>
+        <td>${esc(o.platform || '—')}</td>
+        <td class="wrap">${esc(Array.isArray(o.items) ? o.items.map(i => dishOf(i).name).join(', ') : (o.item || '—'))}</td>
+      </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;padding:22px">Belum ada pesanan.</td></tr>'}
+    </tbody></table></div>
+  </div>`;
+}
+
+function vChats() {
+  const q = DC.q.toLowerCase();
+  const rows = (DC.data.chats || []).filter(c => !q || (uName(c.user_id) + c.text).toLowerCase().includes(q))
+    .sort((a, b) => (b.at || '').localeCompare(a.at || ''));
+  return `<div class="dcard">
+    <h3>Transkrip chat <span class="tag">${rows.length}</span></h3>
+    ${searchBar('Cari isi chat atau nama…')}
+    <div class="row" style="margin-bottom:10px"><button class="btn sm ghost" id="csvChats">Unduh CSV</button></div>
+    <div class="dtable"><table><thead><tr><th>Waktu</th><th>Pengguna</th><th>Peran</th><th>Isi</th></tr></thead><tbody>
+      ${rows.length ? rows.slice(0, 400).map(c => `<tr>
+        <td>${dt(c.at)}</td><td>${esc(uName(c.user_id))}</td>
+        <td>${c.role === 'user' ? '<span class="tag">user</span>' : c.role === 'system' ? '<span class="tag gold">system</span>' : '<span class="tag pink">cimo</span>'}</td>
+        <td class="wrap">${esc(c.text)}</td></tr>`).join('') : '<tr><td colspan="4" style="text-align:center;padding:22px">Belum ada chat.</td></tr>'}
+    </tbody></table></div>
+  </div>`;
+}
+
+function vSpins() {
+  const rows = (DC.data.spins || []).slice().sort((a, b) => (b.at || '').localeCompare(a.at || ''));
+  return `<div class="dcard">
+    <h3>Riwayat spinner <span class="tag">${rows.length}</span></h3>
+    <div class="row" style="margin-bottom:10px"><button class="btn sm ghost" id="csvSpins">Unduh CSV</button></div>
+    <div class="dtable"><table><thead><tr><th>Waktu</th><th>Pengguna</th><th>Menu</th></tr></thead><tbody>
+      ${rows.length ? rows.map(s => `<tr><td>${dt(s.at)}</td><td>${esc(uName(s.user_id))}</td><td>${esc(dishOf(s.item).name)}</td></tr>`).join('')
+        : '<tr><td colspan="3" style="text-align:center;padding:22px">Belum ada putaran.</td></tr>'}
+    </tbody></table></div>
+  </div>`;
+}
+
+function vAI() {
+  const local = !DB.isRemote;
+  return `<div class="dcard">
+    <h3>Otak Cimo (AI)</h3>
+    <p class="mini" style="margin-bottom:12px">Kunci API disimpan di server, tidak pernah dikirim ke browser pengguna. Kalau kosong, chat memakai mesin lokal Cimo yang tetap jalan penuh.</p>
+    ${local ? `<div class="inote" style="margin-bottom:12px"><b>Mode statis.</b> Tanpa server, kunci ini tidak bisa dipakai bersama. Jalankan <code>node server/server.js</code> untuk mengaktifkan AI untuk semua pengguna.</div>` : ''}
+    <div class="airow">
+      <div class="field"><label>API key</label><input id="aiKey" type="password" placeholder="sk-..." ${local ? 'disabled' : ''}></div>
+      <div class="field"><label>Model</label><input id="aiModel" placeholder="gpt-4o-mini" value="${esc(DC.ai.model || 'gpt-4o-mini')}" ${local ? 'disabled' : ''}></div>
+    </div>
+    <div class="field"><label>Base URL</label><input id="aiBase" value="https://api.openai.com/v1" ${local ? 'disabled' : ''}></div>
+    <div class="row">
+      <button class="btn sm" id="aiSave" ${local ? 'disabled' : ''}>Simpan kunci</button>
+      <button class="btn sm ghost" id="aiTest" ${local ? 'disabled' : ''}>Tes koneksi</button>
+      <span class="mini" id="aiStat">${DC.ai.enabled ? 'Aktif · ' + esc(DC.ai.model) : 'Belum aktif'}</span>
+    </div>
+    <div class="inote" style="margin-top:14px">Format kompatibel OpenAI: OpenAI, Groq, Together, OpenRouter, atau endpoint lokal (Ollama/LM Studio) — cukup ganti Base URL dan model.</div>
+  </div>`;
+}
+
+function vExport() {
+  const d = DC.data;
+  const rows = [
+    ['users', 'Pengguna', (d.users || []).length],
+    ['moods', 'Mood', (d.moods || []).length],
+    ['orders', 'Pesanan', (d.orders || []).length],
+    ['chats', 'Chat', (d.chats || []).length],
+    ['spins', 'Putaran', (d.spins || []).length],
+  ];
+  return `<div class="dcard">
+    <h3>Database</h3>
+    <p class="mini" style="margin-bottom:12px">Sumber: <b>${DB.isRemote ? 'API server · server/data/db.json' : 'localStorage perangkat ini'}</b>.
+    Skema relasional ada di <code>db/schema.sql</code>.</p>
+    <div class="kpis" style="margin-bottom:14px">
+      ${rows.map(([k, n, v]) => `<div class="kpi"><small>${n}</small><b>${nf(v)}</b></div>`).join('')}
+    </div>
+    <div class="row">
+      <button class="btn sm" id="dlJson">Unduh semua (JSON)</button>
+      ${rows.map(([k, n]) => `<button class="btn sm ghost" data-csv="${k}">CSV ${n}</button>`).join('')}
+    </div>
+    <div class="inote" style="margin-top:14px">
+      <b>Tips:</b> file JSON ini bisa langsung diimpor ke Postgres/Supabase memakai <code>db/schema.sql</code>,
+      atau disimpan sebagai cadangan. Data live juga tersimpan di <code>server/data/db.json</code>.
+    </div>
+  </div>`;
+}
+
+/* ---------- events ---------- */
+function bind() {
+  const q = $('#dq');
+  if (q) {
+    q.oninput = () => {
+      DC.q = q.value;
+      const pos = q.selectionStart;
+      render();
+      const nq = $('#dq'); if (nq) { nq.focus(); nq.setSelectionRange(pos, pos); }
+    };
+  }
+  const qc = $('#dqClear');
+  if (qc) qc.onclick = () => { DC.q = ''; render(); };
+
+  const c1 = $('#csvUsers'); if (c1) c1.onclick = () => csv(DC.data.users || [], [
+    { k: 'name' }, { k: 'contact' }, { k: 'lang' }, { k: 'guest' }, { k: 'created' }, { k: 'last_seen' },
+    { k: 'moods' }, { k: 'orders' }, { k: 'chats' }, { k: 'spins' }, { k: 'id' },
+  ], 'users');
+  const c2 = $('#csvMoods'); if (c2) c2.onclick = () => csv(DC.data.moods || [], [
+    { k: 'date' }, { k: 'user', v: r => uName(r.user_id) }, { k: 'mood' }, { k: 'at' },
+  ], 'moods');
+  const c3 = $('#csvOrders'); if (c3) c3.onclick = () => csv(DC.data.orders || [], [
+    { k: 'at' }, { k: 'user', v: r => uName(r.user_id) }, { k: 'kind' }, { k: 'platform' },
+    { k: 'items', v: r => Array.isArray(r.items) ? r.items.join(' | ') : (r.item || '') },
+  ], 'orders');
+  const c4 = $('#csvChats'); if (c4) c4.onclick = () => csv(DC.data.chats || [], [
+    { k: 'at' }, { k: 'user', v: r => uName(r.user_id) }, { k: 'role' }, { k: 'text' },
+  ], 'chats');
+  const c5 = $('#csvSpins'); if (c5) c5.onclick = () => csv(DC.data.spins || [], [
+    { k: 'at' }, { k: 'user', v: r => uName(r.user_id) }, { k: 'menu', v: r => dishOf(r.item).name },
+  ], 'spins');
+
+  $$('[data-go]').forEach(b => b.onclick = () => { DC.tab = b.dataset.go; render(); });
+  const dj = $('#dlJson'); if (dj) dj.onclick = jsonDump;
+  $$('[data-csv]').forEach(b => b.onclick = () => {
+    const k = b.dataset.csv;
+    if (k === 'users') csv(DC.data.users || [], [{ k: 'name' }, { k: 'contact' }, { k: 'lang' }, { k: 'guest' }, { k: 'created' }], 'users');
+    if (k === 'moods') csv(DC.data.moods || [], [{ k: 'date' }, { k: 'user', v: r => uName(r.user_id) }, { k: 'mood' }], 'moods');
+    if (k === 'orders') csv(DC.data.orders || [], [{ k: 'at' }, { k: 'user', v: r => uName(r.user_id) }, { k: 'platform' }], 'orders');
+    if (k === 'chats') csv(DC.data.chats || [], [{ k: 'at' }, { k: 'user', v: r => uName(r.user_id) }, { k: 'role' }, { k: 'text' }], 'chats');
+    if (k === 'spins') csv(DC.data.spins || [], [{ k: 'at' }, { k: 'user', v: r => uName(r.user_id) }, { k: 'menu', v: r => dishOf(r.item).name }], 'spins');
+  });
+
+  const save = $('#aiSave');
+  if (save) save.onclick = async () => {
+    const key = $('#aiKey').value.trim(), model = $('#aiModel').value.trim() || 'gpt-4o-mini', base = $('#aiBase').value.trim() || 'https://api.openai.com/v1';
+    try {
+      const r = await fetch('api/ai/config?key=' + encodeURIComponent(DC.key), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, model, base }),
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || 'HTTP ' + r.status);
+      DC.ai = { enabled: !!j.enabled, model: j.model };
+      $('#aiStat').textContent = j.enabled ? 'Aktif · ' + j.model : 'Belum aktif';
+      toast(j.enabled ? 'Kunci disimpan di server' : 'Kunci dikosongkan');
+    } catch (e) { toast('Gagal: ' + e.message); }
+  };
+  const test = $('#aiTest');
+  if (test) test.onclick = async () => {
+    test.disabled = true; test.textContent = 'Menguji…';
+    try {
+      const r = await fetch('api/ai', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: 'Balas satu kata: halo' }] }),
+      });
+      const j = await r.json();
+      toast(j.ok ? 'AI menjawab: ' + (j.text || '').slice(0, 40) : 'Gagal: ' + (j.error || r.status));
+    } catch (e) { toast('Gagal: ' + e.message); }
+    test.disabled = false; test.textContent = 'Tes koneksi';
+  };
+}
+
+</script>
+</body>
+</html>

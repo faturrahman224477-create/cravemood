@@ -210,9 +210,9 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 .wheel{width:min(370px,80vw);aspect-ratio:1;border-radius:50%;position:relative;
   box-shadow:0 18px 40px rgba(122,42,85,.22),inset 0 0 0 10px var(--sf),inset 0 0 0 13px rgba(90,50,100,.10);
   transition:transform 4.6s cubic-bezier(.12,.72,.06,1);will-change:transform}
-.wheel .seg{position:absolute;inset:0;transform-origin:50% 50%;display:flex;justify-content:center;
-  padding-top:14px;font:700 .66rem Fredoka;color:#3a2142;pointer-events:none;line-height:1.1}
-.wheel .seg span{display:block;max-width:86px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wheel .seg{position:absolute;inset:0;pointer-events:none;font:700 .82rem/1.14 Fredoka;color:#3a2142;letter-spacing:-.1px}
+.wheel .seg span{position:absolute;width:102px;margin:0;text-align:center;white-space:normal;word-break:break-word;
+  transform:translate(-50%,-50%);text-shadow:0 1px 0 rgba(255,255,255,.75),0 0 6px rgba(255,255,255,.55)}
 .pointer{position:absolute;top:-4px;left:50%;transform:translateX(-50%);z-index:3;filter:drop-shadow(0 4px 6px rgba(0,0,0,.2))}
 .hub{position:absolute;width:64px;height:64px;border-radius:50%;background:var(--sf);display:grid;place-items:center;
   box-shadow:0 6px 16px rgba(122,42,85,.25);z-index:2;border:3px solid var(--pk)}
@@ -448,3 +448,55 @@ td .tag{font-size:.6rem}
   input[type=range]{width:120px}
 }
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ===== download / install (PWA) ===== */
+.dlcard{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.dlbtn{display:flex;align-items:center;gap:11px;border:1.8px solid var(--ln);background:var(--bg);color:var(--ink);
+  border-radius:20px;padding:12px 14px;cursor:pointer;text-align:left;transition:.22s cubic-bezier(.34,1.56,.64,1);position:relative}
+.dlbtn:hover{transform:translateY(-3px);border-color:var(--pk2);background:color-mix(in srgb,var(--pk) 14%,var(--bg))}
+.dlbtn:active{transform:scale(.97)}
+.dlbtn i{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;flex:none}
+.dlbtn i svg{width:22px;height:22px;fill:currentColor;stroke:none}
+.dlbtn.android i{background:#3ddc84;color:#0b3d24}
+.dlbtn.ios i{background:var(--ink);color:var(--bg)}
+.dlbtn b{display:block;font-size:.88rem;line-height:1.2}
+.dlbtn small{display:block;font-size:.68rem;color:var(--mu);font-weight:700}
+.dlbtn .ok{position:absolute;top:-7px;right:-6px;background:#3ec98a;color:#fff;font:700 .58rem Fredoka;
+  padding:2px 8px;border-radius:99px;box-shadow:0 3px 8px rgba(62,201,138,.4)}
+
+.itabs{display:flex;gap:6px;background:var(--bg);border:1px solid var(--ln);border-radius:99px;padding:4px;margin-bottom:14px}
+.itabs button{flex:1;border:0;background:none;color:var(--mu);font:700 .78rem Fredoka;padding:8px 6px;border-radius:99px;
+  cursor:pointer;transition:.2s;white-space:nowrap}
+.itabs button.on{background:var(--ink);color:var(--bg);box-shadow:0 3px 8px rgba(58,33,66,.2)}
+.installhero{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,color-mix(in srgb,var(--pk) 30%,var(--bg)),var(--cr));
+  border-radius:20px;padding:13px 14px;margin-bottom:14px}
+.installhero .ph{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;flex:none;background:var(--sf)}
+.installhero .ph svg{width:30px;height:30px;fill:currentColor;stroke:none}
+.installhero b{font-size:.92rem;display:block;line-height:1.25}
+.installhero small{font-size:.72rem;color:var(--mu);font-weight:700}
+.isteps{list-style:none;padding:0;margin:0 0 4px;counter-reset:s}
+.istep{display:flex;gap:10px;align-items:flex-start;padding:8px 0;font-size:.83rem;line-height:1.45}
+.istep em{counter-increment:s;font-style:normal;flex:none;width:23px;height:23px;border-radius:50%;
+  background:var(--pk);color:#3a2142;font:700 .7rem Fredoka;display:grid;place-items:center;margin-top:1px}
+.istep em::before{content:counter(s)}
+.istep span{flex:1}
+.inote{background:var(--cr);border:1px solid var(--ln);border-radius:16px;padding:10px 13px;font-size:.74rem;color:var(--mu);line-height:1.5;margin-top:10px}
+.inote b{color:var(--ink)}
+.iacts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.installbanner{position:fixed;left:14px;right:14px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:56;
+  background:var(--sf);border:1px solid var(--ln);border-radius:22px;padding:12px 14px;display:flex;align-items:center;gap:11px;
+  box-shadow:0 14px 34px rgba(122,42,85,.24);transform:translateY(160%);transition:transform .4s cubic-bezier(.34,1.4,.5,1);
+  opacity:0;visibility:hidden}
+.installbanner.on{transform:translateY(0);opacity:1;visibility:visible}
+.installbanner .ph{width:44px;height:44px;flex:none;display:grid;place-items:center}
+.installbanner b{font-size:.84rem;display:block;line-height:1.2}
+.installbanner small{font-size:.68rem;color:var(--mu);font-weight:700}
+.installbanner .act{display:flex;flex-direction:column;gap:5px;flex:none}
+.installbanner .go{border:0;background:var(--pk2);color:#fff;font:700 .72rem Fredoka;padding:7px 14px;border-radius:99px;cursor:pointer;white-space:nowrap}
+.installbanner .no{border:0;background:none;color:var(--mu);font:700 .66rem Fredoka;cursor:pointer}
+@media(max-width:560px){
+  .dlcard{grid-template-columns:1fr}
+  .dlbtn{padding:11px 13px}
+  .iacts{grid-template-columns:1fr}
+}
+@media(min-width:981px){ .installbanner{left:auto;right:24px;bottom:100px;width:360px} }

@@ -8,6 +8,17 @@ const VOICES = [
   {id:'hangat',  name:'Cimo Hangat',  desc:'Berat, hangat, seperti kakak',rate:0.95, pitch:0.82, icon:'🤎'},
 ];
 
+/* prosody per mood — the voice has to sound like the face the user tapped */
+const MOODVOICE = {
+  senang: { r:1.07, p:1.17, gap:40 },
+  sedih:  { r:0.85, p:0.91, gap:170 },
+  marah:  { r:1.05, p:0.89, gap:70 },
+  bingung:{ r:0.97, p:1.06, gap:110 },
+  capek:  { r:0.79, p:0.89, gap:190 },
+  kecewa: { r:0.83, p:0.85, gap:180 },
+  def:    { r:1.00, p:1.00, gap:80 },
+};
+
 const Voice = (() => {
   const synth = window.speechSynthesis;
   const supported = !!synth;
@@ -76,6 +87,7 @@ const Voice = (() => {
     if (!list.length) return Promise.resolve();
     const v = pickVoice(opts.lang || S.lang);
     const token = ++queue;
+    const mv = MOODVOICE[opts.mood] || MOODVOICE.def;
     speaking = true;
 
     return new Promise(resolve => {
@@ -85,13 +97,13 @@ const Voice = (() => {
         const seg = list[i++];
         const u = new SpeechSynthesisUtterance(seg);
         if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = LOCALE[opts.lang || S.lang] || 'id-ID'; }
-        // natural prosody: slow down on the first chunk, gentle lift at the end of questions
+        // natural prosody: gentle drift, lift at the end of questions, mood-coloured base
         const isQ = /[?？]$/.test(seg);
-        const drift = (i === 1 ? -0.03 : 0) + (isQ ? 0.05 : 0) + (Math.random() * 0.04 - 0.02);
-        u.rate = clamp((opts.rate || p.rate * S.rate) + drift, 0.5, 1.8);
-        u.pitch = clamp((opts.pitch || p.pitch * S.pitch) + (isQ ? 0.07 : 0), 0, 2);
+        const drift = (i === 1 ? -0.03 : 0) + (Math.random() * 0.04 - 0.02);
+        u.rate = clamp((opts.rate || p.rate * S.rate) * mv.r + drift, 0.5, 1.8);
+        u.pitch = clamp((opts.pitch || p.pitch * S.pitch) * mv.p + (isQ ? 0.07 : 0), 0, 2);
         u.volume = clamp(S.volume, 0, 1);
-        u.onend = () => setTimeout(next, i === list.length ? 0 : 70);
+        u.onend = () => setTimeout(next, i === list.length ? 0 : mv.gap);
         u.onerror = () => { speaking = false; resolve(); };
         try { synth.speak(u); } catch (e) { resolve(); }
       };

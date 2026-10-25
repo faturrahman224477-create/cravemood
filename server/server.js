@@ -50,6 +50,7 @@ function save() {
 
 const uid = p => p + '_' + Date.now().toString(36) + crypto.randomBytes(3).toString('hex');
 const hash = (pw, salt) => crypto.scryptSync(pw, salt, 32).toString('hex');
+const aiCfg = () => (db.settings && db.settings.ai) || {};
 const pub = u => ({
   id: u.id, name: u.name, contact: u.contact, lang: u.lang, guest: !!u.guest,
   created: u.created, last_seen: u.last_seen,
@@ -95,7 +96,47 @@ const server = http.createServer(async (req, res) => {
   if (p.startsWith('/api/')) {
     try {
       if (p === '/api/health') {
-        return json(res, 200, { ok: true, mode: 'server', users: db.users.length, at: new Date().toISOString() });
+        return json(res, 200, { ok: true, mode: 'server', users: db.users.length, ai: !!aiCfg().key, at: new Date().toISOString() });
+      }
+
+      /* ---- AI: the key lives only here, never in the browser ---- */
+      if (p === '/api/ai/status' && req.method === 'GET') {
+        return json(res, 200, { ok: true, enabled: !!aiCfg().key, model: aiCfg().model || 'gpt-4o-mini' });
+      }
+
+      if (p === '/api/ai/config' && req.method === 'POST') {
+        const key = req.headers['x-admin-key'] || url.searchParams.get('key');
+        if (key !== ADMIN_KEY) return json(res, 401, { ok: false, error: 'admin key required' });
+        const b = await readBody(req);
+        db.settings = db.settings || {};
+        db.settings.ai = {
+          key: String(b.key || '').trim(),
+          model: String(b.model || 'gpt-4o-mini').trim(),
+          base: String(b.base || 'https://api.openai.com/v1').trim(),
+        };
+        save();
+        return json(res, 200, { ok: true, enabled: !!db.settings.ai.key, model: db.settings.ai.model });
+      }
+
+      if (p === '/api/ai' && req.method === 'POST') {
+        const cfg = aiCfg();
+        if (!cfg.key) return json(res, 503, { ok: false, error: 'ai disabled' });
+        const b = await readBody(req);
+        const msgs = Array.isArray(b.messages) ? b.messages.slice(-16) : [];
+        if (!msgs.length) return json(res, 400, { ok: false, error: 'messages required' });
+        try {
+          const r = await fetch(cfg.base.replace(/\/$/, '') + '/chat/completions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + cfg.key },
+            body: JSON.stringify({ model: cfg.model || 'gpt-4o-mini', messages: msgs, temperature: 0.85, max_tokens: 260 }),
+          });
+          const j = await r.json().catch(() => ({}));
+          if (!r.ok) return json(res, 502, { ok: false, error: (j.error && j.error.message) || ('HTTP ' + r.status) });
+          const text = j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
+          return json(res, 200, { ok: true, text: (text || '').trim() });
+        } catch (e) {
+          return json(res, 502, { ok: false, error: String(e.message || e) });
+        }
       }
 
       if (p === '/api/register' && req.method === 'POST') {

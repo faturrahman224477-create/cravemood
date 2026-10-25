@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#241529">
+<title>CraveMood · Developer Console</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23241529'/%3E%3Cellipse cx='32' cy='36' rx='22' ry='20' fill='%23f27aa8'/%3E%3Cellipse cx='30' cy='34' rx='20.5' ry='18.5' fill='%23ffa9c9'/%3E%3Cellipse cx='24' cy='34' rx='3.4' ry='4.4' fill='%232f2a6b'/%3E%3Cellipse cx='40' cy='34' rx='3.4' ry='4.4' fill='%232f2a6b'/%3E%3Cpath d='M28 42q4 4 8 0' fill='none' stroke='%232f2a6b' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/*__CSS__*/
+</style>
+<style>
+/* ===== developer console ===== */
+body{background-image:none;background:var(--bg)}
+.devwrap{display:flex;min-height:100vh}
+.devside{position:fixed;left:0;top:0;bottom:0;width:236px;background:var(--plum);color:#fff;padding:20px 14px;
+  display:flex;flex-direction:column;gap:4px;z-index:40}
+.devside .brand{padding:2px 8px 16px;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.devside .lg{color:#fff}
+.devside .lg mark{background:#ff9ec5;color:#3a2142}
+.devside .tagline{font:700 .6rem Fredoka;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.45);margin:6px 0 0 3px}
+.dnav{display:flex;align-items:center;gap:10px;border:0;background:none;color:rgba(255,255,255,.62);font:600 .86rem Fredoka;
+  padding:10px 12px;border-radius:13px;cursor:pointer;text-align:left;transition:.2s;width:100%}
+.dnav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.dnav:hover{background:rgba(255,255,255,.08);color:#fff}
+.dnav.on{background:var(--pk);color:#3a2142;font-weight:700}
+.dnav .n{margin-left:auto;font-size:.68rem;opacity:.7}
+.dsidefoot{margin-top:auto;display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,.14);padding-top:12px}
+.dsidefoot a,.dsidefoot button{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.6);text-decoration:none;
+  font:700 .74rem Fredoka;background:none;border:0;padding:8px 10px;border-radius:10px;cursor:pointer;text-align:left}
+.dsidefoot a:hover,.dsidefoot button:hover{background:rgba(255,255,255,.08);color:#fff}
+.devmain{margin-left:236px;flex:1;padding:24px 28px 60px;max-width:1180px}
+.devhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.devhead h1{font-size:1.5rem;letter-spacing:-.4px}
+.devhead p{color:var(--mu);font-size:.84rem}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:5px 12px;font:700 .7rem Fredoka;
+  background:var(--cr);border:1px solid var(--ln);color:var(--ink)}
+.pill i{width:7px;height:7px;border-radius:50%;background:#3ec98a;display:block}
+.pill.off i{background:#d63f74}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--sf);border:1px solid var(--ln);border-radius:18px;padding:13px 15px}
+.kpi b{display:block;font-size:1.55rem;line-height:1.1;color:var(--ink)}
+.kpi small{font-size:.68rem;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:.05em}
+.kpi.acc b{color:var(--pk2)}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dcard{background:var(--sf);border:1px solid var(--ln);border-radius:20px;padding:16px}
+.dcard h3{font-size:.9rem;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.dbar{display:flex;align-items:center;gap:8px;margin:6px 0;font:700 .72rem Fredoka}
+.dbar .lbl{width:74px;flex:none;display:flex;align-items:center;gap:5px}
+.dbar .tr{flex:1;height:8px;border-radius:99px;background:var(--bg);overflow:hidden}
+.dbar .tr i{display:block;height:8px;border-radius:99px}
+.dbar .v{width:26px;text-align:right;font-size:.68rem;color:var(--mu)}
+.spark{display:flex;align-items:flex-end;gap:4px;height:74px;margin-top:6px}
+.spark i{flex:1;background:linear-gradient(180deg,var(--pk),var(--pk2));border-radius:5px 5px 3px 3px;min-height:3px;position:relative}
+.spark i:hover{filter:brightness(1.1)}
+.searchrow{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.searchrow input{flex:1;min-width:160px;border:1.8px solid var(--ln);background:var(--bg);color:var(--ink);
+  border-radius:12px;padding:9px 13px;font:600 .82rem Nunito;outline:none}
+.searchrow input:focus{border-color:var(--pk2)}
+.dtable{max-height:60vh;overflow:auto;border-radius:14px;border:1px solid var(--ln)}
+.dtable table{min-width:640px;font-size:.74rem}
+.dtable th{position:sticky;top:0;z-index:2;background:var(--bg)}
+.dtable td{white-space:nowrap}
+.dtable td.wrap{white-space:normal;max-width:340px;min-width:200px}
+.gate{max-width:380px;margin:12vh auto;background:var(--sf);border:1px solid var(--ln);border-radius:26px;padding:26px;
+  box-shadow:0 24px 60px rgba(122,42,85,.18);text-align:center}
+.gate .cimo{width:110px;margin:0 auto -4px}
+.gate h2{font-size:1.25rem;margin-bottom:4px}
+.gate p{color:var(--mu);font-size:.8rem;margin-bottom:16px}
+.gate input{width:100%;border:1.8px solid var(--ln);background:var(--bg);color:var(--ink);border-radius:13px;
+  padding:11px 14px;font:600 .9rem Nunito;outline:none;text-align:center;letter-spacing:.2em}
+.gate input:focus{border-color:var(--pk2)}
+.mini{font-size:.68rem;color:var(--mu)}
+.airow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:900px){
+  .devside{display:none}
+  .devmain{margin-left:0;padding:16px 14px 60px}
+  .dgrid{grid-template-columns:1fr}
+  .airow{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="devwrap">
+  <aside class="devside" id="devside"></aside>
+  <main class="devmain">
+    <div class="devhead">
+      <div>
+        <h1>Developer Console</h1>
+        <p id="devsub">Kelola data, pengguna, dan otak Cimo.</p>
+      </div>
+      <div class="row" id="devheadright"></div>
+    </div>
+    <div id="gate"></div>
+    <div id="console" class="hide"></div>
+  </main>
+</div>
+<script>
+/*__JS__*/
+</script>
+</body>
+</html>

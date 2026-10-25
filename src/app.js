@@ -19,6 +19,13 @@ function mL(m) { const x = MOODI18N[m.k]; return (x && x[App.lang] && x[App.lang
 function mS(m) { const x = MOODI18N[m.k]; return (x && x[App.lang] && x[App.lang][1]) || m.sub; }
 function mD(m) { const x = MOODI18N[m.k]; return (x && x[App.lang] && x[App.lang][2]) || m.dish; }
 function cL(c) { const x = CATI18N[c]; return (x && x[App.lang]) || c; }
+/* full sentence Cimo says for a mood, with the top pick baked in */
+function mSay(m, dish) {
+  const bank = MOODSAY[m.k] || MOODSAY.bingung;
+  const tpl = bank[App.lang] || bank.id;
+  const nm = (App.user && App.user.name) || (App.lang === 'en' ? 'you' : App.lang === 'zh' ? '你' : App.lang === 'hi' ? 'तुम' : 'kamu');
+  return tpl.replace(/\{name\}/g, nm).replace(/\{dish\}/g, dish || mD(m));
+}
 
 /* ---------- distance ---------- */
 function distKm(a, b) {
@@ -150,7 +157,7 @@ function viewHome() {
   return `
   <div class="hero">
     <div>
-      <span class="say">${esc(greeting())}${App.user ? ', ' + esc(name) : ''}! 👋</span>
+      <span class="say" id="say">${esc(greeting())}${App.user ? ', ' + esc(name) : ''}! 👋</span>
       <h1>${t('home_q')}</h1>
       <p>${t('home_sub')}</p>
       <div class="row" style="margin-top:14px">
@@ -180,7 +187,7 @@ function viewHome() {
   </div>
 
   <div class="sectitle"><h2><span class="n">2</span> ${t('home_rec')}</h2>
-    <span class="tag mint">${mS(moodObj)}</span></div>
+    <span class="tag mint" id="moodTag">${mS(moodObj)}</span></div>
   <div class="chips" id="cats">
     ${CATS.map(c => `<button class="chip ${c === App.cat ? 'on' : ''}" data-cat="${c}">${c === 'Terdekat' ? icon('pin') : ''}${cL(c)}</button>`).join('')}
   </div>
@@ -226,9 +233,10 @@ function renderRecs() {
 
 /* ---------- spinner ---------- */
 function wheelItems() {
+  /* 6 slices instead of 8: each slice is wider, so the dish name can be big and readable */
   let l = MENU.filter(m => m.moods.indexOf(App.mood) > -1);
-  if (l.length < 8) l = l.concat(MENU.filter(m => l.indexOf(m) === -1));
-  return l.slice(0, 8);
+  if (l.length < 6) l = l.concat(MENU.filter(m => l.indexOf(m) === -1));
+  return l.slice(0, 6);
 }
 
 function viewSpin() {
@@ -245,7 +253,11 @@ function viewSpin() {
       <div class="wheelbox">
         <svg class="pointer" width="34" height="40" viewBox="0 0 34 40"><path d="M17 38L4 10a14 14 0 0 1 26 0z" fill="#ff5f98" stroke="#fff" stroke-width="3"/></svg>
         <div class="wheel" id="wheel" style="background:conic-gradient(${grad})">
-          ${items.map((m, i) => `<div class="seg" style="transform:rotate(${i * seg + seg / 2}deg)"><span>${esc(m.name.length > 15 ? m.name.slice(0, 14) + '…' : m.name)}</span></div>`).join('')}
+          ${items.map((m, i) => {
+            const ang = i * seg + seg / 2, rad = (ang - 90) * Math.PI / 180, R = 29;
+            const px = 50 + R * Math.cos(rad), py = 50 + R * Math.sin(rad);
+            return `<div class="seg"><span style="left:${px.toFixed(2)}%;top:${py.toFixed(2)}%">${esc(m.name)}</span></div>`;
+          }).join('')}
           <div class="hub" style="left:calc(50% - 32px);top:calc(50% - 32px)">${cimo(App.mood, 52)}</div>
         </div>
       </div>
@@ -504,6 +516,24 @@ function viewProfile() {
   </div>
 
   <div class="card" style="margin-top:12px">
+    <div class="between"><b style="font-size:.95rem">${IL().title}</b>${PLAT.standalone ? `<span class="tag mint">✓ ${IL().off}</span>` : ''}</div>
+    <p class="hint" style="margin:5px 0 0">${IL().sub}</p>
+    <div class="dlcard">
+      <button class="dlbtn android" data-install="android">
+        <i><svg viewBox="0 0 24 24">${PLAT_ICON.android}</svg></i>
+        <div><b>Android</b><small>${installEvt ? IL().on : 'Chrome · PWA'}</small></div>
+        ${PLAT.android && PLAT.standalone ? `<span class="ok">✓</span>` : ''}
+      </button>
+      <button class="dlbtn ios" data-install="ios">
+        <i><svg viewBox="0 0 24 24">${PLAT_ICON.ios}</svg></i>
+        <div><b>iPhone / iPad</b><small>Safari · PWA</small></div>
+        ${PLAT.ios && PLAT.standalone ? `<span class="ok">✓</span>` : ''}
+      </button>
+    </div>
+    <button class="btn ghost sm block" id="dlOffline2" style="margin-top:8px">${icon('down')} ${IL().offline}</button>
+  </div>
+
+  <div class="card" style="margin-top:12px">
     <b style="font-size:.95rem">${t('prof_lang')}</b>
     <div class="langs" style="margin-top:10px">
       ${LANGS.map(l => `<button class="langopt ${l.k === App.lang ? 'on' : ''}" data-lang="${l.k}"><i>${l.short}</i>${l.label}</button>`).join('')}
@@ -543,22 +573,12 @@ function viewProfile() {
   </div>
 
   <div class="card" style="margin-top:12px">
-    <b style="font-size:.95rem">Otak Cimo (opsional)</b>
-    <p class="hint" style="margin:4px 0 10px">Isi API key OpenAI-compatible supaya balasan chat jadi jauh lebih luas. Kosongkan untuk tetap pakai mesin lokal (tetap jalan penuh).</p>
-    <div class="field"><label>API key</label><input id="aiKey" type="password" placeholder="sk-..." value="${esc((DB.getSetting('ai', {}) || {}).key || '')}"></div>
-    <div class="field"><label>Model</label><input id="aiModel" placeholder="gpt-4o-mini" value="${esc((DB.getSetting('ai', {}) || {}).model || '')}"></div>
-    <div class="row"><button class="btn sm" id="aiSave">Simpan</button>
-      <span class="hint" id="aiStat">${(DB.getSetting('ai', {}) || {}).key ? 'Aktif — chat memakai model' : 'Mesin lokal aktif'}</span></div>
-  </div>
-
-  <div class="card" style="margin-top:12px">
     <b style="font-size:.95rem">${t('prof_data')}</b>
     <div class="row" style="margin-top:10px">
       <button class="btn sm ghost" id="expJson">${icon('down')} ${t('prof_export')}</button>
-      <button class="btn sm ghost" id="openAdmin">${icon('db')} ${t('prof_admin')}</button>
       <button class="btn sm ghost" id="logoutBtn">${icon('back')} ${t('prof_logout')}</button>
     </div>
-    <p class="hint" style="margin-top:10px">${DB.isRemote ? 'Terhubung ke API server. Data tersimpan di database.' : 'Mode statis: data tersimpan di database lokal browser ini (localStorage). Jalankan <code>server/server.js</code> untuk mode database penuh.'}</p>
+    <p class="hint" style="margin-top:10px">Data akunmu tersimpan ${DB.isRemote ? 'di server CraveMood' : 'di perangkat ini'}. Kamu bisa mengunduhnya kapan saja.</p>
   </div>`;
 }
 
@@ -796,46 +816,6 @@ function fallbackCopy(txt) {
 }
 
 /* ---------- admin ---------- */
-async function openAdmin() {
-  const m = $('#adminModal');
-  m.classList.add('on');
-  $('#adminBody').innerHTML = `
-    <div class="field"><label>${t('admin_pass')}</label><input type="password" id="admPass" placeholder="••••••"></div>
-    <div class="err" id="admErr"></div>
-    <button class="btn block" id="admGo">${t('admin_open')}</button>
-    <p class="hint" style="margin-top:10px">Default: <b>cimo2026</b>. Ganti di <code>server/server.js</code> (env <code>ADMIN_KEY</code>).</p>`;
-  $('#admGo').onclick = async () => {
-    const v = $('#admPass').value;
-    if (v !== 'cimo2026' && v !== 'cravemood') { $('#admErr').textContent = t('admin_wrong'); SFX.play('error'); return; }
-    SFX.play('success');
-    await renderAdminTable(v);
-  };
-}
-async function renderAdminTable(adminKey) {
-  let users = [], err = '';
-  try { users = await DB.users(adminKey); } catch (e) { err = e.message === 'admin key required' ? 'Kunci admin tidak diterima server.' : String(e.message); }
-  $('#adminBody').innerHTML = `
-    <div class="between" style="margin-bottom:10px">
-      <b>${users.length} ${t('admin_count')}</b>
-      <div class="row"><button class="btn sm ghost" id="admCsv">${icon('down')} CSV</button>
-      <button class="btn sm ghost" id="admJson">JSON</button></div>
-    </div>
-    ${err ? `<p class="hint" style="color:#d63f74;margin-bottom:8px">${esc(err)}</p>` : ''}
-    <div class="tablewrap"><table><thead><tr>
-      <th>Nama</th><th>Kontak</th><th>Bahasa</th><th>Daftar</th><th>Mood</th><th>Order</th><th>Chat</th>
-    </tr></thead><tbody>
-    ${users.length ? users.map(u => `<tr>
-      <td><b>${esc(u.name)}</b>${u.guest ? ' <span class="tag">guest</span>' : ''}</td>
-      <td>${esc(u.contact || '—')}</td><td>${esc(u.lang)}</td>
-      <td>${new Date(u.created).toLocaleDateString('id-ID')}</td>
-      <td>${u.moods}</td><td>${u.orders}</td><td>${u.chats}</td>
-    </tr>`).join('') : `<tr><td colspan="7" style="text-align:center;padding:20px">${t('admin_none')}</td></tr>`}
-    </tbody></table></div>
-    <p class="hint" style="margin-top:10px">${DB.isRemote ? 'Sumber: API server (database terpusat).' : 'Sumber: database lokal browser. Data pendaftar lain hanya terlihat di perangkat masing-masing — jalankan server untuk database terpusat.'}</p>`;
-  $('#admCsv').onclick = () => DB.exportCSV(adminKey);
-  $('#admJson').onclick = () => DB.exportJSON(adminKey);
-}
-
 /* ---------- onboarding ---------- */
 let obStep = 1, obLang = 'id', obMode = 'register';
 function showOnboard() {
@@ -969,6 +949,139 @@ function petSay(txt) {
   petSay._t = setTimeout(() => b.classList.remove('on'), 3200);
 }
 
+/* ---------- install / download (PWA) ---------- */
+const PLAT = (() => {
+  const ua = navigator.userAgent || '';
+  const ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const android = /Android/i.test(ua);
+  const standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  return { ios, android, standalone, mobile: ios || android };
+})();
+const PLAT_ICON = {
+  android: '<path d="M6 10.6h12v6.4a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M6.7 9.9a5.3 5.3 0 0 1 10.6 0z"/><path d="M8.4 6.3L7.1 4.4l1.5-.9 1.3 2zM15.6 6.3l1.3-1.9-1.5-.9-1.3 2z"/><circle cx="9.8" cy="7.4" r=".8" fill="#fff"/><circle cx="14.2" cy="7.4" r=".8" fill="#fff"/>',
+  ios: '<path d="M16.4 12.9c0-2.1 1.7-3.1 1.8-3.2-1-1.4-2.5-1.6-3-1.7-1.3-.1-2.5.8-3.1.8-.6 0-1.6-.8-2.7-.7-1.4 0-2.7.8-3.4 2.1-1.5 2.5-.4 6.2 1 8.2.7 1 1.6 2.1 2.7 2 1.1 0 1.5-.7 2.8-.7s1.6.7 2.7.7c1.1 0 1.9-1 2.6-2 .8-1.2 1.2-2.3 1.2-2.4-.1 0-2.4-.9-2.4-3.1zM14.5 6.3c.6-.7 1-1.7.9-2.7-.9 0-2 .6-2.6 1.3-.6.6-1.1 1.7-.9 2.6 1 .1 2-.5 2.6-1.2z"/>',
+  desktop: '<rect x="3" y="4.5" width="18" height="12" rx="2"/><rect x="4.8" y="6.2" width="14.4" height="8.6" rx="1" fill="#fff"/><rect x="8" y="18" width="8" height="1.8" rx=".9"/>',
+};
+let installEvt = null;
+let installTab = PLAT.ios ? 'ios' : PLAT.android ? 'android' : 'desktop';
+const IL = () => INSTALL_I18N[App.lang] || INSTALL_I18N.id;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  installEvt = e;
+  if (PLAT.mobile) setTimeout(maybeShowBanner, 1600);
+});
+window.addEventListener('appinstalled', () => {
+  installEvt = null;
+  SFX.play('success');
+  toast('CraveMood terpasang! 🎉');
+  if (App.user) DB.logChat(App.user.id, 'system', 'app_installed').catch(() => {});
+  if (currentView === 'profile') render();
+});
+
+function maybeShowBanner() {
+  if (PLAT.standalone) return;
+  if (sessionStorage.getItem('cm_install_bar') === '1') return;
+  const b = $('#installbanner');
+  if (!b) return;
+  const L = IL();
+  b.innerHTML = `
+    <div class="ph">${cimo(App.mood, 40)}</div>
+    <div style="flex:1;min-width:0"><b>${L.banner}</b><small>${L.banner_sub}</small></div>
+    <div class="act">
+      <button class="go" id="barInstall">${L.install}</button>
+      <button class="no" id="barLater">${L.later}</button>
+    </div>`;
+  b.classList.add('on');
+  $('#barLater').onclick = () => { b.classList.remove('on'); sessionStorage.setItem('cm_install_bar', '1'); };
+  $('#barInstall').onclick = () => { b.classList.remove('on'); sessionStorage.setItem('cm_install_bar', '1'); openInstall(); };
+}
+
+function openInstall(tab) {
+  if (tab) installTab = tab;
+  $('#installModal').classList.add('on');
+  renderInstall();
+}
+
+function renderInstall() {
+  const L = IL();
+  const steps = installTab === 'ios' ? L.stepsI : installTab === 'android' ? L.stepsA : L.stepsD;
+  const canPrompt = installTab === 'android' && !!installEvt;
+  const ico = installTab === 'ios' ? PLAT_ICON.ios : installTab === 'android' ? PLAT_ICON.android : PLAT_ICON.desktop;
+  const iconBg = installTab === 'ios' ? 'var(--ink)' : installTab === 'android' ? '#3ddc84' : 'var(--pk)';
+  const iconCol = installTab === 'ios' ? 'var(--bg)' : installTab === 'android' ? '#0b3d24' : '#3a2142';
+  $('#installBody').innerHTML = `
+    <div class="itabs">
+      <button data-itab="android" class="${installTab === 'android' ? 'on' : ''}">${L.tabA}</button>
+      <button data-itab="ios" class="${installTab === 'ios' ? 'on' : ''}">${L.tabI}</button>
+      <button data-itab="desktop" class="${installTab === 'desktop' ? 'on' : ''}">${L.tabD}</button>
+    </div>
+    <div class="installhero">
+      <div class="ph" style="background:${iconBg};color:${iconCol}"><svg viewBox="0 0 24 24">${ico}</svg></div>
+      <div style="flex:1;min-width:0">
+        <b>${L.title}</b>
+        <small>${PLAT.standalone ? L.off : L.on}</small>
+      </div>
+      ${PLAT.standalone ? `<span class="tag mint">✓</span>` : ''}
+    </div>
+    ${canPrompt && !PLAT.standalone ? `<button class="btn block" id="pwaGo">${icon('down')} ${L.install}</button>` : ''}
+    <ol class="isteps" style="margin-top:${canPrompt && !PLAT.standalone ? 14 : 0}px">
+      ${steps.map(s => `<li class="istep"><em></em><span>${s}</span></li>`).join('')}
+    </ol>
+    <div class="iacts">
+      <button class="btn sm ghost" id="dlOffline">${icon('down')} ${L.offline}</button>
+      <button class="btn sm ghost" id="copyLink">${icon('share')} ${L.copy}</button>
+    </div>
+    <div class="inote">${L.note}<br><b>${L.apk}</b> ${L.apk_note}</div>`;
+
+  $$('#installBody [data-itab]').forEach(b => b.onclick = () => { installTab = b.dataset.itab; renderInstall(); SFX.play('tap'); });
+  const go = $('#pwaGo');
+  if (go) go.onclick = doPwaInstall;
+  $('#dlOffline').onclick = downloadOffline;
+  $('#copyLink').onclick = () => { copyText(location.href); toast(L.copied); SFX.play('pop'); };
+}
+
+async function doPwaInstall() {
+  if (!installEvt) return;
+  const L = IL();
+  const btn = $('#pwaGo');
+  if (btn) { btn.disabled = true; btn.textContent = L.installing; }
+  try {
+    installEvt.prompt();
+    const res = await installEvt.userChoice;
+    installEvt = null;
+    if (res && res.outcome === 'accepted') { SFX.play('success'); toast('CraveMood terpasang! 🎉'); }
+    else { SFX.play('tap'); toast(L.notnow); }
+  } catch (e) { /* prompt already used */ }
+  renderInstall();
+}
+
+async function downloadOffline() {
+  const L = IL();
+  SFX.play('pop');
+  try {
+    let html = '';
+    try {
+      const r = await fetch('index.html', { cache: 'no-store' });
+      if (r.ok) html = await r.text();
+    } catch (e) { /* file:// */ }
+    if (!html) html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'cravemood-offline.html';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    toast(L.saved);
+  } catch (e) { toast(L.fail); SFX.play('error'); }
+}
+
+function registerSW() {
+  if (!('serviceWorker' in navigator)) return;
+  if (!/^https?:$/.test(location.protocol)) return;
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
 /* ---------- router ---------- */
 const RENDER = { home: viewHome, spin: viewSpin, chat: viewChat, cart: viewCart, recap: viewRecap, profile: viewProfile };
 
@@ -1013,6 +1126,9 @@ function bindGlobal() {
     const g = e.target.closest('[data-go]');
     if (g) { SFX.play('tap'); go(g.dataset.go); return; }
 
+    const ins = e.target.closest('[data-install]');
+    if (ins) { SFX.play('tap'); openInstall(ins.dataset.install); return; }
+
     const add = e.target.closest('[data-add]');
     if (add) { addToCart(add.dataset.add); flyToCart(add); return; }
     const inc = e.target.closest('[data-inc]');
@@ -1032,7 +1148,18 @@ function bindGlobal() {
       updatePetFace();
       if (App.user) DB.addMood(App.user.id, App.mood).catch(() => {});
       const mo = MOODS.find(m => m.k === App.mood);
-      if (mo && App.settings.speak) Voice.speak(mD(mo), { lang: App.settings.voiceLang || App.lang });
+      if (mo) {
+        const top = recList()[0];
+        const line = mSay(mo, top ? top.name : '');
+        const sayEl = $('#say');
+        if (sayEl) {
+          sayEl.textContent = line;
+          sayEl.style.animation = 'none'; void sayEl.offsetWidth; sayEl.style.animation = '';
+        }
+        const tagEl = $('#moodTag'); if (tagEl) tagEl.textContent = mS(mo);
+        petSay(line.length > 62 ? line.slice(0, 60) + '…' : line);
+        if (App.settings.speak) Voice.speak(line, { lang: App.settings.voiceLang || App.lang, mood: mo.k });
+      }
       return;
     }
     const cat = e.target.closest('[data-cat]');
@@ -1098,7 +1225,7 @@ function bindGlobal() {
     if (hit('#openShare') || hit('#recapShare')) { openShare(); return; }
     if (hit('#testVoice')) { Voice.preview(App.settings.voice, App.settings.voiceLang); return; }
     if (hit('#expJson')) { DB.exportJSON(); return; }
-    if (hit('#openAdmin')) { openAdmin(); return; }
+    if (hit('#dlOffline2')) { downloadOffline(); return; }
     if (hit('#logoutBtn')) { DB.setSetting('session', null); location.reload(); return; }
     if (hit('#chatReset')) {
       App.messages = []; ChatEngine.reset();
@@ -1113,19 +1240,10 @@ function bindGlobal() {
       if (App.settings.speak) Voice.preview(App.settings.voice, App.settings.voiceLang);
       return;
     }
-    if (hit('#aiSave')) {
-      const key = ($('#aiKey').value || '').trim();
-      const model = ($('#aiModel').value || '').trim() || 'gpt-4o-mini';
-      DB.setSetting('ai', key ? { key, model, base: 'https://api.openai.com/v1' } : {});
-      $('#aiStat').textContent = key ? 'Aktif — chat memakai model' : 'Mesin lokal aktif';
-      toast(key ? 'Otak Cimo: model AI aktif' : 'Otak Cimo: mesin lokal');
-      SFX.play('success');
-      return;
-    }
     if (hit('#sendBtn')) { const v = $('#chatInput').value.trim(); if (v) sendChat(v); return; }
     if (hit('#micBtn')) { startMic(); return; }
     if (e.target.closest('#shareModal .closebtn') || e.target.id === 'shareModal') { $('#shareModal').classList.remove('on'); return; }
-    if (e.target.closest('#adminModal .closebtn') || e.target.id === 'adminModal') { $('#adminModal').classList.remove('on'); return; }
+    if (e.target.closest('#installModal .closebtn') || e.target.id === 'installModal') { $('#installModal').classList.remove('on'); return; }
   });
 
   window.addEventListener('hashchange', () => {
@@ -1217,6 +1335,7 @@ function boot2() {
   $('#app').classList.remove('hide');
   renderNav();
   mountPet();
+  registerSW();
   const hash = (location.hash || '#/home').replace('#/', '');
   currentView = RENDER[hash] ? hash : 'home';
   render();
@@ -1225,6 +1344,7 @@ function boot2() {
   // seed a mood for today so the recap is alive
   if (App.user) DB.addMood(App.user.id, App.mood).catch(() => {});
   setTimeout(() => petSay('Hai! Geser aku ke mana aja ya 👋'), 2600);
+  if (PLAT.mobile && !PLAT.standalone) setTimeout(maybeShowBanner, 5200);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
