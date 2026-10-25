@@ -58,10 +58,12 @@ const DB = (() => {
     } catch (e) { return false; }
   }
 
-  async function api(path, body) {
+  async function api(path, body, key) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (key) headers['X-Admin-Key'] = key;
     const r = await fetch(base + path, {
       method: body ? 'POST' : 'GET',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body: body ? JSON.stringify(body) : undefined,
       cache: 'no-store',
     });
@@ -118,8 +120,18 @@ const DB = (() => {
       return { ok: true, user: pub(u) };
     },
 
-    async users() {
-      if (remote) { const j = await api('/api/users'); return j.users || []; }
+    async me(id) {
+      if (!id) return null;
+      if (remote) {
+        try { const j = await api('/api/me?id=' + encodeURIComponent(id)); return j.ok ? j.user : null; }
+        catch (e) { return null; }
+      }
+      const u = load().users.find(x => x.id === id);
+      return u ? pub(u) : null;
+    },
+
+    async users(adminKey) {
+      if (remote) { const j = await api('/api/users', null, adminKey); return j.users || []; }
       return load().users.map(pub);
     },
 
@@ -180,12 +192,15 @@ const DB = (() => {
 
     /* export */
     dump() { return clone(load()); },
-    exportJSON() {
-      const blob = new Blob([JSON.stringify(load(), null, 2)], { type: 'application/json' });
+    async exportJSON(adminKey) {
+      let data = null;
+      if (remote && adminKey) { try { data = await api('/api/export', null, adminKey); } catch (e) { data = null; } }
+      if (!data) data = load();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       dl(blob, 'cravemood-database-' + new Date().toISOString().slice(0, 10) + '.json');
     },
-    async exportCSV() {
-      const rows = await this.users();
+    async exportCSV(adminKey) {
+      const rows = await this.users(adminKey);
       const head = ['id', 'name', 'contact', 'lang', 'guest', 'created', 'last_seen', 'moods', 'orders', 'chats', 'spins'];
       const esc = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
       const csv = [head.join(',')].concat(rows.map(r => head.map(h => esc(r[h])).join(','))).join('\r\n');

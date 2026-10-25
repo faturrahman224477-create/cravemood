@@ -127,7 +127,7 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 .onboard .cimo svg{width:100%;height:auto}
 .onboard h2{font-size:1.7rem;letter-spacing:-.4px}
 .onboard p.sub{color:var(--mu);font-size:.88rem;margin:6px 0 18px}
-.onboard .sheetbox{background:var(--sf);border-radius:30px;padding:20px;box-shadow:0 24px 60px rgba(122,42,85,.22);text-align:left}
+.onboard .sheetbox{background:var(--sf);border-radius:30px;padding:20px 20px 24px;box-shadow:0 24px 60px rgba(122,42,85,.22);text-align:left}
 .field{margin-bottom:12px}
 .field label{display:block;font:700 .76rem Fredoka;color:var(--mu);margin:0 0 5px 4px;letter-spacing:.02em}
 .field input,.field select,.field textarea{
@@ -197,8 +197,8 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 .rec .pic{height:150px;display:grid;place-items:center;position:relative;overflow:hidden}
 .rec .pic > svg{height:104px;width:auto;transition:.4s cubic-bezier(.34,1.56,.64,1)}
 .rec:hover .pic > svg{transform:scale(1.08) rotate(-3deg)}
-.rec .pic .cimomini{position:absolute;left:6px;bottom:-4px;opacity:.95;line-height:0}
-.rec .pic .cimomini svg{width:30px;height:auto}
+.rec .pic .cimomini{position:absolute;left:7px;bottom:3px;opacity:.95;line-height:0}
+.rec .pic .cimomini svg{width:28px;height:auto}
 .rec .pic .badge{position:absolute;top:9px;left:9px}
 .rec .body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:3px;flex:1}
 .rec h4{font-size:1rem;line-height:1.2}
@@ -922,10 +922,12 @@ const DB = (() => {
     } catch (e) { return false; }
   }
 
-  async function api(path, body) {
+  async function api(path, body, key) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (key) headers['X-Admin-Key'] = key;
     const r = await fetch(base + path, {
       method: body ? 'POST' : 'GET',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body: body ? JSON.stringify(body) : undefined,
       cache: 'no-store',
     });
@@ -982,8 +984,18 @@ const DB = (() => {
       return { ok: true, user: pub(u) };
     },
 
-    async users() {
-      if (remote) { const j = await api('/api/users'); return j.users || []; }
+    async me(id) {
+      if (!id) return null;
+      if (remote) {
+        try { const j = await api('/api/me?id=' + encodeURIComponent(id)); return j.ok ? j.user : null; }
+        catch (e) { return null; }
+      }
+      const u = load().users.find(x => x.id === id);
+      return u ? pub(u) : null;
+    },
+
+    async users(adminKey) {
+      if (remote) { const j = await api('/api/users', null, adminKey); return j.users || []; }
       return load().users.map(pub);
     },
 
@@ -1044,12 +1056,15 @@ const DB = (() => {
 
     /* export */
     dump() { return clone(load()); },
-    exportJSON() {
-      const blob = new Blob([JSON.stringify(load(), null, 2)], { type: 'application/json' });
+    async exportJSON(adminKey) {
+      let data = null;
+      if (remote && adminKey) { try { data = await api('/api/export', null, adminKey); } catch (e) { data = null; } }
+      if (!data) data = load();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       dl(blob, 'cravemood-database-' + new Date().toISOString().slice(0, 10) + '.json');
     },
-    async exportCSV() {
-      const rows = await this.users();
+    async exportCSV(adminKey) {
+      const rows = await this.users(adminKey);
       const head = ['id', 'name', 'contact', 'lang', 'guest', 'created', 'last_seen', 'moods', 'orders', 'chats', 'spins'];
       const esc = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
       const csv = [head.join(',')].concat(rows.map(r => head.map(h => esc(r[h])).join(','))).join('\r\n');
@@ -2335,6 +2350,15 @@ function viewProfile() {
   </div>
 
   <div class="card" style="margin-top:12px">
+    <b style="font-size:.95rem">Otak Cimo (opsional)</b>
+    <p class="hint" style="margin:4px 0 10px">Isi API key OpenAI-compatible supaya balasan chat jadi jauh lebih luas. Kosongkan untuk tetap pakai mesin lokal (tetap jalan penuh).</p>
+    <div class="field"><label>API key</label><input id="aiKey" type="password" placeholder="sk-..." value="${esc((DB.getSetting('ai', {}) || {}).key || '')}"></div>
+    <div class="field"><label>Model</label><input id="aiModel" placeholder="gpt-4o-mini" value="${esc((DB.getSetting('ai', {}) || {}).model || '')}"></div>
+    <div class="row"><button class="btn sm" id="aiSave">Simpan</button>
+      <span class="hint" id="aiStat">${(DB.getSetting('ai', {}) || {}).key ? 'Aktif — chat memakai model' : 'Mesin lokal aktif'}</span></div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
     <b style="font-size:.95rem">${t('prof_data')}</b>
     <div class="row" style="margin-top:10px">
       <button class="btn sm ghost" id="expJson">${icon('down')} ${t('prof_export')}</button>
@@ -2589,17 +2613,19 @@ async function openAdmin() {
     const v = $('#admPass').value;
     if (v !== 'cimo2026' && v !== 'cravemood') { $('#admErr').textContent = t('admin_wrong'); SFX.play('error'); return; }
     SFX.play('success');
-    await renderAdminTable();
+    await renderAdminTable(v);
   };
 }
-async function renderAdminTable() {
-  const users = await DB.users();
+async function renderAdminTable(adminKey) {
+  let users = [], err = '';
+  try { users = await DB.users(adminKey); } catch (e) { err = e.message === 'admin key required' ? 'Kunci admin tidak diterima server.' : String(e.message); }
   $('#adminBody').innerHTML = `
     <div class="between" style="margin-bottom:10px">
       <b>${users.length} ${t('admin_count')}</b>
       <div class="row"><button class="btn sm ghost" id="admCsv">${icon('down')} CSV</button>
       <button class="btn sm ghost" id="admJson">JSON</button></div>
     </div>
+    ${err ? `<p class="hint" style="color:#d63f74;margin-bottom:8px">${esc(err)}</p>` : ''}
     <div class="tablewrap"><table><thead><tr>
       <th>Nama</th><th>Kontak</th><th>Bahasa</th><th>Daftar</th><th>Mood</th><th>Order</th><th>Chat</th>
     </tr></thead><tbody>
@@ -2610,9 +2636,9 @@ async function renderAdminTable() {
       <td>${u.moods}</td><td>${u.orders}</td><td>${u.chats}</td>
     </tr>`).join('') : `<tr><td colspan="7" style="text-align:center;padding:20px">${t('admin_none')}</td></tr>`}
     </tbody></table></div>
-    <p class="hint" style="margin-top:10px">${DB.isRemote ? 'Sumber: API server (database penuh).' : 'Sumber: database lokal browser. Data pendaftar lain hanya terlihat di perangkat masing-masing — jalankan server untuk database terpusat.'}</p>`;
-  $('#admCsv').onclick = () => DB.exportCSV();
-  $('#admJson').onclick = () => DB.exportJSON();
+    <p class="hint" style="margin-top:10px">${DB.isRemote ? 'Sumber: API server (database terpusat).' : 'Sumber: database lokal browser. Data pendaftar lain hanya terlihat di perangkat masing-masing — jalankan server untuk database terpusat.'}</p>`;
+  $('#admCsv').onclick = () => DB.exportCSV(adminKey);
+  $('#admJson').onclick = () => DB.exportJSON(adminKey);
 }
 
 /* ---------- onboarding ---------- */
@@ -2892,6 +2918,15 @@ function bindGlobal() {
       if (App.settings.speak) Voice.preview(App.settings.voice, App.settings.voiceLang);
       return;
     }
+    if (hit('#aiSave')) {
+      const key = ($('#aiKey').value || '').trim();
+      const model = ($('#aiModel').value || '').trim() || 'gpt-4o-mini';
+      DB.setSetting('ai', key ? { key, model, base: 'https://api.openai.com/v1' } : {});
+      $('#aiStat').textContent = key ? 'Aktif — chat memakai model' : 'Mesin lokal aktif';
+      toast(key ? 'Otak Cimo: model AI aktif' : 'Otak Cimo: mesin lokal');
+      SFX.play('success');
+      return;
+    }
     if (hit('#sendBtn')) { const v = $('#chatInput').value.trim(); if (v) sendChat(v); return; }
     if (hit('#micBtn')) { startMic(); return; }
     if (e.target.closest('#shareModal .closebtn') || e.target.id === 'shareModal') { $('#shareModal').classList.remove('on'); return; }
@@ -2969,10 +3004,7 @@ async function boot() {
 
   const sid = DB.getSetting('session', null);
   if (sid) {
-    try {
-      const users = await DB.users();
-      App.user = users.find(u => u.id === sid) || null;
-    } catch (e) { App.user = null; }
+    try { App.user = await DB.me(sid); } catch (e) { App.user = null; }
   }
   if (App.user) {
     App.lang = App.user.lang || App.lang;

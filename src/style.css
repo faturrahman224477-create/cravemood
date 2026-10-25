@@ -112,7 +112,7 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 .onboard .cimo svg{width:100%;height:auto}
 .onboard h2{font-size:1.7rem;letter-spacing:-.4px}
 .onboard p.sub{color:var(--mu);font-size:.88rem;margin:6px 0 18px}
-.onboard .sheetbox{background:var(--sf);border-radius:30px;padding:20px;box-shadow:0 24px 60px rgba(122,42,85,.22);text-align:left}
+.onboard .sheetbox{background:var(--sf);border-radius:30px;padding:20px 20px 24px;box-shadow:0 24px 60px rgba(122,42,85,.22);text-align:left}
 .field{margin-bottom:12px}
 .field label{display:block;font:700 .76rem Fredoka;color:var(--mu);margin:0 0 5px 4px;letter-spacing:.02em}
 .field input,.field select,.field textarea{
@@ -182,8 +182,8 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 .rec .pic{height:150px;display:grid;place-items:center;position:relative;overflow:hidden}
 .rec .pic > svg{height:104px;width:auto;transition:.4s cubic-bezier(.34,1.56,.64,1)}
 .rec:hover .pic > svg{transform:scale(1.08) rotate(-3deg)}
-.rec .pic .cimomini{position:absolute;left:6px;bottom:-4px;opacity:.95;line-height:0}
-.rec .pic .cimomini svg{width:30px;height:auto}
+.rec .pic .cimomini{position:absolute;left:7px;bottom:3px;opacity:.95;line-height:0}
+.rec .pic .cimomini svg{width:28px;height:auto}
 .rec .pic .badge{position:absolute;top:9px;left:9px}
 .rec .body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:3px;flex:1}
 .rec h4{font-size:1rem;line-height:1.2}

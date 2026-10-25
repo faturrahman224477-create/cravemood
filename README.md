@@ -7,6 +7,9 @@ live chat curhat, suara 5 pilihan, keranjang, dan bagikan ke sosial media.
 Desain diambil 1:1 dari dokumen mockup (`CraveMood – Mockup Desain (Done).html`): palet, maskot Cimo
 (SVG), tipografi Fredoka + Nunito, pola titik, dan seluruh komponen kartu.
 
+**Live:** https://cravemood.apps.workbuddy.host/?sharecode=NG6DCXKIRE
+**Repo:** https://github.com/faturrahman224477-create/cravemood
+
 ---
 
 ## 1. Fitur yang diminta → sudah jalan
@@ -101,12 +104,27 @@ Password disimpan sebagai hash: scrypt di server, SHA-256 + salt di browser.
 
 ---
 
-## 5. Deploy ke GitHub Pages
+## 5. Deploy
 
-Workflow `.github/workflows/pages.yml` sudah disiapkan — setiap push ke `main` otomatis
-menerbitkan situs. URL: `https://<username>.github.io/<repo>/`.
+**Live sekarang:** https://cravemood.apps.workbuddy.host/?sharecode=NG6DCXKIRE
+(dijalankan sebagai layanan HTTP Node, jadi `/api/*` aktif dan database-nya terpusat.)
 
+**GitHub Pages.** Repo `faturrahman224477-create/cravemood` sudah ada, tetapi integrasi GitHub
+di sesi ini hanya punya izin baca — jadi commit terakhir belum terdorong. Semua file sudah
+di-commit di folder ini; tinggal satu perintah (kredensial GitHub kamu akan dipakai otomatis):
+
+```bash
+git push origin main
+```
+
+Setelah itu workflow `.github/workflows/pages.yml` membangun `index.html` dari `src/` dan
+menerbitkannya. URL: `https://faturrahman224477-create.github.io/cravemood/`.
 Manual: **Settings → Pages → Source: GitHub Actions**.
+
+Untuk GitHub Pages (statis, tanpa server) aplikasi otomatis jatuh ke mode database lokal —
+semua fitur tetap jalan, hanya daftar pendaftar tersimpan per perangkat. Ingin database
+terpusat di GitHub Pages? Deploy `server/server.js` ke Railway/Render/Fly, lalu di `index.html`
+set `window.CRAVEMOOD_API = 'https://api-kamu.example.com'` sebelum script utama.
 
 ---
 

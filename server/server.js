@@ -16,7 +16,7 @@ const crypto = require('crypto');
 
 const ROOT = path.join(__dirname, '..');
 const DATA_DIR = path.join(__dirname, 'data');
-const DB_FILE = path.join(DATA_DIR, 'db.json');
+const DB_FILE = process.env.DB_FILE || path.join(DATA_DIR, 'db.json');
 const PORT = process.env.PORT || 8787;
 const ADMIN_KEY = process.env.ADMIN_KEY || 'cimo2026';
 
@@ -36,10 +36,14 @@ function save() {
   if (saving) return;
   saving = true;
   setTimeout(() => {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-    const tmp = DB_FILE + '.tmp';
-    fs.writeFileSync(tmp, JSON.stringify(db, null, 2));
-    fs.renameSync(tmp, DB_FILE);
+    try {
+      fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
+      const tmp = DB_FILE + '.tmp';
+      fs.writeFileSync(tmp, JSON.stringify(db, null, 2));
+      fs.renameSync(tmp, DB_FILE);
+    } catch (e) {
+      console.warn('db save failed:', e.message);
+    }
     saving = false;
   }, 40);
 }
@@ -124,6 +128,13 @@ const server = http.createServer(async (req, res) => {
           return json(res, 401, { ok: false, error: 'bad' });
         }
         u.last_seen = new Date().toISOString(); save();
+        return json(res, 200, { ok: true, user: pub(u) });
+      }
+
+      if (p === '/api/me' && req.method === 'GET') {
+        const id = url.searchParams.get('id') || '';
+        const u = db.users.find(x => x.id === id);
+        if (!u) return json(res, 404, { ok: false, error: 'not found' });
         return json(res, 200, { ok: true, user: pub(u) });
       }
 

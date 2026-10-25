@@ -538,6 +538,15 @@ function viewProfile() {
   </div>
 
   <div class="card" style="margin-top:12px">
+    <b style="font-size:.95rem">Otak Cimo (opsional)</b>
+    <p class="hint" style="margin:4px 0 10px">Isi API key OpenAI-compatible supaya balasan chat jadi jauh lebih luas. Kosongkan untuk tetap pakai mesin lokal (tetap jalan penuh).</p>
+    <div class="field"><label>API key</label><input id="aiKey" type="password" placeholder="sk-..." value="${esc((DB.getSetting('ai', {}) || {}).key || '')}"></div>
+    <div class="field"><label>Model</label><input id="aiModel" placeholder="gpt-4o-mini" value="${esc((DB.getSetting('ai', {}) || {}).model || '')}"></div>
+    <div class="row"><button class="btn sm" id="aiSave">Simpan</button>
+      <span class="hint" id="aiStat">${(DB.getSetting('ai', {}) || {}).key ? 'Aktif — chat memakai model' : 'Mesin lokal aktif'}</span></div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
     <b style="font-size:.95rem">${t('prof_data')}</b>
     <div class="row" style="margin-top:10px">
       <button class="btn sm ghost" id="expJson">${icon('down')} ${t('prof_export')}</button>
@@ -792,17 +801,19 @@ async function openAdmin() {
     const v = $('#admPass').value;
     if (v !== 'cimo2026' && v !== 'cravemood') { $('#admErr').textContent = t('admin_wrong'); SFX.play('error'); return; }
     SFX.play('success');
-    await renderAdminTable();
+    await renderAdminTable(v);
   };
 }
-async function renderAdminTable() {
-  const users = await DB.users();
+async function renderAdminTable(adminKey) {
+  let users = [], err = '';
+  try { users = await DB.users(adminKey); } catch (e) { err = e.message === 'admin key required' ? 'Kunci admin tidak diterima server.' : String(e.message); }
   $('#adminBody').innerHTML = `
     <div class="between" style="margin-bottom:10px">
       <b>${users.length} ${t('admin_count')}</b>
       <div class="row"><button class="btn sm ghost" id="admCsv">${icon('down')} CSV</button>
       <button class="btn sm ghost" id="admJson">JSON</button></div>
     </div>
+    ${err ? `<p class="hint" style="color:#d63f74;margin-bottom:8px">${esc(err)}</p>` : ''}
     <div class="tablewrap"><table><thead><tr>
       <th>Nama</th><th>Kontak</th><th>Bahasa</th><th>Daftar</th><th>Mood</th><th>Order</th><th>Chat</th>
     </tr></thead><tbody>
@@ -813,9 +824,9 @@ async function renderAdminTable() {
       <td>${u.moods}</td><td>${u.orders}</td><td>${u.chats}</td>
     </tr>`).join('') : `<tr><td colspan="7" style="text-align:center;padding:20px">${t('admin_none')}</td></tr>`}
     </tbody></table></div>
-    <p class="hint" style="margin-top:10px">${DB.isRemote ? 'Sumber: API server (database penuh).' : 'Sumber: database lokal browser. Data pendaftar lain hanya terlihat di perangkat masing-masing — jalankan server untuk database terpusat.'}</p>`;
-  $('#admCsv').onclick = () => DB.exportCSV();
-  $('#admJson').onclick = () => DB.exportJSON();
+    <p class="hint" style="margin-top:10px">${DB.isRemote ? 'Sumber: API server (database terpusat).' : 'Sumber: database lokal browser. Data pendaftar lain hanya terlihat di perangkat masing-masing — jalankan server untuk database terpusat.'}</p>`;
+  $('#admCsv').onclick = () => DB.exportCSV(adminKey);
+  $('#admJson').onclick = () => DB.exportJSON(adminKey);
 }
 
 /* ---------- onboarding ---------- */
@@ -1095,6 +1106,15 @@ function bindGlobal() {
       if (App.settings.speak) Voice.preview(App.settings.voice, App.settings.voiceLang);
       return;
     }
+    if (hit('#aiSave')) {
+      const key = ($('#aiKey').value || '').trim();
+      const model = ($('#aiModel').value || '').trim() || 'gpt-4o-mini';
+      DB.setSetting('ai', key ? { key, model, base: 'https://api.openai.com/v1' } : {});
+      $('#aiStat').textContent = key ? 'Aktif — chat memakai model' : 'Mesin lokal aktif';
+      toast(key ? 'Otak Cimo: model AI aktif' : 'Otak Cimo: mesin lokal');
+      SFX.play('success');
+      return;
+    }
     if (hit('#sendBtn')) { const v = $('#chatInput').value.trim(); if (v) sendChat(v); return; }
     if (hit('#micBtn')) { startMic(); return; }
     if (e.target.closest('#shareModal .closebtn') || e.target.id === 'shareModal') { $('#shareModal').classList.remove('on'); return; }
@@ -1172,10 +1192,7 @@ async function boot() {
 
   const sid = DB.getSetting('session', null);
   if (sid) {
-    try {
-      const users = await DB.users();
-      App.user = users.find(u => u.id === sid) || null;
-    } catch (e) { App.user = null; }
+    try { App.user = await DB.me(sid); } catch (e) { App.user = null; }
   }
   if (App.user) {
     App.lang = App.user.lang || App.lang;

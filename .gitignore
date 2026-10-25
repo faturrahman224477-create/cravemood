@@ -3,6 +3,10 @@ shots/
 *.log
 test.cjs
 dbg*.cjs
+live.cjs
+remote.cjs
 server/data/
+.workbuddy/
+*.genie
 .DS_Store
 Thumbs.db
