@@ -464,6 +464,21 @@ td .tag{font-size:.6rem}
 }
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
+/* ===== VIP / UMKM ===== */
+.vipcard{background:linear-gradient(135deg,#f4e4f7,#fbe8dc);border:1px solid var(--ln);border-radius:var(--r);padding:22px;position:relative;overflow:hidden}
+[data-theme=dark] .vipcard{background:linear-gradient(135deg,#3d2347,#3a2434)}
+.viphead{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.viphead h2{font-size:1.35rem;letter-spacing:-.4px}
+.viphead p{color:var(--mu);font-size:.88rem;margin-top:3px}
+.vipfeatures{font:700 .9rem/2 Nunito;margin:10px 0}
+.vipfeatures div{display:flex;align-items:center;gap:8px}
+.xck{width:22px;height:22px;border-radius:50%;background:#3ec98a;color:#fff;display:grid;place-items:center;font-size:.7rem;flex:none}
+.umkmcard{background:linear-gradient(135deg,#3a2142,#6a3b80);color:#fff8ef;border-radius:var(--r);padding:22px;margin-top:14px;position:relative;overflow:hidden}
+.umkmcard h3{font-size:1.15rem;margin:6px 0 3px;max-width:220px}
+.umkmcard p{font-size:.82rem;opacity:.9;max-width:230px}
+.umkmcard .tag{background:#f4f87f;color:#3a2142}
+.umkmcard button{background:#fff8ef;color:#3a2142;border-color:#fff8ef}
+
 /* ===== download / install (PWA) ===== */
 .dlcard{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .dlbtn{display:flex;align-items:center;gap:11px;border:1.8px solid var(--ln);background:var(--bg);color:var(--ink);
@@ -573,6 +588,13 @@ td .tag{font-size:.6rem}
   <div class="mbox">
     <div class="mhead"><h3>Unduh aplikasi</h3><button class="closebtn" aria-label="close">✕</button></div>
     <div id="installBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="vipModal">
+  <div class="mbox">
+    <div class="mhead"><h3>CraveMood VIP</h3><button class="closebtn" aria-label="close">✕</button></div>
+    <div id="vipBody"></div>
   </div>
 </div>
 
@@ -828,6 +850,13 @@ const I18N = {
     admin_export:'Unduh CSV', admin_count:'pendaftar', admin_none:'Belum ada yang mendaftar.',
     login_t:'Masuk', login_ok:'Selamat datang kembali', login_bad:'Email atau kata sandi salah',
     reg_ok:'Akun dibuat. Selamat datang!', guest:'Tamu',
+    vip_t:'CraveMood VIP', vip_sub:'Cimo makin gaya, makin dekat', vip_price:'Rp19rb/bln', vip_start:'Mulai VIP', vip_benefit:'Keuntungan VIP',
+    vip_only:'Khusus pengguna VIP', vip_unlock:'Buka dengan VIP', vip_badge:'VIP', vip_active:'VIP Aktif',
+    umkm_t:'Daftar UMKM', umkm_sub:'Punya usaha kuliner?', umkm_desc:'Tampil di rekomendasi mood dan pantau klik pesan dari dashboard.',
+    umkm_form_title:'Daftar UMKM', umkm_name:'Nama usaha', umkm_owner:'Nama pemilik', umkm_wa:'Nomor WhatsApp', umkm_addr:'Alamat di Makassar',
+    umkm_type:'Jenis makanan', umkm_mood:'Cocok untuk mood', umkm_photo:'Unggah foto menu', umkm_send:'Kirim pendaftaran',
+    umkm_dash:'Dashboard UMKM', umkm_views:'Dilihat', umkm_clicks:'Klik pesan', umkm_rating:'Rating', umkm_menu:'Menu terdaftar',
+    umkm_pending:'Menunggu persetujuan', umkm_approved:'Disetujui', umkm_add_menu:'+ Tambah menu',
   },
   en: {
     tagline:'Eat according to your mood', best_match:'Best match', viral:'Viral', item:'item',
@@ -861,6 +890,13 @@ const I18N = {
     admin_export:'Download CSV', admin_count:'registrants', admin_none:'No registrants yet.',
     login_t:'Sign in', login_ok:'Welcome back', login_bad:'Wrong email or password',
     reg_ok:'Account created. Welcome!', guest:'Guest',
+    vip_t:'CraveMood VIP', vip_sub:'Cimo more stylish, closer', vip_price:'Rp19k/mo', vip_start:'Start VIP', vip_benefit:'VIP Benefits',
+    vip_only:'VIP only', vip_unlock:'Unlock with VIP', vip_badge:'VIP', vip_active:'VIP Active',
+    umkm_t:'Register UMKM', umkm_sub:'Own a food business?', umkm_desc:'Appear in mood recommendations and track orders from dashboard.',
+    umkm_form_title:'UMKM Registration', umkm_name:'Business name', umkm_owner:'Owner name', umkm_wa:'WhatsApp number', umkm_addr:'Address in Makassar',
+    umkm_type:'Food type', umkm_mood:'Fits mood', umkm_photo:'Upload menu photo', umkm_send:'Submit registration',
+    umkm_dash:'UMKM Dashboard', umkm_views:'Views', umkm_clicks:'Order clicks', umkm_rating:'Rating', umkm_menu:'Registered menu',
+    umkm_pending:'Pending approval', umkm_approved:'Approved', umkm_add_menu:'+ Add menu',
   },
   zh: {
     tagline:'按心情吃饭', best_match:'最合适', viral:'爆款', item:'件',
@@ -894,6 +930,13 @@ const I18N = {
     admin_export:'下载 CSV', admin_count:'位注册者', admin_none:'还没有人注册。',
     login_t:'登录', login_ok:'欢迎回来', login_bad:'邮箱或密码错误',
     reg_ok:'账号已创建，欢迎！', guest:'访客',
+    vip_t:'CraveMood VIP', vip_sub:'Cimo 更时尚，更贴心', vip_price:'每月 Rp19k', vip_start:'开通 VIP', vip_benefit:'VIP 权益',
+    vip_only:'VIP 专享', vip_unlock:'VIP 解锁', vip_badge:'VIP', vip_active:'VIP 已激活',
+    umkm_t:'注册 UMKM', umkm_sub:'有餐饮生意？', umkm_desc:'出现在心情推荐中，从仪表盘追踪订单点击。',
+    umkm_form_title:'UMKM 注册', umkm_name:'店铺名称', umkm_owner:'店主姓名', umkm_wa:'WhatsApp 号码', umkm_addr:'马卡萨地址',
+    umkm_type:'食物类型', umkm_mood:'适合心情', umkm_photo:'上传菜单照片', umkm_send:'提交申请',
+    umkm_dash:'UMKM 仪表盘', umkm_views:'浏览量', umkm_clicks:'订单点击', umkm_rating:'评分', umkm_menu:'已注册菜单',
+    umkm_pending:'等待审核', umkm_approved:'已通过', umkm_add_menu:'+ 添加菜单',
   },
   hi: {
     tagline:'अपने मूड के हिसाब से खाएं', best_match:'सबसे सही', viral:'वायरल', item:'आइटम',
@@ -927,6 +970,13 @@ const I18N = {
     admin_export:'CSV डाउनलोड', admin_count:'पंजीकृत', admin_none:'अभी कोई पंजीकृत नहीं।',
     login_t:'साइन इन', login_ok:'वापसी पर स्वागत', login_bad:'ईमेल या पासवर्ड गलत',
     reg_ok:'खाता बन गया। स्वागत!', guest:'मेहमान',
+    vip_t:'CraveMood VIP', vip_sub:'Cimo और स्टाइलिश, और करीब', vip_price:'Rp19k/माह', vip_start:'VIP शुरू करें', vip_benefit:'VIP लाभ',
+    vip_only:'केवल VIP उपयोगकर्ता', vip_unlock:'VIP से खोलें', vip_badge:'VIP', vip_active:'VIP सक्रिय',
+    umkm_t:'UMKM पंजीकरण', umkm_sub:'खाना का व्यवसाय है?', umkm_desc:'मूड सिफारिशों में दिखें और डैशबोर्ड से ऑर्डर ट्रैक करें।',
+    umkm_form_title:'UMKM पंजीकरण', umkm_name:'व्यवसाय का नाम', umkm_owner:'मालिक का नाम', umkm_wa:'WhatsApp नंबर', umkm_addr:'मकस्सर में पता',
+    umkm_type:'भोजन का प्रकार', umkm_mood:'मूड के लिए उपयुक्त', umkm_photo:'मेनू फोटो अपलोड', umkm_send:'पंजीकरण भेजें',
+    umkm_dash:'UMKM डैशबोर्ड', umkm_views:'व्यू', umkm_clicks:'ऑर्डर क्लिक', umkm_rating:'रेटिंग', umkm_menu:'पंजीकृत मेनू',
+    umkm_pending:'अनुमोदन की प्रतीक्षा', umkm_approved:'अनुमोदित', umkm_add_menu:'+ मेनू जोड़ें',
   },
 };
 
@@ -970,6 +1020,26 @@ const MOODSAY = {
     hi:'आज भारी दिन है, {name}। कोई बात नहीं, धीरे-धीरे। कुछ मीठा दिल बहलाएगा — जैसे {dish}।',
   },
 };
+
+/* ===== install / download copy (PWA) ===== */
+/* ===== VIP & UMKM ===== */
+const VIP_PRICE = 19000;
+const VIP_FEATURES = ['Kostum Cimo eksklusif','Warna Cimo premium','Prioritas Live Chat','Recap bulanan lengkap','Badge VIP di profil'];
+const VIP_FEATURES_I18N = {
+  id: ['Kostum Cimo eksklusif','Warna Cimo premium','Prioritas Live Chat','Recap bulanan lengkap','Badge VIP di profil'],
+  en: ['Exclusive Cimo costumes','Premium Cimo colors','Live Chat priority','Full monthly recap','VIP badge on profile'],
+  zh: ['独家 Cimo 服装','高级 Cimo 颜色','实时聊天优先','完整月度回顾','个人资料 VIP 徽章'],
+  hi: ['एक्सक्लूसिव Cimo कॉस्ट्यूम','प्रीमियम Cimo रंग','लाइव चैट प्राथमिकता','पूरा मासिक रिकैप','प्रोफाइल पर VIP बैज'],
+};
+
+const COSTUMES = [
+  {id:'',    name:'Asli',    nameI18n:{en:'Original',zh:'原版',hi:'मूल'},     vip:false},
+  {id:'crown',name:'Mahkota', nameI18n:{en:'Crown',zh:'皇冠',hi:'मुकुट'},    vip:true},
+  {id:'koki', name:'Koki',    nameI18n:{en:'Chef',zh:'厨师',hi:'शेफ'},       vip:false},
+  {id:'batik',name:'Batik Makassar',nameI18n:{en:'Batik',zh:'蜡染',hi:'बatik'},vip:true},
+];
+
+const UMKM_CATS = ['Snack','Heavy Meal','Beverage'];
 
 /* ===== install / download copy (PWA) ===== */
 const INSTALL_I18N = {
@@ -1060,7 +1130,7 @@ const INSTALL_I18N = {
 */
 const DB = (() => {
   const KEY = 'cravemood.db.v1';
-  const SCHEMA = { v: 1, users: [], moods: [], orders: [], chats: [], spins: [], settings: {} };
+  const SCHEMA = { v: 1, users: [], moods: [], orders: [], chats: [], spins: [], umkms: [], settings: {} };
   let state = null, remote = false, base = '', ready = false;
 
   const uid = () => 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -1157,6 +1227,7 @@ const DB = (() => {
         created: new Date().toISOString(),
         last_seen: new Date().toISOString(),
         moods: 0, orders: 0, chats: 0, spins: 0,
+        vip: false, vip_expiry: null, umkm: null,
       };
       s.users.push(u); persist();
       return { ok: true, user: pub(u) };
@@ -1234,6 +1305,43 @@ const DB = (() => {
       return load().moods.filter(m => m.user_id === userId).map(m => ({ d: m.date, m: m.mood }));
     },
 
+    /* VIP */
+    async setVip(userId, active, expiry) {
+      if (remote) { try { await api('/api/vip', { userId, active, expiry }); } catch (e) {} }
+      const s = load();
+      const u = s.users.find(x => x.id === userId);
+      if (u) { u.vip = !!active; u.vip_expiry = expiry || null; persist(); }
+    },
+
+    isVip(userId) {
+      const u = load().users.find(x => x.id === userId);
+      if (!u || !u.vip) return false;
+      if (u.vip_expiry && new Date(u.vip_expiry) < new Date()) { u.vip = false; persist(); return false; }
+      return true;
+    },
+
+    /* UMKM */
+    async registerUmkm(userId, data) {
+      if (remote) { const j = await api('/api/umkm', Object.assign({ userId }, data)); return j; }
+      const s = load();
+      const entry = Object.assign({
+        id: 'umkm_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+        user_id: userId, status: 'pending', created: new Date().toISOString(),
+        views: 0, clicks: 0, rating: 0, menus: [],
+      }, data);
+      s.umkms.push(entry);
+      const u = s.users.find(x => x.id === userId); if (u) u.umkm = entry.id;
+      persist();
+      return { ok: true, umkm: entry };
+    },
+
+    getUmkm(userId) {
+      const s = load();
+      const u = s.users.find(x => x.id === userId);
+      if (!u || !u.umkm) return null;
+      return s.umkms.find(x => x.id === u.umkm) || null;
+    },
+
     /* settings blob (per device) */
     getSetting(k, dflt) {
       const s = load();
@@ -1267,6 +1375,7 @@ const DB = (() => {
       id: u.id, name: u.name, contact: u.contact, lang: u.lang, guest: !!u.guest,
       created: u.created, last_seen: u.last_seen,
       moods: u.moods || 0, orders: u.orders || 0, chats: u.chats || 0, spins: u.spins || 0,
+      vip: !!u.vip, vip_expiry: u.vip_expiry || null, umkm: u.umkm || null,
     };
   }
   function dl(blob, name) {
@@ -2149,6 +2258,7 @@ const NAV = [
   ['chat', 'chat', 'nav_chat'],
   ['cart', 'bag', 'nav_cart'],
   ['recap', 'recap', 'nav_recap'],
+  ['vip', 'heart', 'nav_vip'],
   ['profile', 'user', 'nav_profile'],
 ];
 
@@ -2158,7 +2268,7 @@ function renderNav() {
     `<button class="navbtn" data-go="${v}">${icon(ic)}<span>${t(k)}</span>${v === 'cart' ? `<span class="bdg" id="navbadge" style="display:none">0</span>` : ''}</button>`
   ).join('');
   const tb = $('#tabbar');
-  const mobile = ['home', 'spin', 'chat', 'recap', 'profile'];
+  const mobile = ['home', 'spin', 'chat', 'recap', 'vip', 'profile'];
   tb.innerHTML = mobile.map(v => {
     const n = NAV.find(x => x[0] === v);
     return `<button data-go="${v}">${icon(n[1])}<span>${t(n[2])}</span></button>`;
@@ -2532,6 +2642,7 @@ function renderRecap() {
 /* ---------- profile ---------- */
 function viewProfile() {
   const s = App.settings;
+  const isV = isVip();
   return `<div class="pagetitle"><div><h1>${t('prof_t')}</h1><p>${t('tagline')}</p></div></div>
 
   <div class="card" style="text-align:center">
@@ -2540,9 +2651,15 @@ function viewProfile() {
     <small class="muted" style="font-weight:700">${App.user && !App.user.guest ? esc(App.user.contact) : t('guest')}</small>
     <div class="row" style="justify-content:center;margin-top:12px">
       <span class="tag pink">${App.user && App.user.guest ? t('guest') : 'Member'}</span>
-      <span class="tag mint">${DB.isRemote ? 'Server DB' : 'Local DB'}</span>
+      ${isV ? `<span class="tag gold">✦ ${t('vip_badge')}</span>` : ''}
+      ${App.user && App.user.umkm ? `<span class="tag mint">UMKM</span>` : ''}
       <span class="tag">${MOODLBL[App.mood] || ''}</span>
     </div>
+    ${!isV ? `
+    <div class="card" style="margin:14px 0 0;background:linear-gradient(135deg,#e9b6d4,#cdbbf0);text-align:left;padding:12px 14px;display:flex;align-items:center;gap:10px">
+      <div style="flex:1"><b style="font:.9rem Fredoka">Paket Gratis</b><div style="font:600 .72rem Nunito;opacity:.85">Buka kostum dan warna Cimo</div></div>
+      <button class="btn sm" data-go="vip">${t('vip_start')}</button>
+    </div>` : ''}
   </div>
 
   <div class="card" style="margin-top:12px">
@@ -2595,10 +2712,12 @@ function viewProfile() {
       <label class="switch"><input type="checkbox" id="speakSw" ${s.speak ? 'checked' : ''}><span></span></label></div>
     <div class="setrow"><div class="lbl"><b>Dark mode</b><small>${t('prof_t')}</small></div>
       <label class="switch"><input type="checkbox" id="darkSw" ${s.theme === 'dark' ? 'checked' : ''}><span></span></label></div>
-    <div class="setrow"><div class="lbl"><b>${t('prof_design')}</b><small>${App.costum || 'Standard'}</small></div>
+    <div class="setrow"><div class="lbl"><b>${t('prof_design')}</b><small>${App.costum ? COSTUMES.find(c=>c.id===App.costum)?.name : 'Standard'} ${!isVip() && App.costum && COSTUMES.find(c=>c.id===App.costum)?.vip ? '🔒' : ''}</small></div>
       <select id="costumSel">
-        <option value="">Standard</option><option value="crown" ${App.costum === 'crown' ? 'selected' : ''}>Mahkota (VIP)</option>
-        <option value="koki" ${App.costum === 'koki' ? 'selected' : ''}>Koki (UMKM)</option><option value="batik" ${App.costum === 'batik' ? 'selected' : ''}>Batik Makassar</option>
+        ${COSTUMES.map(c => {
+          const locked = c.vip && !isVip();
+          return `<option value="${c.id}" ${App.costum === c.id ? 'selected' : ''} ${locked ? 'disabled' : ''}>${c.name}${locked ? ' (VIP)' : ''}</option>`;
+        }).join('')}
       </select></div>
   </div>
 
@@ -2610,6 +2729,131 @@ function viewProfile() {
     </div>
     <p class="hint" style="margin-top:10px">Data akunmu tersimpan ${DB.isRemote ? 'di server CraveMood' : 'di perangkat ini'}. Kamu bisa mengunduhnya kapan saja.</p>
   </div>`;
+}
+
+/* ---------- VIP ---------- */
+function isVip() { return App.user && (App.user.vip || DB.isVip(App.user.id)); }
+
+function viewVip() {
+  const features = (VIP_FEATURES_I18N[App.lang] || VIP_FEATURES_I18N.id);
+  const isV = isVip();
+  return `
+  <div class="pagetitle"><div><h1>${t('vip_t')}</h1><p>${t('vip_sub')}</p></div>
+    ${isV ? `<span class="tag gold">✦ ${t('vip_active')}</span>` : ''}</div>
+
+  <div class="vipcard">
+    <div class="viphead">
+      <div>${cimo(App.mood, 90, false, isV ? App.costum : '')}</div>
+      <div>
+        <h2>${t('vip_t')}</h2>
+        <p>${t('vip_sub')}</p>
+        ${isV ? `<span class="tag gold">${t('vip_active')}</span>` : `<span class="tag pink">${t('vip_price')}</span>`}
+      </div>
+    </div>
+    <div class="vipfeatures">
+      ${features.map(f => `<div><span class="xck">✓</span>${f}</div>`).join('')}
+    </div>
+    ${isV ? '' : `<button class="btn block" id="startVip">${t('vip_start')}</button>`}
+  </div>
+
+  <div class="umkmcard">
+    <div style="position:relative">
+      <div>${cimo('senang', 80, false, 'koki')}</div>
+      <div>
+        <span class="tag mint">${t('umkm_sub')}</span>
+        <h3>${t('umkm_sub')}</h3>
+        <p>${t('umkm_desc')}</p>
+      </div>
+    </div>
+    <button class="btn ghost block" data-go="umkm">${t('umkm_t')} →</button>
+  </div>`;
+}
+
+/* ---------- UMKM ---------- */
+function viewUmkm() {
+  const umkm = App.user ? DB.getUmkm(App.user.id) : null;
+  if (umkm && umkm.status === 'approved') {
+    return `
+    <div class="pagetitle"><div><h1>${t('umkm_dash')}</h1><p>${esc(umkm.name)}</p></div></div>
+    <div class="card" style="text-align:center">
+      <div style="width:80px;height:80px;margin:0 auto">${cimo('senang', 76, false, 'koki')}</div>
+      <h3>${esc(umkm.name)}</h3>
+      <span class="tag mint">${t('umkm_approved')}</span>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="stats">
+        <div><b>${umkm.views || 0}</b><span>${t('umkm_views')}</span></div>
+        <div><b>${umkm.clicks || 0}</b><span>${t('umkm_clicks')}</span></div>
+        <div><b>${(umkm.rating || 0).toFixed(1)}</b><span>${t('umkm_rating')}</span></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <b>${t('umkm_menu')}</b>
+      <div style="margin-top:10px">
+        ${(umkm.menus || []).length ? (umkm.menus || []).map(m => `<div class="cartitem"><div class="inf"><b>${esc(m.name)}</b><small>${esc(m.cat || '')}</small></div></div>`).join('')
+          : `<p class="hint">Belum ada menu terdaftar.</p>`}
+      </div>
+      <button class="btn sm ghost block" style="margin-top:10px">${t('umkm_add_menu')}</button>
+    </div>`;
+  }
+
+  if (umkm && umkm.status === 'pending') {
+    return `
+    <div class="pagetitle"><div><h1>${t('umkm_t')}</h1><p>${esc(umkm.name)}</p></div></div>
+    <div class="card" style="text-align:center">
+      <div style="width:90px;height:90px;margin:0 auto">${cimo('bingung', 86)}</div>
+      <h3>${t('umkm_pending')}</h3>
+      <p class="hint">Pendaftaran sedang ditinjau oleh tim CraveMood.</p>
+    </div>`;
+  }
+
+  return `
+  <div class="pagetitle"><div><h1>${t('umkm_t')}</h1><p>${t('umkm_desc')}</p></div></div>
+  <div class="card">
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="width:100px;height:100px;margin:0 auto">${cimo('senang', 96, false, 'koki')}</div>
+      <div class="bub" style="display:inline-block;margin-top:8px">Yuk gabung, jadi pilihan Cimo!</div>
+    </div>
+    <div class="field"><label>${t('umkm_name')}</label><input id="umkmName" placeholder="Contoh: Warung Daeng Sirua"></div>
+    <div class="field"><label>${t('umkm_owner')}</label><input id="umkmOwner" placeholder="Nama pemilik usaha"></div>
+    <div class="field"><label>${t('umkm_wa')}</label><input id="umkmWa" placeholder="08xx"></div>
+    <div class="field"><label>${t('umkm_addr')}</label><input id="umkmAddr" placeholder="Alamat lengkap di Makassar"></div>
+    <div class="field"><label>${t('umkm_type')}</label>
+      <div class="chips" id="umkmCats">
+        ${UMKM_CATS.map(c => `<button class="chip" data-umkm-cat="${c}">${c}</button>`).join('')}
+      </div>
+    </div>
+    <div class="field"><label>${t('umkm_mood')}</label>
+      <div class="chips" id="umkmMoods">
+        ${MOODS.map(m => `<button class="chip" data-umkm-mood="${m.k}">${mL(m)}</button>`).join('')}
+      </div>
+    </div>
+    <div class="err" id="umkmErr"></div>
+    <button class="btn block" id="umkmSubmit">${t('umkm_send')}</button>
+  </div>`;
+}
+
+async function submitUmkm() {
+  const name = $('#umkmName').value.trim();
+  const owner = $('#umkmOwner').value.trim();
+  const wa = $('#umkmWa').value.trim();
+  const addr = $('#umkmAddr').value.trim();
+  const cats = $$('#umkmCats .chip.on').map(b => b.dataset.umkmCat);
+  const moods = $$('#umkmMoods .chip.on').map(b => b.dataset.umkmMood);
+  if (!name || !owner || !wa || !addr || !cats.length || !moods.length) {
+    $('#umkmErr').textContent = 'Lengkapi semua field dan pilih minimal satu kategori.';
+    SFX.play('error'); return;
+  }
+  $('#umkmSubmit').disabled = true;
+  try {
+    const r = await DB.registerUmkm(App.user.id, { name, owner, wa, addr, cats, moods });
+    if (r.ok) {
+      SFX.play('success'); toast('Pendaftaran dikirim!');
+      App.user.umkm = r.umkm.id;
+      go('umkm');
+    } else { $('#umkmErr').textContent = r.error || 'Gagal'; }
+  } catch (e) { $('#umkmErr').textContent = 'Gagal mengirim.'; }
+  $('#umkmSubmit').disabled = false;
 }
 
 /* ---------- share ---------- */
@@ -2738,6 +2982,34 @@ function loadImg(src) {
     i.onerror = () => { clearTimeout(to); rej(new Error('img error')); };
     i.src = src;
   });
+}
+
+function openVipModal() {
+  const modal = $('#vipModal');
+  modal.classList.add('on');
+  const features = (VIP_FEATURES_I18N[App.lang] || VIP_FEATURES_I18N.id);
+  $('#vipBody').innerHTML = `
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="width:100px;height:100px;margin:0 auto">${cimo(App.mood, 96, false, 'crown')}</div>
+      <h3 style="margin-top:8px">${t('vip_t')}</h3>
+      <p class="hint">${t('vip_sub')}</p>
+      <span class="tag gold" style="margin-top:6px">${t('vip_price')}</span>
+    </div>
+    <div class="vipfeatures" style="margin-bottom:16px">
+      ${features.map(f => `<div><span class="xck">✓</span>${f}</div>`).join('')}
+    </div>
+    <button class="btn block" id="confirmVip">${t('vip_start')}</button>
+    <p class="hint" style="text-align:center;margin-top:10px">Fitur ini dalam tahap pengembangan. Nantikan!</p>
+  `;
+  $('#confirmVip').onclick = () => {
+    if (!App.user) { toast('Masuk dulu ya!'); return; }
+    const expiry = new Date(); expiry.setMonth(expiry.getMonth() + 1);
+    DB.setVip(App.user.id, true, expiry.toISOString()).then(() => {
+      App.user.vip = true; App.user.vip_expiry = expiry.toISOString();
+      toast('Selamat! Kamu sekarang VIP ✦'); SFX.play('success');
+      modal.classList.remove('on'); render();
+    }).catch(() => toast('Gagal mengaktifkan VIP'));
+  };
 }
 
 async function openShare() {
@@ -3113,7 +3385,7 @@ function registerSW() {
 }
 
 /* ---------- router ---------- */
-const RENDER = { home: viewHome, spin: viewSpin, chat: viewChat, cart: viewCart, recap: viewRecap, profile: viewProfile };
+const RENDER = { home: viewHome, spin: viewSpin, chat: viewChat, cart: viewCart, recap: viewRecap, vip: viewVip, umkm: viewUmkm, profile: viewProfile };
 
 function go(v) {
   if (!RENDER[v]) v = 'home';
@@ -3143,10 +3415,26 @@ function render() {
   }
   if (v === 'cart') { renderCart(); }
   if (v === 'recap') { renderRecap(); }
+  if (v === 'vip') { /* vip rendered statically */ }
+  if (v === 'umkm') { bindUmkm(); }
   const pet = $('#pet');
   if (pet) pet.classList.toggle('hide', v === 'chat');
   updateCartBar();
   window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+function bindUmkm() {
+  const cats = $('#umkmCats'); if (cats) {
+    cats.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+      b.classList.toggle('on'); SFX.play('tap');
+    });
+  }
+  const moods = $('#umkmMoods'); if (moods) {
+    moods.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+      b.classList.toggle('on'); SFX.play('tap');
+    });
+  }
+  const sub = $('#umkmSubmit'); if (sub) sub.onclick = submitUmkm;
 }
 
 /* ---------- global events ---------- */
@@ -3224,7 +3512,11 @@ function bindGlobal() {
     if (id === 'speakSw') { App.settings.speak = e.target.checked; saveSettings(); if (e.target.checked) Voice.preview(App.settings.voice, App.settings.voiceLang); }
     if (id === 'darkSw') { App.settings.theme = e.target.checked ? 'dark' : 'light'; saveSettings(); applyTheme(); }
     if (id === 'voiceLang') { App.settings.voiceLang = e.target.value; Voice.set('lang', e.target.value); saveSettings(); Voice.preview(App.settings.voice, e.target.value); }
-    if (id === 'costumSel') { App.costum = e.target.value; savePrefs(); render(); toast(t('prof_saved')); }
+    if (id === 'costumSel') {
+      const c = COSTUMES.find(x => x.id === e.target.value);
+      if (c && c.vip && !isVip()) { toast(t('vip_only')); SFX.play('error'); render(); return; }
+      App.costum = e.target.value; savePrefs(); render(); toast(t('prof_saved'));
+    }
   });
 
   document.addEventListener('input', e => {
@@ -3254,6 +3546,7 @@ function bindGlobal() {
     if (hit('#spinAgain')) { doSpin(); return; }
     if (hit('#openShare') || hit('#recapShare')) { openShare(); return; }
     if (hit('#testVoice')) { Voice.preview(App.settings.voice, App.settings.voiceLang); return; }
+    if (hit('#startVip')) { openVipModal(); return; }
     if (hit('#expJson')) { DB.exportJSON(); return; }
     if (hit('#dlOffline2')) { downloadOffline(); return; }
     if (hit('#logoutBtn')) { DB.setSetting('session', null); location.reload(); return; }

@@ -113,6 +113,13 @@ const I18N = {
     admin_export:'Unduh CSV', admin_count:'pendaftar', admin_none:'Belum ada yang mendaftar.',
     login_t:'Masuk', login_ok:'Selamat datang kembali', login_bad:'Email atau kata sandi salah',
     reg_ok:'Akun dibuat. Selamat datang!', guest:'Tamu',
+    vip_t:'CraveMood VIP', vip_sub:'Cimo makin gaya, makin dekat', vip_price:'Rp19rb/bln', vip_start:'Mulai VIP', vip_benefit:'Keuntungan VIP',
+    vip_only:'Khusus pengguna VIP', vip_unlock:'Buka dengan VIP', vip_badge:'VIP', vip_active:'VIP Aktif',
+    umkm_t:'Daftar UMKM', umkm_sub:'Punya usaha kuliner?', umkm_desc:'Tampil di rekomendasi mood dan pantau klik pesan dari dashboard.',
+    umkm_form_title:'Daftar UMKM', umkm_name:'Nama usaha', umkm_owner:'Nama pemilik', umkm_wa:'Nomor WhatsApp', umkm_addr:'Alamat di Makassar',
+    umkm_type:'Jenis makanan', umkm_mood:'Cocok untuk mood', umkm_photo:'Unggah foto menu', umkm_send:'Kirim pendaftaran',
+    umkm_dash:'Dashboard UMKM', umkm_views:'Dilihat', umkm_clicks:'Klik pesan', umkm_rating:'Rating', umkm_menu:'Menu terdaftar',
+    umkm_pending:'Menunggu persetujuan', umkm_approved:'Disetujui', umkm_add_menu:'+ Tambah menu',
   },
   en: {
     tagline:'Eat according to your mood', best_match:'Best match', viral:'Viral', item:'item',
@@ -146,6 +153,13 @@ const I18N = {
     admin_export:'Download CSV', admin_count:'registrants', admin_none:'No registrants yet.',
     login_t:'Sign in', login_ok:'Welcome back', login_bad:'Wrong email or password',
     reg_ok:'Account created. Welcome!', guest:'Guest',
+    vip_t:'CraveMood VIP', vip_sub:'Cimo more stylish, closer', vip_price:'Rp19k/mo', vip_start:'Start VIP', vip_benefit:'VIP Benefits',
+    vip_only:'VIP only', vip_unlock:'Unlock with VIP', vip_badge:'VIP', vip_active:'VIP Active',
+    umkm_t:'Register UMKM', umkm_sub:'Own a food business?', umkm_desc:'Appear in mood recommendations and track orders from dashboard.',
+    umkm_form_title:'UMKM Registration', umkm_name:'Business name', umkm_owner:'Owner name', umkm_wa:'WhatsApp number', umkm_addr:'Address in Makassar',
+    umkm_type:'Food type', umkm_mood:'Fits mood', umkm_photo:'Upload menu photo', umkm_send:'Submit registration',
+    umkm_dash:'UMKM Dashboard', umkm_views:'Views', umkm_clicks:'Order clicks', umkm_rating:'Rating', umkm_menu:'Registered menu',
+    umkm_pending:'Pending approval', umkm_approved:'Approved', umkm_add_menu:'+ Add menu',
   },
   zh: {
     tagline:'按心情吃饭', best_match:'最合适', viral:'爆款', item:'件',
@@ -179,6 +193,13 @@ const I18N = {
     admin_export:'下载 CSV', admin_count:'位注册者', admin_none:'还没有人注册。',
     login_t:'登录', login_ok:'欢迎回来', login_bad:'邮箱或密码错误',
     reg_ok:'账号已创建，欢迎！', guest:'访客',
+    vip_t:'CraveMood VIP', vip_sub:'Cimo 更时尚，更贴心', vip_price:'每月 Rp19k', vip_start:'开通 VIP', vip_benefit:'VIP 权益',
+    vip_only:'VIP 专享', vip_unlock:'VIP 解锁', vip_badge:'VIP', vip_active:'VIP 已激活',
+    umkm_t:'注册 UMKM', umkm_sub:'有餐饮生意？', umkm_desc:'出现在心情推荐中，从仪表盘追踪订单点击。',
+    umkm_form_title:'UMKM 注册', umkm_name:'店铺名称', umkm_owner:'店主姓名', umkm_wa:'WhatsApp 号码', umkm_addr:'马卡萨地址',
+    umkm_type:'食物类型', umkm_mood:'适合心情', umkm_photo:'上传菜单照片', umkm_send:'提交申请',
+    umkm_dash:'UMKM 仪表盘', umkm_views:'浏览量', umkm_clicks:'订单点击', umkm_rating:'评分', umkm_menu:'已注册菜单',
+    umkm_pending:'等待审核', umkm_approved:'已通过', umkm_add_menu:'+ 添加菜单',
   },
   hi: {
     tagline:'अपने मूड के हिसाब से खाएं', best_match:'सबसे सही', viral:'वायरल', item:'आइटम',
@@ -212,6 +233,13 @@ const I18N = {
     admin_export:'CSV डाउनलोड', admin_count:'पंजीकृत', admin_none:'अभी कोई पंजीकृत नहीं।',
     login_t:'साइन इन', login_ok:'वापसी पर स्वागत', login_bad:'ईमेल या पासवर्ड गलत',
     reg_ok:'खाता बन गया। स्वागत!', guest:'मेहमान',
+    vip_t:'CraveMood VIP', vip_sub:'Cimo और स्टाइलिश, और करीब', vip_price:'Rp19k/माह', vip_start:'VIP शुरू करें', vip_benefit:'VIP लाभ',
+    vip_only:'केवल VIP उपयोगकर्ता', vip_unlock:'VIP से खोलें', vip_badge:'VIP', vip_active:'VIP सक्रिय',
+    umkm_t:'UMKM पंजीकरण', umkm_sub:'खाना का व्यवसाय है?', umkm_desc:'मूड सिफारिशों में दिखें और डैशबोर्ड से ऑर्डर ट्रैक करें।',
+    umkm_form_title:'UMKM पंजीकरण', umkm_name:'व्यवसाय का नाम', umkm_owner:'मालिक का नाम', umkm_wa:'WhatsApp नंबर', umkm_addr:'मकस्सर में पता',
+    umkm_type:'भोजन का प्रकार', umkm_mood:'मूड के लिए उपयुक्त', umkm_photo:'मेनू फोटो अपलोड', umkm_send:'पंजीकरण भेजें',
+    umkm_dash:'UMKM डैशबोर्ड', umkm_views:'व्यू', umkm_clicks:'ऑर्डर क्लिक', umkm_rating:'रेटिंग', umkm_menu:'पंजीकृत मेनू',
+    umkm_pending:'अनुमोदन की प्रतीक्षा', umkm_approved:'अनुमोदित', umkm_add_menu:'+ मेनू जोड़ें',
   },
 };
 
@@ -255,6 +283,26 @@ const MOODSAY = {
     hi:'आज भारी दिन है, {name}। कोई बात नहीं, धीरे-धीरे। कुछ मीठा दिल बहलाएगा — जैसे {dish}।',
   },
 };
+
+/* ===== install / download copy (PWA) ===== */
+/* ===== VIP & UMKM ===== */
+const VIP_PRICE = 19000;
+const VIP_FEATURES = ['Kostum Cimo eksklusif','Warna Cimo premium','Prioritas Live Chat','Recap bulanan lengkap','Badge VIP di profil'];
+const VIP_FEATURES_I18N = {
+  id: ['Kostum Cimo eksklusif','Warna Cimo premium','Prioritas Live Chat','Recap bulanan lengkap','Badge VIP di profil'],
+  en: ['Exclusive Cimo costumes','Premium Cimo colors','Live Chat priority','Full monthly recap','VIP badge on profile'],
+  zh: ['独家 Cimo 服装','高级 Cimo 颜色','实时聊天优先','完整月度回顾','个人资料 VIP 徽章'],
+  hi: ['एक्सक्लूसिव Cimo कॉस्ट्यूम','प्रीमियम Cimo रंग','लाइव चैट प्राथमिकता','पूरा मासिक रिकैप','प्रोफाइल पर VIP बैज'],
+};
+
+const COSTUMES = [
+  {id:'',    name:'Asli',    nameI18n:{en:'Original',zh:'原版',hi:'मूल'},     vip:false},
+  {id:'crown',name:'Mahkota', nameI18n:{en:'Crown',zh:'皇冠',hi:'मुकुट'},    vip:true},
+  {id:'koki', name:'Koki',    nameI18n:{en:'Chef',zh:'厨师',hi:'शेफ'},       vip:false},
+  {id:'batik',name:'Batik Makassar',nameI18n:{en:'Batik',zh:'蜡染',hi:'बatik'},vip:true},
+];
+
+const UMKM_CATS = ['Snack','Heavy Meal','Beverage'];
 
 /* ===== install / download copy (PWA) ===== */
 const INSTALL_I18N = {

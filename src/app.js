@@ -119,6 +119,7 @@ const NAV = [
   ['chat', 'chat', 'nav_chat'],
   ['cart', 'bag', 'nav_cart'],
   ['recap', 'recap', 'nav_recap'],
+  ['vip', 'heart', 'nav_vip'],
   ['profile', 'user', 'nav_profile'],
 ];
 
@@ -128,7 +129,7 @@ function renderNav() {
     `<button class="navbtn" data-go="${v}">${icon(ic)}<span>${t(k)}</span>${v === 'cart' ? `<span class="bdg" id="navbadge" style="display:none">0</span>` : ''}</button>`
   ).join('');
   const tb = $('#tabbar');
-  const mobile = ['home', 'spin', 'chat', 'recap', 'profile'];
+  const mobile = ['home', 'spin', 'chat', 'recap', 'vip', 'profile'];
   tb.innerHTML = mobile.map(v => {
     const n = NAV.find(x => x[0] === v);
     return `<button data-go="${v}">${icon(n[1])}<span>${t(n[2])}</span></button>`;
@@ -502,6 +503,7 @@ function renderRecap() {
 /* ---------- profile ---------- */
 function viewProfile() {
   const s = App.settings;
+  const isV = isVip();
   return `<div class="pagetitle"><div><h1>${t('prof_t')}</h1><p>${t('tagline')}</p></div></div>
 
   <div class="card" style="text-align:center">
@@ -510,9 +512,15 @@ function viewProfile() {
     <small class="muted" style="font-weight:700">${App.user && !App.user.guest ? esc(App.user.contact) : t('guest')}</small>
     <div class="row" style="justify-content:center;margin-top:12px">
       <span class="tag pink">${App.user && App.user.guest ? t('guest') : 'Member'}</span>
-      <span class="tag mint">${DB.isRemote ? 'Server DB' : 'Local DB'}</span>
+      ${isV ? `<span class="tag gold">✦ ${t('vip_badge')}</span>` : ''}
+      ${App.user && App.user.umkm ? `<span class="tag mint">UMKM</span>` : ''}
       <span class="tag">${MOODLBL[App.mood] || ''}</span>
     </div>
+    ${!isV ? `
+    <div class="card" style="margin:14px 0 0;background:linear-gradient(135deg,#e9b6d4,#cdbbf0);text-align:left;padding:12px 14px;display:flex;align-items:center;gap:10px">
+      <div style="flex:1"><b style="font:.9rem Fredoka">Paket Gratis</b><div style="font:600 .72rem Nunito;opacity:.85">Buka kostum dan warna Cimo</div></div>
+      <button class="btn sm" data-go="vip">${t('vip_start')}</button>
+    </div>` : ''}
   </div>
 
   <div class="card" style="margin-top:12px">
@@ -565,10 +573,12 @@ function viewProfile() {
       <label class="switch"><input type="checkbox" id="speakSw" ${s.speak ? 'checked' : ''}><span></span></label></div>
     <div class="setrow"><div class="lbl"><b>Dark mode</b><small>${t('prof_t')}</small></div>
       <label class="switch"><input type="checkbox" id="darkSw" ${s.theme === 'dark' ? 'checked' : ''}><span></span></label></div>
-    <div class="setrow"><div class="lbl"><b>${t('prof_design')}</b><small>${App.costum || 'Standard'}</small></div>
+    <div class="setrow"><div class="lbl"><b>${t('prof_design')}</b><small>${App.costum ? COSTUMES.find(c=>c.id===App.costum)?.name : 'Standard'} ${!isVip() && App.costum && COSTUMES.find(c=>c.id===App.costum)?.vip ? '🔒' : ''}</small></div>
       <select id="costumSel">
-        <option value="">Standard</option><option value="crown" ${App.costum === 'crown' ? 'selected' : ''}>Mahkota (VIP)</option>
-        <option value="koki" ${App.costum === 'koki' ? 'selected' : ''}>Koki (UMKM)</option><option value="batik" ${App.costum === 'batik' ? 'selected' : ''}>Batik Makassar</option>
+        ${COSTUMES.map(c => {
+          const locked = c.vip && !isVip();
+          return `<option value="${c.id}" ${App.costum === c.id ? 'selected' : ''} ${locked ? 'disabled' : ''}>${c.name}${locked ? ' (VIP)' : ''}</option>`;
+        }).join('')}
       </select></div>
   </div>
 
@@ -580,6 +590,131 @@ function viewProfile() {
     </div>
     <p class="hint" style="margin-top:10px">Data akunmu tersimpan ${DB.isRemote ? 'di server CraveMood' : 'di perangkat ini'}. Kamu bisa mengunduhnya kapan saja.</p>
   </div>`;
+}
+
+/* ---------- VIP ---------- */
+function isVip() { return App.user && (App.user.vip || DB.isVip(App.user.id)); }
+
+function viewVip() {
+  const features = (VIP_FEATURES_I18N[App.lang] || VIP_FEATURES_I18N.id);
+  const isV = isVip();
+  return `
+  <div class="pagetitle"><div><h1>${t('vip_t')}</h1><p>${t('vip_sub')}</p></div>
+    ${isV ? `<span class="tag gold">✦ ${t('vip_active')}</span>` : ''}</div>
+
+  <div class="vipcard">
+    <div class="viphead">
+      <div>${cimo(App.mood, 90, false, isV ? App.costum : '')}</div>
+      <div>
+        <h2>${t('vip_t')}</h2>
+        <p>${t('vip_sub')}</p>
+        ${isV ? `<span class="tag gold">${t('vip_active')}</span>` : `<span class="tag pink">${t('vip_price')}</span>`}
+      </div>
+    </div>
+    <div class="vipfeatures">
+      ${features.map(f => `<div><span class="xck">✓</span>${f}</div>`).join('')}
+    </div>
+    ${isV ? '' : `<button class="btn block" id="startVip">${t('vip_start')}</button>`}
+  </div>
+
+  <div class="umkmcard">
+    <div style="position:relative">
+      <div>${cimo('senang', 80, false, 'koki')}</div>
+      <div>
+        <span class="tag mint">${t('umkm_sub')}</span>
+        <h3>${t('umkm_sub')}</h3>
+        <p>${t('umkm_desc')}</p>
+      </div>
+    </div>
+    <button class="btn ghost block" data-go="umkm">${t('umkm_t')} →</button>
+  </div>`;
+}
+
+/* ---------- UMKM ---------- */
+function viewUmkm() {
+  const umkm = App.user ? DB.getUmkm(App.user.id) : null;
+  if (umkm && umkm.status === 'approved') {
+    return `
+    <div class="pagetitle"><div><h1>${t('umkm_dash')}</h1><p>${esc(umkm.name)}</p></div></div>
+    <div class="card" style="text-align:center">
+      <div style="width:80px;height:80px;margin:0 auto">${cimo('senang', 76, false, 'koki')}</div>
+      <h3>${esc(umkm.name)}</h3>
+      <span class="tag mint">${t('umkm_approved')}</span>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="stats">
+        <div><b>${umkm.views || 0}</b><span>${t('umkm_views')}</span></div>
+        <div><b>${umkm.clicks || 0}</b><span>${t('umkm_clicks')}</span></div>
+        <div><b>${(umkm.rating || 0).toFixed(1)}</b><span>${t('umkm_rating')}</span></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <b>${t('umkm_menu')}</b>
+      <div style="margin-top:10px">
+        ${(umkm.menus || []).length ? (umkm.menus || []).map(m => `<div class="cartitem"><div class="inf"><b>${esc(m.name)}</b><small>${esc(m.cat || '')}</small></div></div>`).join('')
+          : `<p class="hint">Belum ada menu terdaftar.</p>`}
+      </div>
+      <button class="btn sm ghost block" style="margin-top:10px">${t('umkm_add_menu')}</button>
+    </div>`;
+  }
+
+  if (umkm && umkm.status === 'pending') {
+    return `
+    <div class="pagetitle"><div><h1>${t('umkm_t')}</h1><p>${esc(umkm.name)}</p></div></div>
+    <div class="card" style="text-align:center">
+      <div style="width:90px;height:90px;margin:0 auto">${cimo('bingung', 86)}</div>
+      <h3>${t('umkm_pending')}</h3>
+      <p class="hint">Pendaftaran sedang ditinjau oleh tim CraveMood.</p>
+    </div>`;
+  }
+
+  return `
+  <div class="pagetitle"><div><h1>${t('umkm_t')}</h1><p>${t('umkm_desc')}</p></div></div>
+  <div class="card">
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="width:100px;height:100px;margin:0 auto">${cimo('senang', 96, false, 'koki')}</div>
+      <div class="bub" style="display:inline-block;margin-top:8px">Yuk gabung, jadi pilihan Cimo!</div>
+    </div>
+    <div class="field"><label>${t('umkm_name')}</label><input id="umkmName" placeholder="Contoh: Warung Daeng Sirua"></div>
+    <div class="field"><label>${t('umkm_owner')}</label><input id="umkmOwner" placeholder="Nama pemilik usaha"></div>
+    <div class="field"><label>${t('umkm_wa')}</label><input id="umkmWa" placeholder="08xx"></div>
+    <div class="field"><label>${t('umkm_addr')}</label><input id="umkmAddr" placeholder="Alamat lengkap di Makassar"></div>
+    <div class="field"><label>${t('umkm_type')}</label>
+      <div class="chips" id="umkmCats">
+        ${UMKM_CATS.map(c => `<button class="chip" data-umkm-cat="${c}">${c}</button>`).join('')}
+      </div>
+    </div>
+    <div class="field"><label>${t('umkm_mood')}</label>
+      <div class="chips" id="umkmMoods">
+        ${MOODS.map(m => `<button class="chip" data-umkm-mood="${m.k}">${mL(m)}</button>`).join('')}
+      </div>
+    </div>
+    <div class="err" id="umkmErr"></div>
+    <button class="btn block" id="umkmSubmit">${t('umkm_send')}</button>
+  </div>`;
+}
+
+async function submitUmkm() {
+  const name = $('#umkmName').value.trim();
+  const owner = $('#umkmOwner').value.trim();
+  const wa = $('#umkmWa').value.trim();
+  const addr = $('#umkmAddr').value.trim();
+  const cats = $$('#umkmCats .chip.on').map(b => b.dataset.umkmCat);
+  const moods = $$('#umkmMoods .chip.on').map(b => b.dataset.umkmMood);
+  if (!name || !owner || !wa || !addr || !cats.length || !moods.length) {
+    $('#umkmErr').textContent = 'Lengkapi semua field dan pilih minimal satu kategori.';
+    SFX.play('error'); return;
+  }
+  $('#umkmSubmit').disabled = true;
+  try {
+    const r = await DB.registerUmkm(App.user.id, { name, owner, wa, addr, cats, moods });
+    if (r.ok) {
+      SFX.play('success'); toast('Pendaftaran dikirim!');
+      App.user.umkm = r.umkm.id;
+      go('umkm');
+    } else { $('#umkmErr').textContent = r.error || 'Gagal'; }
+  } catch (e) { $('#umkmErr').textContent = 'Gagal mengirim.'; }
+  $('#umkmSubmit').disabled = false;
 }
 
 /* ---------- share ---------- */
@@ -708,6 +843,34 @@ function loadImg(src) {
     i.onerror = () => { clearTimeout(to); rej(new Error('img error')); };
     i.src = src;
   });
+}
+
+function openVipModal() {
+  const modal = $('#vipModal');
+  modal.classList.add('on');
+  const features = (VIP_FEATURES_I18N[App.lang] || VIP_FEATURES_I18N.id);
+  $('#vipBody').innerHTML = `
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="width:100px;height:100px;margin:0 auto">${cimo(App.mood, 96, false, 'crown')}</div>
+      <h3 style="margin-top:8px">${t('vip_t')}</h3>
+      <p class="hint">${t('vip_sub')}</p>
+      <span class="tag gold" style="margin-top:6px">${t('vip_price')}</span>
+    </div>
+    <div class="vipfeatures" style="margin-bottom:16px">
+      ${features.map(f => `<div><span class="xck">✓</span>${f}</div>`).join('')}
+    </div>
+    <button class="btn block" id="confirmVip">${t('vip_start')}</button>
+    <p class="hint" style="text-align:center;margin-top:10px">Fitur ini dalam tahap pengembangan. Nantikan!</p>
+  `;
+  $('#confirmVip').onclick = () => {
+    if (!App.user) { toast('Masuk dulu ya!'); return; }
+    const expiry = new Date(); expiry.setMonth(expiry.getMonth() + 1);
+    DB.setVip(App.user.id, true, expiry.toISOString()).then(() => {
+      App.user.vip = true; App.user.vip_expiry = expiry.toISOString();
+      toast('Selamat! Kamu sekarang VIP ✦'); SFX.play('success');
+      modal.classList.remove('on'); render();
+    }).catch(() => toast('Gagal mengaktifkan VIP'));
+  };
 }
 
 async function openShare() {
@@ -1083,7 +1246,7 @@ function registerSW() {
 }
 
 /* ---------- router ---------- */
-const RENDER = { home: viewHome, spin: viewSpin, chat: viewChat, cart: viewCart, recap: viewRecap, profile: viewProfile };
+const RENDER = { home: viewHome, spin: viewSpin, chat: viewChat, cart: viewCart, recap: viewRecap, vip: viewVip, umkm: viewUmkm, profile: viewProfile };
 
 function go(v) {
   if (!RENDER[v]) v = 'home';
@@ -1113,10 +1276,26 @@ function render() {
   }
   if (v === 'cart') { renderCart(); }
   if (v === 'recap') { renderRecap(); }
+  if (v === 'vip') { /* vip rendered statically */ }
+  if (v === 'umkm') { bindUmkm(); }
   const pet = $('#pet');
   if (pet) pet.classList.toggle('hide', v === 'chat');
   updateCartBar();
   window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+function bindUmkm() {
+  const cats = $('#umkmCats'); if (cats) {
+    cats.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+      b.classList.toggle('on'); SFX.play('tap');
+    });
+  }
+  const moods = $('#umkmMoods'); if (moods) {
+    moods.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+      b.classList.toggle('on'); SFX.play('tap');
+    });
+  }
+  const sub = $('#umkmSubmit'); if (sub) sub.onclick = submitUmkm;
 }
 
 /* ---------- global events ---------- */
@@ -1194,7 +1373,11 @@ function bindGlobal() {
     if (id === 'speakSw') { App.settings.speak = e.target.checked; saveSettings(); if (e.target.checked) Voice.preview(App.settings.voice, App.settings.voiceLang); }
     if (id === 'darkSw') { App.settings.theme = e.target.checked ? 'dark' : 'light'; saveSettings(); applyTheme(); }
     if (id === 'voiceLang') { App.settings.voiceLang = e.target.value; Voice.set('lang', e.target.value); saveSettings(); Voice.preview(App.settings.voice, e.target.value); }
-    if (id === 'costumSel') { App.costum = e.target.value; savePrefs(); render(); toast(t('prof_saved')); }
+    if (id === 'costumSel') {
+      const c = COSTUMES.find(x => x.id === e.target.value);
+      if (c && c.vip && !isVip()) { toast(t('vip_only')); SFX.play('error'); render(); return; }
+      App.costum = e.target.value; savePrefs(); render(); toast(t('prof_saved'));
+    }
   });
 
   document.addEventListener('input', e => {
@@ -1224,6 +1407,7 @@ function bindGlobal() {
     if (hit('#spinAgain')) { doSpin(); return; }
     if (hit('#openShare') || hit('#recapShare')) { openShare(); return; }
     if (hit('#testVoice')) { Voice.preview(App.settings.voice, App.settings.voiceLang); return; }
+    if (hit('#startVip')) { openVipModal(); return; }
     if (hit('#expJson')) { DB.exportJSON(); return; }
     if (hit('#dlOffline2')) { downloadOffline(); return; }
     if (hit('#logoutBtn')) { DB.setSetting('session', null); location.reload(); return; }

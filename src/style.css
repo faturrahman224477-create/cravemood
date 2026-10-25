@@ -449,6 +449,21 @@ td .tag{font-size:.6rem}
 }
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
+/* ===== VIP / UMKM ===== */
+.vipcard{background:linear-gradient(135deg,#f4e4f7,#fbe8dc);border:1px solid var(--ln);border-radius:var(--r);padding:22px;position:relative;overflow:hidden}
+[data-theme=dark] .vipcard{background:linear-gradient(135deg,#3d2347,#3a2434)}
+.viphead{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.viphead h2{font-size:1.35rem;letter-spacing:-.4px}
+.viphead p{color:var(--mu);font-size:.88rem;margin-top:3px}
+.vipfeatures{font:700 .9rem/2 Nunito;margin:10px 0}
+.vipfeatures div{display:flex;align-items:center;gap:8px}
+.xck{width:22px;height:22px;border-radius:50%;background:#3ec98a;color:#fff;display:grid;place-items:center;font-size:.7rem;flex:none}
+.umkmcard{background:linear-gradient(135deg,#3a2142,#6a3b80);color:#fff8ef;border-radius:var(--r);padding:22px;margin-top:14px;position:relative;overflow:hidden}
+.umkmcard h3{font-size:1.15rem;margin:6px 0 3px;max-width:220px}
+.umkmcard p{font-size:.82rem;opacity:.9;max-width:230px}
+.umkmcard .tag{background:#f4f87f;color:#3a2142}
+.umkmcard button{background:#fff8ef;color:#3a2142;border-color:#fff8ef}
+
 /* ===== download / install (PWA) ===== */
 .dlcard{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .dlbtn{display:flex;align-items:center;gap:11px;border:1.8px solid var(--ln);background:var(--bg);color:var(--ink);

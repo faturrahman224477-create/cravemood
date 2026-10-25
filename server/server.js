@@ -55,6 +55,7 @@ const pub = u => ({
   id: u.id, name: u.name, contact: u.contact, lang: u.lang, guest: !!u.guest,
   created: u.created, last_seen: u.last_seen,
   moods: u.moods || 0, orders: u.orders || 0, chats: u.chats || 0, spins: u.spins || 0,
+  vip: !!u.vip, vip_expiry: u.vip_expiry || null, umkm: u.umkm || null,
 });
 
 /* ---------- http helpers ---------- */
@@ -218,6 +219,35 @@ const server = http.createServer(async (req, res) => {
         const u = db.users.find(x => x.id === b.userId); if (u) u.spins = (u.spins || 0) + 1;
         save();
         return json(res, 200, { ok: true });
+      }
+
+      if (p === '/api/vip' && req.method === 'POST') {
+        const b = await readBody(req);
+        const u = db.users.find(x => x.id === b.userId);
+        if (!u) return json(res, 404, { ok: false, error: 'user not found' });
+        u.vip = !!b.active;
+        u.vip_expiry = b.expiry || null;
+        save();
+        return json(res, 200, { ok: true, user: pub(u) });
+      }
+
+      if (p === '/api/umkm' && req.method === 'POST') {
+        const b = await readBody(req);
+        const entry = Object.assign({
+          id: uid('umkm'), user_id: b.userId, status: 'pending',
+          created: new Date().toISOString(), views: 0, clicks: 0, rating: 0, menus: [],
+        }, b);
+        delete entry.userId;
+        db.umkms = db.umkms || [];
+        db.umkms.push(entry);
+        const u = db.users.find(x => x.id === b.userId);
+        if (u) u.umkm = entry.id;
+        save();
+        return json(res, 201, { ok: true, umkm: entry });
+      }
+
+      if (p === '/api/umkm/list' && req.method === 'GET') {
+        return json(res, 200, { ok: true, umkms: db.umkms || [] });
       }
 
       if (p === '/api/export' && req.method === 'GET') {

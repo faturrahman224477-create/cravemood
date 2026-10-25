@@ -6,7 +6,7 @@
 */
 const DB = (() => {
   const KEY = 'cravemood.db.v1';
-  const SCHEMA = { v: 1, users: [], moods: [], orders: [], chats: [], spins: [], settings: {} };
+  const SCHEMA = { v: 1, users: [], moods: [], orders: [], chats: [], spins: [], umkms: [], settings: {} };
   let state = null, remote = false, base = '', ready = false;
 
   const uid = () => 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -103,6 +103,7 @@ const DB = (() => {
         created: new Date().toISOString(),
         last_seen: new Date().toISOString(),
         moods: 0, orders: 0, chats: 0, spins: 0,
+        vip: false, vip_expiry: null, umkm: null,
       };
       s.users.push(u); persist();
       return { ok: true, user: pub(u) };
@@ -180,6 +181,43 @@ const DB = (() => {
       return load().moods.filter(m => m.user_id === userId).map(m => ({ d: m.date, m: m.mood }));
     },
 
+    /* VIP */
+    async setVip(userId, active, expiry) {
+      if (remote) { try { await api('/api/vip', { userId, active, expiry }); } catch (e) {} }
+      const s = load();
+      const u = s.users.find(x => x.id === userId);
+      if (u) { u.vip = !!active; u.vip_expiry = expiry || null; persist(); }
+    },
+
+    isVip(userId) {
+      const u = load().users.find(x => x.id === userId);
+      if (!u || !u.vip) return false;
+      if (u.vip_expiry && new Date(u.vip_expiry) < new Date()) { u.vip = false; persist(); return false; }
+      return true;
+    },
+
+    /* UMKM */
+    async registerUmkm(userId, data) {
+      if (remote) { const j = await api('/api/umkm', Object.assign({ userId }, data)); return j; }
+      const s = load();
+      const entry = Object.assign({
+        id: 'umkm_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+        user_id: userId, status: 'pending', created: new Date().toISOString(),
+        views: 0, clicks: 0, rating: 0, menus: [],
+      }, data);
+      s.umkms.push(entry);
+      const u = s.users.find(x => x.id === userId); if (u) u.umkm = entry.id;
+      persist();
+      return { ok: true, umkm: entry };
+    },
+
+    getUmkm(userId) {
+      const s = load();
+      const u = s.users.find(x => x.id === userId);
+      if (!u || !u.umkm) return null;
+      return s.umkms.find(x => x.id === u.umkm) || null;
+    },
+
     /* settings blob (per device) */
     getSetting(k, dflt) {
       const s = load();
@@ -213,6 +251,7 @@ const DB = (() => {
       id: u.id, name: u.name, contact: u.contact, lang: u.lang, guest: !!u.guest,
       created: u.created, last_seen: u.last_seen,
       moods: u.moods || 0, orders: u.orders || 0, chats: u.chats || 0, spins: u.spins || 0,
+      vip: !!u.vip, vip_expiry: u.vip_expiry || null, umkm: u.umkm || null,
     };
   }
   function dl(blob, name) {

@@ -16,6 +16,7 @@ const NAV = [
   ['chats', 'Chat', '<path d="M21 12a8 8 0 0 1-8 8H8l-4 3V12a8 8 0 0 1 8-8h1a8 8 0 0 1 8 8z"/>'],
   ['spins', 'Spinner', '<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>'],
   ['ai', 'Otak Cimo', '<path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>'],
+  ['umkm', 'UMKM', '<path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>'],
   ['export', 'Database', '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>'],
 ];
 
@@ -112,7 +113,7 @@ async function load() {
     DC.data = DB.dump();
     DC.ai = { enabled: false, model: '' };
   }
-  ['users', 'moods', 'orders', 'chats', 'spins'].forEach(k => { if (!Array.isArray(DC.data[k])) DC.data[k] = []; });
+  ['users', 'moods', 'orders', 'chats', 'spins', 'umkms'].forEach(k => { if (!Array.isArray(DC.data[k])) DC.data[k] = []; });
   $('#gate').innerHTML = '';
   $('#console').classList.remove('hide');
   render();
@@ -149,7 +150,7 @@ function jsonDump() {
 function render() {
   $$('#devside [data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === DC.tab));
   const c = $('#console');
-  const R = { overview: vOverview, users: vUsers, moods: vMoods, orders: vOrders, chats: vChats, spins: vSpins, ai: vAI, export: vExport };
+  const R = { overview: vOverview, users: vUsers, moods: vMoods, orders: vOrders, chats: vChats, spins: vSpins, ai: vAI, umkm: vUmkm, export: vExport };
   c.innerHTML = (R[DC.tab] || vOverview)();
   bind();
   // sidebar counters
@@ -157,6 +158,7 @@ function render() {
   if (n('users')) n('users').textContent = (DC.data.users || []).length;
   if (n('chats')) n('chats').textContent = (DC.data.chats || []).length;
   if (n('orders')) n('orders').textContent = (DC.data.orders || []).length;
+  if (n('umkm')) n('umkm').textContent = (DC.data.umkms || []).length;
 }
 
 function vOverview() {
@@ -330,6 +332,21 @@ function vAI() {
       <span class="mini" id="aiStat">${DC.ai.enabled ? 'Aktif · ' + esc(DC.ai.model) : 'Belum aktif'}</span>
     </div>
     <div class="inote" style="margin-top:14px">Format kompatibel OpenAI: OpenAI, Groq, Together, OpenRouter, atau endpoint lokal (Ollama/LM Studio) — cukup ganti Base URL dan model.</div>
+  </div>`;
+}
+
+function vUmkm() {
+  const rows = (DC.data.umkms || []).slice().sort((a, b) => (b.created || '').localeCompare(a.created || ''));
+  return `<div class="dcard">
+    <h3>UMKM terdaftar <span class="tag">${rows.length}</span></h3>
+    <div class="dtable"><table><thead><tr><th>Nama Usaha</th><th>Pemilik</th><th>WA</th><th>Alamat</th><th>Status</th><th>Views</th><th>Clicks</th><th>Daftar</th></tr></thead><tbody>
+      ${rows.length ? rows.map(u => `<tr>
+        <td><b>${esc(u.name)}</b></td><td>${esc(u.owner || '—')}</td><td>${esc(u.wa || '—')}</td>
+        <td>${esc(u.addr || '—')}</td>
+        <td>${u.status === 'approved' ? '<span class="tag mint">approved</span>' : '<span class="tag gold">pending</span>'}</td>
+        <td>${u.views || 0}</td><td>${u.clicks || 0}</td><td>${dOnly(u.created)}</td>
+      </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;padding:22px">Belum ada UMKM terdaftar.</td></tr>'}
+    </tbody></table></div>
   </div>`;
 }
 
