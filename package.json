@@ -1,0 +1,12 @@
+{
+  "name": "cravemood",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CraveMood — makanan sesuai moodmu. Frontend statis + API database tanpa dependensi.",
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node server/server.js",
+    "dev": "node build.mjs && node server/server.js"
+  },
+  "engines": { "node": ">=18" }
+}

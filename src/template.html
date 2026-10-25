@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fff7fa">
+<title>CraveMood — Makan sesuai moodmu</title>
+<meta name="description" content="CraveMood: Cimo bantu pilihin makanan khas Makassar sesuai moodmu. Spinner acak, live chat curhat, suara 5 pilihan, bagikan ke sosial media.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23fff7fa'/%3E%3Cellipse cx='32' cy='36' rx='22' ry='20' fill='%23f27aa8'/%3E%3Cellipse cx='30' cy='34' rx='20.5' ry='18.5' fill='%23ffa9c9'/%3E%3Cellipse cx='24' cy='34' rx='3.4' ry='4.4' fill='%232f2a6b'/%3E%3Cellipse cx='40' cy='34' rx='3.4' ry='4.4' fill='%232f2a6b'/%3E%3Cpath d='M28 42q4 4 8 0' fill='none' stroke='%232f2a6b' stroke-width='2.4' stroke-linecap='round'/%3E%3Cg transform='translate(46 18) rotate(18)'%3E%3Cellipse cx='-5' rx='5.5' ry='3.4' fill='%23ff7aa8'/%3E%3Cellipse cx='5' rx='5.5' ry='3.4' fill='%23ff7aa8'/%3E%3Ccircle r='2.5' fill='%23ff5c92'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/*__CSS__*/
+</style>
+</head>
+<body>
+
+<!-- ============ onboarding ============ -->
+<div class="onboard" id="onboard"></div>
+
+<!-- ============ app ============ -->
+<div id="app" class="hide">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="lg"><span>Crave</span><mark>Mood</mark></div>
+    </div>
+    <div id="navlist" style="display:flex;flex-direction:column;gap:4px"></div>
+    <div class="sidefoot" id="sidefoot"></div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div class="lg"><span>Crave</span><mark>Mood</mark></div>
+      <div class="row">
+        <button class="iconbtn" data-go="cart" aria-label="cart" id="topCart" style="position:relative">
+          <svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7z"/><path d="M9.5 8a2.5 2.5 0 0 1 5 0"/></svg>
+          <span class="bdg" id="topbadge" style="display:none;position:absolute;top:-3px;right:-3px">0</span>
+        </button>
+        <button class="iconbtn" data-go="profile" aria-label="profile">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="shell">
+      <div id="view"></div>
+    </div>
+  </main>
+
+  <nav class="tabbar" id="tabbar"></nav>
+
+  <div class="cartbar" id="cartbar">
+    <span id="cbt">🛒 0 item</span>
+    <button data-go="cart">Lihat Pesanan</button>
+  </div>
+
+  <div class="pet" id="pet"></div>
+</div>
+
+<!-- ============ modals ============ -->
+<div class="modal" id="shareModal">
+  <div class="mbox">
+    <div class="mhead"><h3>Bagikan pilihanku</h3><button class="closebtn" aria-label="close">✕</button></div>
+    <div id="shareBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="adminModal">
+  <div class="mbox">
+    <div class="mhead"><h3>Database pendaftar</h3><button class="closebtn" aria-label="close">✕</button></div>
+    <div id="adminBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/*__JS__*/
+</script>
+</body>
+</html>

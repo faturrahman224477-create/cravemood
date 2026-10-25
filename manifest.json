@@ -1,15 +1,15 @@
 {
-  "name": "CraveMood — Makan sesuai mood",
+  "name": "CraveMood — Makan sesuai moodmu",
   "short_name": "CraveMood",
-  "description": "Pilih mood, Cimo carikan kuliner Makassar yang pas. Ngobrol sama Cimo lewat suara kapan aja.",
+  "description": "Cimo carikan kuliner Makassar sesuai moodmu. Spinner acak, live chat curhat, suara 5 pilihan.",
   "id": "/cravemood/",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait-primary",
-  "background_color": "#FFF4DF",
-  "theme_color": "#FFF4DF",
+  "background_color": "#FFF7FA",
+  "theme_color": "#FFF7FA",
   "lang": "id",
   "categories": ["food", "lifestyle", "health"],
   "icons": [
@@ -18,7 +18,8 @@
     { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "Ngobrol sama Cimo", "short_name": "Ngobrol", "url": "./#talk" },
-    { "name": "Cimo Spinner", "short_name": "Spinner", "url": "./#spin" }
+    { "name": "Cimo Live Chat", "short_name": "Chat", "url": "./#/chat" },
+    { "name": "Cimo Spinner", "short_name": "Spinner", "url": "./#/spin" },
+    { "name": "Pesanan", "short_name": "Pesanan", "url": "./#/cart" }
   ]
 }

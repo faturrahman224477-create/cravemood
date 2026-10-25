@@ -1,0 +1,8 @@
+node_modules/
+shots/
+*.log
+test.cjs
+dbg*.cjs
+server/data/
+.DS_Store
+Thumbs.db

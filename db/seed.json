@@ -1,0 +1,61 @@
+{
+  "v": 1,
+  "users": [
+    {
+      "id": "u_seed_aisyah",
+      "name": "Aisyah",
+      "contact": "aisyah@example.com",
+      "lang": "id",
+      "guest": false,
+      "created": "2026-10-18T03:12:00.000Z",
+      "last_seen": "2026-10-25T01:40:00.000Z",
+      "moods": 6,
+      "orders": 2,
+      "chats": 9,
+      "spins": 3
+    },
+    {
+      "id": "u_seed_rangga",
+      "name": "Rangga",
+      "contact": "081234567890",
+      "lang": "id",
+      "guest": false,
+      "created": "2026-10-20T11:05:00.000Z",
+      "last_seen": "2026-10-24T13:22:00.000Z",
+      "moods": 3,
+      "orders": 1,
+      "chats": 4,
+      "spins": 2
+    },
+    {
+      "id": "u_seed_mei",
+      "name": "Mei Ling",
+      "contact": "meiling@example.com",
+      "lang": "zh",
+      "guest": false,
+      "created": "2026-10-22T07:30:00.000Z",
+      "last_seen": "2026-10-25T00:15:00.000Z",
+      "moods": 2,
+      "orders": 0,
+      "chats": 6,
+      "spins": 1
+    }
+  ],
+  "moods": [
+    { "user_id": "u_seed_aisyah", "mood": "senang", "date": "2026-10-19" },
+    { "user_id": "u_seed_aisyah", "mood": "sedih",  "date": "2026-10-20" },
+    { "user_id": "u_seed_aisyah", "mood": "capek",  "date": "2026-10-21" },
+    { "user_id": "u_seed_aisyah", "mood": "senang", "date": "2026-10-22" },
+    { "user_id": "u_seed_aisyah", "mood": "bingung","date": "2026-10-23" },
+    { "user_id": "u_seed_aisyah", "mood": "senang", "date": "2026-10-24" },
+    { "user_id": "u_seed_rangga", "mood": "marah",  "date": "2026-10-22" },
+    { "user_id": "u_seed_rangga", "mood": "capek",  "date": "2026-10-23" },
+    { "user_id": "u_seed_rangga", "mood": "senang", "date": "2026-10-24" },
+    { "user_id": "u_seed_mei",    "mood": "kecewa", "date": "2026-10-23" },
+    { "user_id": "u_seed_mei",    "mood": "senang", "date": "2026-10-24" }
+  ],
+  "orders": [],
+  "chats": [],
+  "spins": [],
+  "created": "2026-10-18T00:00:00.000Z"
+}
