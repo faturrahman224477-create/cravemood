@@ -14,6 +14,11 @@ const t = k => {
   const d = I18N[App.lang] || I18N.id;
   return d[k] !== undefined ? d[k] : (I18N.en[k] !== undefined ? I18N.en[k] : k);
 };
+/* mood / category labels in the active language */
+function mL(m) { const x = MOODI18N[m.k]; return (x && x[App.lang] && x[App.lang][0]) || m.label; }
+function mS(m) { const x = MOODI18N[m.k]; return (x && x[App.lang] && x[App.lang][1]) || m.sub; }
+function mD(m) { const x = MOODI18N[m.k]; return (x && x[App.lang] && x[App.lang][2]) || m.dish; }
+function cL(c) { const x = CATI18N[c]; return (x && x[App.lang]) || c; }
 
 /* ---------- distance ---------- */
 function distKm(a, b) {
@@ -163,7 +168,7 @@ function viewHome() {
     <button class="link" data-go="chat">${t('nav_chat')} ${icon('arrow')}</button></div>
   <div class="moods" id="moods">
     ${MOODS.map(m => `<button class="mood ${m.k === App.mood ? 'on' : ''}" data-mood="${m.k}" style="--c:${m.c}">
-      <div class="face">${cimo(m.face, 48)}</div><b>${m.label}</b></button>`).join('')}
+      <div class="face">${cimo(m.face, 48)}</div><b>${mL(m)}</b></button>`).join('')}
   </div>
 
   <div class="locbar">
@@ -175,9 +180,9 @@ function viewHome() {
   </div>
 
   <div class="sectitle"><h2><span class="n">2</span> ${t('home_rec')}</h2>
-    <span class="tag mint">${moodObj.sub}</span></div>
+    <span class="tag mint">${mS(moodObj)}</span></div>
   <div class="chips" id="cats">
-    ${CATS.map(c => `<button class="chip ${c === App.cat ? 'on' : ''}" data-cat="${c}">${c === 'Terdekat' ? icon('pin') : ''}${c}</button>`).join('')}
+    ${CATS.map(c => `<button class="chip ${c === App.cat ? 'on' : ''}" data-cat="${c}">${c === 'Terdekat' ? icon('pin') : ''}${cL(c)}</button>`).join('')}
   </div>
   <div class="recs" id="recs"></div>`;
 }
@@ -233,7 +238,7 @@ function viewSpin() {
   const grad = items.map((_, i) => `${cols[i % cols.length]} ${i * seg}deg ${(i + 1) * seg}deg`).join(',');
   return `
   <div class="pagetitle"><div><h1>${t('spin_t')}</h1><p>${t('spin_sub')}</p></div>
-    <span class="tag mint">${(MOODS.find(m => m.k === App.mood) || MOODS[0]).label}</span></div>
+    <span class="tag mint">${mL(MOODS.find(m => m.k === App.mood) || MOODS[0])}</span></div>
 
   <div class="card" style="padding:22px 18px">
     <div class="spinwrap">
@@ -477,7 +482,7 @@ function renderRecap() {
   const mx = Math.max(1, ...Object.values(cnt));
   $('#bars').innerHTML = MOODS.map(m => {
     const v = cnt[m.k] || 0;
-    return `<div class="bar"><span style="width:96px;display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;flex:none">${cimo(m.face, 20)}</span>${m.label}</span>
+    return `<div class="bar"><span style="width:96px;display:flex;align-items:center;gap:6px"><span style="width:22px;height:22px;flex:none">${cimo(m.face, 20)}</span>${mL(m)}</span>
       <div class="tr"><i style="width:${(v / mx) * 100}%;background:${m.c}"></i></div><b style="width:26px;text-align:right;font-size:.72rem">${v}</b></div>`;
   }).join('');
 }
@@ -563,10 +568,10 @@ function shareCaption(items) {
   const name = App.user ? App.user.name : '';
   const list = items.map(i => '• ' + i).join('\n');
   const L = {
-    id: `${name ? name + ' lagi ' : 'Lagi '}${moodObj.label.toLowerCase()} hari ini ${moodObj.k === 'senang' ? '✨' : moodObj.k === 'sedih' ? '🌧️' : moodObj.k === 'marah' ? '🔥' : '🍡'}\n\nCimo pilihin buatku:\n${list}\n\nLagi mood apa hari ini? Cobain CraveMood 🍡\n#CraveMood #Makassar #MakanSesuaiMood`,
-    en: `${name ? name + ' is ' : 'Feeling '}${moodObj.label.toLowerCase()} today.\n\nCimo picked for me:\n${list}\n\nWhat is your mood? Try CraveMood 🍡\n#CraveMood #Makassar #FoodForMood`,
-    zh: `今天心情：${moodObj.label}\n\nCimo 帮我选了：\n${list}\n\n你今天心情怎么样？来试试 CraveMood 🍡\n#CraveMood #Makassar`,
-    hi: `आज मूड: ${moodObj.label}\n\nCimo ने चुना:\n${list}\n\nआज आपका मूड कैसा है? CraveMood आज़माएं 🍡\n#CraveMood #Makassar`,
+    id: `${name ? name + ' lagi ' : 'Lagi '}${mL(moodObj).toLowerCase()} hari ini ${moodObj.k === 'senang' ? '✨' : moodObj.k === 'sedih' ? '🌧️' : moodObj.k === 'marah' ? '🔥' : '🍡'}\n\nCimo pilihin buatku:\n${list}\n\nLagi mood apa hari ini? Cobain CraveMood 🍡\n#CraveMood #Makassar #MakanSesuaiMood`,
+    en: `${name ? name + ' is ' : 'Feeling '}${mL(moodObj).toLowerCase()} today.\n\nCimo picked for me:\n${list}\n\nWhat is your mood? Try CraveMood 🍡\n#CraveMood #Makassar #FoodForMood`,
+    zh: `今天心情：${mL(moodObj)}\n\nCimo 帮我选了：\n${list}\n\n你今天心情怎么样？来试试 CraveMood 🍡\n#CraveMood #Makassar`,
+    hi: `आज मूड: ${mL(moodObj)}\n\nCimo ने चुना:\n${list}\n\nआज आपका मूड कैसा है? CraveMood आज़माएं 🍡\n#CraveMood #Makassar`,
   };
   return L[App.lang] || L.id;
 }
@@ -621,10 +626,10 @@ async function buildShareCard() {
   x.textAlign = 'center';
   x.fillStyle = '#3a2142';
   x.font = '700 62px Fredoka, Nunito, sans-serif';
-  const title = (App.user ? App.user.name + ' · ' : '') + moodObj.label;
+  const title = (App.user ? App.user.name + ' · ' : '') + mL(moodObj);
   x.fillText(title.length > 22 ? title.slice(0, 21) + '…' : title, W / 2, 640);
   x.font = '700 30px Nunito, sans-serif'; x.fillStyle = '#7d6683';
-  x.fillText(moodObj.dish, W / 2, 686);
+  x.fillText(mD(moodObj), W / 2, 686);
 
   // items
   const items = Object.keys(App.cart).map(id => MENU.find(m => m.id === id)).filter(Boolean).slice(0, 3);
@@ -1027,7 +1032,7 @@ function bindGlobal() {
       updatePetFace();
       if (App.user) DB.addMood(App.user.id, App.mood).catch(() => {});
       const mo = MOODS.find(m => m.k === App.mood);
-      if (mo && App.settings.speak) Voice.speak(mo.dish, { lang: App.settings.voiceLang || App.lang });
+      if (mo && App.settings.speak) Voice.speak(mD(mo), { lang: App.settings.voiceLang || App.lang });
       return;
     }
     const cat = e.target.closest('[data-cat]');

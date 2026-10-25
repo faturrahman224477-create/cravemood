@@ -21,6 +21,21 @@ const MOODS = [
 
 const CATS = ['Semua','Terdekat','Snack','Heavy Meal','Beverage','Viral'];
 
+/* mood + category translations: [label, sub, dish] */
+const MOODI18N = {
+  senang: { en:['Happy','Bright & upbeat','Sweet, fresh, light'], zh:['开心','明亮有活力','甜的、清爽、轻食'], hi:['खुश','उजला और ऊर्जावान','मीठा, ताज़ा, हल्का'] },
+  sedih:  { en:['Sad','Warm & soothing','Warm soup & broth'], zh:['难过','温暖安抚','热汤和汤面'], hi:['उदास','गरम और सुकून','गरम सूप'] },
+  marah:  { en:['Angry','Fiery & bold','Spicy and hearty'], zh:['生气','有劲带辣','辣的、够味'], hi:['गुस्सा','तेज़ और दमदार','तीखा और भरपूर'] },
+  bingung:{ en:['Confused','Help me decide','Three safe picks'], zh:['纠结','帮你决定','三个稳妥选择'], hi:['उलझन','फैसला आसान','तीन आसान विकल्प'] },
+  capek:  { en:['Tired','Slow & refuel','Filling and gentle'], zh:['疲惫','慢慢补充能量','扎实又温和'], hi:['थका','आराम और ऊर्जा','भरपूर और हल्का'] },
+  kecewa: { en:['Let down','Gentle comfort','Sweet comfort food'], zh:['失望','温柔安慰','甜的安慰'], hi:['निराश','हल्का सुकून','मीठा सुकून'] },
+};
+const CATI18N = {
+  Semua:{en:'All',zh:'全部',hi:'सब'}, Terdekat:{en:'Nearest',zh:'最近',hi:'पास'},
+  Snack:{en:'Snack',zh:'小吃',hi:'स्नैक'}, 'Heavy Meal':{en:'Main',zh:'主食',hi:'मुख्य भोजन'},
+  Beverage:{en:'Drinks',zh:'饮料',hi:'पेय'}, Viral:{en:'Viral',zh:'爆款',hi:'वायरल'},
+};
+
 /* street index = where the stall is */
 const MENU = [
   {id:'coto',    name:'Coto Makassar',           stall:'Coto Daeng Tata',      st:0, r:4.8, lo:25000, hi:32000, cat:'Heavy Meal', art:'soup',  moods:['sedih','capek','kecewa'], viral:1, d:'Kuah kacang hangat, daging empuk, dimakan dengan ketupat.'},
