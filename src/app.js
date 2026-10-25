@@ -913,7 +913,7 @@ function renderVipModal() {
       <div style="font:700 .8rem Fredoka;margin-bottom:8px">${t('pay_method')}</div>
       <div class="paymethods">
         <button class="paybtn on" data-pay="manual">
-          <span class="payico">💚</span>
+          <img src="${acc.logo}" alt="GoPay" style="width:36px;height:36px;border-radius:8px;flex:none">
           <div><b>${acc.label}</b><small>${acc.name}</small></div>
         </button>
         <button class="paybtn" data-pay="wa">
@@ -924,12 +924,13 @@ function renderVipModal() {
       <div id="payDetail" style="margin-top:12px">
         <div class="card" style="padding:14px;background:var(--bg);border-style:dashed">
           <div style="text-align:center;margin-bottom:10px">
-            <div style="font:700 1rem Fredoka">${acc.bankFull}</div>
+            <img src="${acc.logo}" alt="GoPay" style="width:64px;height:64px;margin:0 auto 8px;border-radius:14px">
+            <div style="font:700 1.3rem Fredoka;color:#00AA13">${acc.bankFull}</div>
             <div style="font:700 1.4rem Fredoka;letter-spacing:2px;margin:6px 0;color:var(--pk2)">${acc.number}</div>
             <div style="font:700 .85rem Nunito">a.n. ${acc.name}</div>
           </div>
-          <div class="hint" style="text-align:center;font-size:.75rem;margin-bottom:10px">${t('pay_manual_inst')}</div>
-          <button class="btn sm block" id="copyRek">📋 Salin nomor rekening</button>
+          <div class="hint" style="text-align:center;font-size:.75rem;margin-bottom:10px">Kirim nominal sesuai paket ke nomor GoPay di atas, lalu kirim bukti screenshot ke WhatsApp kami.</div>
+          <button class="btn sm block" id="copyRek">📋 Salin nomor GoPay</button>
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-top:14px">
@@ -944,7 +945,8 @@ function renderVipModal() {
       if (method === 'manual') {
         det.innerHTML = `<div class="card" style="padding:14px;background:var(--bg);border-style:dashed">
           <div style="text-align:center;margin-bottom:10px">
-            <div style="font:700 1.3rem Fredoka;color:#00AA13">${acc.label}</div>
+            <img src="${acc.logo}" alt="GoPay" style="width:64px;height:64px;margin:0 auto 8px;border-radius:14px">
+            <div style="font:700 1.3rem Fredoka;color:#00AA13">${acc.bankFull}</div>
             <div style="font:700 1.4rem Fredoka;letter-spacing:2px;margin:6px 0;color:var(--pk2)">${acc.number}</div>
             <div style="font:700 .85rem Nunito">a.n. ${acc.name}</div>
           </div>
