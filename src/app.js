@@ -1279,6 +1279,7 @@ function maybeShowBanner() {
     <div style="flex:1;min-width:0"><b>${L.banner}</b><small>${L.banner_sub}</small></div>
     <div class="act">
       <button class="go" id="barInstall">${L.install}</button>
+      <a href="https://www.pwabuilder.com/reportcard?site=https://cravemood.apps.workbuddy.host" target="_blank" rel="noopener" class="go" style="background:#00aa13;text-decoration:none;display:inline-block">APK</a>
       <button class="no" id="barLater">${L.later}</button>
     </div>`;
   b.classList.add('on');
@@ -1321,7 +1322,14 @@ function renderInstall() {
       <button class="btn sm ghost" id="dlOffline">${icon('down')} ${L.offline}</button>
       <button class="btn sm ghost" id="copyLink">${icon('share')} ${L.copy}</button>
     </div>
-    <div class="inote">${L.note}<br><b>${L.apk}</b> ${L.apk_note}</div>`;
+    <div class="card" style="margin-top:14px;padding:14px;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-color:#81c784">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:1.8rem">📦</span>
+        <div><b style="font-size:.95rem;color:#2e7d32">${L.apk}</b><small style="display:block;color:#388e3c;font-size:.72rem">${L.apk_note}</small></div>
+      </div>
+      <a href="https://www.pwabuilder.com/reportcard?site=https://cravemood.apps.workbuddy.host" target="_blank" rel="noopener" class="btn block" style="background:#00aa13;box-shadow:0 5px 0 #007a0e;text-decoration:none">📲 Unduh APK Android</a>
+    </div>
+    <div class="inote">${L.note}</div>`;
 
   $$('#installBody [data-itab]').forEach(b => b.onclick = () => { installTab = b.dataset.itab; renderInstall(); SFX.play('tap'); });
   const go = $('#pwaGo');
