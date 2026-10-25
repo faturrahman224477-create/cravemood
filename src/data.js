@@ -324,11 +324,11 @@ const COSTUMES = [
   {id:'batik',name:'Batik Makassar',nameI18n:{en:'Batik',zh:'蜡染',hi:'बatik'},vip:true},
 ];
 
-/* bank account for manual VIP payment */
+/* payment account for manual VIP payment */
 const PAYMENT_ACCOUNT = {
-  bank: 'BNI', bankFull: 'Bank Negara Indonesia',
-  number: '1859784321', name: 'FATUR RAHMAN',
-  whatsapp: 'https://wa.me/6282349410090?text=Halo%20CraveMood,%20saya%20sudah%20transfer%20VIP%20dan%20ini%20bukti%20transfernya.',
+  type: 'gopay', label: 'GoPay',
+  number: '085824461910', name: 'FATUR RAHMAN',
+  whatsapp: 'https://wa.me/6282349410090?text=Halo%20CraveMood,%20saya%20sudah%20transfer%20VIP%20via%20GoPay%20dan%20ini%20bukti%20transfernya.',
 };
 
 const UMKM_CATS = ['Snack','Heavy Meal','Beverage'];

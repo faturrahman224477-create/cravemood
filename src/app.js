@@ -913,8 +913,8 @@ function renderVipModal() {
       <div style="font:700 .8rem Fredoka;margin-bottom:8px">${t('pay_method')}</div>
       <div class="paymethods">
         <button class="paybtn on" data-pay="manual">
-          <span class="payico">🏦</span>
-          <div><b>${t('pay_va')}</b><small>${acc.bank}</small></div>
+          <span class="payico">💚</span>
+          <div><b>${acc.label}</b><small>${acc.name}</small></div>
         </button>
         <button class="paybtn" data-pay="wa">
           <span class="payico">💬</span>
@@ -944,14 +944,14 @@ function renderVipModal() {
       if (method === 'manual') {
         det.innerHTML = `<div class="card" style="padding:14px;background:var(--bg);border-style:dashed">
           <div style="text-align:center;margin-bottom:10px">
-            <div style="font:700 1rem Fredoka">${acc.bankFull}</div>
+            <div style="font:700 1.3rem Fredoka;color:#00AA13">${acc.label}</div>
             <div style="font:700 1.4rem Fredoka;letter-spacing:2px;margin:6px 0;color:var(--pk2)">${acc.number}</div>
             <div style="font:700 .85rem Nunito">a.n. ${acc.name}</div>
           </div>
-          <div class="hint" style="text-align:center;font-size:.75rem;margin-bottom:10px">${t('pay_manual_inst')}</div>
-          <button class="btn sm block" id="copyRek">📋 Salin nomor rekening</button>
+          <div class="hint" style="text-align:center;font-size:.75rem;margin-bottom:10px">Kirim nominal sesuai paket ke nomor GoPay di atas, lalu kirim bukti screenshot ke WhatsApp kami.</div>
+          <button class="btn sm block" id="copyRek">📋 Salin nomor GoPay</button>
         </div>`;
-        $('#copyRek').onclick = () => { copyText(acc.number); toast('Nomor rekening disalin'); SFX.play('pop'); };
+        $('#copyRek').onclick = () => { copyText(acc.number); toast('Nomor GoPay disalin'); SFX.play('pop'); };
       } else {
         det.innerHTML = `<div class="card" style="padding:14px;background:var(--bg);border-style:dashed;text-align:center">
           <div style="font:700 .9rem Fredoka;margin-bottom:8px">Pesan via WhatsApp</div>
@@ -961,7 +961,7 @@ function renderVipModal() {
       }
       SFX.play('tap');
     });
-    $('#copyRek').onclick = () => { copyText(acc.number); toast('Nomor rekening disalin'); SFX.play('pop'); };
+    $('#copyRek').onclick = () => { copyText(acc.number); toast('Nomor GoPay disalin'); SFX.play('pop'); };
     $('#vipBack').onclick = () => { vipStep = 'pkg'; renderVipModal(); };
     $('#vipConfirmPay').onclick = () => submitVipPayment(pkg);
   }
