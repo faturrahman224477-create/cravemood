@@ -3339,7 +3339,7 @@ function renderInstall() {
         <small>${PLAT.standalone ? L.off : L.on}</small>
       </div>
       ${PLAT.standalone ? `<span class="tag mint">✓</span>` : ''}
-    </div>`
+    </div>
     ${canPrompt && !PLAT.standalone ? `<button class="btn block" id="pwaGo">${icon('down')} ${L.install}</button>` : ''}
     <ol class="isteps" style="margin-top:${canPrompt && !PLAT.standalone ? 14 : 0}px">
       ${steps.map(s => `<li class="istep"><em></em><span>${s}</span></li>`).join('')}
