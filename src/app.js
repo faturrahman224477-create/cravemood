@@ -1149,7 +1149,7 @@ function maybeShowBanner() {
   if (!b) return;
   const L = IL();
   b.innerHTML = `
-    <div class="ph">${cimo(App.mood, 40)}</div>
+    <img src="icon-192.png" alt="CraveMood" style="width:44px;height:44px;border-radius:12px;flex:none;box-shadow:0 3px 10px rgba(122,42,85,.2)">
     <div style="flex:1;min-width:0"><b>${L.banner}</b><small>${L.banner_sub}</small></div>
     <div class="act">
       <button class="go" id="barInstall">${L.install}</button>
@@ -1180,13 +1180,13 @@ function renderInstall() {
       <button data-itab="desktop" class="${installTab === 'desktop' ? 'on' : ''}">${L.tabD}</button>
     </div>
     <div class="installhero">
-      <div class="ph" style="background:${iconBg};color:${iconCol}"><svg viewBox="0 0 24 24">${ico}</svg></div>
+      <img src="icon-192.png" alt="CraveMood" style="width:56px;height:56px;border-radius:16px;flex:none;box-shadow:0 4px 14px rgba(122,42,85,.25)">
       <div style="flex:1;min-width:0">
         <b>${L.title}</b>
         <small>${PLAT.standalone ? L.off : L.on}</small>
       </div>
       ${PLAT.standalone ? `<span class="tag mint">✓</span>` : ''}
-    </div>
+    </div>`
     ${canPrompt && !PLAT.standalone ? `<button class="btn block" id="pwaGo">${icon('down')} ${L.install}</button>` : ''}
     <ol class="isteps" style="margin-top:${canPrompt && !PLAT.standalone ? 14 : 0}px">
       ${steps.map(s => `<li class="istep"><em></em><span>${s}</span></li>`).join('')}

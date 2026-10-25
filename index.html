@@ -3,12 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#fff7fa">
+<meta name="theme-color" content="#FFF7FA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#241529" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
 <title>CraveMood — Makan sesuai moodmu</title>
 <meta name="description" content="CraveMood: Cimo bantu pilihin makanan khas Makassar sesuai moodmu. Spinner acak, live chat curhat, suara 5 pilihan, bagikan ke sosial media.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23fff7fa'/%3E%3Cellipse cx='32' cy='36' rx='22' ry='20' fill='%23f27aa8'/%3E%3Cellipse cx='30' cy='34' rx='20.5' ry='18.5' fill='%23ffa9c9'/%3E%3Cellipse cx='24' cy='34' rx='3.4' ry='4.4' fill='%232f2a6b'/%3E%3Cellipse cx='40' cy='34' rx='3.4' ry='4.4' fill='%232f2a6b'/%3E%3Cpath d='M28 42q4 4 8 0' fill='none' stroke='%232f2a6b' stroke-width='2.4' stroke-linecap='round'/%3E%3Cg transform='translate(46 18) rotate(18)'%3E%3Cellipse cx='-5' rx='5.5' ry='3.4' fill='%23ff7aa8'/%3E%3Cellipse cx='5' rx='5.5' ry='3.4' fill='%23ff7aa8'/%3E%3Ccircle r='2.5' fill='%23ff5c92'/%3E%3C/g%3E%3C/svg%3E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="CraveMood">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="CraveMood">
+<meta name="msapplication-TileColor" content="#FFF7FA">
+<meta name="msapplication-TileImage" content="icon-192.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -500,6 +513,7 @@ td .tag{font-size:.6rem}
 .itabs button.on{background:var(--ink);color:var(--bg);box-shadow:0 3px 8px rgba(58,33,66,.2)}
 .installhero{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,color-mix(in srgb,var(--pk) 30%,var(--bg)),var(--cr));
   border-radius:20px;padding:13px 14px;margin-bottom:14px}
+.installhero img{width:56px;height:56px;border-radius:16px;flex:none;box-shadow:0 4px 14px rgba(122,42,85,.25)}
 .installhero .ph{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;flex:none;background:var(--sf)}
 .installhero .ph svg{width:30px;height:30px;fill:currentColor;stroke:none}
 .installhero b{font-size:.92rem;display:block;line-height:1.25}
@@ -518,7 +532,7 @@ td .tag{font-size:.6rem}
   box-shadow:0 14px 34px rgba(122,42,85,.24);transform:translateY(160%);transition:transform .4s cubic-bezier(.34,1.4,.5,1);
   opacity:0;visibility:hidden}
 .installbanner.on{transform:translateY(0);opacity:1;visibility:visible}
-.installbanner .ph{width:44px;height:44px;flex:none;display:grid;place-items:center}
+.installbanner img{width:44px;height:44px;flex:none;border-radius:12px;box-shadow:0 3px 10px rgba(122,42,85,.2)}
 .installbanner b{font-size:.84rem;display:block;line-height:1.2}
 .installbanner small{font-size:.68rem;color:var(--mu);font-weight:700}
 .installbanner .act{display:flex;flex-direction:column;gap:5px;flex:none}
@@ -3288,7 +3302,7 @@ function maybeShowBanner() {
   if (!b) return;
   const L = IL();
   b.innerHTML = `
-    <div class="ph">${cimo(App.mood, 40)}</div>
+    <img src="icon-192.png" alt="CraveMood" style="width:44px;height:44px;border-radius:12px;flex:none;box-shadow:0 3px 10px rgba(122,42,85,.2)">
     <div style="flex:1;min-width:0"><b>${L.banner}</b><small>${L.banner_sub}</small></div>
     <div class="act">
       <button class="go" id="barInstall">${L.install}</button>
@@ -3319,13 +3333,13 @@ function renderInstall() {
       <button data-itab="desktop" class="${installTab === 'desktop' ? 'on' : ''}">${L.tabD}</button>
     </div>
     <div class="installhero">
-      <div class="ph" style="background:${iconBg};color:${iconCol}"><svg viewBox="0 0 24 24">${ico}</svg></div>
+      <img src="icon-192.png" alt="CraveMood" style="width:56px;height:56px;border-radius:16px;flex:none;box-shadow:0 4px 14px rgba(122,42,85,.25)">
       <div style="flex:1;min-width:0">
         <b>${L.title}</b>
         <small>${PLAT.standalone ? L.off : L.on}</small>
       </div>
       ${PLAT.standalone ? `<span class="tag mint">✓</span>` : ''}
-    </div>
+    </div>`
     ${canPrompt && !PLAT.standalone ? `<button class="btn block" id="pwaGo">${icon('down')} ${L.install}</button>` : ''}
     <ol class="isteps" style="margin-top:${canPrompt && !PLAT.standalone ? 14 : 0}px">
       ${steps.map(s => `<li class="istep"><em></em><span>${s}</span></li>`).join('')}

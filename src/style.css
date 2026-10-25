@@ -485,6 +485,7 @@ td .tag{font-size:.6rem}
 .itabs button.on{background:var(--ink);color:var(--bg);box-shadow:0 3px 8px rgba(58,33,66,.2)}
 .installhero{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,color-mix(in srgb,var(--pk) 30%,var(--bg)),var(--cr));
   border-radius:20px;padding:13px 14px;margin-bottom:14px}
+.installhero img{width:56px;height:56px;border-radius:16px;flex:none;box-shadow:0 4px 14px rgba(122,42,85,.25)}
 .installhero .ph{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;flex:none;background:var(--sf)}
 .installhero .ph svg{width:30px;height:30px;fill:currentColor;stroke:none}
 .installhero b{font-size:.92rem;display:block;line-height:1.25}
@@ -503,7 +504,7 @@ td .tag{font-size:.6rem}
   box-shadow:0 14px 34px rgba(122,42,85,.24);transform:translateY(160%);transition:transform .4s cubic-bezier(.34,1.4,.5,1);
   opacity:0;visibility:hidden}
 .installbanner.on{transform:translateY(0);opacity:1;visibility:visible}
-.installbanner .ph{width:44px;height:44px;flex:none;display:grid;place-items:center}
+.installbanner img{width:44px;height:44px;flex:none;border-radius:12px;box-shadow:0 3px 10px rgba(122,42,85,.2)}
 .installbanner b{font-size:.84rem;display:block;line-height:1.2}
 .installbanner small{font-size:.68rem;color:var(--mu);font-weight:700}
 .installbanner .act{display:flex;flex-direction:column;gap:5px;flex:none}
