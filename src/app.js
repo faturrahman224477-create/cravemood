@@ -588,16 +588,16 @@ async function buildShareCard() {
   const c0 = MOODC[moodObj.face] || MOODC.def;
 
   const g = x.createLinearGradient(0, 0, W, H);
-  g.addColorStop(0, '#fff7fa'); g.addColorStop(0.45, c0[0] + 'aa'); g.addColorStop(1, c0[1] + 'cc');
+  g.addColorStop(0, '#fff7fa'); g.addColorStop(0.38, c0[0] + 'ee'); g.addColorStop(1, c0[1] + 'ff');
   x.fillStyle = g; x.fillRect(0, 0, W, H);
 
   x.fillStyle = 'rgba(255,255,255,.45)';
   for (let i = 20; i < W; i += 44) for (let j = 20; j < H; j += 44) { x.beginPath(); x.arc(i, j, 3.4, 0, 7); x.fill(); }
 
   // white card
-  x.fillStyle = 'rgba(255,255,255,.66)';
+  x.fillStyle = 'rgba(255,255,255,.58)';
   roundRect(x, 52, 52, W - 104, H - 104, 52); x.fill();
-  x.strokeStyle = 'rgba(255,255,255,.9)'; x.lineWidth = 3; x.stroke();
+  x.strokeStyle = 'rgba(255,255,255,.95)'; x.lineWidth = 4; x.stroke();
 
   // soft mood glow behind the mascot
   const gl = x.createRadialGradient(W / 2, 400, 40, W / 2, 400, 320);
