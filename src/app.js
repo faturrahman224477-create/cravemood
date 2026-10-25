@@ -845,32 +845,156 @@ function loadImg(src) {
   });
 }
 
+let vipPkg = null, vipStep = 'pkg';
+
 function openVipModal() {
   const modal = $('#vipModal');
   modal.classList.add('on');
+  vipStep = 'pkg'; vipPkg = null;
+  renderVipModal();
+}
+
+function renderVipModal() {
   const features = (VIP_FEATURES_I18N[App.lang] || VIP_FEATURES_I18N.id);
-  $('#vipBody').innerHTML = `
-    <div style="text-align:center;margin-bottom:16px">
-      <div style="width:100px;height:100px;margin:0 auto">${cimo(App.mood, 96, false, 'crown')}</div>
-      <h3 style="margin-top:8px">${t('vip_t')}</h3>
-      <p class="hint">${t('vip_sub')}</p>
-      <span class="tag gold" style="margin-top:6px">${t('vip_price')}</span>
-    </div>
-    <div class="vipfeatures" style="margin-bottom:16px">
-      ${features.map(f => `<div><span class="xck">✓</span>${f}</div>`).join('')}
-    </div>
-    <button class="btn block" id="confirmVip">${t('vip_start')}</button>
-    <p class="hint" style="text-align:center;margin-top:10px">Fitur ini dalam tahap pengembangan. Nantikan!</p>
-  `;
-  $('#confirmVip').onclick = () => {
-    if (!App.user) { toast('Masuk dulu ya!'); return; }
-    const expiry = new Date(); expiry.setMonth(expiry.getMonth() + 1);
-    DB.setVip(App.user.id, true, expiry.toISOString()).then(() => {
-      App.user.vip = true; App.user.vip_expiry = expiry.toISOString();
-      toast('Selamat! Kamu sekarang VIP ✦'); SFX.play('success');
-      modal.classList.remove('on'); render();
-    }).catch(() => toast('Gagal mengaktifkan VIP'));
-  };
+  const L = I18N[App.lang] || I18N.id;
+  const body = $('#vipBody');
+
+  if (vipStep === 'pkg') {
+    body.innerHTML = `
+      <div style="text-align:center;margin-bottom:14px">
+        <div style="width:80px;height:80px;margin:0 auto">${cimo(App.mood, 76, false, 'crown')}</div>
+        <h3 style="margin-top:6px;font-size:1.1rem">${t('vip_t')}</h3>
+        <p class="hint" style="font-size:.8rem">${t('vip_sub')}</p>
+      </div>
+      <div class="vipfeatures" style="margin-bottom:14px;font-size:.88rem">
+        ${features.map(f => `<div><span class="xck">✓</span>${f}</div>`).join('')}
+      </div>
+      <div style="font:700 .8rem Fredoka;margin-bottom:8px">${t('pay_pkg')}</div>
+      <div class="pkggrid">
+        ${VIP_PACKAGES.map(p => {
+          const lbl = (p.labelI18n && p.labelI18n[App.lang]) || p.label;
+          const tag = p.popular ? `<span class="tag gold">${t('pay_popular')}</span>` : p.best ? `<span class="tag mint">${t('pay_best')}</span>` : '';
+          return `<button class="pkgcard ${vipPkg === p.id ? 'on' : ''}" data-pkg="${p.id}">
+            <div class="pkgtop"><b>${lbl}</b>${tag}</div>
+            <div class="pkgprice">Rp ${String(p.price).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</div>
+            <div class="pkghint">${p.months} ${t('pay_month')}</div>
+          </button>`;
+        }).join('')}
+      </div>
+      <button class="btn block" id="vipNextPkg" style="margin-top:14px" disabled>${t('pay_confirm')}</button>
+    `;
+    $$('#vipBody .pkgcard').forEach(b => b.onclick = () => {
+      vipPkg = b.dataset.pkg;
+      $$('#vipBody .pkgcard').forEach(x => x.classList.toggle('on', x.dataset.pkg === vipPkg));
+      $('#vipNextPkg').disabled = false;
+      SFX.play('tap');
+    });
+    $('#vipNextPkg').onclick = () => { if (vipPkg) { vipStep = 'pay'; renderVipModal(); } };
+  }
+
+  if (vipStep === 'pay') {
+    const pkg = VIP_PACKAGES.find(p => p.id === vipPkg);
+    const acc = PAYMENT_ACCOUNT;
+    body.innerHTML = `
+      <div style="text-align:center;margin-bottom:12px">
+        <div style="width:70px;height:70px;margin:0 auto">${cimo(App.mood, 66, false, 'crown')}</div>
+        <h3 style="margin-top:6px;font-size:1.05rem">${t('pay_t')}</h3>
+      </div>
+      <div class="card" style="padding:14px;margin-bottom:12px;background:linear-gradient(135deg,#f4e4f7,#fbe8dc)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span class="muted" style="font-size:.8rem">${t('pay_pkg')}</span>
+          <b style="font-size:.9rem">${esc((pkg.labelI18n && pkg.labelI18n[App.lang]) || pkg.label)}</b>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="muted" style="font-size:.8rem">${t('pay_total')}</span>
+          <b style="font-size:1.1rem;color:var(--pk2)">Rp ${String(pkg.price).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</b>
+        </div>
+      </div>
+      <div style="font:700 .8rem Fredoka;margin-bottom:8px">${t('pay_method')}</div>
+      <div class="paymethods">
+        <button class="paybtn on" data-pay="manual">
+          <span class="payico">🏦</span>
+          <div><b>${t('pay_va')}</b><small>${acc.bank}</small></div>
+        </button>
+        <button class="paybtn" data-pay="wa">
+          <span class="payico">💬</span>
+          <div><b>${t('pay_wa')}</b><small>Kirim bukti transfer</small></div>
+        </button>
+      </div>
+      <div id="payDetail" style="margin-top:12px">
+        <div class="card" style="padding:14px;background:var(--bg);border-style:dashed">
+          <div style="text-align:center;margin-bottom:10px">
+            <div style="font:700 1rem Fredoka">${acc.bankFull}</div>
+            <div style="font:700 1.4rem Fredoka;letter-spacing:2px;margin:6px 0;color:var(--pk2)">${acc.number}</div>
+            <div style="font:700 .85rem Nunito">a.n. ${acc.name}</div>
+          </div>
+          <div class="hint" style="text-align:center;font-size:.75rem;margin-bottom:10px">${t('pay_manual_inst')}</div>
+          <button class="btn sm block" id="copyRek">📋 Salin nomor rekening</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn ghost" style="flex:1" id="vipBack">‹ Kembali</button>
+        <button class="btn" style="flex:2" id="vipConfirmPay">${t('pay_confirm')}</button>
+      </div>
+    `;
+    $$('#vipBody .paybtn').forEach(b => b.onclick = () => {
+      $$('#vipBody .paybtn').forEach(x => x.classList.toggle('on', x === b));
+      const method = b.dataset.pay;
+      const det = $('#payDetail');
+      if (method === 'manual') {
+        det.innerHTML = `<div class="card" style="padding:14px;background:var(--bg);border-style:dashed">
+          <div style="text-align:center;margin-bottom:10px">
+            <div style="font:700 1rem Fredoka">${acc.bankFull}</div>
+            <div style="font:700 1.4rem Fredoka;letter-spacing:2px;margin:6px 0;color:var(--pk2)">${acc.number}</div>
+            <div style="font:700 .85rem Nunito">a.n. ${acc.name}</div>
+          </div>
+          <div class="hint" style="text-align:center;font-size:.75rem;margin-bottom:10px">${t('pay_manual_inst')}</div>
+          <button class="btn sm block" id="copyRek">📋 Salin nomor rekening</button>
+        </div>`;
+        $('#copyRek').onclick = () => { copyText(acc.number); toast('Nomor rekening disalin'); SFX.play('pop'); };
+      } else {
+        det.innerHTML = `<div class="card" style="padding:14px;background:var(--bg);border-style:dashed;text-align:center">
+          <div style="font:700 .9rem Fredoka;margin-bottom:8px">Pesan via WhatsApp</div>
+          <div class="hint" style="font-size:.75rem;margin-bottom:10px">Klik tombol di bawah untuk membuka WhatsApp dan kirim bukti transfer.</div>
+          <a href="${acc.whatsapp}" target="_blank" rel="noopener" class="btn block" style="text-decoration:none">💬 Buka WhatsApp</a>
+        </div>`;
+      }
+      SFX.play('tap');
+    });
+    $('#copyRek').onclick = () => { copyText(acc.number); toast('Nomor rekening disalin'); SFX.play('pop'); };
+    $('#vipBack').onclick = () => { vipStep = 'pkg'; renderVipModal(); };
+    $('#vipConfirmPay').onclick = () => submitVipPayment(pkg);
+  }
+
+  if (vipStep === 'pending') {
+    body.innerHTML = `
+      <div style="text-align:center;padding:20px 0">
+        <div style="width:90px;height:90px;margin:0 auto">${cimo('bingung', 86)}</div>
+        <h3 style="margin-top:10px">${t('pay_pending')}</h3>
+        <p class="hint" style="margin:8px 0 16px">Transfer ke rekening BNI sedang diproses. VIP akan aktif setelah pembayaran dikonfirmasi.</p>
+        <button class="btn" id="vipClosePending">Oke, mengerti</button>
+      </div>
+    `;
+    $('#vipClosePending').onclick = () => { $('#vipModal').classList.remove('on'); render(); };
+  }
+}
+
+async function submitVipPayment(pkg) {
+  if (!App.user) { toast('Masuk dulu ya!'); return; }
+  const btn = $('#vipConfirmPay');
+  if (btn) { btn.disabled = true; btn.textContent = 'Memproses…'; }
+  try {
+    const orderId = 'VIP-' + App.user.id.slice(-6) + '-' + Date.now().toString(36).toUpperCase();
+    const r = await DB.createTransaction(App.user.id, {
+      type: 'vip', pkg: pkg.id, months: pkg.months, amount: pkg.price,
+      order_id: orderId, gateway: 'manual',
+    });
+    if (r.ok) {
+      SFX.play('success');
+      vipStep = 'pending'; renderVipModal();
+    } else { toast('Gagal membuat transaksi'); }
+  } catch (e) { toast('Gagal memproses pembayaran'); }
+  if (btn) { btn.disabled = false; btn.textContent = t('pay_confirm'); }
 }
 
 async function openShare() {

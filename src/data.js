@@ -115,6 +115,10 @@ const I18N = {
     reg_ok:'Akun dibuat. Selamat datang!', guest:'Tamu',
     vip_t:'CraveMood VIP', vip_sub:'Cimo makin gaya, makin dekat', vip_price:'Rp19rb/bln', vip_start:'Mulai VIP', vip_benefit:'Keuntungan VIP',
     vip_only:'Khusus pengguna VIP', vip_unlock:'Buka dengan VIP', vip_badge:'VIP', vip_active:'VIP Aktif',
+    pay_t:'Pembayaran VIP', pay_pkg:'Pilih paket', pay_method:'Metode pembayaran', pay_qris:'QRIS (Scan QR)', pay_va:'Transfer Bank',
+    pay_wa:'Pesan via WhatsApp', pay_total:'Total pembayaran', pay_confirm:'Bayar sekarang', pay_pending:'Menunggu pembayaran',
+    pay_success:'Pembayaran berhasil!', pay_check:'Cek status', pay_manual:'Transfer manual', pay_manual_inst:'Transfer ke rekening berikut, lalu kirim bukti ke WhatsApp kami.',
+    pay_month:'bulan', pay_popular:'Paling populer', pay_best:'Hemat', pay_detail:'Rincian pembayaran',
     umkm_t:'Daftar UMKM', umkm_sub:'Punya usaha kuliner?', umkm_desc:'Tampil di rekomendasi mood dan pantau klik pesan dari dashboard.',
     umkm_form_title:'Daftar UMKM', umkm_name:'Nama usaha', umkm_owner:'Nama pemilik', umkm_wa:'Nomor WhatsApp', umkm_addr:'Alamat di Makassar',
     umkm_type:'Jenis makanan', umkm_mood:'Cocok untuk mood', umkm_photo:'Unggah foto menu', umkm_send:'Kirim pendaftaran',
@@ -155,6 +159,10 @@ const I18N = {
     reg_ok:'Account created. Welcome!', guest:'Guest',
     vip_t:'CraveMood VIP', vip_sub:'Cimo more stylish, closer', vip_price:'Rp19k/mo', vip_start:'Start VIP', vip_benefit:'VIP Benefits',
     vip_only:'VIP only', vip_unlock:'Unlock with VIP', vip_badge:'VIP', vip_active:'VIP Active',
+    pay_t:'VIP Payment', pay_pkg:'Select package', pay_method:'Payment method', pay_qris:'QRIS (Scan QR)', pay_va:'Bank Transfer',
+    pay_wa:'Order via WhatsApp', pay_total:'Total payment', pay_confirm:'Pay now', pay_pending:'Awaiting payment',
+    pay_success:'Payment successful!', pay_check:'Check status', pay_manual:'Manual transfer', pay_manual_inst:'Transfer to the account below, then send proof to our WhatsApp.',
+    pay_month:'months', pay_popular:'Most popular', pay_best:'Best value', pay_detail:'Payment details',
     umkm_t:'Register UMKM', umkm_sub:'Own a food business?', umkm_desc:'Appear in mood recommendations and track orders from dashboard.',
     umkm_form_title:'UMKM Registration', umkm_name:'Business name', umkm_owner:'Owner name', umkm_wa:'WhatsApp number', umkm_addr:'Address in Makassar',
     umkm_type:'Food type', umkm_mood:'Fits mood', umkm_photo:'Upload menu photo', umkm_send:'Submit registration',
@@ -195,6 +203,10 @@ const I18N = {
     reg_ok:'账号已创建，欢迎！', guest:'访客',
     vip_t:'CraveMood VIP', vip_sub:'Cimo 更时尚，更贴心', vip_price:'每月 Rp19k', vip_start:'开通 VIP', vip_benefit:'VIP 权益',
     vip_only:'VIP 专享', vip_unlock:'VIP 解锁', vip_badge:'VIP', vip_active:'VIP 已激活',
+    pay_t:'VIP 支付', pay_pkg:'选择套餐', pay_method:'支付方式', pay_qris:'QRIS (扫码)', pay_va:'银行转账',
+    pay_wa:'WhatsApp 下单', pay_total:'支付总额', pay_confirm:'立即支付', pay_pending:'等待付款',
+    pay_success:'支付成功！', pay_check:'查看状态', pay_manual:'手动转账', pay_manual_inst:'转账至以下账户，然后将凭证发送至我们的 WhatsApp。',
+    pay_month:'个月', pay_popular:'最受欢迎', pay_best:'最划算', pay_detail:'付款详情',
     umkm_t:'注册 UMKM', umkm_sub:'有餐饮生意？', umkm_desc:'出现在心情推荐中，从仪表盘追踪订单点击。',
     umkm_form_title:'UMKM 注册', umkm_name:'店铺名称', umkm_owner:'店主姓名', umkm_wa:'WhatsApp 号码', umkm_addr:'马卡萨地址',
     umkm_type:'食物类型', umkm_mood:'适合心情', umkm_photo:'上传菜单照片', umkm_send:'提交申请',
@@ -235,6 +247,10 @@ const I18N = {
     reg_ok:'खाता बन गया। स्वागत!', guest:'मेहमान',
     vip_t:'CraveMood VIP', vip_sub:'Cimo और स्टाइलिश, और करीब', vip_price:'Rp19k/माह', vip_start:'VIP शुरू करें', vip_benefit:'VIP लाभ',
     vip_only:'केवल VIP उपयोगकर्ता', vip_unlock:'VIP से खोलें', vip_badge:'VIP', vip_active:'VIP सक्रिय',
+    pay_t:'VIP भुगतान', pay_pkg:'पैकेज चुनें', pay_method:'भुगतान का तरीका', pay_qris:'QRIS (QR स्कैन)', pay_va:'बैंक ट्रांसफर',
+    pay_wa:'WhatsApp से ऑर्डर', pay_total:'कुल भुगतान', pay_confirm:'अभी भुगतान करें', pay_pending:'भुगतान का इंतजार',
+    pay_success:'भुगतान सफल!', pay_check:'स्थिति जांचें', pay_manual:'मैन्युअल ट्रांसफर', pay_manual_inst:'नीचे दिए गए खाते में ट्रांसफर करें, फिर प्रूफ हमारे WhatsApp पर भेजें।',
+    pay_month:'महीने', pay_popular:'सबसे लोकप्रिय', pay_best:'सबसे अच्छा', pay_detail:'भुगतान विवरण',
     umkm_t:'UMKM पंजीकरण', umkm_sub:'खाना का व्यवसाय है?', umkm_desc:'मूड सिफारिशों में दिखें और डैशबोर्ड से ऑर्डर ट्रैक करें।',
     umkm_form_title:'UMKM पंजीकरण', umkm_name:'व्यवसाय का नाम', umkm_owner:'मालिक का नाम', umkm_wa:'WhatsApp नंबर', umkm_addr:'मकस्सर में पता',
     umkm_type:'भोजन का प्रकार', umkm_mood:'मूड के लिए उपयुक्त', umkm_photo:'मेनू फोटो अपलोड', umkm_send:'पंजीकरण भेजें',
@@ -287,6 +303,12 @@ const MOODSAY = {
 /* ===== install / download copy (PWA) ===== */
 /* ===== VIP & UMKM ===== */
 const VIP_PRICE = 19000;
+const VIP_PACKAGES = [
+  {id:'1m',  months:1,  price:19000,  label:'1 Bulan',  labelI18n:{en:'1 Month',zh:'1个月',hi:'1 महीना'}},
+  {id:'3m',  months:3,  price:49000,  label:'3 Bulan',  labelI18n:{en:'3 Months',zh:'3个月',hi:'3 महीने'}, popular:true},
+  {id:'12m', months:12, price:169000, label:'12 Bulan', labelI18n:{en:'12 Months',zh:'12个月',hi:'12 महीने'}, best:true},
+];
+
 const VIP_FEATURES = ['Kostum Cimo eksklusif','Warna Cimo premium','Prioritas Live Chat','Recap bulanan lengkap','Badge VIP di profil'];
 const VIP_FEATURES_I18N = {
   id: ['Kostum Cimo eksklusif','Warna Cimo premium','Prioritas Live Chat','Recap bulanan lengkap','Badge VIP di profil'],
@@ -301,6 +323,13 @@ const COSTUMES = [
   {id:'koki', name:'Koki',    nameI18n:{en:'Chef',zh:'厨师',hi:'शेफ'},       vip:false},
   {id:'batik',name:'Batik Makassar',nameI18n:{en:'Batik',zh:'蜡染',hi:'बatik'},vip:true},
 ];
+
+/* bank account for manual VIP payment */
+const PAYMENT_ACCOUNT = {
+  bank: 'BNI', bankFull: 'Bank Negara Indonesia',
+  number: '1859784321', name: 'FATUR RAHMAN',
+  whatsapp: 'https://wa.me/6282349410090?text=Halo%20CraveMood,%20saya%20sudah%20transfer%20VIP%20dan%20ini%20bukti%20transfernya.',
+};
 
 const UMKM_CATS = ['Snack','Heavy Meal','Beverage'];
 

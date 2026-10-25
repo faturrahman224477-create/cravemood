@@ -250,6 +250,91 @@ const server = http.createServer(async (req, res) => {
         return json(res, 200, { ok: true, umkms: db.umkms || [] });
       }
 
+      /* ---- payments / transactions ---- */
+      if (p === '/api/transaction' && req.method === 'POST') {
+        const b = await readBody(req);
+        const tx = Object.assign({
+          id: uid('tx'), user_id: b.userId, status: 'pending',
+          created: new Date().toISOString(), paid_at: null, gateway: b.gateway || 'manual',
+        }, b);
+        delete tx.userId;
+        db.transactions = db.transactions || [];
+        db.transactions.push(tx);
+        save();
+        return json(res, 201, { ok: true, tx });
+      }
+
+      if (p === '/api/transaction/update' && req.method === 'POST') {
+        const key = req.headers['x-admin-key'] || url.searchParams.get('key');
+        if (key !== ADMIN_KEY) return json(res, 401, { ok: false, error: 'admin key required' });
+        const b = await readBody(req);
+        db.transactions = db.transactions || [];
+        const tx = db.transactions.find(x => x.id === b.txId);
+        if (!tx) return json(res, 404, { ok: false, error: 'not found' });
+        tx.status = b.status;
+        if (b.meta) Object.assign(tx, b.meta);
+        if (b.status === 'success') {
+          tx.paid_at = new Date().toISOString();
+          // auto-activate VIP
+          const u = db.users.find(x => x.id === tx.user_id);
+          if (u && tx.months) {
+            const expiry = new Date();
+            expiry.setMonth(expiry.getMonth() + tx.months);
+            u.vip = true; u.vip_expiry = expiry.toISOString();
+          }
+        }
+        save();
+        return json(res, 200, { ok: true, tx });
+      }
+
+      if (p === '/api/midtrans/snap' && req.method === 'POST') {
+        const cfg = (db.settings && db.settings.midtrans) || {};
+        if (!cfg.key) return json(res, 503, { ok: false, error: 'midtrans not configured' });
+        const b = await readBody(req);
+        const isProd = cfg.env === 'production';
+        const snapUrl = isProd ? 'https://app.midtrans.com/snap/v1/transactions' : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
+        try {
+          const r = await fetch(snapUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Basic ' + Buffer.from(cfg.key + ':').toString('base64') },
+            body: JSON.stringify({
+              transaction_details: { order_id: b.orderId, gross_amount: b.amount },
+              customer_details: { first_name: b.name, email: b.email || 'guest@cravemood.id' },
+              enabled_payments: b.methods || ['qris', 'bank_transfer', 'gopay', 'shopeepay'],
+            }),
+          });
+          const j = await r.json();
+          if (!r.ok) return json(res, 502, { ok: false, error: j.error_messages ? j.error_messages.join(', ') : ('HTTP ' + r.status) });
+          return json(res, 200, { ok: true, token: j.token, redirect_url: j.redirect_url });
+        } catch (e) {
+          return json(res, 502, { ok: false, error: String(e.message || e) });
+        }
+      }
+
+      if (p === '/api/midtrans/webhook' && req.method === 'POST') {
+        const b = await readBody(req);
+        const orderId = b.order_id;
+        const status = b.transaction_status;
+        db.transactions = db.transactions || [];
+        const tx = db.transactions.find(x => x.order_id === orderId || x.id === orderId);
+        if (!tx) return json(res, 404, { ok: false, error: 'order not found' });
+        const success = ['capture', 'settlement'].includes(status);
+        const fail = ['deny', 'expire', 'cancel', 'failure'].includes(status);
+        if (success) {
+          tx.status = 'success'; tx.paid_at = new Date().toISOString();
+          const u = db.users.find(x => x.id === tx.user_id);
+          if (u && tx.months) {
+            const expiry = new Date();
+            expiry.setMonth(expiry.getMonth() + tx.months);
+            u.vip = true; u.vip_expiry = expiry.toISOString();
+          }
+        } else if (fail) {
+          tx.status = 'failed';
+        }
+        save();
+        return json(res, 200, { ok: true });
+      }
+
       if (p === '/api/export' && req.method === 'GET') {
         const key = req.headers['x-admin-key'] || url.searchParams.get('key');
         if (key !== ADMIN_KEY) return json(res, 401, { ok: false, error: 'admin key required' });

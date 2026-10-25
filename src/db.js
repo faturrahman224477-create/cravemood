@@ -6,7 +6,7 @@
 */
 const DB = (() => {
   const KEY = 'cravemood.db.v1';
-  const SCHEMA = { v: 1, users: [], moods: [], orders: [], chats: [], spins: [], umkms: [], settings: {} };
+  const SCHEMA = { v: 1, users: [], moods: [], orders: [], chats: [], spins: [], umkms: [], transactions: [], settings: {} };
   let state = null, remote = false, base = '', ready = false;
 
   const uid = () => 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -216,6 +216,39 @@ const DB = (() => {
       const u = s.users.find(x => x.id === userId);
       if (!u || !u.umkm) return null;
       return s.umkms.find(x => x.id === u.umkm) || null;
+    },
+
+    /* transactions / payments */
+    async createTransaction(userId, data) {
+      if (remote) { const j = await api('/api/transaction', Object.assign({ userId }, data)); return j; }
+      const s = load();
+      const tx = Object.assign({
+        id: 'tx_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+        user_id: userId, status: 'pending', created: new Date().toISOString(),
+        paid_at: null, gateway: data.gateway || 'manual',
+      }, data);
+      s.transactions = s.transactions || [];
+      s.transactions.push(tx);
+      persist();
+      return { ok: true, tx };
+    },
+
+    async updateTransaction(txId, status, meta) {
+      if (remote) { const j = await api('/api/transaction/update', { txId, status, meta }); return j; }
+      const s = load();
+      s.transactions = s.transactions || [];
+      const tx = s.transactions.find(x => x.id === txId);
+      if (!tx) return { ok: false, error: 'not found' };
+      tx.status = status;
+      if (meta) Object.assign(tx, meta);
+      if (status === 'success') tx.paid_at = new Date().toISOString();
+      persist();
+      return { ok: true, tx };
+    },
+
+    getTransactions(userId) {
+      const s = load();
+      return (s.transactions || []).filter(x => x.user_id === userId).sort((a, b) => (b.created || '').localeCompare(a.created || ''));
     },
 
     /* settings blob (per device) */

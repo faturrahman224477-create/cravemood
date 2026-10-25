@@ -17,6 +17,7 @@ const NAV = [
   ['spins', 'Spinner', '<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>'],
   ['ai', 'Otak Cimo', '<path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>'],
   ['umkm', 'UMKM', '<path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>'],
+  ['transactions', 'Transaksi', '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>'],
   ['export', 'Database', '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>'],
 ];
 
@@ -113,7 +114,7 @@ async function load() {
     DC.data = DB.dump();
     DC.ai = { enabled: false, model: '' };
   }
-  ['users', 'moods', 'orders', 'chats', 'spins', 'umkms'].forEach(k => { if (!Array.isArray(DC.data[k])) DC.data[k] = []; });
+  ['users', 'moods', 'orders', 'chats', 'spins', 'umkms', 'transactions'].forEach(k => { if (!Array.isArray(DC.data[k])) DC.data[k] = []; });
   $('#gate').innerHTML = '';
   $('#console').classList.remove('hide');
   render();
@@ -150,7 +151,7 @@ function jsonDump() {
 function render() {
   $$('#devside [data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === DC.tab));
   const c = $('#console');
-  const R = { overview: vOverview, users: vUsers, moods: vMoods, orders: vOrders, chats: vChats, spins: vSpins, ai: vAI, umkm: vUmkm, export: vExport };
+  const R = { overview: vOverview, users: vUsers, moods: vMoods, orders: vOrders, chats: vChats, spins: vSpins, ai: vAI, umkm: vUmkm, transactions: vTransactions, export: vExport };
   c.innerHTML = (R[DC.tab] || vOverview)();
   bind();
   // sidebar counters
@@ -159,6 +160,7 @@ function render() {
   if (n('chats')) n('chats').textContent = (DC.data.chats || []).length;
   if (n('orders')) n('orders').textContent = (DC.data.orders || []).length;
   if (n('umkm')) n('umkm').textContent = (DC.data.umkms || []).length;
+  if (n('transactions')) n('transactions').textContent = (DC.data.transactions || []).length;
 }
 
 function vOverview() {
@@ -350,6 +352,25 @@ function vUmkm() {
   </div>`;
 }
 
+function vTransactions() {
+  const rows = (DC.data.transactions || []).slice().sort((a, b) => (b.created || '').localeCompare(a.created || ''));
+  return `<div class="dcard">
+    <h3>Transaksi VIP <span class="tag">${rows.length}</span></h3>
+    <div class="dtable"><table><thead><tr><th>Order ID</th><th>Pengguna</th><th>Paket</th><th>Jumlah</th><th>Status</th><th>Gateway</th><th>Waktu</th><th>Aksi</th></tr></thead><tbody>
+      ${rows.length ? rows.map(tx => `<tr>
+        <td><b>${esc(tx.order_id || tx.id)}</b></td>
+        <td>${esc(uName(tx.user_id))}</td>
+        <td>${esc(tx.pkg || '—')}</td>
+        <td>Rp ${esc(tx.amount || 0)}</td>
+        <td>${tx.status === 'success' ? '<span class="tag mint">success</span>' : tx.status === 'pending' ? '<span class="tag gold">pending</span>' : '<span class="tag">' + esc(tx.status) + '</span>'}</td>
+        <td>${esc(tx.gateway || 'manual')}</td>
+        <td>${dt(tx.created)}</td>
+        <td>${tx.status === 'pending' ? `<button class="btn sm" data-approve="${esc(tx.id)}">Approve</button>` : '—'}</td>
+      </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;padding:22px">Belum ada transaksi.</td></tr>'}
+    </tbody></table></div>
+  </div>`;
+}
+
 function vExport() {
   const d = DC.data;
   const rows = [
@@ -408,6 +429,20 @@ function bind() {
   const c5 = $('#csvSpins'); if (c5) c5.onclick = () => csv(DC.data.spins || [], [
     { k: 'at' }, { k: 'user', v: r => uName(r.user_id) }, { k: 'menu', v: r => dishOf(r.item).name },
   ], 'spins');
+
+  $$('[data-approve]').forEach(b => b.onclick = async () => {
+    const txId = b.dataset.approve;
+    b.disabled = true; b.textContent = '…';
+    try {
+      const r = await fetch('api/transaction/update?key=' + encodeURIComponent(DC.key), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ txId, status: 'success' }),
+      });
+      const j = await r.json();
+      if (j.ok) { toast('Transaksi diapprove & VIP diaktifkan'); await load(); }
+      else { toast('Gagal: ' + (j.error || 'unknown')); b.disabled = false; b.textContent = 'Approve'; }
+    } catch (e) { toast('Gagal: ' + e.message); b.disabled = false; b.textContent = 'Approve'; }
+  });
 
   $$('[data-go]').forEach(b => b.onclick = () => { DC.tab = b.dataset.go; render(); });
   const dj = $('#dlJson'); if (dj) dj.onclick = jsonDump;

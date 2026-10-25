@@ -446,6 +446,8 @@ td .tag{font-size:.6rem}
   .setrow{gap:8px}
   .setrow select{max-width:100%;flex:1}
   input[type=range]{width:120px}
+  .pkggrid{grid-template-columns:1fr}
+  .pkgcard{padding:14px 10px}
 }
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
@@ -463,6 +465,24 @@ td .tag{font-size:.6rem}
 .umkmcard p{font-size:.82rem;opacity:.9;max-width:230px}
 .umkmcard .tag{background:#f4f87f;color:#3a2142}
 .umkmcard button{background:#fff8ef;color:#3a2142;border-color:#fff8ef}
+
+/* ===== VIP payment ===== */
+.pkggrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pkgcard{border:2px solid var(--ln);background:var(--sf);border-radius:18px;padding:12px 8px;text-align:center;cursor:pointer;transition:.22s;color:var(--ink);font-family:inherit}
+.pkgcard:hover{border-color:var(--pkb);transform:translateY(-3px)}
+.pkgcard.on{border-color:var(--pk2);background:color-mix(in srgb,var(--pk) 18%,var(--sf));box-shadow:0 5px 0 color-mix(in srgb,var(--pk2) 25%,transparent)}
+.pkgtop{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:4px}
+.pkgtop b{font-size:.88rem}
+.pkgprice{font:700 1.15rem Fredoka;color:var(--pk2);line-height:1.2}
+.pkghint{font-size:.68rem;color:var(--mu);font-weight:700}
+.paymethods{display:flex;flex-direction:column;gap:8px}
+.paybtn{display:flex;align-items:center;gap:12px;border:2px solid var(--ln);background:var(--sf);border-radius:16px;padding:11px 14px;cursor:pointer;transition:.2s;text-align:left;color:var(--ink);font-family:inherit}
+.paybtn:hover{border-color:var(--pkb)}
+.paybtn.on{border-color:var(--pk2);background:color-mix(in srgb,var(--pk) 14%,var(--sf))}
+.payico{font-size:1.6rem;width:36px;text-align:center}
+.paybtn div{flex:1}
+.paybtn b{font-size:.88rem;display:block}
+.paybtn small{font-size:.68rem;color:var(--mu);font-weight:700}
 
 /* ===== download / install (PWA) ===== */
 .dlcard{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
