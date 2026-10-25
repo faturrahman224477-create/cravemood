@@ -10,3 +10,5 @@ server/data/
 *.genie
 .DS_Store
 Thumbs.db
+final.cjs
+probe.cjs

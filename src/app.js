@@ -647,23 +647,25 @@ async function buildShareCard() {
   x.fillStyle = 'rgba(58,33,66,.55)'; x.font = '700 22px Nunito, sans-serif';
   x.fillText(new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }), W / 2, H - 92);
 
-  return canvasToBlob(cv);
+  const dataUrl = cv.toDataURL('image/jpeg', 0.92);
+  const blob = await canvasToBlob(cv);
+  return { blob, dataUrl };
 }
 
-/* toBlob can silently never fire on some Chromium builds — fall back to toDataURL */
+/* toBlob can silently never fire (or OOM on huge PNGs) — fall back to the data URL bytes */
 function canvasToBlob(cv) {
   return new Promise(resolve => {
     let done = false;
     const finish = b => { if (!done) { done = true; resolve(b); } };
-    try { cv.toBlob(b => finish(b), 'image/png', 0.95); } catch (e) {}
+    try { cv.toBlob(b => finish(b), 'image/jpeg', 0.92); } catch (e) {}
     setTimeout(() => {
       if (done) return;
       try {
-        const url = cv.toDataURL('image/png');
+        const url = cv.toDataURL('image/jpeg', 0.92);
         const bin = atob(url.split(',')[1]);
         const u8 = new Uint8Array(bin.length);
         for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
-        finish(new Blob([u8], { type: 'image/png' }));
+        finish(new Blob([u8], { type: 'image/jpeg' }));
       } catch (e) { finish(null); }
     }, 2200);
   });
@@ -691,9 +693,9 @@ async function openShare() {
   $('#shareBody').innerHTML = `<div class="empty"><p>Menyiapkan kartu…</p></div>`;
   // fonts can hang when the network is slow — never block the card on them
   await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1200))]).catch(() => {});
-  let blob;
+  let card;
   try {
-    blob = await Promise.race([
+    card = await Promise.race([
       buildShareCard(),
       new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 9000)),
     ]);
@@ -705,6 +707,7 @@ async function openShare() {
     const rb = $('#retryShare'); if (rb) rb.onclick = openShare;
     return;
   }
+  const blob = card && card.blob;
   App.shareBlob = blob;
   if (!blob) {
     $('#shareBody').innerHTML = `<div class="empty"><p>Kartu kosong. Coba lagi ya.</p>
@@ -712,9 +715,8 @@ async function openShare() {
     const rb = $('#retryShare'); if (rb) rb.onclick = openShare;
     return;
   }
-  if (App.shareUrl) { try { URL.revokeObjectURL(App.shareUrl); } catch (e) {} }
-  const url = URL.createObjectURL(blob);
-  App.shareUrl = url;
+  // data URL for the preview: blob URLs can fail to decode large images on low-memory devices
+  const url = card.dataUrl;
   const caption = shareCaption(items);
   $('#shareBody').innerHTML = `
     <img class="preview" src="${url}" alt="CraveMood card">
@@ -735,7 +737,7 @@ async function openShare() {
 
   const shareUrl = location.href.split('#')[0];
   $('#nativeShare').onclick = async () => {
-    const file = new File([blob], 'cravemood.png', { type: 'image/png' });
+    const file = new File([blob], 'cravemood.jpg', { type: 'image/jpeg' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try { await navigator.share({ files: [file], text: caption, title: 'CraveMood' }); SFX.play('success'); }
       catch (e) { downloadBlob(blob); }
@@ -752,7 +754,7 @@ async function shareTo(k, blob, caption, url) {
   const text = encodeURIComponent(caption);
   const u = encodeURIComponent(url);
   if (k === 'ig') {
-    const file = new File([blob], 'cravemood.png', { type: 'image/png' });
+    const file = new File([blob], 'cravemood.jpg', { type: 'image/jpeg' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try { await navigator.share({ files: [file], text: caption, title: 'CraveMood' }); return; }
       catch (e) { /* user cancelled */ }
@@ -772,7 +774,7 @@ async function shareTo(k, blob, caption, url) {
 function downloadBlob(blob) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'cravemood-' + App.mood + '-' + Date.now() + '.png';
+  a.download = 'cravemood-' + App.mood + '-' + Date.now() + '.jpg';
   document.body.appendChild(a); a.click();
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
 }
