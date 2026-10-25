@@ -100,7 +100,7 @@ function updateCartBar() {
   const bar = $('#cartbar');
   const hide = currentView === 'cart' || currentView === 'chat';
   bar.classList.toggle('on', c > 0 && !hide);
-  $('#cbt').textContent = `🛒 ${c} item · ±${rp(lo)} – ${rp(hi)}`;
+  $('#cbt').textContent = `🛒 ${c} ${t('item')} · ±${rp(lo)} – ${rp(hi)}`;
   const b = $('#navbadge'); if (b) { b.textContent = c; b.style.display = c ? 'grid' : 'none'; }
   const mb = $('#topbadge'); if (mb) { mb.textContent = c; mb.style.display = c ? 'grid' : 'none'; }
 }
@@ -206,8 +206,8 @@ function renderRecs() {
     const d = distOf(m).toFixed(1).replace('.', ',');
     return `<div class="rec">
       <div class="pic" style="background:linear-gradient(135deg,${MOODC[m.moods[0]][0]}55,${MOODC[m.moods[0]][1]}33)">
-        ${i === 0 ? '<span class="badge tag pink">Paling cocok</span>' : ''}
-        ${m.viral ? (i === 0 ? '' : '<span class="badge tag gold">✦ Viral</span>') : ''}
+        ${i === 0 ? `<span class="badge tag pink">${t('best_match')}</span>` : ''}
+        ${m.viral ? (i === 0 ? '' : `<span class="badge tag gold">✦ ${t('viral')}</span>`) : ''}
         ${art(m.art, 104)}
         <div class="cimomini">${cimo(m.moods[0], 30)}</div>
       </div>

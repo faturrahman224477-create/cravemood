@@ -82,7 +82,7 @@ const LANGS = [
 
 const I18N = {
   id: {
-    tagline:'Makan sesuai moodmu',
+    tagline:'Makan sesuai moodmu', best_match:'Paling cocok', viral:'Viral', item:'item',
     nav_home:'Beranda', nav_spin:'Cimo Spinner', nav_chat:'Cimo Live Chat', nav_cart:'Pesanan', nav_recap:'Recap Mood', nav_profile:'Profil',
     on_title:'Kenalan dulu, yuk!', on_sub:'Aku Cimo. Aku bantu pilihin makanan sesuai perasaanmu hari ini.',
     on_name:'Nama panggilan', on_name_ph:'Contoh: Aisyah', on_lang:'Bahasa', on_go:'Mulai sekarang',
@@ -115,7 +115,7 @@ const I18N = {
     reg_ok:'Akun dibuat. Selamat datang!', guest:'Tamu',
   },
   en: {
-    tagline:'Eat according to your mood',
+    tagline:'Eat according to your mood', best_match:'Best match', viral:'Viral', item:'item',
     nav_home:'Home', nav_spin:'Cimo Spinner', nav_chat:'Cimo Live Chat', nav_cart:'Order', nav_recap:'Mood Recap', nav_profile:'Profile',
     on_title:'Let us get to know each other!', on_sub:'I am Cimo. I will pick food that fits how you feel today.',
     on_name:'Nickname', on_name_ph:'e.g. Aisyah', on_lang:'Language', on_go:'Start now',
@@ -148,7 +148,7 @@ const I18N = {
     reg_ok:'Account created. Welcome!', guest:'Guest',
   },
   zh: {
-    tagline:'按心情吃饭',
+    tagline:'按心情吃饭', best_match:'最合适', viral:'爆款', item:'件',
     nav_home:'首页', nav_spin:'Cimo 转盘', nav_chat:'Cimo 聊天', nav_cart:'订单', nav_recap:'心情回顾', nav_profile:'我的',
     on_title:'先认识一下吧！', on_sub:'我是 Cimo。我会根据你今天的心情帮你选食物。',
     on_name:'昵称', on_name_ph:'例如：小雅', on_lang:'语言', on_go:'开始使用',
@@ -181,7 +181,7 @@ const I18N = {
     reg_ok:'账号已创建，欢迎！', guest:'访客',
   },
   hi: {
-    tagline:'अपने मूड के हिसाब से खाएं',
+    tagline:'अपने मूड के हिसाब से खाएं', best_match:'सबसे सही', viral:'वायरल', item:'आइटम',
     nav_home:'होम', nav_spin:'Cimo स्पिनर', nav_chat:'Cimo चैट', nav_cart:'ऑर्डर', nav_recap:'मूड रिकैप', nav_profile:'प्रोफ़ाइल',
     on_title:'पहले एक-दूसरे को जान लें!', on_sub:'मैं Cimo हूँ। आज आपका मन कैसा है, उसी हिसाब से खाना चुनूँगा।',
     on_name:'नाम', on_name_ph:'जैसे: आयशा', on_lang:'भाषा', on_go:'शुरू करें',
