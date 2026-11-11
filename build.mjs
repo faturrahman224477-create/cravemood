@@ -32,9 +32,14 @@ bundle('src/template.html', [
   'src/app.js',
 ], 'index.html');
 
-bundle('src/dev-template.html', [
-  'src/mascot.js',
-  'src/data.js',
-  'src/db.js',
-  'src/dev.js',
-], 'dev.html');
+/* the developer console is local-only: it must never end up on the public site */
+if (process.env.DEV === '1') {
+  bundle('src/dev-template.html', [
+    'src/mascot.js',
+    'src/data.js',
+    'src/db.js',
+    'src/dev.js',
+  ], 'dev.html');
+} else {
+  console.log('dev.html    skipped (set DEV=1 to build it locally)');
+}
