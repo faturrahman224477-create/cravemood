@@ -1,0 +1,61 @@
+{
+  "lang": "id",
+  "voice": "cgSgspJ2msm6clMCkdW9",
+  "voiceName": "Jessica",
+  "model": "eleven_multilingual_v2",
+  "moods": {
+    "senang": {
+      "pre": "m_senang_pre.mp3",
+      "post": "m_senang_post.mp3"
+    },
+    "sedih": {
+      "pre": "m_sedih_pre.mp3",
+      "post": "m_sedih_post.mp3"
+    },
+    "marah": {
+      "pre": "m_marah_pre.mp3",
+      "post": "m_marah_post.mp3"
+    },
+    "bingung": {
+      "pre": "m_bingung_pre.mp3"
+    }
+  },
+  "dishes": {
+    "coto": "d_coto.mp3",
+    "konro": "d_konro.mp3",
+    "saudara": "d_saudara.mp3",
+    "pallubasa": "d_pallubasa.mp3",
+    "bakso": "d_bakso.mp3",
+    "palekko": "d_palekko.mp3",
+    "dabu": "d_dabu.mp3",
+    "konrobakar": "d_konrobakar.mp3",
+    "geprek": "d_geprek.mp3",
+    "taichan": "d_taichan.mp3",
+    "nasi": "d_nasi.mp3",
+    "naskun": "d_naskun.mp3",
+    "campur": "d_campur.mp3",
+    "mititi": "d_mititi.mp3",
+    "mikering": "d_mikering.mp3",
+    "jalang": "d_jalang.mp3",
+    "pisangepe": "d_pisangepe.mp3",
+    "pisanggoreng": "d_pisanggoreng.mp3",
+    "barongko": "d_barongko.mp3",
+    "lapis": "d_lapis.mp3",
+    "terbul": "d_terbul.mp3",
+    "roti": "d_roti.mp3",
+    "espijo": "d_espijo.mp3",
+    "espallu": "d_espallu.mp3",
+    "markisa": "d_markisa.mp3",
+    "kelapa": "d_kelapa.mp3",
+    "kopi": "d_kopi.mp3",
+    "teh": "d_teh.mp3",
+    "airjeruk": "d_airjeruk.mp3",
+    "bubur": "d_bubur.mp3"
+  },
+  "fixed": {
+    "greet": "f_greet.mp3",
+    "preview": "f_preview.mp3",
+    "added": "f_added.mp3",
+    "saved": "f_saved.mp3"
+  }
+}

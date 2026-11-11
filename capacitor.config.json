@@ -1,0 +1,13 @@
+{
+  "appId": "id.cravemood.app",
+  "appName": "CraveMood",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#FFE9F1"
+  }
+}

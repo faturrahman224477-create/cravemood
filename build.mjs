@@ -10,13 +10,18 @@ const r = p => readFileSync(join(root, p), 'utf8');
 const css = r('src/style.css');
 
 // NOTE: function replacers — a plain string would treat `$$`, `$&`, `$'` as escapes
+const BUILD = String(Date.now());
 function bundle(template, files, out) {
   const tpl = r(template);
   const js = files.map(r).join('\n\n');
-  const html = tpl.replace('/*__CSS__*/', () => css).replace('/*__JS__*/', () => js);
+  let html = tpl.replace('/*__CSS__*/', () => css).replace('/*__JS__*/', () => js);
+  html = html.replace('<head>', `<head>\n<meta name="build" content="${BUILD}">`);
   writeFileSync(join(root, out), html, 'utf8');
   console.log(out.padEnd(12) + (html.length / 1024).toFixed(1) + ' KB');
 }
+
+/* lets an already-open app notice a new deploy and refresh itself */
+writeFileSync(join(root, 'build.json'), JSON.stringify({ v: BUILD }), 'utf8');
 
 bundle('src/template.html', [
   'src/mascot.js',

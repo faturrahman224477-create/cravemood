@@ -4,10 +4,28 @@ const $$ = s => Array.from(document.querySelectorAll(s));
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rp = n => 'Rp ' + String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
+/* canonical public link — used whenever the current address is not the real hosted URL
+   (e.g. inside the Android app the page runs on https://localhost) */
+const PUBLIC_URL = 'https://cravemood.apps.workbuddy.host/?sharecode=NG6DCXKIRE';
+function appLink() {
+  const here = location.href.split('#')[0];
+  if (/^https?:\/\//i.test(here) && /sharecode=/.test(here)) return here;
+  return PUBLIC_URL;
+}
+
+/* capek & kecewa are no longer offered — their dishes now answer to sedih */
+try {
+  MENU.forEach(m => {
+    if (m.moods && (m.moods.indexOf('capek') > -1 || m.moods.indexOf('kecewa') > -1)) {
+      m.moods = Array.from(new Set(m.moods.concat('sedih')));
+    }
+  });
+} catch (e) {}
+
 const App = {
   user: null, lang: 'id', mood: 'senang', cat: 'Semua', street: 'pendidikan',
-  cart: {}, messages: [], spinning: false, lastSpin: null, costum: '',
-  settings: { sound: true, speak: true, voice: 'lembut', rate: 1, pitch: 1, vol: 1, voiceLang: 'id', theme: 'light' },
+  cart: {}, messages: [], spinning: false, lastSpin: null, costum: '', moodPicked: false,
+  settings: { sound: true, speak: true, vol: 1, voiceLang: 'id', theme: 'light' },
 };
 
 const t = k => {
@@ -48,13 +66,13 @@ function savePrefs() { DB.setSetting('prefs', { lang: App.lang, mood: App.mood, 
 function loadPrefs() {
   const p = DB.getSetting('prefs', {});
   if (p.lang && I18N[p.lang]) App.lang = p.lang;
-  if (p.mood) App.mood = p.mood;
+  if (p.mood) App.mood = normMood(p.mood);
   if (p.street) App.street = p.street;
   if (p.costum) App.costum = p.costum;
   App.pet = p.pet || null;
   const s = DB.getSetting('settings', null);
   if (s) App.settings = Object.assign(App.settings, s);
-  Voice.setAll({ profile: App.settings.voice, rate: App.settings.rate, pitch: App.settings.pitch, volume: App.settings.vol, lang: App.settings.voiceLang, enabled: true });
+  Voice.setAll({ volume: App.settings.vol, enabled: App.settings.speak });
   SFX.enabled = App.settings.sound;
 }
 
@@ -70,6 +88,37 @@ function toast(msg) {
 /* ---------- theme ---------- */
 function applyTheme() {
   document.documentElement.setAttribute('data-theme', App.settings.theme || 'light');
+}
+
+/* ---------- mood-tinted page background ----------
+   the whole page shifts to the colour of the emotion the user tapped
+   (marah = warm orange, bingung = mint, sedih = soft blue, ...) */
+function hex2rgb(h) {
+  h = String(h).replace('#', '');
+  if (h.length === 3) h = h.split('').map(c => c + c).join('');
+  return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+}
+function mixHex(base, color, t) {
+  const A = hex2rgb(base), B = hex2rgb(color);
+  const c = i => Math.round(A[i] * (1 - t) + B[i] * t);
+  return '#' + [c(0), c(1), c(2)].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+function applyMoodBg() {
+  const root = document.documentElement;
+  const m = MOODS.find(x => x.k === App.mood);
+  const picked = !!App.moodPicked;
+  const c = (picked && m) ? m.c : '#ff9ec5';
+  const A = mixHex('#ffffff', c, picked ? 0.40 : 0.26);
+  const B = mixHex('#ffffff', c, picked ? 0.24 : 0.16);
+  const C = mixHex('#fff2ea', c, picked ? 0.11 : 0.07);
+  const D = mixHex('#fff6ef', c, picked ? 0.04 : 0.02);
+  root.style.setProperty('--bgA', A);
+  root.style.setProperty('--bgB', B);
+  root.style.setProperty('--bgC', C);
+  root.style.setProperty('--bgD', D);
+  root.style.setProperty('--moodc', c);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', A);
 }
 
 /* ---------- cart ---------- */
@@ -109,17 +158,16 @@ function updateCartBar() {
   bar.classList.toggle('on', c > 0 && !hide);
   $('#cbt').textContent = `🛒 ${c} ${t('item')} · ±${rp(lo)} – ${rp(hi)}`;
   const b = $('#navbadge'); if (b) { b.textContent = c; b.style.display = c ? 'grid' : 'none'; }
+  const tb = $('#tabbadge'); if (tb) { tb.textContent = c; tb.style.display = c ? 'grid' : 'none'; }
   const mb = $('#topbadge'); if (mb) { mb.textContent = c; mb.style.display = c ? 'grid' : 'none'; }
 }
 
 /* ---------- nav ---------- */
+/* VIP is intentionally NOT a tab — it lives inside Profil */
 const NAV = [
   ['home', 'home', 'nav_home'],
-  ['spin', 'wheel', 'nav_spin'],
-  ['chat', 'chat', 'nav_chat'],
-  ['cart', 'bag', 'nav_cart'],
   ['recap', 'recap', 'nav_recap'],
-  ['vip', 'heart', 'nav_vip'],
+  ['cart', 'bag', 'nav_cart'],
   ['profile', 'user', 'nav_profile'],
 ];
 
@@ -129,17 +177,16 @@ function renderNav() {
     `<button class="navbtn" data-go="${v}">${icon(ic)}<span>${t(k)}</span>${v === 'cart' ? `<span class="bdg" id="navbadge" style="display:none">0</span>` : ''}</button>`
   ).join('');
   const tb = $('#tabbar');
-  const mobile = ['home', 'spin', 'chat', 'recap', 'vip', 'profile'];
-  tb.innerHTML = mobile.map(v => {
-    const n = NAV.find(x => x[0] === v);
-    return `<button data-go="${v}">${icon(n[1])}<span>${t(n[2])}</span></button>`;
-  }).join('');
+  tb.innerHTML = NAV.map(([v, ic, k]) =>
+    `<button data-go="${v}">${icon(ic)}<span>${t(k)}</span>${v === 'cart' ? `<span class="bdg" id="tabbadge" style="display:none">0</span>` : ''}</button>`
+  ).join('');
   const s = $('#sidefoot');
   if (s) s.innerHTML = `
     <div class="minicard">
       <div style="width:38px;height:38px;flex:none">${cimo(App.mood, 36, false, App.costum)}</div>
       <div style="min-width:0"><b>${esc(App.user ? App.user.name : t('guest'))}</b><small>${esc(curStreet().name.replace('Jalan ', 'Jl. '))}</small></div>
     </div>
+    <button class="navbtn" data-go="chat" style="font-size:.82rem">${icon('chat')}<span>${t('nav_chat')}</span></button>
     <button class="navbtn" data-go="profile" style="font-size:.82rem">${icon('gear')}<span>${t('nav_profile')}</span></button>`;
   updateCartBar();
 }
@@ -155,30 +202,31 @@ function greeting() {
 function viewHome() {
   const name = App.user ? App.user.name : t('guest');
   const moodObj = MOODS.find(m => m.k === App.mood) || MOODS[0];
+  const picked = !!App.moodPicked;
+  const ask = t('home_ask').replace('{name}', esc(name));
   return `
-  <div class="hero">
+  <div class="hometop">
     <div>
-      <span class="say" id="say">${esc(greeting())}${App.user ? ', ' + esc(name) : ''}! 👋</span>
-      <h1>${t('home_q')}</h1>
-      <p>${t('home_sub')}</p>
-      <div class="row" style="margin-top:14px">
-        <button class="btn sm plum" data-go="spin">${icon('wheel')} ${t('home_spin')}</button>
-        <button class="btn sm ghost" data-go="chat">${icon('chat')} ${t('nav_chat')}</button>
-      </div>
+      <span class="greet">${greeting()}${App.user && !App.user.guest ? ', ' + esc(name) : ''}</span>
+      <div class="brandrow"><span>Crave</span><mark>Mood</mark></div>
     </div>
-    <div class="cimobox">
-      <div class="halo"></div>
-      <div id="heroCimo" class="float">${cimo(App.mood, 190, false, App.costum)}</div>
+    <div style="display:flex;align-items:center;gap:7px">
+      <button class="iconbtn" data-go="chat" aria-label="chat" title="${t('nav_chat')}">${icon('chat')}</button>
+      <button class="avatarbtn" data-go="profile" aria-label="profile" id="heroCimo">${cimo(App.mood, 40)}</button>
     </div>
   </div>
 
-  <div class="sectitle"><h2><span class="n">1</span> ${t('home_q')}</h2>
-    <button class="link" data-go="chat">${t('nav_chat')} ${icon('arrow')}</button></div>
-  <div class="moods" id="moods">
-    ${MOODS.map(m => `<button class="mood ${m.k === App.mood ? 'on' : ''}" data-mood="${m.k}" style="--c:${m.c}">
-      <div class="face">${cimo(m.face, 48)}</div><b>${mL(m)}</b></button>`).join('')}
+  <div class="hero2">
+    <div class="bigcimo ${picked ? 'picked' : ''}" id="sayCimo">${cimo(picked ? App.mood : 'def', 208)}</div>
+    <div class="saybubble" id="say" role="status" aria-live="polite">${picked ? esc(mSay(moodObj, (recList()[0] || {}).name)) : esc(ask)}</div>
   </div>
 
+  <div class="moodrow" id="moods">
+    ${MOODS.map(m => `<button class="mpill ${m.k === App.mood && picked ? 'on' : ''}" data-mood="${m.k}" style="--c:${m.c}">
+      <span class="mf">${cimo(m.face, 38)}</span><b>${mL(m)}</b></button>`).join('')}
+  </div>
+
+  ${picked ? `
   <div class="locbar">
     ${icon('pin')}
     <select id="streetSel" aria-label="location">
@@ -187,19 +235,23 @@ function viewHome() {
     <span class="dist">${esc(curStreet().area)}</span>
   </div>
 
-  <div class="sectitle"><h2><span class="n">2</span> ${t('home_rec')}</h2>
-    <span class="tag mint" id="moodTag">${mS(moodObj)}</span></div>
   <div class="chips" id="cats">
-    ${CATS.map(c => `<button class="chip ${c === App.cat ? 'on' : ''}" data-cat="${c}">${c === 'Terdekat' ? icon('pin') : ''}${cL(c)}</button>`).join('')}
+    ${CATS.map(c => `<button class="chip ${c === App.cat ? 'on' : ''}" data-cat="${c}">${cL(c)}</button>`).join('')}
   </div>
-  <div class="recs" id="recs"></div>`;
+
+  <div class="recs" id="recs"></div>
+
+  <button class="shuffle" id="shuffleBtn">
+    <span class="sico">${icon('wheel')}</span>
+    <span style="flex:1;min-width:0"><b>${t('shuffle_t')}</b><small>${t('shuffle_s')}</small></span>
+    <span class="go">›</span>
+  </button>
+  ` : `<p class="pickhint">${t('home_hint')}</p>`}`;
 }
 
 function recList() {
   let list = MENU.filter(m => m.moods.indexOf(App.mood) > -1);
-  if (App.cat === 'Terdekat') list.sort((a, b) => distOf(a) - distOf(b));
-  else if (App.cat === 'Viral') list = list.filter(m => m.viral);
-  else if (App.cat !== 'Semua') list = list.filter(m => m.cat === App.cat);
+  if (App.cat !== 'Semua') list = list.filter(m => m.cat === App.cat);
   if (!list.length) list = MENU.filter(m => m.moods.indexOf(App.mood) > -1).slice(0, 3);
   list.sort((a, b) => distOf(a) - distOf(b));
   return list.slice(0, App.cat === 'Semua' ? 3 : 6);
@@ -212,24 +264,105 @@ function renderRecs() {
   box.innerHTML = list.map((m, i) => {
     const q = App.cart[m.id] || 0;
     const d = distOf(m).toFixed(1).replace('.', ',');
-    return `<div class="rec">
-      <div class="pic" style="background:linear-gradient(135deg,${MOODC[m.moods[0]][0]}55,${MOODC[m.moods[0]][1]}33)">
-        ${i === 0 ? `<span class="badge tag pink">${t('best_match')}</span>` : ''}
-        ${m.viral ? (i === 0 ? '' : `<span class="badge tag gold">✦ ${t('viral')}</span>`) : ''}
-        ${art(m.art, 104)}
-        <div class="cimomini">${cimo(m.moods[0], 30)}</div>
+    const lbl = i === 0 ? t('pick_t')
+      : m.viral ? '✦ ' + t('viral')
+      : (CATS.indexOf(m.cat) > -1 ? cL(m.cat) : '');
+    const c = MOODC[m.moods[0]] || MOODC.def;
+    const media = m.photo
+      ? `<img class="fphoto" src="${esc(m.photo)}" alt="${esc(m.name)}" loading="lazy"
+             onerror="this.style.display='none'">`
+      : `<div class="fart">${art(m.art, 96)}</div>`;
+    return `<article class="pickcard fcard">
+      <div class="pickhead"><b>${lbl}</b><span class="mini">${cimo(m.moods[0], 30)}</span></div>
+      <div class="fmedia" style="--c1:${c[0]}22;--c2:${c[1]}18" ${m.shopee ? `data-shop="${esc(m.shopee)}"` : ''}>
+        ${media}
+        <span class="frate">★ ${m.r}</span>
+        <span class="fdist">${icon('pin')}${d} km</span>
+        ${m.viral ? `<span class="fviral">🔥 ${t('viral')}</span>` : ''}
       </div>
-      <div class="body">
-        <h4>${esc(m.name)}</h4>
-        <div class="stall">${icon('pin')} ${esc(m.stall)} · ${esc(streetOf(m.st).name.replace('Jalan ', 'Jl. '))}</div>
-        <div class="meta"><span>${d} km</span><span>· ±${minsOf(m)} mnt</span><span>· <b>★ ${m.r}</b></span></div>
-        <div class="price"><b>${rp(m.lo)} – ${String(m.hi).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</b>
-          ${q ? `<span class="step" data-step="${m.id}"><button data-dec="${m.id}">−</button><i>${q}</i><button data-inc="${m.id}">+</button></span>`
-              : `<button class="addbtn" data-add="${m.id}">+ ${t('home_add')}</button>`}
+      <div class="fbody">
+        <b class="fname">${esc(m.name)}</b>
+        <small class="fstall">${esc(m.stall)}</small>
+        <div class="frow">
+          <span class="fprice">${rp(m.lo)} – ${String(m.hi).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</span>
+          ${q ? `<span class="step"><button data-dec="${m.id}">−</button><i>${q}</i><button data-inc="${m.id}">+</button></span>`
+              : `<button class="fadd" data-add="${m.id}">${icon('plus')} ${t('home_add')}</button>`}
         </div>
       </div>
-    </div>`;
+    </article>`;
   }).join('');
+}
+
+/* "Putar acak" — a real spinning-wheel popup */
+let popItems = [], popRot = 0, popSpinning = false;
+
+function openSpinPop() {
+  const m = $('#spinModal');
+  if (!m) return;
+  popRot = 0;
+  m.classList.add('on');
+  renderSpinPop();
+}
+
+function renderSpinPop() {
+  popItems = wheelItems();
+  if (!popItems.length) popItems = recList();
+  const n = popItems.length, seg = 360 / n;
+  const cols = ['#ffd9e6', '#ffe9c9', '#d9f0e3', '#dbe9fb', '#eee0fb', '#ffe3d4', '#f4f7c9', '#e2f4f8'];
+  const grad = popItems.map((_, i) => `${cols[i % cols.length]} ${i * seg}deg ${(i + 1) * seg}deg`).join(',');
+  $('#spinPopBody').innerHTML = `
+    <p class="hint" style="text-align:center;margin-bottom:12px">${t('spin_pop_sub')}</p>
+    <div class="popwheelbox">
+      <svg class="pointer" width="28" height="34" viewBox="0 0 34 40"><path d="M17 38L4 10a14 14 0 0 1 26 0z" fill="#ff5f98" stroke="#fff" stroke-width="3"/></svg>
+      <div class="wheel popwheel" id="popWheel" style="background:conic-gradient(${grad})">
+        ${popItems.map((m, i) => {
+          const ang = i * seg + seg / 2, rad = (ang - 90) * Math.PI / 180, R = 30;
+          const px = 50 + R * Math.cos(rad), py = 50 + R * Math.sin(rad);
+          return `<div class="seg"><span style="left:${px.toFixed(2)}%;top:${py.toFixed(2)}%">${foodEmoji(m, i)}</span></div>`;
+        }).join('')}
+        <div class="hub">${cimo(App.mood, 42)}</div>
+      </div>
+    </div>
+    <div id="popResult"></div>
+    <button class="btn block" id="popSpinBtn" style="margin-top:14px">${icon('wheel')} ${t('spin_pop_btn')}</button>`;
+  $('#popSpinBtn').onclick = spinPopGo;
+}
+
+function spinPopGo() {
+  if (popSpinning) return;
+  const wheel = $('#popWheel'); if (!wheel) return;
+  const n = popItems.length, seg = 360 / n;
+  const idx = Math.floor(Math.random() * n);
+  const center = idx * seg + seg / 2;
+  const jitter = (Math.random() - 0.5) * (seg * 0.5);
+  const turns = 5 + Math.floor(Math.random() * 3);
+  popRot += turns * 360 + (360 - center) + jitter;
+  popSpinning = true;
+  const btn = $('#popSpinBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  const res = $('#popResult'); if (res) res.innerHTML = '';
+  SFX.play('spin');
+  SFX.spinTicks(3800);
+  wheel.style.transition = 'transform 3.8s cubic-bezier(.12,.72,.06,1)';
+  wheel.style.transform = `rotate(${popRot}deg)`;
+  setTimeout(() => {
+    popSpinning = false;
+    const pick = popItems[idx];
+    App.lastSpin = pick;
+    SFX.play('success');
+    const q = App.cart[pick.id] || 0;
+    if (res) res.innerHTML = `<div class="shuffleres" style="margin:12px 0 0">
+      <div class="pic">${art(pick.art, 44)}</div>
+      <div style="flex:1;min-width:0">
+        <b>${esc(pick.name)}</b>
+        <small>${esc(pick.stall)} · ${distOf(pick).toFixed(1).replace('.', ',')} km</small>
+      </div>
+      ${q ? `<span class="step"><button data-dec="${pick.id}">−</button><i>${q}</i><button data-inc="${pick.id}">+</button></span>`
+          : `<button class="btn sm" data-add="${pick.id}" style="padding:7px 13px">${icon('plus')} ${t('home_add')}</button>`}
+    </div>`;
+    if (btn) { btn.disabled = false; btn.innerHTML = `${icon('wheel')} ${t('spin_pop_again')}`; }
+    if (App.user) DB.logSpin(App.user.id, pick.id).catch(() => {});
+  }, 3900);
 }
 
 /* ---------- spinner ---------- */
@@ -257,7 +390,7 @@ function viewSpin() {
           ${items.map((m, i) => {
             const ang = i * seg + seg / 2, rad = (ang - 90) * Math.PI / 180, R = 29;
             const px = 50 + R * Math.cos(rad), py = 50 + R * Math.sin(rad);
-            return `<div class="seg"><span style="left:${px.toFixed(2)}%;top:${py.toFixed(2)}%">${esc(m.name)}</span></div>`;
+            return `<div class="seg"><span style="left:${px.toFixed(2)}%;top:${py.toFixed(2)}%">${foodEmoji(m, i)}</span></div>`;
           }).join('')}
           <div class="hub" style="left:calc(50% - 32px);top:calc(50% - 32px)">${cimo(App.mood, 52)}</div>
         </div>
@@ -286,12 +419,10 @@ function doSpin() {
   wheel.dataset.rot = target;
   App.spinning = true;
   SFX.play('spin');
-  let tk = 0;
-  const iv = setInterval(() => { if (tk++ < 22) SFX.play('tick'); else clearInterval(iv); }, 190);
+  SFX.spinTicks(4200);
   wheel.style.transition = 'transform 4.6s cubic-bezier(.12,.72,.06,1)';
   wheel.style.transform = `rotate(${target}deg)`;
   setTimeout(() => {
-    clearInterval(iv);
     App.spinning = false;
     App.lastSpin = items[idx];
     App.spinHist = (App.spinHist || []).concat(items[idx].name).slice(-8);
@@ -390,12 +521,12 @@ async function sendChat(text) {
   const tp = $('#typing'); if (tp) tp.remove();
 
   addMsg('cimo', res.text, res.mood);
-  App.mood = res.mood;
+  App.mood = normMood(res.mood);
   renderChips(res.chips);
   if (App.user) DB.logChat(App.user.id, 'cimo', res.text).catch(() => {});
 
   if (App.settings.speak && Voice.supported) {
-    Voice.speak(res.text.replace(/\*[^*]+\*/g, ''), { lang: App.settings.voiceLang || App.lang });
+    Voice.speak(String(res.speak || res.text).replace(/\*[^*]+\*/g, ''), { lang: App.settings.voiceLang || App.lang });
   }
   updatePetFace();
 }
@@ -427,9 +558,18 @@ function renderCart() {
     <div class="totline"><span>${t('cart_total')}</span><span style="color:var(--pk2)">${rp(lo)} – ${rp(hi)}</span></div>
     <p class="hint" style="margin-bottom:14px">${t('cart_note')}</p>
     <b style="font-size:.86rem">${t('cart_plat')}</b>
-    <div class="plats">
-      ${[['GoFood', '#ee2737', 'gofood', 'Go'], ['GrabFood', '#00a651', 'grabfood', 'G'], ['ShopeeFood', '#f05a28', 'shopeefood', 'S']].map(([n, col, k, letter]) =>
-        `<button class="plat" data-plat="${k}" style="--pc:${col}"><i style="background:${col}"><svg viewBox="0 0 24 24"><text x="12" y="17.5" text-anchor="middle" font-size="14" font-weight="800" fill="#fff" font-family="Fredoka,sans-serif">${letter}</text></svg></i>${n}<u>${t('cart_go')} ↗</u></button>`).join('')}
+    <div class="platmain">
+      <button class="plat big" data-plat="shopeefood" style="--pc:#f05a28">
+        <i style="background:#f05a28"><svg viewBox="0 0 24 24"><text x="12" y="17.5" text-anchor="middle" font-size="14" font-weight="800" fill="#fff" font-family="Fredoka,sans-serif">S</text></svg></i>
+        <span><b>ShopeeFood</b><small>${t('cart_go')} ↗</small></span>
+        <em class="arrow">›</em>
+      </button>
+    </div>
+    <div class="platsub">
+      ${[['GrabFood', '#00a651', 'grabfood', 'G'], ['GoFood', '#ee2737', 'gofood', 'Go']].map(([n, col, k, letter]) =>
+        `<button class="plat sm" data-plat="${k}" style="--pc:${col}">
+          <i style="background:${col}"><svg viewBox="0 0 24 24"><text x="12" y="17.5" text-anchor="middle" font-size="14" font-weight="800" fill="#fff" font-family="Fredoka,sans-serif">${letter}</text></svg></i>
+          <span>${n}</span></button>`).join('')}
     </div>
     <button class="btn block" id="openShare" style="margin-top:14px">${icon('share')} ${t('cart_share')}</button>`;
 }
@@ -504,63 +644,63 @@ function renderRecap() {
 function viewProfile() {
   const s = App.settings;
   const isV = isVip();
+  const map = moodMap();
+  const moodDays = Object.keys(map).length;
+  let streak = 0, cur = new Date();
+  while (map[iso(cur.getFullYear(), cur.getMonth(), cur.getDate())]) { streak++; cur.setDate(cur.getDate() - 1); }
+  const menuCount = Object.keys(App.cart).length;
   return `<div class="pagetitle"><div><h1>${t('prof_t')}</h1><p>${t('tagline')}</p></div></div>
 
-  <div class="card" style="text-align:center">
+  <div class="profhero">
     <div class="avatar-lg">${cimo(App.mood, 82, false, App.costum)}</div>
-    <h3 style="font-size:1.15rem">${esc(App.user ? App.user.name : t('guest'))}</h3>
-    <small class="muted" style="font-weight:700">${App.user && !App.user.guest ? esc(App.user.contact) : t('guest')}</small>
-    <div class="row" style="justify-content:center;margin-top:12px">
-      <span class="tag pink">${App.user && App.user.guest ? t('guest') : 'Member'}</span>
-      ${isV ? `<span class="tag gold">✦ ${t('vip_badge')}</span>` : ''}
+    <h3>${esc(App.user ? App.user.name : t('guest'))}</h3>
+    <small class="muted">${App.user && !App.user.guest ? esc(App.user.contact) : t('guest')} · Pemburu Rasa · Level ${Math.max(1, Math.min(9, 1 + Math.floor(moodDays / 4)))}</small>
+    <div class="row" style="justify-content:center;margin-top:10px">
+      ${isV ? `<span class="tag gold">✦ ${t('vip_badge')}</span>` : `<span class="tag pink">Paket Gratis</span>`}
       ${App.user && App.user.umkm ? `<span class="tag mint">UMKM</span>` : ''}
       <span class="tag">${MOODLBL[App.mood] || ''}</span>
     </div>
-    ${!isV ? `
-    <div class="card" style="margin:14px 0 0;background:linear-gradient(135deg,#e9b6d4,#cdbbf0);text-align:left;padding:12px 14px;display:flex;align-items:center;gap:10px">
-      <div style="flex:1"><b style="font:.9rem Fredoka">Paket Gratis</b><div style="font:600 .72rem Nunito;opacity:.85">Buka kostum dan warna Cimo</div></div>
-      <button class="btn sm" data-go="vip">${t('vip_start')}</button>
-    </div>` : ''}
+  </div>
+
+  <div class="vipplan ${isV ? 'on' : ''}">
+    <div class="between">
+      <div>
+        <b>${isV ? t('vip_active') : 'Paket Gratis'}</b>
+        <small>${isV ? t('vip_sub') : 'Buka kostum dan warna Cimo'}</small>
+      </div>
+      <button class="btn sm ${isV ? 'ghost' : 'plum'}" data-go="vip">${isV ? t('vip_t') : t('vip_start')}</button>
+    </div>
+  </div>
+
+  <div class="profstats">
+    <div><b>${moodDays}</b><span>Mood</span></div>
+    <div><b>${menuCount}</b><span>Menu</span></div>
+    <div><b>${streak}</b><span>Beruntun</span></div>
   </div>
 
   <div class="card" style="margin-top:12px">
     <div class="between"><b style="font-size:.95rem">${IL().title}</b>${PLAT.standalone ? `<span class="tag mint">✓ ${IL().off}</span>` : ''}</div>
     <p class="hint" style="margin:5px 0 0">${IL().sub}</p>
-    <div class="dlcard">
-      <button class="dlbtn android" data-install="android">
-        <i><svg viewBox="0 0 24 24">${PLAT_ICON.android}</svg></i>
-        <div><b>Android</b><small>${installEvt ? IL().on : 'Chrome · PWA'}</small></div>
-        ${PLAT.android && PLAT.standalone ? `<span class="ok">✓</span>` : ''}
-      </button>
-      <button class="dlbtn ios" data-install="ios">
-        <i><svg viewBox="0 0 24 24">${PLAT_ICON.ios}</svg></i>
-        <div><b>iPhone / iPad</b><small>Safari · PWA</small></div>
-        ${PLAT.ios && PLAT.standalone ? `<span class="ok">✓</span>` : ''}
-      </button>
-    </div>
-    <button class="btn ghost sm block" id="dlOffline2" style="margin-top:8px">${icon('down')} ${IL().offline}</button>
+    <button class="btn block" data-install style="margin-top:10px">${icon('down')} ${IL().install}</button>
   </div>
 
   <div class="card" style="margin-top:12px">
-    <b style="font-size:.95rem">${t('prof_lang')}</b>
-    <div class="langs" style="margin-top:10px">
-      ${LANGS.map(l => `<button class="langopt ${l.k === App.lang ? 'on' : ''}" data-lang="${l.k}"><i>${l.short}</i>${l.label}</button>`).join('')}
+    <div class="between"><b style="font-size:.95rem">${t('prof_lang')}</b>
+      <span class="langnow" style="margin:0">${esc((LANGS.find(l => l.k === App.lang) || LANGS[0]).label)}</span></div>
+    <div class="langs" style="margin-top:8px">
+      ${LANGS.map(l => `<button class="langopt ${l.k === App.lang ? 'on' : ''}" data-lang="${l.k}" title="${esc(l.label)}" aria-label="${esc(l.label)}"><i>${l.short}</i></button>`).join('')}
     </div>
   </div>
 
-  <div class="card" style="margin-top:12px">
-    <div class="between"><b style="font-size:.95rem">${t('prof_voice')}</b><span class="tag">${t('voice_5')}</span></div>
-    <div class="voicecard" id="voiceCards">
-      ${VOICES.map(v => `<button class="vopt ${v.id === s.voice ? 'on' : ''}" data-voice="${v.id}">
-        <b>${v.icon} ${v.name}</b><small>${v.desc}</small>
-        <span class="wave">${[8, 12, 6, 14, 9, 5].map(h => `<i style="height:${h}px"></i>`).join('')}</span></button>`).join('')}
+  <div class="card voiceone" style="margin-top:12px">
+    <div class="vhead">
+      <div class="vava">${cimo(App.mood, 46)}<i class="vwave"><b></b><b></b><b></b><b></b></i></div>
+      <div style="flex:1;min-width:0">
+        <b>${t('prof_voice')}</b>
+        <small>${t('voice_one_sub')}</small>
+      </div>
+      <span class="tag mint">${t('voice_one_badge')}</span>
     </div>
-    <div class="setrow" style="margin-top:10px"><div class="lbl"><b>${t('voice_lang')}</b><small>${LANGS.find(l => l.k === s.voiceLang)?.label || ''}</small></div>
-      <select id="voiceLang">${LANGS.map(l => `<option value="${l.k}" ${l.k === s.voiceLang ? 'selected' : ''}>${l.label}</option>`).join('')}</select></div>
-    <div class="setrow"><div class="lbl"><b>${t('voice_rate')}</b><small id="rateV">${s.rate.toFixed(2)}×</small></div>
-      <input type="range" id="rate" min="0.6" max="1.6" step="0.02" value="${s.rate}"></div>
-    <div class="setrow"><div class="lbl"><b>${t('voice_pitch')}</b><small id="pitchV">${s.pitch.toFixed(2)}</small></div>
-      <input type="range" id="pitch" min="0.6" max="1.6" step="0.02" value="${s.pitch}"></div>
     <div class="setrow"><div class="lbl"><b>${t('voice_vol')}</b><small id="volV">${Math.round(s.vol * 100)}%</small></div>
       <input type="range" id="vol" min="0" max="1" step="0.05" value="${s.vol}"></div>
     <button class="btn block sm" id="testVoice" style="margin-top:12px">${icon('volume')} ${t('voice_test')}</button>
@@ -573,22 +713,14 @@ function viewProfile() {
       <label class="switch"><input type="checkbox" id="speakSw" ${s.speak ? 'checked' : ''}><span></span></label></div>
     <div class="setrow"><div class="lbl"><b>Dark mode</b><small>${t('prof_t')}</small></div>
       <label class="switch"><input type="checkbox" id="darkSw" ${s.theme === 'dark' ? 'checked' : ''}><span></span></label></div>
-    <div class="setrow"><div class="lbl"><b>${t('prof_design')}</b><small>${App.costum ? COSTUMES.find(c=>c.id===App.costum)?.name : 'Standard'} ${!isVip() && App.costum && COSTUMES.find(c=>c.id===App.costum)?.vip ? '🔒' : ''}</small></div>
-      <select id="costumSel">
-        ${COSTUMES.map(c => {
-          const locked = c.vip && !isVip();
-          return `<option value="${c.id}" ${App.costum === c.id ? 'selected' : ''} ${locked ? 'disabled' : ''}>${c.name}${locked ? ' (VIP)' : ''}</option>`;
-        }).join('')}
-      </select></div>
   </div>
 
   <div class="card" style="margin-top:12px">
-    <b style="font-size:.95rem">${t('prof_data')}</b>
+    <div class="between"><b style="font-size:.95rem">Akun</b>
+      <span class="tag">${App.user && !App.user.guest ? esc(App.user.contact) : t('guest')}</span></div>
     <div class="row" style="margin-top:10px">
-      <button class="btn sm ghost" id="expJson">${icon('down')} ${t('prof_export')}</button>
       <button class="btn sm ghost" id="logoutBtn">${icon('back')} ${t('prof_logout')}</button>
     </div>
-    <p class="hint" style="margin-top:10px">Data akunmu tersimpan ${DB.isRemote ? 'di server CraveMood' : 'di perangkat ini'}. Kamu bisa mengunduhnya kapan saja.</p>
   </div>`;
 }
 
@@ -599,7 +731,11 @@ function viewVip() {
   const features = (VIP_FEATURES_I18N[App.lang] || VIP_FEATURES_I18N.id);
   const isV = isVip();
   return `
-  <div class="pagetitle"><div><h1>${t('vip_t')}</h1><p>${t('vip_sub')}</p></div>
+  <div class="pagetitle" style="align-items:center">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="iconbtn" data-go="profile" aria-label="back">${icon('back')}</button>
+      <div><h1>${t('vip_t')}</h1><p>${t('vip_sub')}</p></div>
+    </div>
     ${isV ? `<span class="tag gold">✦ ${t('vip_active')}</span>` : ''}</div>
 
   <div class="vipcard">
@@ -617,16 +753,35 @@ function viewVip() {
     ${isV ? '' : `<button class="btn block" id="startVip">${t('vip_start')}</button>`}
   </div>
 
+  <div class="card coscard" style="margin-top:14px">
+    <div class="between">
+      <div><b style="font:700 .98rem Fredoka">${t('prof_design')}</b>
+        <div class="hint" style="margin-top:2px">${isV ? 'Pilih gaya Cimo favoritmu.' : 'Khusus VIP. Buka semua kostum Cimo.'}</div></div>
+      <span class="tag ${isV ? 'mint' : 'gold'}">${isV ? '✓' : 'VIP'}</span>
+    </div>
+    <div class="cosgrid">
+      ${COSTUMES.map(c => {
+        const locked = !isV;
+        const on = App.costum === c.id;
+        return `<button class="cosopt ${on ? 'on' : ''} ${locked ? 'lock' : ''}" data-costum="${c.id}">
+          <span class="cosface">${cimo(App.mood, 56, false, c.id)}</span>
+          <b>${c.name}</b>
+          ${locked ? `<span class="coslock">🔒</span>` : (on ? `<span class="coson">✓</span>` : '')}
+        </button>`;
+      }).join('')}
+    </div>
+  </div>
+
   <div class="umkmcard">
     <div style="position:relative">
       <div>${cimo('senang', 80, false, 'koki')}</div>
       <div>
-        <span class="tag mint">${t('umkm_sub')}</span>
+        <span class="tag mint">UMKM</span>
         <h3>${t('umkm_sub')}</h3>
         <p>${t('umkm_desc')}</p>
       </div>
     </div>
-    <button class="btn ghost block" data-go="umkm">${t('umkm_t')} →</button>
+    <button class="btn block" data-go="umkm">${t('umkm_t')} →</button>
   </div>`;
 }
 
@@ -740,72 +895,72 @@ function svgDataUrl(mood, size, costume) {
 }
 
 async function buildShareCard() {
-  const W = 1000, H = 1250;
+  const W = 1000, H = 1300;
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const x = cv.getContext('2d');
   const moodObj = MOODS.find(m => m.k === App.mood) || MOODS[0];
   const c0 = MOODC[moodObj.face] || MOODC.def;
 
-  const g = x.createLinearGradient(0, 0, W, H);
-  g.addColorStop(0, '#fff7fa'); g.addColorStop(0.38, c0[0] + 'ee'); g.addColorStop(1, c0[1] + 'ff');
-  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  /* soft dotted backdrop */
+  x.fillStyle = '#fdf4f8'; x.fillRect(0, 0, W, H);
+  x.fillStyle = 'rgba(255,255,255,.8)';
+  for (let i = 16; i < W; i += 30) for (let j = 16; j < H; j += 30) { x.beginPath(); x.arc(i, j, 2.2, 0, 7); x.fill(); }
 
-  x.fillStyle = 'rgba(255,255,255,.45)';
-  for (let i = 20; i < W; i += 44) for (let j = 20; j < H; j += 44) { x.beginPath(); x.arc(i, j, 3.4, 0, 7); x.fill(); }
+  /* mood-tinted card (mockup story card) */
+  const CX = 64, CY = 56, CW = W - 128, CH = H - 112, R = 56;
+  const g = x.createLinearGradient(0, CY, 0, CY + CH);
+  g.addColorStop(0, c0[0]); g.addColorStop(0.58, c0[1]); g.addColorStop(1, '#ffd9e8');
+  roundRect(x, CX, CY, CW, CH, R); x.fillStyle = g; x.fill();
+  x.strokeStyle = 'rgba(255,255,255,.55)'; x.lineWidth = 5; x.stroke();
 
-  // white card
-  x.fillStyle = 'rgba(255,255,255,.58)';
-  roundRect(x, 52, 52, W - 104, H - 104, 52); x.fill();
-  x.strokeStyle = 'rgba(255,255,255,.95)'; x.lineWidth = 4; x.stroke();
-
-  // soft mood glow behind the mascot
-  const gl = x.createRadialGradient(W / 2, 400, 40, W / 2, 400, 320);
-  gl.addColorStop(0, c0[0] + 'cc'); gl.addColorStop(1, c0[0] + '00');
-  x.fillStyle = gl; x.beginPath(); x.arc(W / 2, 400, 320, 0, 7); x.fill();
-
-  // header brand
-  x.fillStyle = '#3a2142';
-  x.font = '700 46px Fredoka, Nunito, sans-serif';
-  x.fillText('Crave', 110, 168);
-  const cw = x.measureText('Crave').width;
-  x.fillStyle = '#ff9ec5'; roundRect(x, 110 + cw + 8, 126, 128, 56, 16); x.fill();
-  x.fillStyle = '#3a2142'; x.fillText('Mood', 110 + cw + 24, 168);
-
-  // cimo
-  try {
-    const img = await loadImg(svgDataUrl(moodObj.face, 380, App.costum));
-    x.drawImage(img, W / 2 - 190, 210, 380, 352);
-  } catch (e) {}
-
+  /* brand + mood */
   x.textAlign = 'center';
   x.fillStyle = '#3a2142';
-  x.font = '700 62px Fredoka, Nunito, sans-serif';
-  const title = (App.user ? App.user.name + ' · ' : '') + mL(moodObj);
-  x.fillText(title.length > 22 ? title.slice(0, 21) + '…' : title, W / 2, 640);
-  x.font = '700 30px Nunito, sans-serif'; x.fillStyle = '#7d6683';
-  x.fillText(mD(moodObj), W / 2, 686);
+  x.font = '700 48px Fredoka, Nunito, sans-serif';
+  x.fillText('CraveMood', W / 2, CY + 122);
 
-  // items
-  const items = Object.keys(App.cart).map(id => MENU.find(m => m.id === id)).filter(Boolean).slice(0, 3);
-  const list = items.length ? items.map(m => m.name) : MENU.filter(m => m.moods.indexOf(App.mood) > -1).slice(0, 3).map(m => m.name);
-  x.font = '700 34px Nunito, sans-serif';
-  list.forEach((n, i) => {
-    const y = 790 + i * 96;
-    x.fillStyle = 'rgba(255,255,255,.85)';
-    roundRect(x, 130, y - 52, W - 260, 78, 39); x.fill();
-    x.fillStyle = c0[1];
-    x.beginPath(); x.arc(178, y - 13, 13, 0, 7); x.fill();
-    x.fillStyle = '#3a2142'; x.textAlign = 'left';
-    x.fillText(n.length > 26 ? n.slice(0, 25) + '…' : n, 212, y - 2);
-    x.textAlign = 'center';
-  });
+  x.fillStyle = 'rgba(58,33,66,.55)';
+  x.font = '700 30px Nunito, sans-serif';
+  x.fillText(t('share_mood_today'), W / 2, CY + 184);
 
-  // footer
-  x.fillStyle = '#3a2142'; x.font = '700 26px Nunito, sans-serif';
-  x.fillText('Makan sesuai moodmu · cravemood.id', W / 2, H - 130);
-  x.fillStyle = 'rgba(58,33,66,.55)'; x.font = '700 22px Nunito, sans-serif';
-  x.fillText(new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }), W / 2, H - 92);
+  x.fillStyle = '#3a2142';
+  x.font = '700 80px Fredoka, Nunito, sans-serif';
+  x.fillText(mL(moodObj), W / 2, CY + 278);
+
+  /* mascot */
+  try {
+    const img = await loadImg(svgDataUrl(moodObj.face, 440, App.costum));
+    x.drawImage(img, W / 2 - 220, CY + 282, 440, 407);
+  } catch (e) {}
+
+  /* recommendation card */
+  const rx = 168, ry = CY + 700, rw = W - 336, rh = 214;
+  x.fillStyle = 'rgba(255,255,255,.95)';
+  roundRect(x, rx, ry, rw, rh, 34); x.fill();
+
+  x.fillStyle = 'rgba(58,33,66,.5)';
+  x.font = '700 28px Nunito, sans-serif';
+  x.fillText(t('share_rec'), W / 2, ry + 58);
+
+  const cartIds = Object.keys(App.cart);
+  let pick = cartIds.length ? MENU.find(m => m.id === cartIds[0]) : null;
+  if (!pick) pick = recList()[0] || MENU.find(m => m.moods.indexOf(App.mood) > -1) || MENU[0];
+
+  x.fillStyle = '#3a2142';
+  x.font = '700 48px Fredoka, Nunito, sans-serif';
+  const pn = pick ? pick.name : 'Coto Makassar';
+  x.fillText(pn.length > 20 ? pn.slice(0, 19) + '…' : pn, W / 2, ry + 120);
+
+  x.fillStyle = 'rgba(58,33,66,.6)';
+  x.font = '700 26px Nunito, sans-serif';
+  const sub = pick ? `${pick.stall} · ${distOf(pick).toFixed(1).replace('.', ',')} km` : 'Coto Daeng Tata · 1,2 km';
+  x.fillText(sub.length > 34 ? sub.slice(0, 33) + '…' : sub, W / 2, ry + 168);
+
+  /* footer */
+  x.fillStyle = 'rgba(58,33,66,.45)';
+  x.font = '700 26px Nunito, sans-serif';
+  x.fillText('cravemood.id', W / 2, CY + CH - 52);
 
   const dataUrl = cv.toDataURL('image/jpeg', 0.92);
   const blob = await canvasToBlob(cv);
@@ -1032,24 +1187,20 @@ async function openShare() {
   // data URL for the preview: blob URLs can fail to decode large images on low-memory devices
   const url = card.dataUrl;
   const caption = shareCaption(items);
+  const nm = (App.user && App.user.name) || (App.lang === 'en' ? 'you' : App.lang === 'zh' ? '你' : App.lang === 'hi' ? 'तुम' : 'kamu');
   $('#shareBody').innerHTML = `
-    <img class="preview" src="${url}" alt="CraveMood card">
-    <p class="hint" style="text-align:center;margin:12px 0 4px">${t('share_t')}</p>
-    <div class="sharegrid">
-      <button class="soc" data-soc="ig"><i style="background:${SOC.ig[0]}"><svg viewBox="0 0 24 24">${SOC.ig[1]}</svg></i>Instagram</button>
-      <button class="soc" data-soc="wa"><i style="background:${SOC.wa[0]}"><svg viewBox="0 0 24 24">${SOC.wa[1]}</svg></i>WhatsApp</button>
-      <button class="soc" data-soc="tg"><i style="background:${SOC.tg[0]}"><svg viewBox="0 0 24 24">${SOC.tg[1]}</svg></i>Telegram</button>
-      <button class="soc" data-soc="x"><i style="background:${SOC.x[0]}"><svg viewBox="0 0 24 24">${SOC.x[1]}</svg></i>X</button>
-      <button class="soc" data-soc="fb"><i style="background:${SOC.fb[0]}"><svg viewBox="0 0 24 24">${SOC.fb[1]}</svg></i>Facebook</button>
+    <div class="sharehero"><h3>${esc(t('share_done').replace('{name}', nm))}</h3></div>
+    <img class="sharepreview" src="${url}" alt="CraveMood card">
+    <div class="sharebtns">
+      <button class="sharebtn ig" data-soc="ig" aria-label="Instagram"><svg viewBox="0 0 24 24">${SOC.ig[1]}</svg></button>
+      <button class="sharebtn wa" data-soc="wa" aria-label="WhatsApp"><svg viewBox="0 0 24 24">${SOC.wa[1]}</svg></button>
+      <button class="sharebtn dl" id="dlCard" aria-label="Download"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 11l5 5 5-5M4 20h16"/></svg></button>
+      <button class="sharebtn more" id="nativeShare" aria-label="More"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.7" fill="#fff" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="#fff" stroke="none"/><circle cx="19" cy="12" r="1.7" fill="#fff" stroke="none"/></svg></button>
     </div>
-    <div class="shareacts">
-      <button class="btn sm" id="nativeShare">${icon('share')} ${t('share_native')}</button>
-      <button class="btn sm ghost" id="dlCard">${icon('down')} ${t('share_dl')}</button>
-      <button class="btn sm ghost" id="copyCap">${t('share_copy')}</button>
-    </div>
-    <p class="hint" style="margin-top:10px">Instagram tidak menerima unggahan langsung dari web. Tombol Instagram akan membuka panel bagikan HP (pilih Instagram), atau menyimpan gambar + menyalin caption supaya kamu bisa posting manual.</p>`;
+    <div class="sharelabels"><span>Instagram</span><span>WhatsApp</span><span>${t('share_dl')}</span><span>${t('share_more')}</span></div>
+    <p class="sharetip">${t('share_hint')}</p>`;
 
-  const shareUrl = location.href.split('#')[0];
+  const shareUrl = appLink();
   $('#nativeShare').onclick = async () => {
     const file = new File([blob], 'cravemood.jpg', { type: 'image/jpeg' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -1057,8 +1208,7 @@ async function openShare() {
       catch (e) { downloadBlob(blob); }
     } else { downloadBlob(blob); copyText(caption); toast(t('copied')); }
   };
-  $('#dlCard').onclick = () => downloadBlob(blob);
-  $('#copyCap').onclick = () => { copyText(caption); toast(t('copied')); SFX.play('pop'); };
+  $('#dlCard').onclick = () => { downloadBlob(blob); SFX.play('pop'); };
 
   $$('#shareBody [data-soc]').forEach(b => b.onclick = () => shareTo(b.dataset.soc, blob, caption, shareUrl));
 }
@@ -1106,72 +1256,156 @@ function fallbackCopy(txt) {
 
 /* ---------- admin ---------- */
 /* ---------- onboarding ---------- */
-let obStep = 1, obLang = 'id', obMode = 'register';
+let obStep = 0, obLang = 'id', obMode = 'login';
 function showOnboard() {
   const o = $('#onboard');
   o.classList.remove('hide');
-  o.innerHTML = `<div class="box">
-    <div class="cimo" id="obCimo">${cimo('def', 170, true)}</div>
-    <div class="sheetbox" id="obBox"></div>
-  </div>`;
+  obLang = App.lang || 'id';
+  obStep = 0;
   obRender();
 }
+
 function obRender() {
-  const box = $('#obBox');
+  const o = $('#onboard');
+
+  /* ---- 0. splash ---- */
+  if (obStep === 0) {
+    o.className = 'onboard splashwrap';
+    o.innerHTML = `<div class="splash">
+      <div class="doodle d1">${cimo('senang', 54)}</div>
+      <div class="doodle d2">${cimo('bingung', 46)}</div>
+      <div class="doodle d3">${cimo('kecewa', 44)}</div>
+      <div class="doodle d4">${cimo('sedih', 52)}</div>
+      <div class="hero-cimo">${cimo('def', 238)}</div>
+      <div class="wordmark"><span>Crave</span><mark>Mood</mark></div>
+      <div class="tagline">${t('splash_tag')}</div>
+      <button class="startbtn" id="obStart">${t('on_go')} →</button>
+      <div class="dots"><i class="on"></i><i></i><i></i><i></i></div>
+    </div>`;
+    $('#obStart').onclick = () => { SFX.init(); SFX.play('tap'); obStep = 1; obRender(); };
+    return;
+  }
+
+  o.className = 'onboard';
+
+  /* ---- 1. how it works ---- */
   if (obStep === 1) {
-    box.innerHTML = `
-      <h2 style="font-size:1.35rem">${t('on_title')}</h2>
-      <p class="sub" style="color:var(--mu);font-size:.82rem;margin:4px 0 14px">${t('on_sub')}</p>
-      <div class="field"><label>${t('on_name')}</label><input id="obName" maxlength="20" placeholder="${t('on_name_ph')}" value="${esc(App.tmpName || '')}"></div>
-      <div class="field"><label>${t('on_lang')}</label>
-        <div class="langs">${LANGS.map(l => `<button class="langopt ${l.k === obLang ? 'on' : ''}" data-obl="${l.k}"><i>${l.short}</i>${l.label}</button>`).join('')}</div>
+    o.innerHTML = `<div class="box">
+      <div class="cimo">${cimo('def', 150, true)}</div>
+      <div class="sheetbox">
+        <div class="how">
+          <div style="text-align:center"><span class="bubble-say">${t('how_sub')}</span></div>
+          <h2>${t('how_t')}</h2>
+          <div class="howsteps">
+            <div class="howstep s1"><span class="num">1</span><span class="ico">${cimo('senang', 44)}</span>
+              <div><b>${t('how_1t')}</b><small>${t('how_1s')}</small></div></div>
+            <div class="howstep s2"><span class="num">2</span><span class="ico">${cimo('bingung', 44)}</span>
+              <div><b>${t('how_2t')}</b><small>${t('how_2s')}</small></div></div>
+            <div class="howstep s3"><span class="num">3</span><span class="ico">${cimo('senang', 44)}</span>
+              <div><b>${t('how_3t')}</b><small>${t('how_3s')}</small></div></div>
+          </div>
+          <button class="btn block" id="obHowNext" style="margin-top:16px">${t('how_next')}</button>
+        </div>
       </div>
-      <div class="err" id="obErr"></div>
-      <button class="btn block" id="obNext">${t('on_go')} →</button>
-      <button class="btn block ghost sm" id="obGuest" style="margin-top:8px">${t('on_guest')}</button>`;
-    $$('#obBox [data-obl]').forEach(b => b.onclick = () => {
+    </div>`;
+    $('#obHowNext').onclick = () => { SFX.play('tap'); obStep = 2; obRender(); };
+    return;
+  }
+
+  /* ---- 2. kenalan (name) ---- */
+  if (obStep === 2) {
+    o.innerHTML = `<div class="box">
+      <div class="cimo">${cimo('def', 168)}</div>
+      <div class="sheetbox">
+        <h2 style="font-size:1.3rem;line-height:1.25">${t('kenalan_t')}</h2>
+        <div class="field" style="margin-top:14px"><label>${t('reg_name')}</label>
+          <input id="obName" maxlength="20" placeholder="${t('on_name_ph')}" value="${esc(App.tmpName || '')}"></div>
+        <div class="field"><label>${t('on_lang')}</label>
+          <div class="langs">${LANGS.map(l => `<button class="langopt ${l.k === obLang ? 'on' : ''}" data-obl="${l.k}" title="${esc(l.label)}" aria-label="${esc(l.label)}"><i>${l.short}</i></button>`).join('')}</div>
+          <div class="langnow">${esc((LANGS.find(l => l.k === obLang) || LANGS[0]).label)}</div>
+        </div>
+        <div class="err" id="obErr"></div>
+        <button class="btn block" id="obNext">${t('kenalan_btn')}</button>
+        <p class="obnote">${t('kenalan_note')}</p>
+      </div>
+    </div>`;
+    $$('#onboard [data-obl]').forEach(b => b.onclick = () => {
       obLang = b.dataset.obl; App.lang = obLang;
       Voice.set('lang', obLang); App.settings.voiceLang = obLang;
+      SFX.play('tap');
       obRender();
     });
     $('#obNext').onclick = () => {
       const v = $('#obName').value.trim();
       if (!v) { $('#obErr').textContent = t('on_need_name'); SFX.play('error'); return; }
-      App.tmpName = v; obStep = 2; obRender();
+      App.tmpName = v; SFX.play('tap'); obStep = 3; obMode = 'register'; obRender();
     };
-    $('#obGuest').onclick = () => doRegister(true);
-  } else {
-    box.innerHTML = `
-      <h2 style="font-size:1.3rem">${obMode === 'login' ? t('login_t') : t('on_acc')}</h2>
-      <p class="sub" style="color:var(--mu);font-size:.8rem;margin:4px 0 14px">${obMode === 'login' ? t('on_have') : t('on_acc_sub')}</p>
-      <div class="field"><label>${t('on_email')}</label><input id="obContact" type="text" placeholder="nama@email.com / 08xx"></div>
-      <div class="field"><label>${t('on_pass')}</label><input id="obPass" type="password" placeholder="••••••••"></div>
-      <div class="err" id="obErr"></div>
-      <button class="btn block" id="obSubmit">${obMode === 'login' ? t('on_login') : t('on_reg')}</button>
-      <button class="btn block ghost sm" id="obSkip" style="margin-top:8px">${obMode === 'login' ? t('on_guest') : t('on_skip')}</button>
-      <p class="hint" style="text-align:center;margin-top:10px">
-        <a href="#" id="obToggle" style="color:var(--pk2);font-weight:800">${obMode === 'login' ? t('on_acc') : t('on_have')}</a>
-      </p>`;
-    $('#obToggle').onclick = e => { e.preventDefault(); obMode = obMode === 'login' ? 'register' : 'login'; obRender(); };
-    $('#obSkip').onclick = () => doRegister(true);
-    $('#obSubmit').onclick = async () => {
-      const c = $('#obContact').value.trim(), p = $('#obPass').value;
-      if (!c || !p) { $('#obErr').textContent = t('on_need_cred'); SFX.play('error'); return; }
-      $('#obSubmit').disabled = true;
-      let r;
-      if (obMode === 'login') {
-        r = await DB.login({ contact: c, password: p });
-        if (!r.ok) { $('#obErr').textContent = t('login_bad'); SFX.play('error'); $('#obSubmit').disabled = false; return; }
-        SFX.play('success'); toast(t('login_ok'));
-      } else {
-        r = await DB.register({ name: App.tmpName, contact: c, password: p, lang: obLang });
-        if (!r.ok) { $('#obErr').textContent = r.error === 'exists' ? 'Kontak sudah terdaftar. Coba masuk.' : 'Gagal mendaftar'; SFX.play('error'); $('#obSubmit').disabled = false; return; }
-        SFX.play('success'); toast(t('reg_ok'));
-      }
-      App.user = r.user; DB.setSetting('session', r.user.id);
-      finishOnboard();
-    };
+    return;
   }
+
+  /* ---- 3. masuk / daftar ---- */
+  const isLogin = obMode === 'login';
+  o.innerHTML = `<div class="box">
+    <div class="cimo">${cimo('def', 138)}</div>
+    <div class="sheetbox">
+      <div class="obtabs">
+        <button data-obmode="login" class="${isLogin ? 'on' : ''}">${t('tab_masuk')}</button>
+        <button data-obmode="register" class="${!isLogin ? 'on' : ''}">${t('tab_daftar')}</button>
+      </div>
+      <div class="obwelcome">${isLogin ? t('login_welcome') : t('reg_t')}</div>
+
+      ${isLogin ? `
+        <button class="obbtn" id="obGoogle"><span class="gicon">G</span>${t('login_google')}</button>
+        <div class="field"><label>${t('login_wa')}</label><input id="obContact" type="text" placeholder="+62 812 3456 7890"></div>
+        <div class="field"><label>${t('on_pass')}</label><input id="obPass" type="password" placeholder="••••••••"></div>
+        <div class="err" id="obErr"></div>
+        <button class="obbtn primary" id="obSubmit">${t('tab_masuk')}</button>
+        <div class="obor">${t('login_or')}</div>
+        <button class="obbtn ghostline" id="obSkip">${t('login_guest')}</button>
+        <p class="obnote">${t('login_terms')}</p>
+      ` : `
+        <div class="field"><label>${t('reg_name')}</label><input id="obName2" maxlength="20" value="${esc(App.tmpName || '')}" placeholder="${t('on_name_ph')}"></div>
+        <div class="field"><label>${t('login_wa')}</label><input id="obContact" type="text" placeholder="+62 812 3456 7890"></div>
+        <div class="field"><label>${t('on_pass')}</label><input id="obPass" type="password" placeholder="••••••••"></div>
+        <label class="obterms"><input type="checkbox" id="obTerms"> <span>${t('reg_terms')}</span></label>
+        <div class="err" id="obErr"></div>
+        <button class="obbtn primary" id="obSubmit">${t('reg_btn')}</button>
+        <div class="obor">${t('login_or')}</div>
+        <button class="obbtn" id="obGoogle"><span class="gicon">G</span>${t('reg_google')}</button>
+        <button class="obbtn ghostline" id="obSkip" style="margin-top:9px">${t('on_guest')}</button>
+      `}
+    </div>
+  </div>`;
+
+  $$('#onboard [data-obmode]').forEach(b => b.onclick = () => {
+    obMode = b.dataset.obmode; SFX.play('tap'); obRender();
+  });
+  const g = $('#obGoogle');
+  if (g) g.onclick = () => { toast('Google login segera hadir, pakai nomor WhatsApp dulu ya'); SFX.play('tap'); };
+  $('#obSkip').onclick = () => doRegister(true);
+  $('#obSubmit').onclick = async () => {
+    const nameEl = $('#obName2');
+    const nm = nameEl ? nameEl.value.trim() : (App.tmpName || '');
+    const c = $('#obContact').value.trim(), p = $('#obPass').value;
+    if (nameEl && !nm) { $('#obErr').textContent = t('on_need_name'); SFX.play('error'); return; }
+    if (!c || !p) { $('#obErr').textContent = t('on_need_cred'); SFX.play('error'); return; }
+    const terms = $('#obTerms');
+    if (terms && !terms.checked) { $('#obErr').textContent = t('reg_terms'); SFX.play('error'); return; }
+    $('#obSubmit').disabled = true;
+    let r;
+    if (isLogin) {
+      r = await DB.login({ contact: c, password: p });
+      if (!r.ok) { $('#obErr').textContent = t('login_bad'); SFX.play('error'); $('#obSubmit').disabled = false; return; }
+      SFX.play('success'); toast(t('login_ok'));
+    } else {
+      App.tmpName = nm;
+      r = await DB.register({ name: nm, contact: c, password: p, lang: obLang });
+      if (!r.ok) { $('#obErr').textContent = r.error === 'exists' ? 'Kontak sudah terdaftar. Coba masuk.' : 'Gagal mendaftar'; SFX.play('error'); $('#obSubmit').disabled = false; return; }
+      SFX.play('success'); toast(t('reg_ok'));
+    }
+    App.user = r.user; DB.setSetting('session', r.user.id);
+    finishOnboard();
+  };
 }
 async function doRegister(guest) {
   const r = await DB.register({ name: App.tmpName || t('guest'), contact: '', password: '', lang: obLang, guest: true });
@@ -1235,7 +1469,7 @@ function petSay(txt) {
   const b = $('#petBubble'); if (!b) return;
   b.textContent = txt; b.classList.add('on');
   clearTimeout(petSay._t);
-  petSay._t = setTimeout(() => b.classList.remove('on'), 3200);
+  petSay._t = setTimeout(() => b.classList.remove('on'), 2300);
 }
 
 /* ---------- install / download (PWA) ---------- */
@@ -1252,7 +1486,6 @@ const PLAT_ICON = {
   desktop: '<rect x="3" y="4.5" width="18" height="12" rx="2"/><rect x="4.8" y="6.2" width="14.4" height="8.6" rx="1" fill="#fff"/><rect x="8" y="18" width="8" height="1.8" rx=".9"/>',
 };
 let installEvt = null;
-let installTab = PLAT.ios ? 'ios' : PLAT.android ? 'android' : 'desktop';
 const IL = () => INSTALL_I18N[App.lang] || INSTALL_I18N.id;
 
 window.addEventListener('beforeinstallprompt', e => {
@@ -1279,7 +1512,6 @@ function maybeShowBanner() {
     <div style="flex:1;min-width:0"><b>${L.banner}</b><small>${L.banner_sub}</small></div>
     <div class="act">
       <button class="go" id="barInstall">${L.install}</button>
-      <a href="https://www.pwabuilder.com/reportcard?site=https://cravemood.apps.workbuddy.host" target="_blank" rel="noopener" class="go" style="background:#00aa13;text-decoration:none;display:inline-block">APK</a>
       <button class="no" id="barLater">${L.later}</button>
     </div>`;
   b.classList.add('on');
@@ -1287,55 +1519,82 @@ function maybeShowBanner() {
   $('#barInstall').onclick = () => { b.classList.remove('on'); sessionStorage.setItem('cm_install_bar', '1'); openInstall(); };
 }
 
-function openInstall(tab) {
-  if (tab) installTab = tab;
+function openInstall() {
   $('#installModal').classList.add('on');
   renderInstall();
 }
 
+/* the canonical, always-complete app link (keeps ?sharecode=… so the host gate passes) */
 function renderInstall() {
   const L = IL();
-  const steps = installTab === 'ios' ? L.stepsI : installTab === 'android' ? L.stepsA : L.stepsD;
-  const canPrompt = installTab === 'android' && !!installEvt;
-  const ico = installTab === 'ios' ? PLAT_ICON.ios : installTab === 'android' ? PLAT_ICON.android : PLAT_ICON.desktop;
-  const iconBg = installTab === 'ios' ? 'var(--ink)' : installTab === 'android' ? '#3ddc84' : 'var(--pk)';
-  const iconCol = installTab === 'ios' ? 'var(--bg)' : installTab === 'android' ? '#0b3d24' : '#3a2142';
-  $('#installBody').innerHTML = `
-    <div class="itabs">
-      <button data-itab="android" class="${installTab === 'android' ? 'on' : ''}">${L.tabA}</button>
-      <button data-itab="ios" class="${installTab === 'ios' ? 'on' : ''}">${L.tabI}</button>
-      <button data-itab="desktop" class="${installTab === 'desktop' ? 'on' : ''}">${L.tabD}</button>
-    </div>
-    <div class="installhero">
-      <img src="icon-192.png" alt="CraveMood" style="width:56px;height:56px;border-radius:16px;flex:none;box-shadow:0 4px 14px rgba(122,42,85,.25)">
-      <div style="flex:1;min-width:0">
-        <b>${L.title}</b>
-        <small>${PLAT.standalone ? L.off : L.on}</small>
-      </div>
-      ${PLAT.standalone ? `<span class="tag mint">✓</span>` : ''}
-    </div>
-    ${canPrompt && !PLAT.standalone ? `<button class="btn block" id="pwaGo">${icon('down')} ${L.install}</button>` : ''}
-    <ol class="isteps" style="margin-top:${canPrompt && !PLAT.standalone ? 14 : 0}px">
-      ${steps.map(s => `<li class="istep"><em></em><span>${s}</span></li>`).join('')}
-    </ol>
-    <div class="iacts">
-      <button class="btn sm ghost" id="dlOffline">${icon('down')} ${L.offline}</button>
-      <button class="btn sm ghost" id="copyLink">${icon('share')} ${L.copy}</button>
-    </div>
-    <div class="card" style="margin-top:14px;padding:14px;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-color:#81c784">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <span style="font-size:1.8rem">📦</span>
-        <div><b style="font-size:.95rem;color:#2e7d32">${L.apk}</b><small style="display:block;color:#388e3c;font-size:.72rem">${L.apk_note}</small></div>
-      </div>
-      <a href="https://www.pwabuilder.com/reportcard?site=https://cravemood.apps.workbuddy.host" target="_blank" rel="noopener" class="btn block" style="background:#00aa13;box-shadow:0 5px 0 #007a0e;text-decoration:none">📲 Unduh APK Android</a>
-    </div>
-    <div class="inote">${L.note}</div>`;
+  const platform = PLAT.ios ? 'ios' : PLAT.android ? 'android' : 'desktop';
+  const steps = platform === 'ios' ? L.stepsI : platform === 'android' ? L.stepsA : L.stepsD;
+  const canPrompt = platform === 'android' && !!installEvt && !PLAT.standalone;
+  const link = appLink();
 
-  $$('#installBody [data-itab]').forEach(b => b.onclick = () => { installTab = b.dataset.itab; renderInstall(); SFX.play('tap'); });
+  $('#installBody').innerHTML = `
+    <div class="dlhero">
+      <img src="icon-192.png" alt="CraveMood">
+      <div class="dlinfo">
+        <b>CraveMood</b>
+        <small>${L.version} 2.0 · ${L.light}</small>
+        <div class="dltags">
+          <span class="tag mint">${L.free}</span>
+          <span class="tag">${platform === 'ios' ? L.dl_ios : platform === 'android' ? L.dl_android : L.dl_desktop}</span>
+        </div>
+      </div>
+      ${PLAT.standalone ? `<span class="tag gold">✓ ${L.installed}</span>` : ''}
+    </div>
+
+    ${PLAT.standalone
+      ? `<div class="dlok">${cimo(App.mood, 54)}<span>${L.off}</span></div>`
+      : canPrompt
+        ? `<button class="btn block dlmain" id="pwaGo">${icon('down')} ${L.install}</button>`
+        : platform !== 'desktop'
+          ? `<button class="btn block dlmain" id="shareTop">${icon('share')} ${L.share}</button>`
+          : ''}
+
+    <div class="dlsteps">
+      <b>${L.howto}</b>
+      <ol class="isteps">
+        ${steps.map(s => `<li class="istep"><em></em><span>${s}</span></li>`).join('')}
+      </ol>
+    </div>
+
+    ${platform === 'desktop' ? `
+    <div class="dlqr">
+      <img id="qrImg" src="${assetUrl('qr-app.png')}" alt="QR code" width="128" height="128"
+           onerror="this.parentNode.style.display='none'">
+      <div><b>${L.qr_t}</b><small>${L.qr_s}</small></div>
+    </div>` : ''}
+
+    <div class="dllink">
+      <div class="between"><b>${L.link_t}</b><span class="tag mint">?sharecode</span></div>
+      <code id="fullLink">${esc(link)}</code>
+      <p class="hint">${L.link_s}</p>
+      <div class="iacts">
+        <button class="btn sm" id="copyLink">${icon('share')} ${L.copy_full}</button>
+        <button class="btn sm ghost" id="shareLink">${icon('arrow')} ${L.share}</button>
+      </div>
+    </div>`;
+
   const go = $('#pwaGo');
   if (go) go.onclick = doPwaInstall;
-  $('#dlOffline').onclick = downloadOffline;
-  $('#copyLink').onclick = () => { copyText(location.href); toast(L.copied); SFX.play('pop'); };
+  const st = $('#shareTop');
+  if (st) st.onclick = async () => {
+    try {
+      if (navigator.share) await navigator.share({ title: 'CraveMood', text: 'Coba CraveMood, makanan sesuai moodmu', url: link });
+      else { copyText(link); toast(L.copied); }
+    } catch (e) { copyText(link); toast(L.copied); }
+  };
+  $('#copyLink').onclick = () => { copyText(link); toast(L.copied); SFX.play('pop'); };
+  const sh = $('#shareLink');
+  if (sh) sh.onclick = async () => {
+    try {
+      if (navigator.share) await navigator.share({ title: 'CraveMood', text: 'Coba CraveMood, makanan sesuai moodmu', url: link });
+      else { copyText(link); toast(L.copied); }
+    } catch (e) { copyText(link); toast(L.copied); }
+  };
 }
 
 async function doPwaInstall() {
@@ -1353,26 +1612,6 @@ async function doPwaInstall() {
   renderInstall();
 }
 
-async function downloadOffline() {
-  const L = IL();
-  SFX.play('pop');
-  try {
-    let html = '';
-    try {
-      const r = await fetch('index.html', { cache: 'no-store' });
-      if (r.ok) html = await r.text();
-    } catch (e) { /* file:// */ }
-    if (!html) html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'cravemood-offline.html';
-    document.body.appendChild(a); a.click();
-    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
-    toast(L.saved);
-  } catch (e) { toast(L.fail); SFX.play('error'); }
-}
-
 function registerSW() {
   if (!('serviceWorker' in navigator)) return;
   if (!/^https?:$/.test(location.protocol)) return;
@@ -1384,12 +1623,14 @@ const RENDER = { home: viewHome, spin: viewSpin, chat: viewChat, cart: viewCart,
 
 function go(v) {
   if (!RENDER[v]) v = 'home';
+  Voice.stop();          /* leaving a screen silences Cimo */
   currentView = v;
   location.hash = '#/' + v;
   render();
 }
 function render() {
   const v = currentView;
+  applyMoodBg();
   $('#view').innerHTML = RENDER[v]();
   $$('#navlist .navbtn, #tabbar button').forEach(b => b.classList.toggle('on', b.dataset.go === v));
   if (v === 'home') { renderRecs(); }
@@ -1450,15 +1691,26 @@ function bindGlobal() {
     if (dec) { decCart(dec.dataset.dec); return; }
     const mood = e.target.closest('[data-mood]');
     if (mood) {
+      const firstPick = !App.moodPicked;
       App.mood = mood.dataset.mood;
+      App.moodPicked = true;
       ChatEngine.setMood(App.mood);
       SFX.play('pop');
       savePrefs();
-      const hc = $('#heroCimo');
-      if (hc) { hc.innerHTML = cimo(App.mood, 190, false, App.costum); hc.classList.add('hop'); setTimeout(() => hc.classList.remove('hop'), 650); }
-      $$('#moods .mood').forEach(b => b.classList.toggle('on', b.dataset.mood === App.mood));
-      renderRecs();
-      updatePetFace();
+      if (firstPick) {
+        /* reveal the whole recommendation block for the first time */
+        render();
+        updatePetFace();
+      } else {
+        applyMoodBg();
+        const hc = $('#heroCimo');
+        if (hc) { hc.innerHTML = cimo(App.mood, 40, false, App.costum); hc.classList.add('hop'); setTimeout(() => hc.classList.remove('hop'), 650); }
+        const sc = $('#sayCimo');
+        if (sc) { sc.innerHTML = cimo(App.mood, 208, false, App.costum); sc.classList.add('hop'); setTimeout(() => sc.classList.remove('hop'), 650); }
+        $$('#moods .mpill').forEach(b => b.classList.toggle('on', b.dataset.mood === App.mood));
+        renderRecs();
+        updatePetFace();
+      }
       if (App.user) DB.addMood(App.user.id, App.mood).catch(() => {});
       const mo = MOODS.find(m => m.k === App.mood);
       if (mo) {
@@ -1470,8 +1722,13 @@ function bindGlobal() {
           sayEl.style.animation = 'none'; void sayEl.offsetWidth; sayEl.style.animation = '';
         }
         const tagEl = $('#moodTag'); if (tagEl) tagEl.textContent = mS(mo);
-        petSay(line.length > 62 ? line.slice(0, 60) + '…' : line);
-        if (App.settings.speak) Voice.speak(line, { lang: App.settings.voiceLang || App.lang, mood: mo.k });
+        /* on Beranda the speech bubble already says it — don't cover the CTA with the pet bubble */
+        if (currentView !== 'home') petSay(line.length > 62 ? line.slice(0, 60) + '…' : line);
+        if (App.settings.speak) {
+          if (sayEl) sayEl.classList.add('talking');
+          const pr = Voice.speakMood(mo.k, top ? top.id : '', line);
+          if (pr && pr.then) pr.then(() => { const e2 = $('#say'); if (e2) e2.classList.remove('talking'); });
+        }
       }
       return;
     }
@@ -1479,16 +1736,17 @@ function bindGlobal() {
     if (cat) { App.cat = cat.dataset.cat; SFX.play('tap'); $$('#cats .chip').forEach(b => b.classList.toggle('on', b.dataset.cat === App.cat)); renderRecs(); return; }
     const plat = e.target.closest('[data-plat]');
     if (plat) { openPlatform(plat.dataset.plat); return; }
-    const lang = e.target.closest('[data-lang]');
-    if (lang) { setLang(lang.dataset.lang); return; }
-    const vo = e.target.closest('[data-voice]');
-    if (vo) {
-      App.settings.voice = vo.dataset.voice; saveSettings();
-      $$('#voiceCards .vopt').forEach(b => b.classList.toggle('on', b.dataset.voice === App.settings.voice));
-      Voice.set('profile', App.settings.voice);
-      Voice.preview(App.settings.voice, App.settings.voiceLang);
+    const shop = e.target.closest('[data-shop]');
+    if (shop) { try { window.open(shop.dataset.shop, '_blank', 'noopener'); } catch (err) {} return; }
+    const cos = e.target.closest('[data-costum]');
+    if (cos) {
+      if (!isVip()) { toast(t('vip_only')); SFX.play('error'); return; }
+      App.costum = cos.dataset.costum || '';
+      savePrefs(); SFX.play('pop'); render(); toast(t('prof_saved'));
       return;
     }
+    const lang = e.target.closest('[data-lang]');
+    if (lang) { setLang(lang.dataset.lang); return; }
     const chip = e.target.closest('[data-chip]');
     if (chip) { sendChat(chip.dataset.chip); return; }
     const soc = e.target.closest('[data-soc]');
@@ -1504,20 +1762,12 @@ function bindGlobal() {
       toast('Lokasi: ' + curStreet().name);
     }
     if (id === 'soundSw') { App.settings.sound = e.target.checked; SFX.enabled = e.target.checked; saveSettings(); if (e.target.checked) SFX.play('add'); }
-    if (id === 'speakSw') { App.settings.speak = e.target.checked; saveSettings(); if (e.target.checked) Voice.preview(App.settings.voice, App.settings.voiceLang); }
+    if (id === 'speakSw') { App.settings.speak = e.target.checked; Voice.set('enabled', e.target.checked); saveSettings(); if (e.target.checked) Voice.preview(); }
     if (id === 'darkSw') { App.settings.theme = e.target.checked ? 'dark' : 'light'; saveSettings(); applyTheme(); }
-    if (id === 'voiceLang') { App.settings.voiceLang = e.target.value; Voice.set('lang', e.target.value); saveSettings(); Voice.preview(App.settings.voice, e.target.value); }
-    if (id === 'costumSel') {
-      const c = COSTUMES.find(x => x.id === e.target.value);
-      if (c && c.vip && !isVip()) { toast(t('vip_only')); SFX.play('error'); render(); return; }
-      App.costum = e.target.value; savePrefs(); render(); toast(t('prof_saved'));
-    }
   });
 
   document.addEventListener('input', e => {
     const id = e.target.id;
-    if (id === 'rate') { App.settings.rate = +e.target.value; $('#rateV').textContent = (+e.target.value).toFixed(2) + '×'; Voice.set('rate', App.settings.rate); saveSettings(); }
-    if (id === 'pitch') { App.settings.pitch = +e.target.value; $('#pitchV').textContent = (+e.target.value).toFixed(2); Voice.set('pitch', App.settings.pitch); saveSettings(); }
     if (id === 'vol') { App.settings.vol = +e.target.value; $('#volV').textContent = Math.round(e.target.value * 100) + '%'; Voice.set('volume', App.settings.vol); saveSettings(); }
     if (id === 'chatInput') {
       const el = e.target;
@@ -1537,13 +1787,12 @@ function bindGlobal() {
   // delegated handlers for dynamically rendered blocks (target may be a child svg/path)
   document.addEventListener('click', e => {
     const hit = sel => e.target.closest(sel);
+    if (hit('#shuffleBtn')) { openSpinPop(); return; }
     if (hit('#spinBtn')) { doSpin(); return; }
     if (hit('#spinAgain')) { doSpin(); return; }
     if (hit('#openShare') || hit('#recapShare')) { openShare(); return; }
-    if (hit('#testVoice')) { Voice.preview(App.settings.voice, App.settings.voiceLang); return; }
+    if (hit('#testVoice')) { Voice.preview(); return; }
     if (hit('#startVip')) { openVipModal(); return; }
-    if (hit('#expJson')) { DB.exportJSON(); return; }
-    if (hit('#dlOffline2')) { downloadOffline(); return; }
     if (hit('#logoutBtn')) { DB.setSetting('session', null); location.reload(); return; }
     if (hit('#chatReset')) {
       App.messages = []; ChatEngine.reset();
@@ -1555,13 +1804,14 @@ function bindGlobal() {
       App.settings.speak = !App.settings.speak; saveSettings();
       toast(App.settings.speak ? 'Suara Cimo: ON' : 'Suara Cimo: OFF');
       hit('#voiceToggle').style.color = App.settings.speak ? 'var(--pk2)' : 'var(--mu)';
-      if (App.settings.speak) Voice.preview(App.settings.voice, App.settings.voiceLang);
+      if (App.settings.speak) Voice.preview();
       return;
     }
     if (hit('#sendBtn')) { const v = $('#chatInput').value.trim(); if (v) sendChat(v); return; }
     if (hit('#micBtn')) { startMic(); return; }
     if (e.target.closest('#shareModal .closebtn') || e.target.id === 'shareModal') { $('#shareModal').classList.remove('on'); return; }
     if (e.target.closest('#installModal .closebtn') || e.target.id === 'installModal') { $('#installModal').classList.remove('on'); return; }
+    if (e.target.closest('#spinModal .closebtn') || e.target.id === 'spinModal') { $('#spinModal').classList.remove('on'); SFX.stopTicks(); return; }
   });
 
   window.addEventListener('hashchange', () => {
@@ -1649,11 +1899,98 @@ async function boot() {
   }
 }
 
+/* ---------- a soft click on every tappable ---------- */
+function initClickSound() {
+  if (window.__clickInit) return;
+  window.__clickInit = true;
+  const SEL = 'button, [role="button"], .chip, .mpill, .langopt, .cosopt, .plat, .fadd, .iconbtn, .tabbar button, .step button, .card, .pickcard, select';
+  /* any tap anywhere silences Cimo first; the tap handler below may start a new line */
+  document.addEventListener('click', () => Voice.stop(), { capture: true, passive: true });
+  document.addEventListener('pointerdown', e => {
+    const el = e.target.closest(SEL);
+    if (!el || el.disabled) return;
+    if (el.hasAttribute('data-add') || el.hasAttribute('data-dec') || el.hasAttribute('data-inc')) return;
+    SFX.init();
+    SFX.play('tap');
+  }, { passive: true, capture: true });
+}
+
+/* ---------- Cimo looks at your finger / cursor ---------- */
+function initEyeTracking() {
+  if (window.__eyeInit) return;
+  window.__eyeInit = true;
+  let raf = 0, px = 0, py = 0, has = false;
+  const SEL = '.bigcimo .ceye, .avatar-lg .ceye, .pet .ceye, .splash .hero-cimo .ceye, .cosopt .ceye';
+
+  function apply() {
+    raf = 0;
+    if (!has) return;
+    const eyes = document.querySelectorAll(SEL);
+    for (const g of eyes) {
+      const svg = g.ownerSVGElement;
+      if (!svg) continue;
+      const r = svg.getBoundingClientRect();
+      if (r.width < 20) continue;
+      const cx = r.left + r.width * 0.5;
+      const cy = r.top + r.height * 0.42;
+      const dx = px - cx, dy = py - cy;
+      const d = Math.hypot(dx, dy) || 1;
+      const reach = Math.min(1, d / Math.max(120, r.width * 0.9));
+      const ox = (dx / d) * 5 * reach;
+      const oy = (dy / d) * 4 * reach;
+      g.setAttribute('transform', `translate(${ox.toFixed(2)} ${oy.toFixed(2)})`);
+    }
+  }
+  function onMove(e) {
+    const t = e.touches && e.touches[0] ? e.touches[0] : e;
+    if (t.clientX == null) return;
+    px = t.clientX; py = t.clientY; has = true;
+    if (!raf) raf = requestAnimationFrame(apply);
+  }
+  window.addEventListener('mousemove', onMove, { passive: true });
+  window.addEventListener('touchstart', onMove, { passive: true });
+  window.addEventListener('touchmove', onMove, { passive: true });
+  window.addEventListener('scroll', () => { if (has && !raf) raf = requestAnimationFrame(apply); }, { passive: true });
+}
+
+/* ---------- self-update: an already-open app refreshes after a new deploy ---------- */
+function checkBuild() {
+  try {
+    const m = document.querySelector('meta[name="build"]');
+    if (!m || !m.content) return;
+    fetch('build.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => {
+        if (!j || !j.v || j.v === m.content) return;
+        const u = new URL(location.href);
+        if (u.searchParams.get('v') === j.v) return;   // already tried this build
+        u.searchParams.set('v', j.v);
+        location.replace(u.toString());
+      })
+      .catch(() => {});
+  } catch (e) {}
+}
+
 function boot2() {
+  checkBuild();
   $('#app').classList.remove('hide');
   renderNav();
   mountPet();
   registerSW();
+  initEyeTracking();
+  initClickSound();
+  Voice.set('name', (App.user && App.user.name) || '');
+  /* costumes are a VIP perk — plain users always see the plain Cimo */
+  if (!isVip() && App.costum) { App.costum = ''; savePrefs(); }
+  /* system voices arrive asynchronously, refresh the picker once they do */
+  if (window.speechSynthesis && window.speechSynthesis.addEventListener) {
+    let refreshed = false;
+    window.speechSynthesis.addEventListener('voiceschanged', () => {
+      if (refreshed) return;
+      refreshed = true;
+      if (currentView === 'profile') render();
+    });
+  }
   const hash = (location.hash || '#/home').replace('#/', '');
   currentView = RENDER[hash] ? hash : 'home';
   render();
@@ -1661,7 +1998,6 @@ function boot2() {
   if (App.user) DB.touch(App.user.id).catch(() => {});
   // seed a mood for today so the recap is alive
   if (App.user) DB.addMood(App.user.id, App.mood).catch(() => {});
-  setTimeout(() => petSay('Hai! Geser aku ke mana aja ya 👋'), 2600);
   if (PLAT.mobile && !PLAT.standalone) setTimeout(maybeShowBanner, 5200);
 }
 

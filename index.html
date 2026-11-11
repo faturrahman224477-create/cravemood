@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
+<meta name="build" content="1793665000046">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7FA" media="(prefers-color-scheme: light)">
@@ -28,11 +29,13 @@
 <style>
 /* ===== CraveMood — design tokens from the mockup ===== */
 :root{
-  --bg:#fff7fa; --ink:#3a2142; --mu:#7d6683; --sf:#fff; --ln:rgba(90,50,100,.14);
+  --bg:#ffe9f1; --ink:#3a2142; --mu:#7d6683; --sf:#fff; --ln:rgba(90,50,100,.14);
   --cr:#fff8ef; --pk:#ffb6d0; --pkb:#ff8fb8; --pk2:#ff5f98; --plum:#4a2a5e;
   --le:#f4f87f; --sk:#9fd6ff; --pe:#ffb98a; --mi:#a8ecd6; --li:#dccbff; --gd:#ffc800;
   --sh:0 10px 30px rgba(122,42,85,.10); --sh2:0 4px 0 rgba(122,42,85,.10);
   --r:24px; --r2:18px; --nav:264px;
+  /* page gradient, re-tinted per mood by applyMoodBg() */
+  --bgA:#ffe2ee; --bgB:#ffe7f1; --bgC:#ffecec; --bgD:#fff5ee;
 }
 [data-theme=dark]{
   --bg:#241529; --ink:#fff0f7; --mu:#d3b9cd; --sf:#35223b; --ln:rgba(255,255,255,.14);
@@ -43,9 +46,20 @@ html,body{height:100%}
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font:400 15px/1.6 Nunito,system-ui,-apple-system,"Segoe UI",sans-serif;
-  background-image:radial-gradient(rgba(255,182,208,.42) 2px,transparent 2.6px);
-  background-size:30px 30px; background-attachment:fixed;
+  /* soft pink→peach gradient (mockup) + a few sparse sparkles, no polka dots */
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='460' viewBox='0 0 320 460'%3E%3Cg fill='%23ffffff' opacity='.72'%3E%3Cpath d='M46 34l3.2 9.6 9.6 3.2-9.6 3.2-3.2 9.6-3.2-9.6-9.6-3.2 9.6-3.2z'/%3E%3Cpath d='M258 118l2.4 7 7 2.4-7 2.4-2.4 7-2.4-7-7-2.4 7-2.4z'/%3E%3Cpath d='M96 246l2 6 6 2-6 2-2 6-2-6-6-2 6-2z'/%3E%3Cpath d='M232 344l3 9 9 3-9 3-3 9-3-9-9-3 9-3z'/%3E%3C/g%3E%3Cg fill='%23ffc9dd' opacity='.5'%3E%3Cpath d='M160 168l1.8 5.4 5.4 1.8-5.4 1.8-1.8 5.4-1.8-5.4-5.4-1.8 5.4-1.8z'/%3E%3Cpath d='M36 392l1.8 5.4 5.4 1.8-5.4 1.8-1.8 5.4-1.8-5.4-5.4-1.8 5.4-1.8z'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(180deg,var(--bgA) 0%,var(--bgB) 34%,var(--bgC) 68%,var(--bgD) 100%);
+  background-repeat:repeat,no-repeat;
+  background-size:320px 460px,100% 100%;
+  background-attachment:fixed;
   -webkit-font-smoothing:antialiased; overscroll-behavior-y:none;
+}
+[data-theme=dark] body{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='460' viewBox='0 0 320 460'%3E%3Cg fill='%23ff9ec5' opacity='.2'%3E%3Cpath d='M46 34l3.2 9.6 9.6 3.2-9.6 3.2-3.2 9.6-3.2-9.6-9.6-3.2 9.6-3.2z'/%3E%3Cpath d='M258 118l2.4 7 7 2.4-7 2.4-2.4 7-2.4-7-7-2.4 7-2.4z'/%3E%3Cpath d='M96 246l2 6 6 2-6 2-2 6-2-6-6-2 6-2z'/%3E%3Cpath d='M232 344l3 9 9 3-9 3-3 9-3-9-9-3 9-3z'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(180deg,#2e1a33 0%,#281630 55%,#241529 100%);
+  background-repeat:repeat,no-repeat;
+  background-size:320px 460px,100% 100%;
+  background-attachment:fixed;
 }
 h1,h2,h3,h4,b,button,.f{font-family:Fredoka,Nunito,sans-serif}
 h1,h2,h3,h4,p{margin:0}
@@ -53,6 +67,9 @@ a{color:inherit}
 button{font-family:inherit}
 ::selection{background:var(--pk);color:#3a2142}
 .hide{display:none!important}
+/* keyboard focus stays visible, mouse clicks stay clean */
+:focus-visible{outline:3px solid color-mix(in srgb,var(--pk2) 65%,transparent);outline-offset:2px;border-radius:12px}
+button:focus:not(:focus-visible),select:focus:not(:focus-visible){outline:none}
 /* inline icon primitive — every icon() call gets a sane size */
 .ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
 .btn .ic{width:17px;height:17px}
@@ -94,7 +111,7 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 .view.on{display:block;animation:vin .34s cubic-bezier(.22,1,.36,1)}
 @keyframes vin{from{opacity:0;transform:translateY(12px)}}
 .pagetitle{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:18px;flex-wrap:wrap}
-.pagetitle h1{font-size:clamp(1.5rem,3vw,2.05rem);letter-spacing:-.5px}
+.pagetitle h1{font-size:clamp(1.5rem,3vw,2.05rem);letter-spacing:-.5px;line-height:1.15}
 .pagetitle p{color:var(--mu);font-size:.92rem;margin-top:3px}
 .card{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:20px;box-shadow:var(--sh2)}
 .card.tight{padding:14px}
@@ -133,8 +150,11 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 
 /* ===== onboarding ===== */
 .onboard{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:20px;
-  background:radial-gradient(ellipse 90% 40% at 50% 18%,rgba(255,255,255,.92),rgba(255,255,255,0) 70%),linear-gradient(180deg,#ffe3ec,#ffd9e6 55%,#ffe8d8)}
-[data-theme=dark] .onboard{background:radial-gradient(ellipse 90% 40% at 50% 18%,rgba(255,158,197,.18),transparent 70%),linear-gradient(180deg,#2b1830,#241529)}
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='460' viewBox='0 0 320 460'%3E%3Cg fill='%23ffffff' opacity='.72'%3E%3Cpath d='M46 34l3.2 9.6 9.6 3.2-9.6 3.2-3.2 9.6-3.2-9.6-9.6-3.2 9.6-3.2z'/%3E%3Cpath d='M258 118l2.4 7 7 2.4-7 2.4-2.4 7-2.4-7-7-2.4 7-2.4z'/%3E%3Cpath d='M96 246l2 6 6 2-6 2-2 6-2-6-6-2 6-2z'/%3E%3Cpath d='M232 344l3 9 9 3-9 3-3 9-3-9-9-3 9-3z'/%3E%3C/g%3E%3Cg fill='%23ffc9dd' opacity='.5'%3E%3Cpath d='M160 168l1.8 5.4 5.4 1.8-5.4 1.8-1.8 5.4-1.8-5.4-5.4-1.8 5.4-1.8z'/%3E%3Cpath d='M36 392l1.8 5.4 5.4 1.8-5.4 1.8-1.8 5.4-1.8-5.4-5.4-1.8 5.4-1.8z'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(180deg,#ffe4ef 0%,#ffe9f1 40%,#ffecec 72%,#fff2e9 100%);
+  background-repeat:repeat,no-repeat;background-size:320px 460px,100% 100%}
+[data-theme=dark] .onboard{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='460' viewBox='0 0 320 460'%3E%3Cg fill='%23ff9ec5' opacity='.2'%3E%3Cpath d='M46 34l3.2 9.6 9.6 3.2-9.6 3.2-3.2 9.6-3.2-9.6-9.6-3.2 9.6-3.2z'/%3E%3Cpath d='M258 118l2.4 7 7 2.4-7 2.4-2.4 7-2.4-7-7-2.4 7-2.4z'/%3E%3Cpath d='M96 246l2 6 6 2-6 2-2 6-2-6-6-2 6-2z'/%3E%3Cpath d='M232 344l3 9 9 3-9 3-3 9-3-9-9-3 9-3z'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(180deg,#2e1a33 0%,#281630 55%,#241529 100%);background-repeat:repeat,no-repeat;background-size:320px 460px,100% 100%}
 .onboard .box{width:min(430px,100%);text-align:center}
 .onboard .cimo{width:180px;margin:0 auto -20px;cursor:pointer;position:relative;z-index:2;filter:drop-shadow(0 10px 16px rgba(122,42,85,.16))}
 .onboard .cimo svg{width:100%;height:auto}
@@ -149,11 +169,17 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 }
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pk2);background:var(--sf);box-shadow:0 0 0 4px color-mix(in srgb,var(--pk) 32%,transparent)}
 .field textarea{resize:vertical;min-height:70px}
-.langs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.langopt{display:flex;align-items:center;gap:8px;border:1.8px solid var(--ln);background:var(--bg);border-radius:14px;padding:9px 11px;cursor:pointer;font:700 .84rem Fredoka;transition:.18s}
-.langopt:hover{border-color:var(--pkb)}
-.langopt.on{border-color:var(--pk2);background:color-mix(in srgb,var(--pk) 22%,var(--sf));box-shadow:0 3px 0 color-mix(in srgb,var(--pk2) 40%,transparent)}
-.langopt i{font-style:normal;font-size:1.05rem}
+/* compact language switcher: one row of small pills + the active name */
+.langs{display:flex;gap:6px;flex-wrap:nowrap;margin-top:8px}
+.langopt{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;
+  border:1.6px solid var(--ln);background:var(--bg);border-radius:11px;padding:7px 2px;cursor:pointer;
+  transition:.18s cubic-bezier(.34,1.56,.64,1)}
+.langopt:hover{border-color:var(--pkb);transform:translateY(-1px)}
+.langopt.on{border-color:var(--pk2);background:color-mix(in srgb,var(--pk) 24%,var(--sf));
+  box-shadow:0 2px 0 color-mix(in srgb,var(--pk2) 35%,transparent)}
+.langopt i{font-style:normal;font:700 .82rem Fredoka;color:var(--mu);line-height:1}
+.langopt.on i{color:var(--pk2)}
+.langnow{font:700 .68rem Nunito;color:var(--mu);margin-top:6px;text-align:center}
 .hint{font-size:.72rem;color:var(--mu);line-height:1.45}
 .err{color:#d63f74;font-size:.75rem;font-weight:700;margin-top:4px;min-height:1em}
 
@@ -190,10 +216,11 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 .mood b{font-size:.78rem;display:block;line-height:1.2}
 .mood.on::after{content:"";position:absolute;inset:0;border-radius:18px;background:color-mix(in srgb,var(--c) 16%,transparent);pointer-events:none}
 
-.locbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--sf);border:1px solid var(--ln);border-radius:99px;padding:7px 8px 7px 16px;margin:16px 0 4px}
-.locbar svg{width:17px;height:17px;stroke:var(--pk2);fill:none;stroke-width:2.2;flex:none}
-.locbar select{border:0;background:transparent;color:var(--ink);font:700 .84rem Nunito;outline:none;flex:1;min-width:140px;cursor:pointer}
-.locbar .dist{font:700 .72rem Fredoka;background:var(--cr);padding:5px 12px;border-radius:99px;color:var(--mu)}
+.locbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;background:var(--sf);border:1px solid var(--ln);
+  border-radius:99px;padding:5px 6px 5px 12px;margin:12px 0 2px;box-shadow:0 2px 8px rgba(122,42,85,.05)}
+.locbar svg{width:14px;height:14px;stroke:var(--pk2);fill:none;stroke-width:2.2;flex:none}
+.locbar select{border:0;background:transparent;color:var(--ink);font:700 .74rem Nunito;outline:none;flex:1;min-width:110px;cursor:pointer}
+.locbar .dist{font:700 .62rem Fredoka;background:var(--cr);padding:3px 9px;border-radius:99px;color:var(--mu)}
 
 .chips{display:flex;gap:7px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
@@ -203,7 +230,7 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .chip i{width:9px;height:9px;border-radius:50%;display:block}
 
-.recs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.recs{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px}
 .rec{background:var(--sf);border:1px solid var(--ln);border-radius:26px;overflow:hidden;position:relative;
   transition:.28s cubic-bezier(.34,1.56,.64,1);display:flex;flex-direction:column}
 .rec:hover{transform:translateY(-6px);box-shadow:0 18px 34px rgba(122,42,85,.16)}
@@ -308,6 +335,22 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 .cartitem .pr{font:700 .8rem Fredoka;color:var(--pk2);margin-top:2px}
 .totline{display:flex;justify-content:space-between;align-items:baseline;font:700 1.02rem Fredoka;margin:14px 0 2px}
 .plats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+/* ShopeeFood hero button + smaller Grab/Go row */
+.platmain{margin-top:10px}
+.plat.big{display:flex;flex-direction:row;align-items:center;width:100%;gap:12px;padding:15px 16px;border-radius:20px;
+  background:linear-gradient(135deg,#fff3ec,#ffe6da);border:2px solid color-mix(in srgb,#f05a28 45%,#fff);
+  box-shadow:0 6px 0 color-mix(in srgb,#f05a28 22%,transparent)}
+.plat.big i{width:52px;height:52px;border-radius:16px}
+.plat.big svg{width:30px;height:30px}
+.plat.big span{display:flex;flex-direction:column;align-items:flex-start;gap:1px;flex:1;min-width:0}
+.plat.big b{font:700 1.06rem Fredoka;color:var(--ink)}
+.plat.big small{font:700 .72rem Nunito;color:#2fa06f}
+.plat.big .arrow{font:700 1.5rem Fredoka;color:#f05a28;font-style:normal;line-height:1}
+.platsub{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.plat.sm{display:flex;flex-direction:row;align-items:center;gap:8px;padding:9px 11px;border-radius:16px;background:var(--bg)}
+.plat.sm i{width:30px;height:30px;border-radius:10px}
+.plat.sm svg{width:18px;height:18px}
+.plat.sm span{font:700 .8rem Fredoka;color:var(--ink)}
 .plat{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--bg);border:2px solid var(--ln);
   border-radius:18px;padding:12px 4px;cursor:pointer;font:700 .72rem Fredoka;color:var(--ink);transition:.2s}
 .plat:hover{transform:translateY(-3px)}
@@ -332,7 +375,7 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 .stats>div{padding:12px 6px;border-radius:20px;background:var(--bg);border:1px solid var(--ln)}
 .stats b{display:block;font-size:1.6rem;color:var(--pk2);line-height:1.1}
 .stats span{font-size:.7rem;color:var(--mu);font-weight:700}
-.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:12px}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:12px;max-width:560px;margin-left:auto;margin-right:auto}
 .cal .wd{text-align:center;font:700 .64rem Fredoka;color:var(--mu);padding-bottom:2px}
 .cd{aspect-ratio:1;border-radius:12px;background:var(--bg);display:grid;place-items:center;position:relative;
   font-size:.6rem;font-weight:800;color:var(--mu);border:1px solid transparent;transition:.2s}
@@ -422,13 +465,15 @@ td .tag{font-size:.6rem}
 .closebtn{border:0;background:var(--cr);width:32px;height:32px;border-radius:50%;cursor:pointer;color:var(--ink);font-size:1rem;display:grid;place-items:center;flex:none}
 
 /* ===== mobile nav ===== */
-.tabbar{display:none;position:fixed;left:0;right:0;bottom:0;background:var(--sf);border-top:1px solid var(--ln);
+.tabbar{display:none;position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--sf) 90%,transparent);
+  backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);
+  border-top:1px solid var(--ln);
   padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));z-index:50;justify-content:space-around}
 .tabbar button{flex:1;border:0;background:none;color:var(--mu);display:flex;flex-direction:column;align-items:center;gap:2px;
   padding:6px 2px;font:700 .58rem Fredoka;cursor:pointer;border-radius:14px;position:relative;transition:.2s}
 .tabbar button svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.tabbar button.on{color:var(--pk2)}
-.tabbar button.on svg{fill:color-mix(in srgb,var(--pk2) 18%,transparent)}
+.tabbar button.on{color:var(--pk2);background:color-mix(in srgb,var(--pk2) 11%,transparent)}
+.tabbar button.on svg{fill:color-mix(in srgb,var(--pk2) 18%,transparent);transform:translateY(-1px)}
 .tabbar .bdg{position:absolute;top:2px;right:50%;transform:translateX(16px);background:var(--pk2);color:#fff;
   font:700 .55rem Fredoka;min-width:15px;height:15px;border-radius:99px;display:grid;place-items:center;padding:0 4px}
 
@@ -443,8 +488,8 @@ td .tag{font-size:.6rem}
   :root{--nav:0px}
   .sidebar{display:none}
   .tabbar{display:flex}
-  main{margin-left:0;padding:12px 14px 120px}
-  .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 2px 12px}
+  main{margin-left:0;padding:12px 14px 156px}
+  .topbar{display:none}
   .topbar .lg{font-size:1.3rem}
   .hero{grid-template-columns:1fr;text-align:center;padding:20px 18px}
   .hero p{margin:0 auto}
@@ -467,7 +512,6 @@ td .tag{font-size:.6rem}
   .sharegrid{grid-template-columns:repeat(5,1fr)}
   .soc{font-size:.58rem}
   .soc i{width:42px;height:42px}
-  .langs{grid-template-columns:1fr}
   .plats{grid-template-columns:1fr;gap:6px}
   .plat{flex-direction:row;justify-content:flex-start;padding:10px 12px;gap:10px}
   .stats b{font-size:1.3rem}
@@ -480,7 +524,7 @@ td .tag{font-size:.6rem}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
 /* ===== VIP / UMKM ===== */
-.vipcard{background:linear-gradient(135deg,#f4e4f7,#fbe8dc);border:1px solid var(--ln);border-radius:var(--r);padding:22px;position:relative;overflow:hidden}
+.vipcard{background:linear-gradient(135deg,#e7d5f9,#f9dbe9);border:1px solid var(--ln);border-radius:var(--r);padding:22px;position:relative;overflow:hidden}
 [data-theme=dark] .vipcard{background:linear-gradient(135deg,#3d2347,#3a2434)}
 .viphead{display:flex;align-items:center;gap:16px;margin-bottom:14px}
 .viphead h2{font-size:1.35rem;letter-spacing:-.4px}
@@ -513,6 +557,27 @@ td .tag{font-size:.6rem}
 .paybtn small{font-size:.68rem;color:var(--mu);font-weight:700}
 
 /* ===== download / install (PWA) ===== */
+.dlhero{display:flex;align-items:center;gap:13px;background:linear-gradient(135deg,#ffeaf2,#fff4ea);
+  border:1px solid var(--ln);border-radius:22px;padding:14px;margin-bottom:14px}
+.dlhero img{width:62px;height:62px;border-radius:18px;flex:none;box-shadow:0 6px 16px rgba(122,42,85,.2)}
+.dlinfo{flex:1;min-width:0}
+.dlinfo b{font:700 1.1rem Fredoka;display:block;line-height:1.2}
+.dlinfo small{font:700 .72rem Nunito;color:var(--mu);display:block;margin-top:1px}
+.dltags{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.dlmain{margin-bottom:16px}
+.dlok{display:flex;align-items:center;gap:10px;background:#e7f8ef;border:1px solid #b9e6cf;border-radius:18px;
+  padding:11px 14px;font:700 .84rem Fredoka;color:#1f7a52;margin-bottom:16px}
+.dlsteps b{font:700 .92rem Fredoka;display:block;margin-bottom:4px}
+.dlqr{display:flex;align-items:center;gap:13px;background:var(--cr);border:1px solid var(--ln);border-radius:20px;
+  padding:12px 14px;margin-top:14px}
+.dlqr img{border-radius:12px;background:#fff;padding:6px;flex:none}
+.dlqr b{font:700 .88rem Fredoka;display:block}
+.dlqr small{font:700 .72rem Nunito;color:var(--mu);display:block;margin-top:2px}
+.dllink{margin-top:14px;background:var(--bg);border:1px solid var(--ln);border-radius:20px;padding:13px 14px}
+.dllink code{display:block;margin:9px 0 7px;padding:9px 11px;background:#fff;border:1px dashed var(--ln);border-radius:12px;
+  font:600 .67rem/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ink);
+  word-break:break-all;max-height:76px;overflow:auto}
+.dllink .hint{margin-bottom:10px}
 .dlcard{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .dlbtn{display:flex;align-items:center;gap:11px;border:1.8px solid var(--ln);background:var(--bg);color:var(--ink);
   border-radius:20px;padding:12px 14px;cursor:pointer;text-align:left;transition:.22s cubic-bezier(.34,1.56,.64,1);position:relative}
@@ -564,6 +629,281 @@ td .tag{font-size:.6rem}
   .iacts{grid-template-columns:1fr}
 }
 @media(min-width:981px){ .installbanner{left:auto;right:24px;bottom:100px;width:360px} }
+
+/* ===================================================================
+   MOCKUP-ALIGNED UI — splash, how-it-works, beranda, share card
+   =================================================================== */
+
+/* ---------- beranda hero (big centered Cimo) ---------- */
+.hero2{display:flex;flex-direction:column;align-items:center;gap:14px;margin:2px 0 16px;position:relative}
+.bigcimo{width:min(232px,62vw);display:grid;place-items:center;position:relative}
+.bigcimo:before{content:"";position:absolute;left:50%;top:50%;width:126%;height:126%;transform:translate(-50%,-50%);
+  border-radius:50%;z-index:0;pointer-events:none;
+  background:radial-gradient(circle,color-mix(in srgb,var(--moodc,#ffd9e6) 42%,transparent),transparent 66%)}
+.bigcimo svg{width:100%;height:auto;position:relative;z-index:1}
+.bigcimo.hop{animation:hop .62s cubic-bezier(.3,1.7,.5,1)}
+.saybubble{position:relative;background:#fff;border-radius:20px;padding:14px 20px;font:700 .95rem/1.5 Fredoka;
+  color:var(--ink);box-shadow:0 6px 0 rgba(122,42,85,.08);text-align:center;max-width:min(430px,94%)}
+.saybubble:before{content:"";position:absolute;top:-9px;left:50%;transform:translateX(-50%);
+  border:10px solid transparent;border-top:0;border-bottom-color:#fff}
+.pickhint{text-align:center;color:var(--mu);font:700 .82rem/1.5 Nunito;margin:8px auto 18px;max-width:310px}
+
+/* ---------- putar acak popup ---------- */
+.popwheelbox{position:relative;display:grid;place-items:center;padding:10px 0 4px}
+.popwheel{width:min(272px,66vw)!important;transition:none}
+.popwheel .seg span{width:74px;font-size:1.45rem;line-height:1}
+.wheel .seg span{font-size:1.45rem;line-height:1}
+.popwheel .hub{left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px}
+.popwheel .hub svg{width:42px;height:auto}
+
+/* ---------- single Cimo voice card ---------- */
+.voiceone .vhead{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.voiceone .vava{position:relative;width:54px;height:54px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:radial-gradient(circle at 38% 32%,#fff,#ffe7f1);box-shadow:0 4px 12px rgba(122,42,85,.14)}
+.voiceone .vava svg{width:46px;height:auto}
+.voiceone .vhead b{font:700 .96rem Fredoka;display:block;line-height:1.25}
+.voiceone .vhead small{font:700 .72rem/1.35 Nunito;color:var(--mu);display:block}
+.vwave{position:absolute;right:-5px;bottom:-3px;display:flex;gap:2px;align-items:flex-end;height:16px;
+  background:var(--pk2);padding:3px 5px;border-radius:99px;box-shadow:0 2px 6px rgba(214,63,116,.4)}
+.vwave b{width:2.5px;background:#fff;border-radius:2px;height:6px;animation:vw 1.05s ease-in-out infinite}
+.vwave b:nth-child(1){animation-delay:0s;height:5px}
+.vwave b:nth-child(2){animation-delay:.15s;height:9px}
+.vwave b:nth-child(3){animation-delay:.3s;height:6px}
+.vwave b:nth-child(4){animation-delay:.45s;height:8px}
+@keyframes vw{0%,100%{transform:scaleY(.55)}50%{transform:scaleY(1.25)}}
+
+/* talking indicator on the speech bubble */
+.saybubble.talking{box-shadow:0 6px 0 rgba(122,42,85,.08),0 0 0 3px color-mix(in srgb,var(--moodc,var(--pk2)) 26%,transparent)}
+.saybubble .talkdots{display:inline-flex;gap:3px;align-items:flex-end;height:12px;margin-left:7px;vertical-align:-1px}
+.saybubble .talkdots i{width:3px;border-radius:2px;background:var(--pk2);animation:vw .9s ease-in-out infinite}
+.saybubble .talkdots i:nth-child(2){animation-delay:.12s}
+.saybubble .talkdots i:nth-child(3){animation-delay:.24s}
+
+/* ---------- VIP costume picker ---------- */
+.cosgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:12px}
+.cosopt{position:relative;border:1.8px solid var(--ln);background:var(--bg);border-radius:18px;padding:8px 5px 7px;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:.2s cubic-bezier(.34,1.56,.64,1);color:var(--ink)}
+.cosopt:hover{transform:translateY(-2px);border-color:var(--pkb)}
+.cosopt.on{border-color:var(--pk2);background:color-mix(in srgb,var(--pk) 16%,var(--sf));
+  box-shadow:0 4px 0 color-mix(in srgb,var(--pk2) 26%,transparent)}
+.cosopt.lock{opacity:.72}
+.cosface{width:56px;height:56px;display:grid;place-items:center;flex:none}
+.cosface svg{width:56px;height:auto}
+.cosopt b{font:700 .7rem Fredoka;text-align:center;line-height:1.2}
+.coslock{position:absolute;top:5px;right:6px;font-size:.68rem;line-height:1}
+.coson{position:absolute;top:4px;right:5px;width:16px;height:16px;border-radius:50%;background:var(--pk2);color:#fff;
+  font:700 .58rem Fredoka;display:grid;place-items:center}
+
+/* ---------- food card (photo · rating · distance) ---------- */
+.fcard{padding:10px 10px 12px}
+.fmedia{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:16/10;max-height:196px;margin-bottom:10px;
+  background:linear-gradient(135deg,var(--c1,#ffe6ef),var(--c2,#fff2e8)),var(--cr);
+  display:grid;place-items:center;isolation:isolate}
+.fmedia .fart{display:grid;place-items:center;transform:scale(1.18)}
+.fphoto{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0}
+.frate{position:absolute;top:8px;left:8px;z-index:2;background:rgba(255,255,255,.95);color:#7a5a12;
+  font:700 .72rem Fredoka;padding:4px 9px;border-radius:99px;box-shadow:0 2px 6px rgba(0,0,0,.10)}
+.fdist{position:absolute;bottom:8px;right:8px;z-index:2;background:rgba(58,33,66,.84);color:#fff;
+  font:700 .66rem Fredoka;padding:4px 9px;border-radius:99px;display:flex;align-items:center;gap:3px}
+.fdist svg{width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2.4}
+.fviral{position:absolute;top:8px;right:8px;z-index:2;background:linear-gradient(135deg,#ff8a4c,#ff4d6d);
+  color:#fff;font:700 .64rem Fredoka;padding:4px 9px;border-radius:99px;box-shadow:0 3px 8px rgba(255,77,109,.35)}
+.fbody{padding:0 4px}
+.fname{display:block;font:700 1.04rem Fredoka;color:var(--ink);line-height:1.25}
+.fstall{display:block;font:700 .74rem Nunito;color:var(--mu);margin-top:1px}
+.frow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px}
+.fprice{font:700 .92rem Fredoka;color:var(--pk2)}
+.fadd{display:flex;align-items:center;gap:5px;background:var(--pk2);color:#fff;border:0;border-radius:99px;
+  padding:8px 14px;font:700 .8rem Fredoka;cursor:pointer;box-shadow:0 4px 0 #d63f74;transition:.15s}
+.fadd:active{transform:translateY(2px);box-shadow:0 2px 0 #d63f74}
+.fadd svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.6}
+
+/* ---------- splash ---------- */
+.onboard.splashwrap{display:block;padding:0;overflow-y:auto}
+.splash{position:relative;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;padding:38px 22px 44px;text-align:center;overflow:hidden}
+.splash .doodle{position:absolute;opacity:.5;pointer-events:none}
+.splash .doodle.d1{left:6%;top:12%;width:54px;transform:rotate(-14deg)}
+.splash .doodle.d2{right:7%;top:8%;width:46px;transform:rotate(12deg)}
+.splash .doodle.d3{left:10%;bottom:16%;width:44px;transform:rotate(8deg)}
+.splash .doodle.d4{right:9%;bottom:20%;width:52px;transform:rotate(-10deg)}
+.splash .hero-cimo{width:min(238px,60vw);margin-bottom:6px;position:relative}
+.splash .hero-cimo:before{content:"";position:absolute;left:50%;top:52%;width:170%;height:170%;transform:translate(-50%,-50%);
+  border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.5),rgba(255,255,255,0) 62%);z-index:0;pointer-events:none}
+.splash .hero-cimo svg{width:100%;height:auto;position:relative;z-index:1;filter:drop-shadow(0 14px 20px rgba(122,42,85,.16))}
+.splash .wordmark{font:700 clamp(2.1rem,7.4vw,2.9rem)/1 Fredoka;letter-spacing:-1px;color:#3a2142;display:flex;align-items:center;gap:7px}
+.splash .wordmark mark{background:linear-gradient(135deg,#ffb0cd,#ff7aa8);color:#fff;padding:2px 14px 7px;border-radius:16px;
+  box-shadow:0 6px 0 #f26394,0 12px 20px rgba(242,122,168,.35);transform:rotate(-3deg)}
+.splash .tagline{margin-top:12px;color:#7d6683;font:700 .9rem/1.5 Nunito;max-width:250px}
+.splash .startbtn{margin-top:26px;width:min(260px,80%);border:0;border-radius:99px;padding:15px 20px;
+  background:linear-gradient(135deg,#ff8fb8,#ff5f98);color:#fff;font:700 1.02rem Fredoka;cursor:pointer;
+  box-shadow:0 7px 0 #d63f74,0 16px 30px rgba(214,63,116,.32);transition:.16s}
+.splash .startbtn:active{transform:translateY(5px);box-shadow:0 2px 0 #d63f74}
+.splash .dots{display:flex;gap:7px;margin-top:20px}
+.splash .dots i{width:8px;height:8px;border-radius:99px;background:rgba(255,95,152,.32);transition:.3s}
+.splash .dots i.on{width:24px;background:var(--pk2)}
+
+/* ---------- how it works ---------- */
+.how{padding:6px 2px 10px}
+.how .peek{display:flex;justify-content:center;margin-bottom:-6px}
+.how .peek svg{width:96px;height:auto}
+.how .bubble-say{background:#fff;border-radius:18px 18px 18px 5px;padding:10px 15px;font:700 .84rem Fredoka;color:#3a2142;
+  box-shadow:0 4px 0 rgba(122,42,85,.10);display:inline-block;margin:0 auto 14px}
+.how h2{font-size:1.45rem;letter-spacing:-.5px;text-align:center}
+.how .howsteps{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.howstep{display:flex;align-items:center;gap:12px;border-radius:20px;padding:12px 14px;border:1px solid var(--ln);
+  background:#fff;position:relative}
+.howstep .num{width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;
+  font:700 .78rem Fredoka;flex:none;box-shadow:0 3px 0 rgba(58,33,66,.25)}
+.howstep .ico{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:none}
+.howstep .ico svg{width:44px;height:44px}
+.howstep b{font-size:.92rem;display:block;line-height:1.2}
+.howstep small{font-size:.74rem;color:var(--mu);font-weight:700;line-height:1.35;display:block}
+.howstep.s1{background:linear-gradient(120deg,#fffbe0,#fff7c4)}
+.howstep.s2{background:linear-gradient(120deg,#e6f7ff,#d7efff)}
+.howstep.s3{background:linear-gradient(120deg,#fff0e2,#ffe6d3)}
+
+/* ---------- onboarding tabs / fields ---------- */
+.obtabs{display:flex;background:rgba(58,33,66,.07);border-radius:99px;padding:4px;margin-bottom:18px}
+.obtabs button{flex:1;border:0;background:none;color:var(--mu);font:700 .88rem Fredoka;padding:10px;border-radius:99px;
+  cursor:pointer;transition:.22s}
+.obtabs button.on{background:var(--ink);color:#fff;box-shadow:0 4px 10px rgba(58,33,66,.24)}
+.obwelcome{text-align:center;font:700 1.28rem Fredoka;letter-spacing:-.4px;margin-bottom:14px;color:var(--ink)}
+.obbtn{width:100%;border:1.8px solid var(--ln);background:#fff;color:var(--ink);font:700 .92rem Fredoka;padding:13px;
+  border-radius:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:.18s;margin-bottom:9px}
+.obbtn:hover{border-color:var(--pkb);transform:translateY(-1px)}
+.obbtn.primary{background:linear-gradient(135deg,#ff8fb8,#ff5f98);color:#fff;border:0;box-shadow:0 6px 0 #d63f74}
+.obbtn.primary:active{transform:translateY(4px);box-shadow:0 2px 0 #d63f74}
+.obbtn.ghostline{background:none;border:1.8px solid var(--ln);color:var(--mu);font-size:.84rem}
+.obbtn .gicon{width:20px;height:20px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none;
+  box-shadow:0 1px 3px rgba(0,0,0,.12);font:800 .7rem Fredoka;color:#4285f4}
+.obor{text-align:center;font:700 .74rem Fredoka;color:var(--mu);margin:10px 0}
+.obterms{display:flex;align-items:flex-start;gap:8px;font:600 .74rem Nunito;color:var(--mu);margin:2px 0 12px;line-height:1.45;cursor:pointer}
+.obterms input{width:17px;height:17px;flex:none;accent-color:var(--pk2);margin-top:1px}
+.obnote{text-align:center;font:700 .72rem Nunito;color:var(--mu);margin-top:10px}
+
+/* ---------- beranda (mockup layout) ---------- */
+.hometop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.hometop .greet{font:700 .78rem Nunito;color:var(--mu);display:block;margin-bottom:1px}
+.hometop .brandrow{font:700 1.5rem/1 Fredoka;letter-spacing:-.6px;color:var(--ink);display:flex;align-items:center;gap:9px}
+.hometop .brandrow mark{background:linear-gradient(135deg,#ffb0cd,#ff7aa8);color:#fff;padding:1px 9px 5px;border-radius:10px;
+  box-shadow:0 3px 0 #f26394;margin-left:1px}
+.avatarbtn{border:0;background:none;padding:0;cursor:pointer;width:52px;height:52px;border-radius:50%;flex:none;
+  background:radial-gradient(circle at 35% 30%,#fff,#ffe7f1);display:grid;place-items:center;box-shadow:0 4px 12px rgba(122,42,85,.16)}
+.avatarbtn svg{width:40px;height:auto}
+
+.moodrow{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 10px;scrollbar-width:none}
+.moodrow::-webkit-scrollbar{display:none}
+.mpill{flex:1 1 0;min-width:64px;display:flex;flex-direction:column;align-items:center;gap:5px;border:2px solid rgba(255,255,255,.9);
+  background:color-mix(in srgb,var(--c,#ffd9e6) 34%,#fff);
+  border-radius:22px;padding:11px 4px 10px;cursor:pointer;transition:.24s cubic-bezier(.34,1.56,.64,1)}
+.mpill .mf{width:54px;height:54px;display:grid;place-items:center}
+.mpill .mf svg{width:52px;height:auto}
+.mpill b{font:700 .82rem Fredoka;color:var(--ink)}
+.mpill.on{background:#fff;border-color:var(--c,var(--pk2));box-shadow:0 8px 18px rgba(122,42,85,.16),0 0 0 3px color-mix(in srgb,var(--c,var(--pk2)) 22%,transparent);transform:translateY(-2px)}
+[data-theme=dark] .mpill{background:color-mix(in srgb,var(--c,#ffd9e6) 22%,#3a2142)}
+[data-theme=dark] .mpill.on{background:#4a2a5e}
+
+.saybox{position:relative;display:flex;align-items:flex-end;gap:6px;margin:6px 0 12px}
+.sayspeech{flex:1;background:#fff;border-radius:18px 18px 18px 6px;padding:11px 15px;font:700 .85rem/1.45 Fredoka;
+  color:var(--ink);box-shadow:0 4px 0 rgba(122,42,85,.08);min-height:44px}
+.saycimo{width:86px;flex:none;margin-bottom:-6px}
+.saycimo svg{width:86px;height:auto;animation:flt 3.8s ease-in-out infinite}
+
+.pickcard{background:#fff;border:1px solid var(--ln);border-radius:26px;padding:12px;box-shadow:var(--sh2);margin-bottom:12px}
+.pickhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;padding:0 3px}
+.pickhead b{font:700 .88rem Fredoka;color:var(--ink)}
+.pickhead .mini{width:30px}
+.pickhead .mini svg{width:30px;height:auto}
+.pickbody{display:flex;align-items:center;gap:12px;background:linear-gradient(120deg,#fffaf3,#fff5ea);
+  border-radius:18px;padding:11px 13px;border:1px solid rgba(230,214,200,.6)}
+.pickbody .pic{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;flex:none;
+  background:radial-gradient(circle at 40% 35%,#fff,#ffeed9);box-shadow:inset 0 0 0 2px rgba(255,255,255,.9)}
+.pickbody .pic svg{height:54px;width:auto}
+.pickbody .inf{flex:1;min-width:0}
+.pickbody h4{font-size:1.02rem;line-height:1.2;color:#8a5a2a}
+.pickbody .stall{font:700 .72rem Nunito;color:var(--mu);margin-top:2px}
+.pickbody .price{display:block;font:700 .88rem Fredoka;color:#8a5a2a;margin-top:4px}
+.pickcard .addrow{display:flex;gap:8px;margin-top:10px}
+.pickcard .addrow .btn{flex:1}
+.pickcard .addrow .step{align-self:center}
+
+.shuffle{display:flex;align-items:center;gap:12px;width:100%;border:0;cursor:pointer;text-align:left;
+  background:linear-gradient(120deg,#4a2a5e,#3a2142);color:#fff;border-radius:20px;padding:12px 15px;
+  box-shadow:0 6px 0 #2a1634,0 14px 26px rgba(58,33,66,.24);transition:.18s;margin-bottom:16px}
+.shuffle:hover{transform:translateY(-2px);box-shadow:0 8px 0 #2a1634,0 18px 30px rgba(58,33,66,.28)}
+.shuffle:active{transform:translateY(4px);box-shadow:0 2px 0 #2a1634}
+.shuffle .sico{width:42px;height:42px;border-radius:14px;background:rgba(255,255,255,.14);display:grid;place-items:center;flex:none}
+.shuffle .sico svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.shuffle b{display:block;font:700 .92rem Fredoka;line-height:1.2}
+.shuffle small{display:block;font:700 .7rem Nunito;opacity:.75}
+.shuffle .go{margin-left:auto;font:700 1.1rem Fredoka;opacity:.8}
+.shuffleres{background:#fff;border:1px solid var(--ln);border-radius:20px;padding:11px 13px;margin:-6px 0 14px;
+  display:flex;align-items:center;gap:11px;animation:say .4s cubic-bezier(.34,1.56,.64,1)}
+.shuffleres .pic{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;flex:none;background:#fff5ea}
+.shuffleres .pic svg{height:44px}
+.shuffleres b{font:700 .92rem Fredoka;display:block;line-height:1.2}
+.shuffleres small{font:700 .7rem Nunito;color:var(--mu);display:block}
+
+/* ---------- share card modal ---------- */
+.sharehero{text-align:center;margin-bottom:6px}
+.sharehero h3{font:700 1.18rem Fredoka;letter-spacing:-.4px;color:var(--ink)}
+.sharepreview{width:100%;max-width:300px;border-radius:26px;box-shadow:0 18px 38px rgba(122,42,85,.24);display:block;margin:12px auto 0}
+.sharebtns{display:flex;justify-content:center;gap:14px;margin-top:18px}
+.sharebtn{width:54px;height:54px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;
+  box-shadow:0 6px 14px rgba(0,0,0,.16);transition:.22s cubic-bezier(.34,1.56,.64,1)}
+.sharebtn:hover{transform:translateY(-4px) scale(1.06)}
+.sharebtn svg{width:25px;height:25px}
+.sharebtn.ig{background:linear-gradient(135deg,#f9a03f,#e1306c 55%,#7f4fd6)}
+.sharebtn.wa{background:linear-gradient(135deg,#5ce27a,#128c4b)}
+.sharebtn.dl{background:#3a2142}
+.sharebtn.more{background:#9a8fa5}
+.sharebtn svg{fill:none;stroke:#fff;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.sharebtn.wa svg,.sharebtn.dl svg{stroke:#fff}
+.sharelabels{display:flex;justify-content:center;gap:14px;margin-top:7px}
+.sharelabels span{width:54px;text-align:center;font:700 .64rem Fredoka;color:var(--mu)}
+.sharetip{text-align:center;font:600 .72rem Nunito;color:var(--mu);margin-top:14px;line-height:1.5}
+
+/* ---------- mobile tuning ---------- */
+@media(max-width:980px){
+  .hometop{margin-bottom:10px}
+  .saycimo{width:74px}
+  .pickbody .pic{width:66px;height:66px}
+  .pickbody .pic svg{height:48px}
+  .moodrow{padding-bottom:8px}
+  .tabbar{box-shadow:0 -8px 22px rgba(122,42,85,.10);border-top:0;border-radius:22px 22px 0 0}
+  /* keep the pet bubble above the mascot so it never covers the Tambah button */
+  .pet .bubble{right:0;top:auto;bottom:62px;border-radius:14px 14px 4px 14px}
+}
+@media(min-width:981px){
+  .hometop .brandrow{display:none}
+  .moodrow .mpill{max-width:132px}
+  .saycimo{width:104px}
+  .saycimo svg{width:104px}
+}
+@media(max-width:400px){
+  .mpill{min-width:52px;padding:6px 3px 5px}
+  .mpill .mf{width:32px;height:32px}
+  .mpill .mf svg{width:30px}
+  .mpill b{font-size:.6rem}
+}
+
+/* ---------- profil (mockup) ---------- */
+.saycimo.hop svg{animation:hop .62s cubic-bezier(.3,1.7,.5,1)}
+.avatarbtn.hop{animation:hop .62s cubic-bezier(.3,1.7,.5,1)}
+.profhero{text-align:center;background:#fff;border:1px solid var(--ln);border-radius:28px;padding:20px 16px 16px;box-shadow:var(--sh2)}
+.profhero .avatar-lg{width:104px;height:104px;background:radial-gradient(circle at 38% 32%,#fff,#ffe7f1);border:3px solid #fff;box-shadow:0 10px 24px rgba(122,42,85,.16)}
+.profhero h3{font-size:1.2rem;margin-top:8px;letter-spacing:-.3px}
+.profhero small{font:700 .76rem Nunito;color:var(--mu);display:block;margin-top:2px}
+.vipplan{background:linear-gradient(120deg,#dcc4f0,#f3c9dd);border-radius:22px;padding:14px 16px;margin-top:12px;
+  box-shadow:0 4px 0 rgba(122,42,85,.10)}
+.vipplan.on{background:linear-gradient(120deg,#ffe6a8,#ffd07a)}
+.vipplan b{font:700 .94rem Fredoka;display:block;color:#3a2142}
+.vipplan small{font:700 .72rem Nunito;color:#5c4463;display:block;margin-top:1px}
+.profstats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
+.profstats>div{background:#fff;border:1px solid var(--ln);border-radius:20px;padding:12px 6px;text-align:center;box-shadow:var(--sh2)}
+.profstats b{display:block;font:700 1.35rem Fredoka;color:var(--ink);line-height:1.15}
+.profstats span{font:700 .68rem Nunito;color:var(--mu)}
 
 </style>
 </head>
@@ -632,6 +972,13 @@ td .tag{font-size:.6rem}
   </div>
 </div>
 
+<div class="modal" id="spinModal">
+  <div class="mbox" style="width:min(420px,100%)">
+    <div class="mhead"><h3>Putar acak</h3><button class="closebtn" aria-label="close">✕</button></div>
+    <div id="spinPopBody"></div>
+  </div>
+</div>
+
 <div class="installbanner" id="installbanner"></div>
 
 <div class="toast" id="toast"></div>
@@ -692,7 +1039,17 @@ function cimo(mood, size, peek, costume) {
     x += '<g fill="none" stroke="#2fae8a" stroke-width="3" stroke-linecap="round"><path d="M36 38a8 8 0 1 1 8 8a4 4 0 1 1-4-4"/><path d="M160 36a8 8 0 1 1 8 8a4 4 0 1 1-4-4"/></g><text x="92" y="28" font-size="28" font-weight="700" fill="#2fae8a" font-family="Fredoka,sans-serif">?</text>';
     mo = st('M86 117q7-8 14 0t14 0');
   }
-  const core = `<ellipse cx="100" cy="96" rx="70" ry="62" fill="${b}"/><g clip-path="url(#${g})"><ellipse cx="93" cy="89" rx="68" ry="60" fill="${a}"/></g><ellipse cx="62" cy="56" rx="15" ry="8" transform="rotate(-28 62 56)" fill="#fff" opacity=".55"/><circle cx="82" cy="45" r="3.4" fill="#fff" opacity=".55"/><ellipse cx="52" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><ellipse cx="148" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><g fill="#fff" opacity=".6"><circle cx="146" cy="130" r="2"/><circle cx="156" cy="124" r="1.6"/><circle cx="52" cy="132" r="1.8"/><circle cx="62" cy="138" r="1.5"/></g>${e}${x}${mo}`;
+  /* pita (bow) on the top-left of the head — signature detail from the mockup */
+  const pita = costume === 'crown' ? '' : `<g transform="translate(50 42) rotate(-20)">
+      <ellipse cx="-12" cy="0" rx="12.5" ry="7.6" fill="#ff7aa8"/>
+      <ellipse cx="12" cy="0" rx="12.5" ry="7.6" fill="#ff7aa8"/>
+      <ellipse cx="-11" cy="-1" rx="7.4" ry="4.2" fill="#ffa8c6" opacity=".8"/>
+      <ellipse cx="11" cy="-1" rx="7.4" ry="4.2" fill="#ffa8c6" opacity=".8"/>
+      <ellipse cx="-19" cy="1" rx="5" ry="3" fill="#f26394" opacity=".55"/>
+      <ellipse cx="19" cy="1" rx="5" ry="3" fill="#f26394" opacity=".55"/>
+      <circle r="5.2" fill="#ff5c92"/><circle cx="-1.6" cy="-1.6" r="1.8" fill="#ffd0e0" opacity=".9"/>
+    </g>`;
+  const core = `<ellipse cx="100" cy="96" rx="70" ry="62" fill="${b}"/><g clip-path="url(#${g})"><ellipse cx="93" cy="89" rx="68" ry="60" fill="${a}"/></g><ellipse cx="62" cy="56" rx="15" ry="8" transform="rotate(-28 62 56)" fill="#fff" opacity=".55"/><circle cx="82" cy="45" r="3.4" fill="#fff" opacity=".55"/><ellipse cx="52" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><ellipse cx="148" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><g fill="#fff" opacity=".6"><circle cx="146" cy="130" r="2"/><circle cx="156" cy="124" r="1.6"/><circle cx="52" cy="132" r="1.8"/><circle cx="62" cy="138" r="1.5"/></g>${pita}<g class="ceye">${e}</g>${x}${mo}`;
   const defs = `<defs><clipPath id="${g}"><ellipse cx="100" cy="96" rx="70" ry="62"/></clipPath><clipPath id="${g}c"><rect x="-10" y="0" width="220" height="138"/></clipPath></defs>`;
 
   let body;
@@ -768,6 +1125,23 @@ const SOC = {
   fb: ['linear-gradient(135deg,#5b9bf8,#1b4ea8)', '<path d="M14.5 8.5h2V5.6h-2.4c-2 0-3.3 1.3-3.3 3.4v1.7H8.4v3h2.4V20h3.2v-6.3h2.3l.4-3h-2.7V9.4c0-.6.2-.9.9-.9z" fill="#fff"/>'],
 };
 
+/* ===== food emoji for the spinner (one varied emoji per dish) ===== */
+const FOOD_EMOJI = {
+  soup:  ['🍲', '🍜', '🥣', '🍥'],
+  drink: ['🥤', '🧋', '🥛', '🧃'],
+  plate: ['🍛', '🍚', '🥘', '🍱'],
+  snack: ['🍢', '🍡', '🥟', '🧆'],
+  sweet: ['🍰', '🧁', '🍮', '🍩'],
+  rice:  ['🍙', '🍚', '🍛', '🍱'],
+};
+function foodEmoji(item, i) {
+  const list = FOOD_EMOJI[(item && item.art) || 'plate'] || FOOD_EMOJI.plate;
+  let h = 0;
+  const id = String((item && item.id) || '');
+  for (let k = 0; k < id.length; k++) h = (h * 31 + id.charCodeAt(k)) >>> 0;
+  return list[(h + (i || 0) * 7) % list.length];
+}
+
 
 /* ===== data: streets, menu, moods, i18n ===== */
 
@@ -786,11 +1160,13 @@ const MOODS = [
   {k:'sedih',   c:'#5eb0ee', face:'sedih',   label:'Sedih',   sub:'Hangat & menenangkan', dish:'Yang berkuah dan hangat'},
   {k:'marah',   c:'#f2864c', face:'marah',   label:'Marah',   sub:'Bertenaga & pedas',    dish:'Pedas, gurih, bertenaga'},
   {k:'bingung', c:'#68cdaa', face:'bingung', label:'Bingung', sub:'Bantu putuskan',       dish:'Tiga pilihan aman'},
-  {k:'capek',   c:'#cfd5e6', face:'capek',   label:'Capek',   sub:'Pelan & mengisi',      dish:'Isi tenaga, lembut'},
-  {k:'kecewa',  c:'#cdb27e', face:'kecewa',  label:'Kecewa',  sub:'Dihibur pelan',        dish:'Manis penghibur'},
 ];
 
-const CATS = ['Semua','Terdekat','Snack','Heavy Meal','Beverage','Viral'];
+/* moods that are no longer offered fold into the closest one that is */
+const MOOD_ALIAS = { capek: 'sedih', kecewa: 'sedih' };
+const normMood = k => (MOODS.some(m => m.k === k) ? k : (MOOD_ALIAS[k] || 'bingung'));
+
+const CATS = ['Semua','Snack','Heavy Meal'];
 
 /* mood + category translations: [label, sub, dish] */
 const MOODI18N = {
@@ -877,7 +1253,8 @@ const I18N = {
     prof_sound_sub:'Bunyi klik saat menambah makanan', prof_design:'Desain Cimo', prof_admin:'Panel database', prof_data:'Data & cadangan',
     prof_export:'Unduh data (JSON)', prof_logout:'Keluar', prof_saved:'Tersimpan',
     voice_test:'Coba suara', voice_rate:'Kecepatan bicara', voice_pitch:'Intonasi', voice_vol:'Volume',
-    voice_5:'5 pilihan suara', voice_lang:'Bahasa suara',
+    voice_5:'5 pilihan suara', voice_lang:'Bahasa suara', voice_device:'Suara perangkat', voice_auto:'Otomatis, paling natural',
+    voice_one_sub:'Satu suara untuk Cimo, diucapkan jelas dan tidak terburu-buru', voice_one_badge:'Aktif', voice_orig:'Rekaman asli',
     share_t:'Bagikan ke sosial media', share_dl:'Unduh gambar', share_copy:'Salin caption', share_native:'Bagikan…',
     add_ok:'ditambahkan ke keranjang', removed:'dihapus dari keranjang', copied:'Caption disalin',
     admin_t:'Database pendaftar', admin_pass:'Kata sandi admin', admin_open:'Buka', admin_wrong:'Kata sandi salah',
@@ -895,6 +1272,29 @@ const I18N = {
     umkm_type:'Jenis makanan', umkm_mood:'Cocok untuk mood', umkm_photo:'Unggah foto menu', umkm_send:'Kirim pendaftaran',
     umkm_dash:'Dashboard UMKM', umkm_views:'Dilihat', umkm_clicks:'Klik pesan', umkm_rating:'Rating', umkm_menu:'Menu terdaftar',
     umkm_pending:'Menunggu persetujuan', umkm_approved:'Disetujui', umkm_add_menu:'+ Tambah menu',
+    /* splash / onboarding */
+    splash_tag:'rekomendasi makanan sesuai moodmu',
+    how_t:'Cara kerja CraveMood', how_sub:'Gampang! Cuma 3 langkah',
+    how_1t:'Pilih mood-mu', how_1s:'Senang, sedih, marah, atau bingung.',
+    how_2t:'Dapatkan rekomendasi', how_2s:'3 menu khas Makassar dari Cimo.',
+    how_3t:'Nikmati makanannya', how_3s:'Pesan via GoFood, GrabFood, ShopeeFood.',
+    how_next:'Selanjutnya →', how_skip:'Lewati',
+    kenalan_t:'Halo! Aku Cimo. Siapa namamu?', kenalan_btn:'Kenalan! →', kenalan_note:'Bisa diganti nanti di Profil',
+    tab_masuk:'Masuk', tab_daftar:'Daftar',
+    login_welcome:'Selamat datang kembali!', login_google:'Lanjut dengan Google', login_wa:'Nomor WhatsApp',
+    login_code:'Kirim kode', login_or:'atau', login_guest:'Coba dulu sebagai Tamu',
+    login_terms:'Dengan masuk, kamu setuju dengan Syarat & Kebijakan Privasi.',
+    reg_t:'Yuk, buat akun!', reg_name:'Nama panggilan', reg_terms:'Aku setuju dengan Syarat & Kebijakan Privasi',
+    reg_btn:'Buat akun', reg_google:'atau daftar dengan Google',
+    /* beranda */
+    pick_t:'Pilihan Cimo', shuffle_t:'Putar acak', shuffle_s:'Nggak cocok? Cimo pilihkan yang lain',
+    home_ask:'Halo {name}! Lagi mood apa hari ini?',
+    home_hint:'Pilih satu mood di atas dulu ya, Cimo langsung carikan makanannya.',
+    spin_pop_t:'Putar acak', spin_pop_sub:'Nggak cocok? Biar Cimo pilihkan yang lain.',
+    spin_pop_btn:'Putar sekarang', spin_pop_again:'Putar lagi', spin_pop_close:'Tutup',
+    /* share */
+    share_done:'Selamat makan, {name}!', share_mood_today:'Mood hari ini', share_rec:'Rekomendasi Cimo',
+    share_more:'Lainnya', share_hint:'Ketuk ikon untuk bagikan ke story atau simpan gambarnya.',
   },
   en: {
     tagline:'Eat according to your mood', best_match:'Best match', viral:'Viral', item:'item',
@@ -921,7 +1321,8 @@ const I18N = {
     prof_sound_sub:'Click sound when adding food', prof_design:'Cimo design', prof_admin:'Database panel', prof_data:'Data & backup',
     prof_export:'Download data (JSON)', prof_logout:'Sign out', prof_saved:'Saved',
     voice_test:'Test voice', voice_rate:'Speaking rate', voice_pitch:'Intonation', voice_vol:'Volume',
-    voice_5:'5 voice options', voice_lang:'Voice language',
+    voice_5:'5 voice options', voice_lang:'Voice language', voice_device:'Device voice', voice_auto:'Auto, most natural',
+    voice_one_sub:'One voice for Cimo, clear and never rushed', voice_one_badge:'Active', voice_orig:'Original clip',
     share_t:'Share to social media', share_dl:'Download image', share_copy:'Copy caption', share_native:'Share…',
     add_ok:'added to cart', removed:'removed from cart', copied:'Caption copied',
     admin_t:'Registrant database', admin_pass:'Admin password', admin_open:'Open', admin_wrong:'Wrong password',
@@ -939,6 +1340,26 @@ const I18N = {
     umkm_type:'Food type', umkm_mood:'Fits mood', umkm_photo:'Upload menu photo', umkm_send:'Submit registration',
     umkm_dash:'UMKM Dashboard', umkm_views:'Views', umkm_clicks:'Order clicks', umkm_rating:'Rating', umkm_menu:'Registered menu',
     umkm_pending:'Pending approval', umkm_approved:'Approved', umkm_add_menu:'+ Add menu',
+    splash_tag:'food recommendations that match your mood',
+    how_t:'How CraveMood works', how_sub:'Easy! Just 3 steps',
+    how_1t:'Pick your mood', how_1s:'Happy, sad, angry, or confused.',
+    how_2t:'Get recommendations', how_2s:'3 Makassar classics from Cimo.',
+    how_3t:'Enjoy the food', how_3s:'Order via GoFood, GrabFood, ShopeeFood.',
+    how_next:'Next →', how_skip:'Skip',
+    kenalan_t:'Hi! I am Cimo. What is your name?', kenalan_btn:'Nice to meet you! →', kenalan_note:'You can change it later in Profile',
+    tab_masuk:'Sign in', tab_daftar:'Sign up',
+    login_welcome:'Welcome back!', login_google:'Continue with Google', login_wa:'WhatsApp number',
+    login_code:'Send code', login_or:'or', login_guest:'Try as Guest first',
+    login_terms:'By signing in, you agree to our Terms & Privacy Policy.',
+    reg_t:'Let us create your account!', reg_name:'Nickname', reg_terms:'I agree to the Terms & Privacy Policy',
+    reg_btn:'Create account', reg_google:'or sign up with Google',
+    pick_t:'Cimo picks', shuffle_t:'Spin randomly', shuffle_s:'Not feeling it? Let Cimo pick another',
+    home_ask:'Hi {name}! What is your mood today?',
+    home_hint:'Pick a mood above first, Cimo will find your food right away.',
+    spin_pop_t:'Random spin', spin_pop_sub:'Not feeling it? Let Cimo pick another.',
+    spin_pop_btn:'Spin now', spin_pop_again:'Spin again', spin_pop_close:'Close',
+    share_done:'Enjoy your meal, {name}!', share_mood_today:'Mood today', share_rec:'Cimo recommends',
+    share_more:'More', share_hint:'Tap an icon to share to your story or save the image.',
   },
   zh: {
     tagline:'按心情吃饭', best_match:'最合适', viral:'爆款', item:'件',
@@ -965,7 +1386,8 @@ const I18N = {
     prof_sound_sub:'加入购物车时的点击音', prof_design:'Cimo 造型', prof_admin:'数据库面板', prof_data:'数据与备份',
     prof_export:'下载数据 (JSON)', prof_logout:'退出', prof_saved:'已保存',
     voice_test:'试听', voice_rate:'语速', voice_pitch:'语调', voice_vol:'音量',
-    voice_5:'5 种声音', voice_lang:'语音语言',
+    voice_5:'5 种声音', voice_lang:'语音语言', voice_device:'设备语音', voice_auto:'自动，最自然',
+    voice_one_sub:'Cimo 只有一个声音，吐字清楚，不会太快', voice_one_badge:'已启用', voice_orig:'原始录音',
     share_t:'分享到社交平台', share_dl:'下载图片', share_copy:'复制文案', share_native:'分享…',
     add_ok:'已加入购物车', removed:'已从购物车移除', copied:'文案已复制',
     admin_t:'注册数据库', admin_pass:'管理员密码', admin_open:'打开', admin_wrong:'密码错误',
@@ -983,6 +1405,26 @@ const I18N = {
     umkm_type:'食物类型', umkm_mood:'适合心情', umkm_photo:'上传菜单照片', umkm_send:'提交申请',
     umkm_dash:'UMKM 仪表盘', umkm_views:'浏览量', umkm_clicks:'订单点击', umkm_rating:'评分', umkm_menu:'已注册菜单',
     umkm_pending:'等待审核', umkm_approved:'已通过', umkm_add_menu:'+ 添加菜单',
+    splash_tag:'按心情推荐美食',
+    how_t:'CraveMood 怎么用', how_sub:'很简单！只要 3 步',
+    how_1t:'选择心情', how_1s:'开心、难过、生气或纠结。',
+    how_2t:'获得推荐', how_2s:'Cimo 为你挑 3 道马卡萨特色菜。',
+    how_3t:'享受美食', how_3s:'通过 GoFood、GrabFood、ShopeeFood 下单。',
+    how_next:'下一步 →', how_skip:'跳过',
+    kenalan_t:'嗨！我是 Cimo。你叫什么名字？', kenalan_btn:'认识一下！→', kenalan_note:'以后可以在“我的”里修改',
+    tab_masuk:'登录', tab_daftar:'注册',
+    login_welcome:'欢迎回来！', login_google:'使用 Google 继续', login_wa:'WhatsApp 号码',
+    login_code:'发送验证码', login_or:'或', login_guest:'先以访客身份试用',
+    login_terms:'登录即表示你同意《条款与隐私政策》。',
+    reg_t:'来创建账号吧！', reg_name:'昵称', reg_terms:'我同意《条款与隐私政策》',
+    reg_btn:'创建账号', reg_google:'或用 Google 注册',
+    pick_t:'Cimo 的选择', shuffle_t:'随机转一下', shuffle_s:'不合适？让 Cimo 再挑一个',
+    home_ask:'嗨 {name}！今天心情怎么样？',
+    home_hint:'先在上面选一个心情，Cimo 马上帮你找吃的。',
+    spin_pop_t:'随机转一下', spin_pop_sub:'不合适？让 Cimo 再挑一个。',
+    spin_pop_btn:'现在转', spin_pop_again:'再转一次', spin_pop_close:'关闭',
+    share_done:'好好吃，{name}！', share_mood_today:'今天的心情', share_rec:'Cimo 推荐',
+    share_more:'更多', share_hint:'点图标分享到动态，或保存图片。',
   },
   hi: {
     tagline:'अपने मूड के हिसाब से खाएं', best_match:'सबसे सही', viral:'वायरल', item:'आइटम',
@@ -1009,7 +1451,8 @@ const I18N = {
     prof_sound_sub:'खाना जोड़ते समय क्लिक ध्वनि', prof_design:'Cimo डिज़ाइन', prof_admin:'डेटाबेस पैनल', prof_data:'डेटा और बैकअप',
     prof_export:'डेटा डाउनलोड (JSON)', prof_logout:'साइन आउट', prof_saved:'सहेजा गया',
     voice_test:'आवाज़ सुनें', voice_rate:'बोलने की गति', voice_pitch:'स्वर', voice_vol:'वॉल्यूम',
-    voice_5:'5 आवाज़ विकल्प', voice_lang:'आवाज़ की भाषा',
+    voice_5:'5 आवाज़ विकल्प', voice_lang:'आवाज़ की भाषा', voice_device:'डिवाइस आवाज़', voice_auto:'ऑटो, सबसे प्राकृतिक',
+    voice_one_sub:'Cimo के लिए एक ही आवाज़, साफ़ और धीरे', voice_one_badge:'सक्रिय', voice_orig:'मूल रिकॉर्डिंग',
     share_t:'सोशल मीडिया पर शेयर करें', share_dl:'तस्वीर डाउनलोड', share_copy:'कैप्शन कॉपी', share_native:'शेयर…',
     add_ok:'कार्ट में जोड़ा गया', removed:'कार्ट से हटाया गया', copied:'कैप्शन कॉपी हुआ',
     admin_t:'पंजीकरण डेटाबेस', admin_pass:'एडमिन पासवर्ड', admin_open:'खोलें', admin_wrong:'पासवर्ड गलत है',
@@ -1027,47 +1470,68 @@ const I18N = {
     umkm_type:'भोजन का प्रकार', umkm_mood:'मूड के लिए उपयुक्त', umkm_photo:'मेनू फोटो अपलोड', umkm_send:'पंजीकरण भेजें',
     umkm_dash:'UMKM डैशबोर्ड', umkm_views:'व्यू', umkm_clicks:'ऑर्डर क्लिक', umkm_rating:'रेटिंग', umkm_menu:'पंजीकृत मेनू',
     umkm_pending:'अनुमोदन की प्रतीक्षा', umkm_approved:'अनुमोदित', umkm_add_menu:'+ मेनू जोड़ें',
+    splash_tag:'आपके मूड के हिसाब से खाने की सलाह',
+    how_t:'CraveMood कैसे काम करता है', how_sub:'आसान! बस 3 कदम',
+    how_1t:'अपना मूड चुनें', how_1s:'खुश, उदास, गुस्सा या उलझन।',
+    how_2t:'सलाह पाएं', how_2s:'Cimo से 3 मकस्सर व्यंजन।',
+    how_3t:'खाने का आनंद लें', how_3s:'GoFood, GrabFood, ShopeeFood से ऑर्डर करें।',
+    how_next:'आगे →', how_skip:'छोड़ें',
+    kenalan_t:'नमस्ते! मैं Cimo हूँ। आपका नाम क्या है?', kenalan_btn:'पहचान हो गई! →', kenalan_note:'बाद में प्रोफ़ाइल में बदल सकते हैं',
+    tab_masuk:'साइन इन', tab_daftar:'साइन अप',
+    login_welcome:'वापसी पर स्वागत!', login_google:'Google से जारी रखें', login_wa:'WhatsApp नंबर',
+    login_code:'कोड भेजें', login_or:'या', login_guest:'पहले मेहमान के रूप में देखें',
+    login_terms:'साइन इन करके आप शर्तें और गोपनीयता नीति स्वीकार करते हैं।',
+    reg_t:'चलिए खाता बनाएं!', reg_name:'नाम', reg_terms:'मैं शर्तें और गोपनीयता नीति स्वीकार करता हूँ',
+    reg_btn:'खाता बनाएं', reg_google:'या Google से साइन अप करें',
+    pick_t:'Cimo की पसंद', shuffle_t:'रैंडम घुमाएं', shuffle_s:'पसंद नहीं? Cimo कुछ और चुनेगा',
+    home_ask:'नमस्ते {name}! आज मूड कैसा है?',
+    home_hint:'पहले ऊपर एक मूड चुनें, Cimo तुरंत खाना ढूँढ देगा।',
+    spin_pop_t:'रैंडम स्पिन', spin_pop_sub:'पसंद नहीं? Cimo कुछ और चुनेगा।',
+    spin_pop_btn:'अभी घुमाएं', spin_pop_again:'फिर घुमाएं', spin_pop_close:'बंद करें',
+    share_done:'मज़े से खाइए, {name}!', share_mood_today:'आज का मूड', share_rec:'Cimo की सलाह',
+    share_more:'और', share_hint:'स्टोरी पर शेयर करने या इमेज सेव करने के लिए आइकन दबाएँ।',
   },
 };
 
 /* ===== what Cimo says when a mood is picked =====
-   {name} = user name, {dish} = top recommendation for that mood */
+   {name} = user name, {dish} = top recommendation for that mood.
+   Keep it short (max ~2 sentences) and never use a dash to join clauses. */
 const MOODSAY = {
   senang: {
-    id:'Wah, {name} lagi senang ya hari ini! Aku ikut senang. Kamu cocok makan yang manis dan segar — {dish} bisa jadi pilihan.',
-    en:'Wah, {name} is happy today! I am happy too. You should eat something sweet and fresh — {dish} works.',
-    zh:'哇，{name} 今天心情很好呀！我也开心。你适合吃点甜的、清爽的——{dish} 就不错。',
-    hi:'वाह, {name} आज खुश हैं! मुझे भी अच्छा लगा। कुछ मीठा और ताज़ा खाइए — {dish} ठीक रहेगा।',
+    id:'Wah, {name} lagi senang ya! Kamu cocok makan yang manis dan segar, {dish} bisa jadi pilihan.',
+    en:'Wah, {name} is happy! Something sweet and fresh fits you, {dish} works.',
+    zh:'哇，{name} 今天心情很好呀！吃点甜的、清爽的，{dish} 就不错。',
+    hi:'वाह, {name} आज खुश हैं! कुछ मीठा और ताज़ा लीजिए, {dish} ठीक रहेगा।',
   },
   sedih: {
-    id:'Wah, hari ini {name} lagi sedih ya. Peluk dulu dari aku. Kamu cocok makan yang berkuah dan hangat — {dish} misalnya.',
-    en:'Oh, {name} is feeling sad today. Here is a hug first. Something warm and soupy fits you — {dish}, maybe.',
-    zh:'哎，{name} 今天有点难过呀。先抱一下。你适合吃点热汤类的——比如 {dish}。',
-    hi:'अरे, {name} आज उदास हैं। पहले एक गले लगाना। कुछ गरम सूप जैसा ठीक रहेगा — जैसे {dish}।',
+    id:'{name} lagi sedih ya? Peluk dulu. Kamu cocok makan yang hangat dan berkuah, {dish} misalnya.',
+    en:'{name} is feeling sad? Here is a hug. Something warm and soupy fits, {dish} maybe.',
+    zh:'{name} 今天有点难过呀？先抱一下。吃点热汤类的，比如 {dish}。',
+    hi:'{name} आज उदास हैं? पहले एक गले लगाना। कुछ गरम सूप जैसा, जैसे {dish}।',
   },
   marah: {
-    id:'{name} lagi kesal ya? Wajar kok. Tarik napas dulu. Kamu cocok makan yang pedas biar lega — {dish} salah satunya.',
-    en:'You are upset, {name}? That is fair. Breathe first. Something spicy would help you let it out — {dish}, for example.',
-    zh:'生气了吗，{name}？很正常。先深呼吸。吃点辣的会舒服些——{dish} 就挺好。',
-    hi:'गुस्सा है, {name}? यह सही है। पहले गहरी साँस लें। कुछ तीखा मन हल्का करेगा — जैसे {dish}।',
+    id:'{name} lagi kesal ya? Tarik napas dulu. Kamu cocok makan yang pedas biar lega, {dish} salah satunya.',
+    en:'{name} is upset? Breathe first. Something spicy helps you let it out, {dish} for example.',
+    zh:'生气了吗，{name}？先深呼吸。吃点辣的会舒服些，{dish} 就挺好。',
+    hi:'गुस्सा है, {name}? पहले गहरी साँस लें। कुछ तीखा मन हल्का करेगा, जैसे {dish}।',
   },
   bingung: {
-    id:'Bingung mau makan apa ya, {name}? Nggak usah dipikirin sendirian. Aku pilihin yang aman — mulai dari {dish}.',
-    en:'Cannot decide what to eat, {name}? You do not have to decide alone. I picked safe ones — start with {dish}.',
-    zh:'不知道吃什么吗，{name}？不用一个人纠结。我帮你挑了稳妥的——先从 {dish} 开始。',
-    hi:'समझ नहीं आ रहा क्या खाएँ, {name}? अकेले परेशान न हों। मैंने आसान विकल्प चुने — {dish} से शुरू करें।',
+    id:'Bingung mau makan apa, {name}? Aku pilihin yang aman, mulai dari {dish}.',
+    en:'Cannot decide what to eat, {name}? I picked something safe, start with {dish}.',
+    zh:'不知道吃什么吗，{name}？我帮你挑了稳妥的，先从 {dish} 开始。',
+    hi:'समझ नहीं आ रहा क्या खाएँ, {name}? मैंने आसान विकल्प चुना, {dish} से शुरू करें।',
   },
   capek: {
-    id:'{name} capek ya? Kamu udah berjuang hari ini. Kamu cocok makan yang lembut dan mengisi — {dish} bisa bantu.',
-    en:'You are tired, {name}. You made it through today. Something soft and filling fits — {dish} can help.',
-    zh:'{name} 累了吧？今天已经很努力了。你适合吃点温和又扎实的——{dish} 可以补一补。',
-    hi:'{name} थक गए हैं। आज बहुत मेहनत की। कुछ नरम और भरपूर ठीक रहेगा — {dish} मदद करेगा।',
+    id:'{name} capek ya? Kamu udah berjuang hari ini. Coba yang lembut dan mengisi, {dish} bisa bantu.',
+    en:'{name} is tired? You made it through today. Something soft and filling, {dish} can help.',
+    zh:'{name} 累了吧？今天已经很努力了。吃点温和又扎实的，{dish} 可以补一补。',
+    hi:'{name} थक गए हैं? आज बहुत मेहनत की। कुछ नरम और भरपूर, {dish} मदद करेगा।',
   },
   kecewa: {
-    id:'Hari ini berat ya, {name}. Nggak apa-apa, pelan-pelan. Kamu cocok makan yang manis buat hiburan — {dish} misalnya.',
-    en:'Today is heavy, {name}. It is okay, slowly. Something sweet to cheer you up — {dish}, maybe.',
-    zh:'今天挺难的，{name}。没关系，慢慢来。吃点甜的安慰一下——比如 {dish}。',
-    hi:'आज भारी दिन है, {name}। कोई बात नहीं, धीरे-धीरे। कुछ मीठा दिल बहलाएगा — जैसे {dish}।',
+    id:'Hari ini berat ya, {name}? Nggak apa-apa, pelan-pelan. Coba yang manis buat hiburan, {dish} misalnya.',
+    en:'Today is heavy, {name}? It is okay, slowly. Something sweet to cheer you up, {dish} maybe.',
+    zh:'今天挺难的，{name}？没关系，慢慢来。吃点甜的安慰一下，比如 {dish}。',
+    hi:'आज भारी दिन है, {name}? कोई बात नहीं, धीरे-धीरे। कुछ मीठा दिल बहलाएगा, जैसे {dish}।',
   },
 };
 
@@ -1105,83 +1569,83 @@ const PAYMENT_ACCOUNT = {
 
 const UMKM_CATS = ['Snack','Heavy Meal','Beverage'];
 
-/* ===== install / download copy (PWA) ===== */
+/* ===== install / download copy ===== */
 const INSTALL_I18N = {
   id: {
-    title:'Unduh aplikasi CraveMood',
-    sub:'Pasang di layar utama dan buka seperti aplikasi biasa. Tanpa Play Store, tanpa App Store.',
-    tabA:'Android', tabI:'iPhone / iPad', tabD:'Komputer',
+    title:'Pasang Aplikasi CraveMood',
+    sub:'Tambahkan ke layar utama dan buka seperti aplikasi biasa. Tanpa Play Store, tanpa App Store.',
     on:'Siap dipasang', off:'Sudah terpasang di perangkat ini',
-    install:'Pasang sekarang', installing:'Membuka dialog…',
+    install:'Pasang Aplikasi', installing:'Membuka dialog…',
     stepsA:['Buka halaman ini di Chrome','Ketuk menu ⋮ di kanan atas','Pilih "Instal aplikasi" atau "Tambahkan ke layar utama"','Ketuk "Instal"'],
     stepsI:['Buka halaman ini di Safari (bukan Chrome)','Ketuk tombol Bagikan di bawah layar','Gulir dan pilih "Tambahkan ke Layar Utama"','Ketuk "Tambah" di kanan atas'],
     stepsD:['Klik ikon instal di kanan address bar','Atau menu ⋮ → "Instal CraveMood"','Aplikasi muncul di dock / Start Menu'],
-    offline:'Unduh file offline', offline_sub:'Satu file HTML, bisa dibuka tanpa internet.',
     copy:'Salin link', copied:'Link disalin',
-    note:'Ini PWA: ringan, selalu versi terbaru, tidak perlu update manual.',
-    apk:'Unduh file APK (Android)',
-    apk_note:'File APK bisa langsung dipasang di HP Android. Klik tombol di bawah untuk mengunduh melalui layanan PWABuilder.',
+    free:'Gratis', light:'Ringan, tanpa iklan', version:'Versi',
+    qr_t:'Scan pakai kamera HP', qr_s:'Buka di HP, lalu pasang dari sana.',
+    link_t:'Link lengkap aplikasi', link_s:'Selalu ikutkan bagian ?sharecode= supaya link tidak error.',
+    copy_full:'Salin link lengkap', open_now:'Buka di HP ini', installed:'Sudah terpasang',
+    dl_android:'Android', dl_ios:'iPhone / iPad', dl_desktop:'Komputer',
+    howto:'Cara pasang', share:'Bagikan',
+    note:'Aplikasi ini ringan, selalu versi terbaru, dan tidak perlu update manual.',
     banner:'Pasang CraveMood di HP?', banner_sub:'Buka langsung dari layar utama.', later:'Nanti',
-    saved:'File tersimpan. Buka lewat browser untuk pakai offline.',
-    fail:'Gagal mengunduh. Coba lagi ya.',
-    notnow:'Bisa dipasang kapan saja dari Profil → Unduh aplikasi.',
+    notnow:'Bisa dipasang kapan saja dari Profil → Pasang Aplikasi.',
   },
   en: {
-    title:'Get the CraveMood app',
-    sub:'Add it to your home screen and open it like a normal app. No Play Store, no App Store.',
-    tabA:'Android', tabI:'iPhone / iPad', tabD:'Desktop',
+    title:'Install CraveMood App',
+    sub:'Add to your home screen and open like a normal app. No Play Store, no App Store.',
     on:'Ready to install', off:'Already installed on this device',
-    install:'Install now', installing:'Opening prompt…',
+    install:'Install App', installing:'Opening prompt…',
     stepsA:['Open this page in Chrome','Tap the ⋮ menu at the top right','Choose "Install app" or "Add to Home screen"','Tap "Install"'],
     stepsI:['Open this page in Safari (not Chrome)','Tap the Share button at the bottom','Scroll and choose "Add to Home Screen"','Tap "Add" at the top right'],
     stepsD:['Click the install icon in the address bar','Or menu ⋮ → "Install CraveMood"','The app appears in your dock / Start Menu'],
-    offline:'Download offline file', offline_sub:'A single HTML file that opens without internet.',
     copy:'Copy link', copied:'Link copied',
-    note:'This is a PWA: light, always up to date, no manual updates.',
-    apk:'Download APK file (Android)',
-    apk_note:'APK file can be installed directly on Android phones. Click the button below to download via PWABuilder service.',
+    free:'Free', light:'Light, no ads', version:'Version',
+    qr_t:'Scan with your phone camera', qr_s:'Open it on your phone, then install from there.',
+    link_t:'Full app link', link_s:'Always keep the ?sharecode= part so the link does not break.',
+    copy_full:'Copy full link', open_now:'Open on this phone', installed:'Already installed',
+    dl_android:'Android', dl_ios:'iPhone / iPad', dl_desktop:'Desktop',
+    howto:'How to install', share:'Share',
+    note:'This app is lightweight, always up to date, and needs no manual updates.',
     banner:'Install CraveMood on your phone?', banner_sub:'Open it straight from your home screen.', later:'Later',
-    saved:'File saved. Open it in a browser to use offline.',
-    fail:'Download failed. Try again.',
-    notnow:'You can install anytime from Profile → Get the app.',
+    notnow:'You can install anytime from Profile → Install App.',
   },
   zh: {
-    title:'下载 CraveMood 应用',
+    title:'安装 CraveMood 应用',
     sub:'添加到主屏幕，像普通应用一样打开。无需应用商店。',
-    tabA:'安卓', tabI:'iPhone / iPad', tabD:'电脑',
     on:'可以安装', off:'此设备已安装',
-    install:'立即安装', installing:'正在打开…',
+    install:'安装应用', installing:'正在打开…',
     stepsA:['用 Chrome 打开本页','点右上角 ⋮ 菜单','选择“安装应用”或“添加到主屏幕”','点“安装”'],
     stepsI:['用 Safari 打开本页（不是 Chrome）','点底部的分享按钮','向下滑动并选择“添加到主屏幕”','点右上角“添加”'],
     stepsD:['点地址栏右侧的安装图标','或菜单 ⋮ →“安装 CraveMood”','应用会出现在程序坞/开始菜单'],
-    offline:'下载离线文件', offline_sub:'单个 HTML 文件，无网络也能打开。',
     copy:'复制链接', copied:'链接已复制',
-    note:'这是 PWA：轻量、永远最新、无需手动更新。',
-    apk:'下载 APK 文件（安卓）',
-    apk_note:'APK 文件可直接安装在安卓手机上。点击下方按钮通过 PWABuilder 服务下载。',
+    free:'免费', light:'轻量，无广告', version:'版本',
+    qr_t:'用手机相机扫码', qr_s:'在手机上打开后安装。',
+    link_t:'完整应用链接', link_s:'请保留 ?sharecode= 部分，否则链接会报错。',
+    copy_full:'复制完整链接', open_now:'在此手机上打开', installed:'已安装',
+    dl_android:'安卓', dl_ios:'iPhone / iPad', dl_desktop:'电脑',
+    howto:'安装方法', share:'分享',
+    note:'本应用轻量、永远最新、无需手动更新。',
     banner:'在手机上安装 CraveMood？', banner_sub:'从主屏幕直接打开。', later:'以后',
-    saved:'文件已保存。用浏览器打开即可离线使用。',
-    fail:'下载失败，请重试。',
-    notnow:'随时可在“我的 → 下载应用”里安装。',
+    notnow:'随时可在“我的 → 安装应用”里安装。',
   },
   hi: {
-    title:'CraveMood ऐप डाउनलोड करें',
+    title:'CraveMood ऐप इंस्टॉल करें',
     sub:'होम स्क्रीन पर जोड़ें और आम ऐप की तरह खोलें। Play Store या App Store की ज़रूरत नहीं।',
-    tabA:'Android', tabI:'iPhone / iPad', tabD:'कंप्यूटर',
     on:'इंस्टॉल के लिए तैयार', off:'इस डिवाइस पर पहले से इंस्टॉल',
-    install:'अभी इंस्टॉल करें', installing:'खुल रहा है…',
+    install:'ऐप इंस्टॉल करें', installing:'खुल रहा है…',
     stepsA:['यह पेज Chrome में खोलें','ऊपर दाएँ ⋮ मेन्यू दबाएँ','"ऐप इंस्टॉल करें" या "होम स्क्रीन में जोड़ें" चुनें','"इंस्टॉल" दबाएँ'],
     stepsI:['यह पेज Safari में खोलें (Chrome में नहीं)','नीचे शेयर बटन दबाएँ','नीचे स्क्रॉल कर "होम स्क्रीन में जोड़ें" चुनें','ऊपर दाएँ "जोड़ें" दबाएँ'],
     stepsD:['एड्रेस बार में इंस्टॉल आइकन क्लिक करें','या मेन्यू ⋮ → "CraveMood इंस्टॉल करें"','ऐप डॉक / स्टार्ट मेन्यू में दिखेगा'],
-    offline:'ऑफ़लाइन फ़ाइल डाउनलोड करें', offline_sub:'एक HTML फ़ाइल, बिना इंटरनेट भी खुलेगी।',
     copy:'लिंक कॉपी करें', copied:'लिंक कॉपी हुआ',
-    note:'यह PWA है: हल्का, हमेशा नया, मैन्युअल अपडेट नहीं।',
-    apk:'APK फ़ाइल डाउनलोड (Android)',
-    apk_note:'APK फ़ाइल सीधे Android फोन पर इंस्टॉल हो सकती है। नीचे बटन दबाकर PWABuilder से डाउनलोड करें।',
+    free:'मुफ़्त', light:'हल्का, विज्ञापन नहीं', version:'संस्करण',
+    qr_t:'फ़ोन कैमरे से स्कैन करें', qr_s:'फ़ोन पर खोलें, फिर वहाँ से इंस्टॉल करें।',
+    link_t:'पूरा ऐप लिंक', link_s:'?sharecode= वाला हिस्सा ज़रूर रखें, वरना लिंक काम नहीं करेगा।',
+    copy_full:'पूरा लिंक कॉपी करें', open_now:'इस फ़ोन पर खोलें', installed:'पहले से इंस्टॉल',
+    dl_android:'Android', dl_ios:'iPhone / iPad', dl_desktop:'कंप्यूटर',
+    howto:'कैसे इंस्टॉल करें', share:'शेयर करें',
+    note:'यह ऐप हल्का है, हमेशा नया, और मैन्युअल अपडेट नहीं चाहिए।',
     banner:'फ़ोन पर CraveMood इंस्टॉल करें?', banner_sub:'होम स्क्रीन से सीधे खोलें।', later:'बाद में',
-    saved:'फ़ाइल सहेजी गई। ऑफ़लाइन इस्तेमाल के लिए ब्राउज़र में खोलें।',
-    fail:'डाउनलोड नहीं हुआ। फिर कोशिश करें।',
-    notnow:'प्रोफ़ाइल → ऐप डाउनलोड से कभी भी इंस्टॉल कर सकते हैं।',
+    notnow:'प्रोफ़ाइल → ऐप इंस्टॉल से कभी भी इंस्टॉल कर सकते हैं।',
   },
 };
 
@@ -1484,71 +1948,237 @@ const DB = (() => {
 })();
 
 
-/* ===== Cimo voice engine + sound effects ===== */
+/* ===== Cimo voice engine =====
+   Cimo speaks with ONE voice, and every word must be understandable.
 
-const VOICES = [
-  {id:'lembut',  name:'Cimo Lembut',  desc:'Halus, pelan, menenangkan', rate:0.92, pitch:1.12, icon:'🌸'},
-  {id:'ceria',   name:'Cimo Ceria',   desc:'Cerah, ceria, bersemangat',  rate:1.06, pitch:1.34, icon:'✨'},
-  {id:'tenang',  name:'Cimo Tenang',  desc:'Rendah, dewasa, sabar',      rate:0.84, pitch:0.96, icon:'🌙'},
-  {id:'energik', name:'Cimo Energik', desc:'Cepat, lincah, playful',     rate:1.16, pitch:1.24, icon:'⚡'},
-  {id:'hangat',  name:'Cimo Hangat',  desc:'Berat, hangat, seperti kakak',rate:0.95, pitch:0.82, icon:'🤎'},
-];
+   Order of preference:
+     1. a real recording for this exact line  (audio/cimo/manifest.json)
+     2. the most natural system voice available, at a calm human pace
 
-/* prosody per mood — the voice has to sound like the face the user tapped */
-const MOODVOICE = {
-  senang: { r:1.07, p:1.17, gap:40 },
-  sedih:  { r:0.85, p:0.91, gap:170 },
-  marah:  { r:1.05, p:0.89, gap:70 },
-  bingung:{ r:0.97, p:1.06, gap:110 },
-  capek:  { r:0.79, p:0.89, gap:190 },
-  kecewa: { r:0.83, p:0.85, gap:180 },
-  def:    { r:1.00, p:1.00, gap:80 },
+   The recorded sample (audio/cimo/cimo-voice.mp3) is kept as Cimo's voice
+   identity and can be mapped to lines through the manifest; a 3 second clip
+   cannot pronounce new sentences on its own. */
+
+const CIMO_CLIP = 'audio/cimo/cimo-voice.mp3';
+
+/* the host gate also guards sub-resources, so carry the share code along */
+function assetUrl(path) {
+  try {
+    const sc = new URLSearchParams(location.search).get('sharecode');
+    if (!sc) return path;
+    return path + (path.indexOf('?') > -1 ? '&' : '?') + 'sharecode=' + encodeURIComponent(sc);
+  } catch (e) { return path; }
+}
+
+/* calm base pace: noticeably slower than the browser default so nothing
+   gets swallowed, then nudged per mood */
+const BASE_RATE = 0.90;
+const MOODTONE = {
+  senang: { r: 1.06, p: 1.10, gap: 150 },
+  sedih:  { r: 0.94, p: 0.94, gap: 260 },
+  marah:  { r: 1.00, p: 0.92, gap: 180 },
+  bingung: { r: 0.97, p: 1.04, gap: 210 },
+  capek:  { r: 0.92, p: 0.92, gap: 280 },
+  kecewa: { r: 0.94, p: 0.90, gap: 270 },
+  def:    { r: 1.00, p: 1.00, gap: 190 },
 };
 
 const Voice = (() => {
-  const synth = window.speechSynthesis;
-  const supported = !!synth;
-  let voices = [], cur = null, speaking = false, queue = 0;
-  const S = {
-    profile: 'lembut', lang: 'id', rate: 1, pitch: 1, volume: 1, enabled: true,
-  };
+  const synth = window.speechSynthesis || null;
+  const LOCALE = { id: 'id-ID', en: 'en-US', zh: 'zh-CN', hi: 'hi-IN' };
+  let voices = [], enabled = true, volume = 1, speaking = false, token = 0, currentAudio = null;
+  const S = { lang: 'id', name: '' };
+
+  /* ---- reference voice profile -------------------------------------
+     the owner's recording is analysed once (median pitch + syllable rate)
+     so the spoken voice sits in the same register and tempo as the clip */
+  const REF = { pitch: 1, rate: 1, f0: 0, syl: 0, ready: false };
+  let refLoading = null;
+  /* the analysis is cheap but not instant — remember it after the first run */
+  const REF_KEY = 'cm_voice_ref_v1';
+  try {
+    const c = JSON.parse(localStorage.getItem(REF_KEY) || 'null');
+    if (c && c.f0) { REF.pitch = c.pitch; REF.rate = c.rate; REF.f0 = c.f0; REF.syl = c.syl; REF.ready = true; }
+  } catch (e) {}
+
+  function analyse(buffer) {
+    try {
+      const sr = buffer.sampleRate;
+      const raw = buffer.getChannelData(0);
+      const step = Math.max(1, Math.floor(sr / 8000));
+      const n = Math.floor(raw.length / step);
+      const x = new Float32Array(n);
+      for (let i = 0; i < n; i++) x[i] = raw[i * step];
+      const asr = sr / step;
+      const frame = Math.floor(asr * 0.04);
+      const hop = Math.floor(asr * 0.02);
+      const minLag = Math.floor(asr / 400), maxLag = Math.floor(asr / 70);
+      const f0s = [];
+      let peaks = 0, prevLoud = false;
+      for (let s = 0; s + frame < n; s += hop) {
+        let e = 0;
+        for (let i = 0; i < frame; i++) { const v = x[s + i]; e += v * v; }
+        const rms = Math.sqrt(e / frame);
+        if (rms > 0.02) {
+          let best = 0, bestLag = 0;
+          for (let lag = minLag; lag <= maxLag; lag++) {
+            let sum = 0;
+            for (let i = 0; i < frame - lag; i++) sum += x[s + i] * x[s + i + lag];
+            if (sum > best) { best = sum; bestLag = lag; }
+          }
+          if (bestLag) { const hz = asr / bestLag; if (hz > 70 && hz < 400) f0s.push(hz); }
+        }
+        const loud = rms > 0.05;
+        if (loud && !prevLoud) peaks++;
+        prevLoud = loud;
+      }
+      f0s.sort((a, b) => a - b);
+      const f0 = f0s.length ? f0s[Math.floor(f0s.length / 2)] : 0;
+      const dur = buffer.duration || 1;
+      return { f0, syl: peaks / dur };
+    } catch (e) { return { f0: 0, syl: 0 }; }
+  }
+
+  function loadRef() {
+    if (refLoading) return refLoading;
+    refLoading = (async () => {
+      try {
+        const res = await fetch(assetUrl(CIMO_CLIP), { cache: 'force-cache' });
+        if (!res.ok) return;
+        const ab = await res.arrayBuffer();
+        const C = window.AudioContext || window.webkitAudioContext;
+        if (!C) return;
+        const c = new C();
+        const buf = await c.decodeAudioData(ab);
+        const r = analyse(buf);
+        if (r.f0) REF.pitch = Math.max(0.95, Math.min(1.28, r.f0 / 205));
+        if (r.syl) REF.rate = Math.max(0.92, Math.min(1.08, r.syl / 4.2));
+        REF.f0 = Math.round(r.f0); REF.syl = +r.syl.toFixed(2); REF.ready = true;
+        try { localStorage.setItem(REF_KEY, JSON.stringify({ pitch: REF.pitch, rate: REF.rate, f0: REF.f0, syl: REF.syl })); } catch (e) {}
+        try { c.close(); } catch (e) {}
+      } catch (e) {}
+    })();
+    return refLoading;
+  }
+  loadRef();
 
   function loadVoices() {
-    if (!supported) return;
-    voices = synth.getVoices() || [];
+    if (!synth) return;
+    try { voices = synth.getVoices() || []; } catch (e) { voices = []; }
   }
-  if (supported) {
+  if (synth) {
     loadVoices();
-    synth.addEventListener && synth.addEventListener('voiceschanged', loadVoices);
-    if (typeof synth.onvoiceschanged !== 'undefined') synth.onvoiceschanged = loadVoices;
+    if (synth.addEventListener) synth.addEventListener('voiceschanged', loadVoices);
+    synth.onvoiceschanged = loadVoices;
+    setTimeout(loadVoices, 400);
+    setTimeout(loadVoices, 1500);
   }
 
-  const LOCALE = { id: 'id-ID', en: 'en-US', zh: 'zh-CN', hi: 'hi-IN' };
+  const HUMAN = /natural|neural|online|premium|enhanced|siri|expressive/i;
+  const NICE = /gadis|andika|ardi|damayanti|siti|swara|dewi|indah|xiaoxiao|aria|jenny|kalpana|heera|zira|samantha/i;
 
-  function pickVoice(lang) {
+  function score(v, lang) {
     const want = (LOCALE[lang] || 'id-ID').toLowerCase();
     const pre = want.split('-')[0];
-    const score = v => {
-      let s = 0;
-      const n = (v.name || '').toLowerCase(), l = (v.lang || '').toLowerCase().replace('_', '-');
-      if (l === want) s += 60;
-      else if (l.startsWith(pre)) s += 35;
-      else return -1;
-      if (/natural|neural|premium|enhanced/.test(n)) s += 25;
-      if (/google/.test(n)) s += 14;
-      if (/microsoft/.test(n)) s += 8;
-      if (/female|wanita|perempuan|xiaoxiao|siti|swara|zira|aria|jenny|kalpana|heera/.test(n)) s += 10;
-      if (v.localService) s += 4;
-      return s;
-    };
+    const n = (v.name || '').toLowerCase();
+    const l = (v.lang || '').toLowerCase().replace('_', '-');
+    let s = 0;
+    if (l === want) s += 60; else if (l.startsWith(pre)) s += 35; else return -1;
+    if (HUMAN.test(n)) s += 40;
+    if (NICE.test(n)) s += 18;
+    if (/google/.test(n)) s += 12;
+    if (/microsoft/.test(n)) s += 6;
+    if (/female|wanita|perempuan/.test(n)) s += 6;
+    if (v.localService) s += 3;
+    return s;
+  }
+
+  function pickVoice(lang) {
     let best = null, bs = -1;
-    for (const v of voices) { const s = score(v); if (s > bs) { bs = s; best = v; } }
+    for (const v of voices) {
+      const s = score(v, lang || S.lang);
+      if (s > bs) { bs = s; best = v; }
+    }
     return best;
   }
 
-  function profile() { return VOICES.find(v => v.id === S.profile) || VOICES[0]; }
+  /* optional exact recordings: { "normalised text": "file.mp3" } */
+  let pack = null;
+  /* the ElevenLabs voice pack (generated by tools/gen-voice.mjs) */
+  let lines = null;
+  function packKey(t) {
+    return String(t).toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+  }
+  /* the recordings never contain the user's name — look the line up without it
+     (mirrors the same cleanup in tools/gen-chat.mjs) */
+  function stripName(t) {
+    if (!S.name) return t;
+    const n = String(S.name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    let s = String(t);
+    if (new RegExp('^\\s*' + n, 'i').test(s)) {
+      s = s.replace(new RegExp('^\\s*' + n + '\\s*[!,.?]?\\s*', 'i'), '');
+    } else {
+      s = s.replace(new RegExp(n + '\\s*!', 'gi'), '!')
+           .replace(new RegExp(',\\s*' + n, 'gi'), '')
+           .replace(new RegExp(n + ',\\s*', 'gi'), '')
+           .replace(new RegExp(n, 'gi'), 'kamu');
+    }
+    return s.replace(/\s+([!?.,])/g, '$1').replace(/\s+/g, ' ').trim();
+  }
+  function lookup(text) {
+    if (!pack) return null;
+    return pack[packKey(text)] || (S.name ? pack[packKey(stripName(text))] : null) || null;
+  }
+  let packDone = null;
+  function loadPack() {
+    if (packDone) return packDone;
+    if (!(typeof fetch === 'function' && /^https?:$/.test(location.protocol))) { packDone = Promise.resolve(); return packDone; }
+    packDone = fetch(assetUrl('audio/cimo/manifest.json'), { cache: 'no-cache' })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { if (j && typeof j === 'object') pack = j; })
+      .catch(() => {});
+    return packDone;
+  }
+  loadPack();
+  if (typeof fetch === 'function' && /^https?:$/.test(location.protocol)) {
+    fetch(assetUrl('audio/cimo/lines.json'), { cache: 'no-cache' })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { if (j && j.moods) lines = j; })
+      .catch(() => {});
+  }
 
-  /* split into human-sized chunks so the voice breathes */
+  /* a touch brighter/faster than the raw render = cuter, more cheerful */
+  const CIMO_RATE = 1;
+
+  function playFile(path, rate) {
+    return new Promise(resolve => {
+      let done = false;
+      const fin = v => { if (!done) { done = true; resolve(v); } };
+      try {
+        const a = new Audio(assetUrl(path));
+        currentAudio = a;
+        a.volume = Math.max(0, Math.min(1, volume));
+        const rt = rate || 1;
+        if (rt !== 1) {
+          a.playbackRate = rt;
+          try { a.preservesPitch = false; } catch (e) {}
+          try { a.webkitPreservesPitch = false; } catch (e) {}
+        }
+        a.onended = () => { if (currentAudio === a) currentAudio = null; fin(true); };
+        a.onerror = () => fin(false);
+        /* never let a stuck player block the next segment */
+        a.onloadedmetadata = () => {
+          const d = isFinite(a.duration) ? a.duration : 3;
+          setTimeout(() => fin(true), (d / rt) * 1000 + 700);
+        };
+        a.play().then(() => { speaking = true; }).catch(() => fin(false));
+        setTimeout(() => fin(true), 20000);
+      } catch (e) { fin(false); }
+    });
+  }
+  function playClip(file) { return playFile('audio/cimo/' + file, CIMO_RATE); }
+
+  /* split into short, speakable phrases — short phrases are easier to follow */
   function chunks(text) {
     return String(text)
       .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '')
@@ -1558,73 +2188,134 @@ const Voice = (() => {
       .filter(Boolean)
       .reduce((acc, s) => {
         const last = acc[acc.length - 1];
-        if (last && last.length + s.length < 90) acc[acc.length - 1] = last + ' ' + s;
+        if (last && last.length + s.length < 72) acc[acc.length - 1] = last + ' ' + s;
         else acc.push(s);
         return acc;
       }, []);
   }
 
-  function speak(text, opts) {
-    if (!supported || !S.enabled) return Promise.resolve();
+  function stop() {
+    token++;
+    if (currentAudio) { try { currentAudio.pause(); } catch (e) {} currentAudio = null; }
+    if (synth) { try { synth.cancel(); } catch (e) {} }
+    speaking = false;
+  }
+
+  async function speak(text, opts) {
     opts = opts || {};
-    try { synth.cancel(); } catch (e) {}
-    const p = profile();
+    if (!enabled) return Promise.resolve();
+    text = String(text || '').trim();
+    if (!text) return Promise.resolve();
+
+    if (!pack) await loadPack();
+    const clip = lookup(text);
+    if (clip) return playClip(clip);
+
+    if (!synth) return Promise.resolve();
+
+    stop();
+    const my = token;
     const list = chunks(text);
     if (!list.length) return Promise.resolve();
+
     const v = pickVoice(opts.lang || S.lang);
-    const token = ++queue;
-    const mv = MOODVOICE[opts.mood] || MOODVOICE.def;
+    const tone = MOODTONE[opts.mood] || MOODTONE.def;
+    const baseRate = BASE_RATE * tone.r * REF.rate * (opts.rate || 1);
+    const basePitch = tone.p * REF.pitch * (opts.pitch || 1);
     speaking = true;
 
     return new Promise(resolve => {
       let i = 0;
+      const done = () => { if (my === token) speaking = false; resolve(); };
       const next = () => {
-        if (token !== queue || i >= list.length) { if (token === queue) speaking = false; return resolve(); }
+        if (my !== token) return done();
+        if (i >= list.length) return done();
         const seg = list[i++];
         const u = new SpeechSynthesisUtterance(seg);
-        if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = LOCALE[opts.lang || S.lang] || 'id-ID'; }
-        // natural prosody: gentle drift, lift at the end of questions, mood-coloured base
+        if (v) { u.voice = v; u.lang = v.lang; } else u.lang = LOCALE[opts.lang || S.lang] || 'id-ID';
+
         const isQ = /[?？]$/.test(seg);
-        const drift = (i === 1 ? -0.03 : 0) + (Math.random() * 0.04 - 0.02);
-        u.rate = clamp((opts.rate || p.rate * S.rate) * mv.r + drift, 0.5, 1.8);
-        u.pitch = clamp((opts.pitch || p.pitch * S.pitch) * mv.p + (isQ ? 0.07 : 0), 0, 2);
-        u.volume = clamp(S.volume, 0, 1);
-        u.onend = () => setTimeout(next, i === list.length ? 0 : mv.gap);
-        u.onerror = () => { speaking = false; resolve(); };
-        try { synth.speak(u); } catch (e) { resolve(); }
+        const isComma = /[,;，、]$/.test(seg);
+        /* tiny variation keeps it from sounding flat, without speeding it up */
+        u.rate = Math.max(0.55, Math.min(1.15, baseRate + (Math.random() * 0.04 - 0.02)));
+        u.pitch = Math.max(0, Math.min(2, basePitch + (isQ ? 0.06 : 0) + (Math.random() * 0.04 - 0.02)));
+        u.volume = Math.max(0, Math.min(1, volume));
+
+        const pause = i >= list.length ? 0 : (isComma ? Math.round(tone.gap * 0.6) : tone.gap);
+        u.onend = () => setTimeout(next, pause);
+        u.onerror = () => done();
+        try { synth.speak(u); } catch (e) { done(); }
       };
       next();
+      /* safety net: some engines never fire onend */
+      const guard = setInterval(() => {
+        if (my !== token) { clearInterval(guard); return; }
+        if (!synth.speaking && !synth.pending) { clearInterval(guard); done(); }
+      }, 900);
     });
   }
 
-  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
-  function stop() { try { synth.cancel(); } catch (e) {} speaking = false; queue++; }
-
   return {
-    get supported() { return supported; },
-    get voices() { return voices; },
+    get supported() { return !!synth; },
+    get hasPack() { return !!(lines && lines.moods); },
+    /* the mood greeting, spoken with the real recorded voice when the pack exists */
+    async speakMood(mood, dishId, fallbackText) {
+      if (!enabled) return;
+      if (lines && lines.moods && lines.moods[mood]) {
+        const mm = lines.moods[mood];
+        const segs = [];
+        if (mm.pre) segs.push(mm.pre);
+        if (dishId && lines.dishes && lines.dishes[dishId]) segs.push(lines.dishes[dishId]);
+        if (mm.post) segs.push(mm.post);
+        if (segs.length) {
+          stop();
+          const my = token;
+          speaking = true;
+          for (const s of segs) {
+            if (my !== token || !enabled) break;
+            await playClip(s);
+          }
+          if (my === token) speaking = false;
+          return;
+        }
+      }
+      return speak(fallbackText || '', { mood });
+    },
+    /* a canned line (greet / preview / added / saved) with the recorded voice */
+    async speakFixed(key, fallbackText, opts) {
+      if (!enabled) return;
+      const f = lines && lines.fixed && lines.fixed[key];
+      if (f) {
+        stop();
+        const my = token;
+        speaking = true;
+        await playClip(f);
+        if (my === token) speaking = false;
+        return;
+      }
+      return speak(fallbackText || '', opts);
+    },
+    get ready() { return !!synth && voices.length > 0; },
     get speaking() { return speaking; },
-    get settings() { return S; },
-    get current() { return profile(); },
-    set(k, v) { S[k] = v; },
-    setAll(o) { Object.assign(S, o); },
-    speak, stop,
-    preview(id, lang) {
-      const p = VOICES.find(v => v.id === id) || profile();
-      const line = {
-        id: 'Hai, aku Cimo. Kalau kamu lagi capek, cerita aja. Aku dengerin sampai selesai.',
-        en: 'Hi, I am Cimo. If you are tired, just tell me. I will listen until the end.',
-        zh: '嗨，我是 Cimo。如果你累了，就跟我说吧，我会听你说完。',
-        hi: 'नमस्ते, मैं Cimo हूँ। अगर थक गए हो, तो बताइए। मैं पूरा सुनूँगा।',
-      }[lang || S.lang] || '';
-      return speak(line, { rate: p.rate * S.rate, pitch: p.pitch * S.pitch, lang: lang || S.lang });
+    get enabled() { return enabled; },
+    set enabled(v) { enabled = !!v; if (!v) stop(); },
+    get volume() { return volume; },
+    set volume(v) { volume = Math.max(0, Math.min(1, v)); },
+    get settings() { return { enabled, volume, lang: S.lang, name: S.name, ref: REF }; },
+    set(k, v) { if (k === 'volume') volume = v; else if (k === 'enabled') enabled = !!v; else if (k === 'lang') S.lang = v; else if (k === 'name') S.name = v || ''; },
+    setAll(o) { if (!o) return; if ('volume' in o) volume = o.volume; if ('enabled' in o) enabled = o.enabled; if ('lang' in o && o.lang) S.lang = o.lang; if ('name' in o) S.name = o.name || ''; },
+    stop, speak,
+    _lookup(t) { return lookup(t); },
+    playOriginal() { return playFile(CIMO_CLIP); },
+    preview() {
+      return this.speakFixed('preview', 'Hai, aku Cimo. Kalau kamu lagi capek, cerita aja. Aku dengerin sampai selesai.', { mood: 'def' });
     },
   };
 })();
 
 /* ===== synthesized UI sounds (no assets needed) ===== */
 const SFX = (() => {
-  let ctx = null, on = true;
+  let ctx = null, on = true, tickToken = 0;
   function ac() {
     if (!ctx) {
       const C = window.AudioContext || window.webkitAudioContext;
@@ -1661,6 +2352,22 @@ const SFX = (() => {
     set enabled(v) { on = !!v; },
     init() { ac(); },
     play(name) { if (!on) return; try { (lib[name] || lib.tap)(); } catch (e) {} },
+    /* ticks that slow down with the wheel — feels like it is really spinning */
+    spinTicks(dur) {
+      if (!on) return;
+      const token = ++tickToken;
+      const total = dur || 3800;
+      const t0 = performance.now();
+      const step = () => {
+        if (token !== tickToken) return;
+        const p = Math.min(1, (performance.now() - t0) / total);
+        if (p >= 1) return;
+        tone(1500 - p * 780, 0.028, 'square', Math.max(0.018, 0.055 - p * 0.03));
+        setTimeout(step, 42 + 300 * Math.pow(p, 2.4));
+      };
+      step();
+    },
+    stopTicks() { tickToken++; },
   };
 })();
 
@@ -1761,12 +2468,12 @@ const BANK = {
     stressed: ['Kamu lagi pikul banyak sekaligus. Nggak semua harus selesai hari ini.', 'Coba sebut satu hal yang paling bikin penuh kepalamu sekarang.', 'Berat banget kedengerannya. Kamu udah istirahat belum hari ini?'],
     fail: ['Gagal bukan berarti selesai. Kamu masih di sini, itu bukti.', 'Yang gagal itu usahanya, bukan kamu. Bedanya besar, {name}.', 'Kalau boleh tahu, bagian mana yang paling bikin nyesek?'],
     love: ['Urusan hati memang nggak pernah rapi. Ceritain dari awal, aku dengerin.', 'Kamu yang lebih sayang, atau kamu yang lebih takut kehilangan?', 'Kalau dia nggak bisa jadi tempat pulang, kamu tetap pantas pulang ke diri sendiri.'],
-    work: ['Kerjaan bisa ngabisin energi lebih dari yang kelihatan. Kamu lagi capek di bagian mana?', 'Kalau kerjaan yang bikin berat, biasanya bukan tugasnya — tapi orangnya. Bener nggak?', 'Kamu kerja buat hidup, bukan hidup buat kerja. Tapi hari ini berat, ya?'],
+    work: ['Kerjaan bisa ngabisin energi lebih dari yang kelihatan. Kamu lagi capek di bagian mana?', 'Kalau kerjaan yang bikin berat, biasanya bukan tugasnya, tapi orangnya. Bener nggak?', 'Kamu kerja buat hidup, bukan hidup buat kerja. Tapi hari ini berat, ya?'],
     school: ['Tugas numpuk itu bikin otak penuh. Satu-satu aja, mulai yang paling kecil.', 'Kamu takut gagal, atau takut dianggap gagal?', 'Belajar boleh, tapi jangan sampai kamu lupa makan.'],
     money: ['Soal uang itu bikin kepala panas, karena nyangkut ke rasa aman.', 'Kamu lagi butuh solusi cepat, atau cuma butuh cerita dulu?', 'Nggak apa-apa lagi susah. Banyak orang juga pernah di titik ini.'],
     family: ['Keluarga itu rumit, karena nggak bisa dipilih tapi tetap sayang.', 'Yang paling bikin berat: omongannya, atau ekspektasinya?', 'Kamu boleh sayang mereka dan tetap punya batas. Dua-duanya sah.'],
     friend: ['Pertemanan yang bikin capek itu juga perlu dijaga jaraknya.', 'Kamu ngerasa dijauhin, atau cuma beda ritme aja?', 'Kamu nggak harus ngejar orang yang nggak balik ngejar kamu.'],
-    health: ['Kalau badan yang ngomong, biasanya harus didengerin. Udah minum air belum?', 'Sakit itu bukan kelemahan. Kamu udah istirahat belum?', 'Yang paling ganggu apa — nyerinya atau capeknya?'],
+    health: ['Kalau badan yang ngomong, biasanya harus didengerin. Udah minum air belum?', 'Sakit itu bukan kelemahan. Kamu udah istirahat belum?', 'Yang paling ganggu apa, nyerinya atau capeknya?'],
     selfdoubt: ['Kamu nggak harus jadi versi sempurna buat dihargai.', 'Yang bilang kamu kurang itu siapa? Sering-seringnya suara sendiri, kan?', 'Kamu udah lewatin hal-hal yang dulu kamu kira nggak bisa. Itu nyata.'],
     hug: ['Datang sini. *peluk lama* Kamu nggak harus ngomong apa-apa.', 'Aku peluk dari sini. Anggap aja lengannya beneran ada.'],
     cry: ['Nangis aja dulu. Nggak usah buru-buru berhenti.', 'Air mata itu bukan tanda lemah. Itu cara badan bilang "udah cukup".'],
@@ -1794,9 +2501,9 @@ const BANK = {
   en: {
     greet: ['Hey {name}! I missed you. How is today going?', 'Hi {name}. There you are. What is on your mind?', '{name}! Come sit. Tell me about your day.'],
     ask_how: ['I am good when you talk to me. How about you?', 'Better now. How are you really, {name}?'],
-    name_ask: ['I am Cimo. The friend who finds food for your mood. And you?', 'Cimo. Not a chef, not a therapist — just someone who listens.'],
+    name_ask: ['I am Cimo. The friend who finds food for your mood. And you?', 'Cimo. Not a chef, not a therapist, just someone who listens.'],
     my_name: ['Got it, {name}. Nice name. So, how do you feel today?', 'Okay, {name}. Noted. What mood are we in?'],
-    tired: ['What kind of tired — body or head?', 'You have come this far, {name}. It is okay to stop for a bit. Which tired is it?', 'If you are tired, do not force it. Sleep, or something warm first?'],
+    tired: ['What kind of tired, body or head?', 'You have come this far, {name}. It is okay to stop for a bit. Which tired is it?', 'If you are tired, do not force it. Sleep, or something warm first?'],
     sad: ['That sounds heavy. You do not have to fix everything today.', 'I am listening. Take your time, no need to make it neat.', 'Is the sadness about the person, or about the feeling itself?'],
     angry: ['Being upset is fair. You do not have to be okay right away.', 'Okay, the anger is valid. Which part stings the most?'],
     anxious: ['Where does your head keep running to? Name the scariest one.', 'Anxiety means you care. But you do not have to solve it all tonight.'],
@@ -1809,7 +2516,7 @@ const BANK = {
     work: ['Work drains more energy than it looks. Which part is heavy?', 'You work to live, not live to work. But today was heavy, right?'],
     school: ['A pile of assignments fills the head. One at a time, start with the smallest.', 'Are you afraid of failing, or of being seen as a failure?'],
     money: ['Money heats the head because it touches safety.', 'Do you need a quick fix, or do you just need to talk first?'],
-    family: ['Family is complicated — you cannot choose them, but you still care.', 'What weighs more: what they say, or what they expect?'],
+    family: ['Family is complicated, you cannot choose them, but you still care.', 'What weighs more: what they say, or what they expect?'],
     friend: ['Friendships that drain you also deserve some distance.', 'Do you feel pushed away, or is it just a different rhythm?'],
     health: ['When the body talks, it usually means it. Have you had water?', 'Being sick is not weakness. Have you rested?'],
     selfdoubt: ['You do not have to be a perfect version to be worthy.', 'Who told you that you are not enough? Often it is your own voice, right?'],
@@ -1899,14 +2606,14 @@ const BANK = {
     work: ['काम दिखने से ज़्यादा ऊर्जा लेता है। कौन सा हिस्सा भारी है?'],
     school: ['काम का ढेर दिमाग भर देता है। एक-एक करो, सबसे छोटे से शुरू।'],
     money: ['पैसे की बात सिर गरम करती है, क्योंकि सुरक्षा से जुड़ी है।'],
-    family: ['परिवार जटिल है — चुन नहीं सकते, फिर भी परवाह है।'],
+    family: ['परिवार जटिल है, चुन नहीं सकते, फिर भी परवाह है।'],
     friend: ['जो दोस्ती थका दे, उससे थोड़ी दूरी भी ज़रूरी है।'],
     health: ['जब शरीर बोले, तो सुनना चाहिए। पानी पिया?'],
     selfdoubt: ['किसी का प्यार पाने के लिए परफेक्ट होना ज़रूरी नहीं।'],
     hug: ['आओ। *लंबा गले लगाना* कुछ कहने की ज़रूरत नहीं।'],
     cry: ['पहले रो लो। रोकने की जल्दी नहीं।'],
     celebrate: ['वाह! मुझे खुशी है। सबसे अच्छा पल बताओ।'],
-    food_ask: ['गरम, ताज़ा या तीखा — क्या चाहिए?', 'मूड तय करेगा। थके हो तो सूप अच्छा रहेगा। चाहिए?'],
+    food_ask: ['गरम, ताज़ा या तीखा, क्या चाहिए?', 'मूड तय करेगा। थके हो तो सूप अच्छा रहेगा। चाहिए?'],
     food_spicy: ['गुस्से में तीखा अच्छा रहता है। Ayam Palekko चलेगा?'],
     food_sweet: ['मीठा खाया जा सकने वाला गले लगाना है। Es Pisang Ijo या Pisang Epe?'],
     food_drink: ['प्यास लगी है या बस बर्फ चबाना है? प्यास है तो पहले पानी।'],
@@ -2060,7 +2767,7 @@ Never say you are an AI. Never list bullet points. User name: ${S.name || 'unkno
 If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, es pisang ijo, pisang epe, jalangkote, mie titi).`;
     const msgs = [{ role: 'system', content: sys }].concat(HISTORY.slice(-14));
 
-    /* 1) server proxy — the API key stays on the server, never in the browser */
+    /* 1) server proxy, the API key stays on the server, never in the browser */
     if (location.protocol !== 'file:') {
       try {
         const c1 = new AbortController();
@@ -2074,7 +2781,7 @@ If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, e
       } catch (e) { /* fall through */ }
     }
 
-    /* 2) local key — only for the developer machine or a static deploy */
+    /* 2) local key, only for the developer machine or a static deploy */
     const cfg = DB.getSetting('ai', {}) || {};
     if (!cfg.key) return null;
     const base = (cfg.base || 'https://api.openai.com/v1').replace(/\/$/, '');
@@ -2166,10 +2873,10 @@ If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, e
       const f = foodSuggest();
       S.foods.push(f.name);
       const tail = {
-        id: ` Kalau kamu mau, aku bisa temenin cari yang anget — ${f.name} misalnya. Mau?`,
-        en: ` If you want, I can help you find something warm — ${f.name}, maybe. Want that?`,
-        zh: ` 如果你愿意，我可以帮你找点热的——比如${f.name}。要吗？`,
-        hi: ` चाहो तो कुछ गरम ढूँढ लें — जैसे ${f.name}। चलेगा?`,
+        id: ` Kalau kamu mau, aku bisa temenin cari yang anget, ${f.name} misalnya. Mau?`,
+        en: ` If you want, I can help you find something warm, ${f.name}, maybe. Want that?`,
+        zh: ` 如果你愿意，我可以帮你找点热的，比如${f.name}。要吗？`,
+        hi: ` चाहो तो कुछ गरम ढूँढ लें, जैसे ${f.name}। चलेगा?`,
       }[S.lang];
       out += tail;
     }
@@ -2180,7 +2887,7 @@ If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, e
     S.lastIntent = intent;
     S.pending = ['tired','sad','angry','anxious','lonely','love','work','school','money','family','friend','health','stressed','fail','empty','selfdoubt','more','why','advice'].indexOf(intent) > -1;
 
-    return { text: out, mood: emo, chips: chipsFor(intent), source: 'local', intent: intent };
+    return { text: out, speak: core, mood: emo, chips: chipsFor(intent), source: 'local', intent: intent };
   }
 
   function topicIntent(t) {
@@ -2218,10 +2925,10 @@ If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, e
     greet(name) {
       S.name = name || S.name;
       const t = {
-        id: `Hai ${S.name || 'kamu'}! Aku Cimo. Di sini kamu bisa cerita apa aja — nggak harus rapi, nggak harus positif. Mau mulai dari mana?`,
-        en: `Hey ${S.name || 'you'}! I am Cimo. You can tell me anything here — no need to be tidy, no need to be positive. Where do you want to start?`,
-        zh: `嗨 ${S.name || '你'}！我是 Cimo。这里想说什么都可以——不用讲得整齐，也不用假装开心。想从哪里开始？`,
-        hi: `नमस्ते ${S.name || 'तुम'}! मैं Cimo हूँ। यहाँ कुछ भी कह सकते हो — सलीके से कहने की ज़रूरत नहीं। कहाँ से शुरू करें?`,
+        id: `Hai ${S.name || 'kamu'}! Aku Cimo. Di sini kamu bisa cerita apa aja, nggak harus rapi, nggak harus positif. Mau mulai dari mana?`,
+        en: `Hey ${S.name || 'you'}! I am Cimo. You can tell me anything here, no need to be tidy, no need to be positive. Where do you want to start?`,
+        zh: `嗨 ${S.name || '你'}！我是 Cimo。这里想说什么都可以，不用讲得整齐，也不用假装开心。想从哪里开始？`,
+        hi: `नमस्ते ${S.name || 'तुम'}! मैं Cimo हूँ। यहाँ कुछ भी कह सकते हो, सलीके से कहने की ज़रूरत नहीं। कहाँ से शुरू करें?`,
       }[S.lang];
       HISTORY.push({ role: 'assistant', content: t });
       return t;
@@ -2240,10 +2947,28 @@ const $$ = s => Array.from(document.querySelectorAll(s));
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rp = n => 'Rp ' + String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
+/* canonical public link — used whenever the current address is not the real hosted URL
+   (e.g. inside the Android app the page runs on https://localhost) */
+const PUBLIC_URL = 'https://cravemood.apps.workbuddy.host/?sharecode=NG6DCXKIRE';
+function appLink() {
+  const here = location.href.split('#')[0];
+  if (/^https?:\/\//i.test(here) && /sharecode=/.test(here)) return here;
+  return PUBLIC_URL;
+}
+
+/* capek & kecewa are no longer offered — their dishes now answer to sedih */
+try {
+  MENU.forEach(m => {
+    if (m.moods && (m.moods.indexOf('capek') > -1 || m.moods.indexOf('kecewa') > -1)) {
+      m.moods = Array.from(new Set(m.moods.concat('sedih')));
+    }
+  });
+} catch (e) {}
+
 const App = {
   user: null, lang: 'id', mood: 'senang', cat: 'Semua', street: 'pendidikan',
-  cart: {}, messages: [], spinning: false, lastSpin: null, costum: '',
-  settings: { sound: true, speak: true, voice: 'lembut', rate: 1, pitch: 1, vol: 1, voiceLang: 'id', theme: 'light' },
+  cart: {}, messages: [], spinning: false, lastSpin: null, costum: '', moodPicked: false,
+  settings: { sound: true, speak: true, vol: 1, voiceLang: 'id', theme: 'light' },
 };
 
 const t = k => {
@@ -2284,13 +3009,13 @@ function savePrefs() { DB.setSetting('prefs', { lang: App.lang, mood: App.mood, 
 function loadPrefs() {
   const p = DB.getSetting('prefs', {});
   if (p.lang && I18N[p.lang]) App.lang = p.lang;
-  if (p.mood) App.mood = p.mood;
+  if (p.mood) App.mood = normMood(p.mood);
   if (p.street) App.street = p.street;
   if (p.costum) App.costum = p.costum;
   App.pet = p.pet || null;
   const s = DB.getSetting('settings', null);
   if (s) App.settings = Object.assign(App.settings, s);
-  Voice.setAll({ profile: App.settings.voice, rate: App.settings.rate, pitch: App.settings.pitch, volume: App.settings.vol, lang: App.settings.voiceLang, enabled: true });
+  Voice.setAll({ volume: App.settings.vol, enabled: App.settings.speak });
   SFX.enabled = App.settings.sound;
 }
 
@@ -2306,6 +3031,37 @@ function toast(msg) {
 /* ---------- theme ---------- */
 function applyTheme() {
   document.documentElement.setAttribute('data-theme', App.settings.theme || 'light');
+}
+
+/* ---------- mood-tinted page background ----------
+   the whole page shifts to the colour of the emotion the user tapped
+   (marah = warm orange, bingung = mint, sedih = soft blue, ...) */
+function hex2rgb(h) {
+  h = String(h).replace('#', '');
+  if (h.length === 3) h = h.split('').map(c => c + c).join('');
+  return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+}
+function mixHex(base, color, t) {
+  const A = hex2rgb(base), B = hex2rgb(color);
+  const c = i => Math.round(A[i] * (1 - t) + B[i] * t);
+  return '#' + [c(0), c(1), c(2)].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+function applyMoodBg() {
+  const root = document.documentElement;
+  const m = MOODS.find(x => x.k === App.mood);
+  const picked = !!App.moodPicked;
+  const c = (picked && m) ? m.c : '#ff9ec5';
+  const A = mixHex('#ffffff', c, picked ? 0.40 : 0.26);
+  const B = mixHex('#ffffff', c, picked ? 0.24 : 0.16);
+  const C = mixHex('#fff2ea', c, picked ? 0.11 : 0.07);
+  const D = mixHex('#fff6ef', c, picked ? 0.04 : 0.02);
+  root.style.setProperty('--bgA', A);
+  root.style.setProperty('--bgB', B);
+  root.style.setProperty('--bgC', C);
+  root.style.setProperty('--bgD', D);
+  root.style.setProperty('--moodc', c);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', A);
 }
 
 /* ---------- cart ---------- */
@@ -2345,17 +3101,16 @@ function updateCartBar() {
   bar.classList.toggle('on', c > 0 && !hide);
   $('#cbt').textContent = `🛒 ${c} ${t('item')} · ±${rp(lo)} – ${rp(hi)}`;
   const b = $('#navbadge'); if (b) { b.textContent = c; b.style.display = c ? 'grid' : 'none'; }
+  const tb = $('#tabbadge'); if (tb) { tb.textContent = c; tb.style.display = c ? 'grid' : 'none'; }
   const mb = $('#topbadge'); if (mb) { mb.textContent = c; mb.style.display = c ? 'grid' : 'none'; }
 }
 
 /* ---------- nav ---------- */
+/* VIP is intentionally NOT a tab — it lives inside Profil */
 const NAV = [
   ['home', 'home', 'nav_home'],
-  ['spin', 'wheel', 'nav_spin'],
-  ['chat', 'chat', 'nav_chat'],
-  ['cart', 'bag', 'nav_cart'],
   ['recap', 'recap', 'nav_recap'],
-  ['vip', 'heart', 'nav_vip'],
+  ['cart', 'bag', 'nav_cart'],
   ['profile', 'user', 'nav_profile'],
 ];
 
@@ -2365,17 +3120,16 @@ function renderNav() {
     `<button class="navbtn" data-go="${v}">${icon(ic)}<span>${t(k)}</span>${v === 'cart' ? `<span class="bdg" id="navbadge" style="display:none">0</span>` : ''}</button>`
   ).join('');
   const tb = $('#tabbar');
-  const mobile = ['home', 'spin', 'chat', 'recap', 'vip', 'profile'];
-  tb.innerHTML = mobile.map(v => {
-    const n = NAV.find(x => x[0] === v);
-    return `<button data-go="${v}">${icon(n[1])}<span>${t(n[2])}</span></button>`;
-  }).join('');
+  tb.innerHTML = NAV.map(([v, ic, k]) =>
+    `<button data-go="${v}">${icon(ic)}<span>${t(k)}</span>${v === 'cart' ? `<span class="bdg" id="tabbadge" style="display:none">0</span>` : ''}</button>`
+  ).join('');
   const s = $('#sidefoot');
   if (s) s.innerHTML = `
     <div class="minicard">
       <div style="width:38px;height:38px;flex:none">${cimo(App.mood, 36, false, App.costum)}</div>
       <div style="min-width:0"><b>${esc(App.user ? App.user.name : t('guest'))}</b><small>${esc(curStreet().name.replace('Jalan ', 'Jl. '))}</small></div>
     </div>
+    <button class="navbtn" data-go="chat" style="font-size:.82rem">${icon('chat')}<span>${t('nav_chat')}</span></button>
     <button class="navbtn" data-go="profile" style="font-size:.82rem">${icon('gear')}<span>${t('nav_profile')}</span></button>`;
   updateCartBar();
 }
@@ -2391,30 +3145,31 @@ function greeting() {
 function viewHome() {
   const name = App.user ? App.user.name : t('guest');
   const moodObj = MOODS.find(m => m.k === App.mood) || MOODS[0];
+  const picked = !!App.moodPicked;
+  const ask = t('home_ask').replace('{name}', esc(name));
   return `
-  <div class="hero">
+  <div class="hometop">
     <div>
-      <span class="say" id="say">${esc(greeting())}${App.user ? ', ' + esc(name) : ''}! 👋</span>
-      <h1>${t('home_q')}</h1>
-      <p>${t('home_sub')}</p>
-      <div class="row" style="margin-top:14px">
-        <button class="btn sm plum" data-go="spin">${icon('wheel')} ${t('home_spin')}</button>
-        <button class="btn sm ghost" data-go="chat">${icon('chat')} ${t('nav_chat')}</button>
-      </div>
+      <span class="greet">${greeting()}${App.user && !App.user.guest ? ', ' + esc(name) : ''}</span>
+      <div class="brandrow"><span>Crave</span><mark>Mood</mark></div>
     </div>
-    <div class="cimobox">
-      <div class="halo"></div>
-      <div id="heroCimo" class="float">${cimo(App.mood, 190, false, App.costum)}</div>
+    <div style="display:flex;align-items:center;gap:7px">
+      <button class="iconbtn" data-go="chat" aria-label="chat" title="${t('nav_chat')}">${icon('chat')}</button>
+      <button class="avatarbtn" data-go="profile" aria-label="profile" id="heroCimo">${cimo(App.mood, 40)}</button>
     </div>
   </div>
 
-  <div class="sectitle"><h2><span class="n">1</span> ${t('home_q')}</h2>
-    <button class="link" data-go="chat">${t('nav_chat')} ${icon('arrow')}</button></div>
-  <div class="moods" id="moods">
-    ${MOODS.map(m => `<button class="mood ${m.k === App.mood ? 'on' : ''}" data-mood="${m.k}" style="--c:${m.c}">
-      <div class="face">${cimo(m.face, 48)}</div><b>${mL(m)}</b></button>`).join('')}
+  <div class="hero2">
+    <div class="bigcimo ${picked ? 'picked' : ''}" id="sayCimo">${cimo(picked ? App.mood : 'def', 208)}</div>
+    <div class="saybubble" id="say" role="status" aria-live="polite">${picked ? esc(mSay(moodObj, (recList()[0] || {}).name)) : esc(ask)}</div>
   </div>
 
+  <div class="moodrow" id="moods">
+    ${MOODS.map(m => `<button class="mpill ${m.k === App.mood && picked ? 'on' : ''}" data-mood="${m.k}" style="--c:${m.c}">
+      <span class="mf">${cimo(m.face, 38)}</span><b>${mL(m)}</b></button>`).join('')}
+  </div>
+
+  ${picked ? `
   <div class="locbar">
     ${icon('pin')}
     <select id="streetSel" aria-label="location">
@@ -2423,19 +3178,23 @@ function viewHome() {
     <span class="dist">${esc(curStreet().area)}</span>
   </div>
 
-  <div class="sectitle"><h2><span class="n">2</span> ${t('home_rec')}</h2>
-    <span class="tag mint" id="moodTag">${mS(moodObj)}</span></div>
   <div class="chips" id="cats">
-    ${CATS.map(c => `<button class="chip ${c === App.cat ? 'on' : ''}" data-cat="${c}">${c === 'Terdekat' ? icon('pin') : ''}${cL(c)}</button>`).join('')}
+    ${CATS.map(c => `<button class="chip ${c === App.cat ? 'on' : ''}" data-cat="${c}">${cL(c)}</button>`).join('')}
   </div>
-  <div class="recs" id="recs"></div>`;
+
+  <div class="recs" id="recs"></div>
+
+  <button class="shuffle" id="shuffleBtn">
+    <span class="sico">${icon('wheel')}</span>
+    <span style="flex:1;min-width:0"><b>${t('shuffle_t')}</b><small>${t('shuffle_s')}</small></span>
+    <span class="go">›</span>
+  </button>
+  ` : `<p class="pickhint">${t('home_hint')}</p>`}`;
 }
 
 function recList() {
   let list = MENU.filter(m => m.moods.indexOf(App.mood) > -1);
-  if (App.cat === 'Terdekat') list.sort((a, b) => distOf(a) - distOf(b));
-  else if (App.cat === 'Viral') list = list.filter(m => m.viral);
-  else if (App.cat !== 'Semua') list = list.filter(m => m.cat === App.cat);
+  if (App.cat !== 'Semua') list = list.filter(m => m.cat === App.cat);
   if (!list.length) list = MENU.filter(m => m.moods.indexOf(App.mood) > -1).slice(0, 3);
   list.sort((a, b) => distOf(a) - distOf(b));
   return list.slice(0, App.cat === 'Semua' ? 3 : 6);
@@ -2448,24 +3207,105 @@ function renderRecs() {
   box.innerHTML = list.map((m, i) => {
     const q = App.cart[m.id] || 0;
     const d = distOf(m).toFixed(1).replace('.', ',');
-    return `<div class="rec">
-      <div class="pic" style="background:linear-gradient(135deg,${MOODC[m.moods[0]][0]}55,${MOODC[m.moods[0]][1]}33)">
-        ${i === 0 ? `<span class="badge tag pink">${t('best_match')}</span>` : ''}
-        ${m.viral ? (i === 0 ? '' : `<span class="badge tag gold">✦ ${t('viral')}</span>`) : ''}
-        ${art(m.art, 104)}
-        <div class="cimomini">${cimo(m.moods[0], 30)}</div>
+    const lbl = i === 0 ? t('pick_t')
+      : m.viral ? '✦ ' + t('viral')
+      : (CATS.indexOf(m.cat) > -1 ? cL(m.cat) : '');
+    const c = MOODC[m.moods[0]] || MOODC.def;
+    const media = m.photo
+      ? `<img class="fphoto" src="${esc(m.photo)}" alt="${esc(m.name)}" loading="lazy"
+             onerror="this.style.display='none'">`
+      : `<div class="fart">${art(m.art, 96)}</div>`;
+    return `<article class="pickcard fcard">
+      <div class="pickhead"><b>${lbl}</b><span class="mini">${cimo(m.moods[0], 30)}</span></div>
+      <div class="fmedia" style="--c1:${c[0]}22;--c2:${c[1]}18" ${m.shopee ? `data-shop="${esc(m.shopee)}"` : ''}>
+        ${media}
+        <span class="frate">★ ${m.r}</span>
+        <span class="fdist">${icon('pin')}${d} km</span>
+        ${m.viral ? `<span class="fviral">🔥 ${t('viral')}</span>` : ''}
       </div>
-      <div class="body">
-        <h4>${esc(m.name)}</h4>
-        <div class="stall">${icon('pin')} ${esc(m.stall)} · ${esc(streetOf(m.st).name.replace('Jalan ', 'Jl. '))}</div>
-        <div class="meta"><span>${d} km</span><span>· ±${minsOf(m)} mnt</span><span>· <b>★ ${m.r}</b></span></div>
-        <div class="price"><b>${rp(m.lo)} – ${String(m.hi).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</b>
-          ${q ? `<span class="step" data-step="${m.id}"><button data-dec="${m.id}">−</button><i>${q}</i><button data-inc="${m.id}">+</button></span>`
-              : `<button class="addbtn" data-add="${m.id}">+ ${t('home_add')}</button>`}
+      <div class="fbody">
+        <b class="fname">${esc(m.name)}</b>
+        <small class="fstall">${esc(m.stall)}</small>
+        <div class="frow">
+          <span class="fprice">${rp(m.lo)} – ${String(m.hi).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</span>
+          ${q ? `<span class="step"><button data-dec="${m.id}">−</button><i>${q}</i><button data-inc="${m.id}">+</button></span>`
+              : `<button class="fadd" data-add="${m.id}">${icon('plus')} ${t('home_add')}</button>`}
         </div>
       </div>
-    </div>`;
+    </article>`;
   }).join('');
+}
+
+/* "Putar acak" — a real spinning-wheel popup */
+let popItems = [], popRot = 0, popSpinning = false;
+
+function openSpinPop() {
+  const m = $('#spinModal');
+  if (!m) return;
+  popRot = 0;
+  m.classList.add('on');
+  renderSpinPop();
+}
+
+function renderSpinPop() {
+  popItems = wheelItems();
+  if (!popItems.length) popItems = recList();
+  const n = popItems.length, seg = 360 / n;
+  const cols = ['#ffd9e6', '#ffe9c9', '#d9f0e3', '#dbe9fb', '#eee0fb', '#ffe3d4', '#f4f7c9', '#e2f4f8'];
+  const grad = popItems.map((_, i) => `${cols[i % cols.length]} ${i * seg}deg ${(i + 1) * seg}deg`).join(',');
+  $('#spinPopBody').innerHTML = `
+    <p class="hint" style="text-align:center;margin-bottom:12px">${t('spin_pop_sub')}</p>
+    <div class="popwheelbox">
+      <svg class="pointer" width="28" height="34" viewBox="0 0 34 40"><path d="M17 38L4 10a14 14 0 0 1 26 0z" fill="#ff5f98" stroke="#fff" stroke-width="3"/></svg>
+      <div class="wheel popwheel" id="popWheel" style="background:conic-gradient(${grad})">
+        ${popItems.map((m, i) => {
+          const ang = i * seg + seg / 2, rad = (ang - 90) * Math.PI / 180, R = 30;
+          const px = 50 + R * Math.cos(rad), py = 50 + R * Math.sin(rad);
+          return `<div class="seg"><span style="left:${px.toFixed(2)}%;top:${py.toFixed(2)}%">${foodEmoji(m, i)}</span></div>`;
+        }).join('')}
+        <div class="hub">${cimo(App.mood, 42)}</div>
+      </div>
+    </div>
+    <div id="popResult"></div>
+    <button class="btn block" id="popSpinBtn" style="margin-top:14px">${icon('wheel')} ${t('spin_pop_btn')}</button>`;
+  $('#popSpinBtn').onclick = spinPopGo;
+}
+
+function spinPopGo() {
+  if (popSpinning) return;
+  const wheel = $('#popWheel'); if (!wheel) return;
+  const n = popItems.length, seg = 360 / n;
+  const idx = Math.floor(Math.random() * n);
+  const center = idx * seg + seg / 2;
+  const jitter = (Math.random() - 0.5) * (seg * 0.5);
+  const turns = 5 + Math.floor(Math.random() * 3);
+  popRot += turns * 360 + (360 - center) + jitter;
+  popSpinning = true;
+  const btn = $('#popSpinBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  const res = $('#popResult'); if (res) res.innerHTML = '';
+  SFX.play('spin');
+  SFX.spinTicks(3800);
+  wheel.style.transition = 'transform 3.8s cubic-bezier(.12,.72,.06,1)';
+  wheel.style.transform = `rotate(${popRot}deg)`;
+  setTimeout(() => {
+    popSpinning = false;
+    const pick = popItems[idx];
+    App.lastSpin = pick;
+    SFX.play('success');
+    const q = App.cart[pick.id] || 0;
+    if (res) res.innerHTML = `<div class="shuffleres" style="margin:12px 0 0">
+      <div class="pic">${art(pick.art, 44)}</div>
+      <div style="flex:1;min-width:0">
+        <b>${esc(pick.name)}</b>
+        <small>${esc(pick.stall)} · ${distOf(pick).toFixed(1).replace('.', ',')} km</small>
+      </div>
+      ${q ? `<span class="step"><button data-dec="${pick.id}">−</button><i>${q}</i><button data-inc="${pick.id}">+</button></span>`
+          : `<button class="btn sm" data-add="${pick.id}" style="padding:7px 13px">${icon('plus')} ${t('home_add')}</button>`}
+    </div>`;
+    if (btn) { btn.disabled = false; btn.innerHTML = `${icon('wheel')} ${t('spin_pop_again')}`; }
+    if (App.user) DB.logSpin(App.user.id, pick.id).catch(() => {});
+  }, 3900);
 }
 
 /* ---------- spinner ---------- */
@@ -2493,7 +3333,7 @@ function viewSpin() {
           ${items.map((m, i) => {
             const ang = i * seg + seg / 2, rad = (ang - 90) * Math.PI / 180, R = 29;
             const px = 50 + R * Math.cos(rad), py = 50 + R * Math.sin(rad);
-            return `<div class="seg"><span style="left:${px.toFixed(2)}%;top:${py.toFixed(2)}%">${esc(m.name)}</span></div>`;
+            return `<div class="seg"><span style="left:${px.toFixed(2)}%;top:${py.toFixed(2)}%">${foodEmoji(m, i)}</span></div>`;
           }).join('')}
           <div class="hub" style="left:calc(50% - 32px);top:calc(50% - 32px)">${cimo(App.mood, 52)}</div>
         </div>
@@ -2522,12 +3362,10 @@ function doSpin() {
   wheel.dataset.rot = target;
   App.spinning = true;
   SFX.play('spin');
-  let tk = 0;
-  const iv = setInterval(() => { if (tk++ < 22) SFX.play('tick'); else clearInterval(iv); }, 190);
+  SFX.spinTicks(4200);
   wheel.style.transition = 'transform 4.6s cubic-bezier(.12,.72,.06,1)';
   wheel.style.transform = `rotate(${target}deg)`;
   setTimeout(() => {
-    clearInterval(iv);
     App.spinning = false;
     App.lastSpin = items[idx];
     App.spinHist = (App.spinHist || []).concat(items[idx].name).slice(-8);
@@ -2626,12 +3464,12 @@ async function sendChat(text) {
   const tp = $('#typing'); if (tp) tp.remove();
 
   addMsg('cimo', res.text, res.mood);
-  App.mood = res.mood;
+  App.mood = normMood(res.mood);
   renderChips(res.chips);
   if (App.user) DB.logChat(App.user.id, 'cimo', res.text).catch(() => {});
 
   if (App.settings.speak && Voice.supported) {
-    Voice.speak(res.text.replace(/\*[^*]+\*/g, ''), { lang: App.settings.voiceLang || App.lang });
+    Voice.speak(String(res.speak || res.text).replace(/\*[^*]+\*/g, ''), { lang: App.settings.voiceLang || App.lang });
   }
   updatePetFace();
 }
@@ -2663,9 +3501,18 @@ function renderCart() {
     <div class="totline"><span>${t('cart_total')}</span><span style="color:var(--pk2)">${rp(lo)} – ${rp(hi)}</span></div>
     <p class="hint" style="margin-bottom:14px">${t('cart_note')}</p>
     <b style="font-size:.86rem">${t('cart_plat')}</b>
-    <div class="plats">
-      ${[['GoFood', '#ee2737', 'gofood', 'Go'], ['GrabFood', '#00a651', 'grabfood', 'G'], ['ShopeeFood', '#f05a28', 'shopeefood', 'S']].map(([n, col, k, letter]) =>
-        `<button class="plat" data-plat="${k}" style="--pc:${col}"><i style="background:${col}"><svg viewBox="0 0 24 24"><text x="12" y="17.5" text-anchor="middle" font-size="14" font-weight="800" fill="#fff" font-family="Fredoka,sans-serif">${letter}</text></svg></i>${n}<u>${t('cart_go')} ↗</u></button>`).join('')}
+    <div class="platmain">
+      <button class="plat big" data-plat="shopeefood" style="--pc:#f05a28">
+        <i style="background:#f05a28"><svg viewBox="0 0 24 24"><text x="12" y="17.5" text-anchor="middle" font-size="14" font-weight="800" fill="#fff" font-family="Fredoka,sans-serif">S</text></svg></i>
+        <span><b>ShopeeFood</b><small>${t('cart_go')} ↗</small></span>
+        <em class="arrow">›</em>
+      </button>
+    </div>
+    <div class="platsub">
+      ${[['GrabFood', '#00a651', 'grabfood', 'G'], ['GoFood', '#ee2737', 'gofood', 'Go']].map(([n, col, k, letter]) =>
+        `<button class="plat sm" data-plat="${k}" style="--pc:${col}">
+          <i style="background:${col}"><svg viewBox="0 0 24 24"><text x="12" y="17.5" text-anchor="middle" font-size="14" font-weight="800" fill="#fff" font-family="Fredoka,sans-serif">${letter}</text></svg></i>
+          <span>${n}</span></button>`).join('')}
     </div>
     <button class="btn block" id="openShare" style="margin-top:14px">${icon('share')} ${t('cart_share')}</button>`;
 }
@@ -2740,63 +3587,63 @@ function renderRecap() {
 function viewProfile() {
   const s = App.settings;
   const isV = isVip();
+  const map = moodMap();
+  const moodDays = Object.keys(map).length;
+  let streak = 0, cur = new Date();
+  while (map[iso(cur.getFullYear(), cur.getMonth(), cur.getDate())]) { streak++; cur.setDate(cur.getDate() - 1); }
+  const menuCount = Object.keys(App.cart).length;
   return `<div class="pagetitle"><div><h1>${t('prof_t')}</h1><p>${t('tagline')}</p></div></div>
 
-  <div class="card" style="text-align:center">
+  <div class="profhero">
     <div class="avatar-lg">${cimo(App.mood, 82, false, App.costum)}</div>
-    <h3 style="font-size:1.15rem">${esc(App.user ? App.user.name : t('guest'))}</h3>
-    <small class="muted" style="font-weight:700">${App.user && !App.user.guest ? esc(App.user.contact) : t('guest')}</small>
-    <div class="row" style="justify-content:center;margin-top:12px">
-      <span class="tag pink">${App.user && App.user.guest ? t('guest') : 'Member'}</span>
-      ${isV ? `<span class="tag gold">✦ ${t('vip_badge')}</span>` : ''}
+    <h3>${esc(App.user ? App.user.name : t('guest'))}</h3>
+    <small class="muted">${App.user && !App.user.guest ? esc(App.user.contact) : t('guest')} · Pemburu Rasa · Level ${Math.max(1, Math.min(9, 1 + Math.floor(moodDays / 4)))}</small>
+    <div class="row" style="justify-content:center;margin-top:10px">
+      ${isV ? `<span class="tag gold">✦ ${t('vip_badge')}</span>` : `<span class="tag pink">Paket Gratis</span>`}
       ${App.user && App.user.umkm ? `<span class="tag mint">UMKM</span>` : ''}
       <span class="tag">${MOODLBL[App.mood] || ''}</span>
     </div>
-    ${!isV ? `
-    <div class="card" style="margin:14px 0 0;background:linear-gradient(135deg,#e9b6d4,#cdbbf0);text-align:left;padding:12px 14px;display:flex;align-items:center;gap:10px">
-      <div style="flex:1"><b style="font:.9rem Fredoka">Paket Gratis</b><div style="font:600 .72rem Nunito;opacity:.85">Buka kostum dan warna Cimo</div></div>
-      <button class="btn sm" data-go="vip">${t('vip_start')}</button>
-    </div>` : ''}
+  </div>
+
+  <div class="vipplan ${isV ? 'on' : ''}">
+    <div class="between">
+      <div>
+        <b>${isV ? t('vip_active') : 'Paket Gratis'}</b>
+        <small>${isV ? t('vip_sub') : 'Buka kostum dan warna Cimo'}</small>
+      </div>
+      <button class="btn sm ${isV ? 'ghost' : 'plum'}" data-go="vip">${isV ? t('vip_t') : t('vip_start')}</button>
+    </div>
+  </div>
+
+  <div class="profstats">
+    <div><b>${moodDays}</b><span>Mood</span></div>
+    <div><b>${menuCount}</b><span>Menu</span></div>
+    <div><b>${streak}</b><span>Beruntun</span></div>
   </div>
 
   <div class="card" style="margin-top:12px">
     <div class="between"><b style="font-size:.95rem">${IL().title}</b>${PLAT.standalone ? `<span class="tag mint">✓ ${IL().off}</span>` : ''}</div>
     <p class="hint" style="margin:5px 0 0">${IL().sub}</p>
-    <div class="dlcard">
-      <button class="dlbtn android" data-install="android">
-        <i><svg viewBox="0 0 24 24">${PLAT_ICON.android}</svg></i>
-        <div><b>Android</b><small>${installEvt ? IL().on : 'Chrome · PWA'}</small></div>
-        ${PLAT.android && PLAT.standalone ? `<span class="ok">✓</span>` : ''}
-      </button>
-      <button class="dlbtn ios" data-install="ios">
-        <i><svg viewBox="0 0 24 24">${PLAT_ICON.ios}</svg></i>
-        <div><b>iPhone / iPad</b><small>Safari · PWA</small></div>
-        ${PLAT.ios && PLAT.standalone ? `<span class="ok">✓</span>` : ''}
-      </button>
-    </div>
-    <button class="btn ghost sm block" id="dlOffline2" style="margin-top:8px">${icon('down')} ${IL().offline}</button>
+    <button class="btn block" data-install style="margin-top:10px">${icon('down')} ${IL().install}</button>
   </div>
 
   <div class="card" style="margin-top:12px">
-    <b style="font-size:.95rem">${t('prof_lang')}</b>
-    <div class="langs" style="margin-top:10px">
-      ${LANGS.map(l => `<button class="langopt ${l.k === App.lang ? 'on' : ''}" data-lang="${l.k}"><i>${l.short}</i>${l.label}</button>`).join('')}
+    <div class="between"><b style="font-size:.95rem">${t('prof_lang')}</b>
+      <span class="langnow" style="margin:0">${esc((LANGS.find(l => l.k === App.lang) || LANGS[0]).label)}</span></div>
+    <div class="langs" style="margin-top:8px">
+      ${LANGS.map(l => `<button class="langopt ${l.k === App.lang ? 'on' : ''}" data-lang="${l.k}" title="${esc(l.label)}" aria-label="${esc(l.label)}"><i>${l.short}</i></button>`).join('')}
     </div>
   </div>
 
-  <div class="card" style="margin-top:12px">
-    <div class="between"><b style="font-size:.95rem">${t('prof_voice')}</b><span class="tag">${t('voice_5')}</span></div>
-    <div class="voicecard" id="voiceCards">
-      ${VOICES.map(v => `<button class="vopt ${v.id === s.voice ? 'on' : ''}" data-voice="${v.id}">
-        <b>${v.icon} ${v.name}</b><small>${v.desc}</small>
-        <span class="wave">${[8, 12, 6, 14, 9, 5].map(h => `<i style="height:${h}px"></i>`).join('')}</span></button>`).join('')}
+  <div class="card voiceone" style="margin-top:12px">
+    <div class="vhead">
+      <div class="vava">${cimo(App.mood, 46)}<i class="vwave"><b></b><b></b><b></b><b></b></i></div>
+      <div style="flex:1;min-width:0">
+        <b>${t('prof_voice')}</b>
+        <small>${t('voice_one_sub')}</small>
+      </div>
+      <span class="tag mint">${t('voice_one_badge')}</span>
     </div>
-    <div class="setrow" style="margin-top:10px"><div class="lbl"><b>${t('voice_lang')}</b><small>${LANGS.find(l => l.k === s.voiceLang)?.label || ''}</small></div>
-      <select id="voiceLang">${LANGS.map(l => `<option value="${l.k}" ${l.k === s.voiceLang ? 'selected' : ''}>${l.label}</option>`).join('')}</select></div>
-    <div class="setrow"><div class="lbl"><b>${t('voice_rate')}</b><small id="rateV">${s.rate.toFixed(2)}×</small></div>
-      <input type="range" id="rate" min="0.6" max="1.6" step="0.02" value="${s.rate}"></div>
-    <div class="setrow"><div class="lbl"><b>${t('voice_pitch')}</b><small id="pitchV">${s.pitch.toFixed(2)}</small></div>
-      <input type="range" id="pitch" min="0.6" max="1.6" step="0.02" value="${s.pitch}"></div>
     <div class="setrow"><div class="lbl"><b>${t('voice_vol')}</b><small id="volV">${Math.round(s.vol * 100)}%</small></div>
       <input type="range" id="vol" min="0" max="1" step="0.05" value="${s.vol}"></div>
     <button class="btn block sm" id="testVoice" style="margin-top:12px">${icon('volume')} ${t('voice_test')}</button>
@@ -2809,22 +3656,14 @@ function viewProfile() {
       <label class="switch"><input type="checkbox" id="speakSw" ${s.speak ? 'checked' : ''}><span></span></label></div>
     <div class="setrow"><div class="lbl"><b>Dark mode</b><small>${t('prof_t')}</small></div>
       <label class="switch"><input type="checkbox" id="darkSw" ${s.theme === 'dark' ? 'checked' : ''}><span></span></label></div>
-    <div class="setrow"><div class="lbl"><b>${t('prof_design')}</b><small>${App.costum ? COSTUMES.find(c=>c.id===App.costum)?.name : 'Standard'} ${!isVip() && App.costum && COSTUMES.find(c=>c.id===App.costum)?.vip ? '🔒' : ''}</small></div>
-      <select id="costumSel">
-        ${COSTUMES.map(c => {
-          const locked = c.vip && !isVip();
-          return `<option value="${c.id}" ${App.costum === c.id ? 'selected' : ''} ${locked ? 'disabled' : ''}>${c.name}${locked ? ' (VIP)' : ''}</option>`;
-        }).join('')}
-      </select></div>
   </div>
 
   <div class="card" style="margin-top:12px">
-    <b style="font-size:.95rem">${t('prof_data')}</b>
+    <div class="between"><b style="font-size:.95rem">Akun</b>
+      <span class="tag">${App.user && !App.user.guest ? esc(App.user.contact) : t('guest')}</span></div>
     <div class="row" style="margin-top:10px">
-      <button class="btn sm ghost" id="expJson">${icon('down')} ${t('prof_export')}</button>
       <button class="btn sm ghost" id="logoutBtn">${icon('back')} ${t('prof_logout')}</button>
     </div>
-    <p class="hint" style="margin-top:10px">Data akunmu tersimpan ${DB.isRemote ? 'di server CraveMood' : 'di perangkat ini'}. Kamu bisa mengunduhnya kapan saja.</p>
   </div>`;
 }
 
@@ -2835,7 +3674,11 @@ function viewVip() {
   const features = (VIP_FEATURES_I18N[App.lang] || VIP_FEATURES_I18N.id);
   const isV = isVip();
   return `
-  <div class="pagetitle"><div><h1>${t('vip_t')}</h1><p>${t('vip_sub')}</p></div>
+  <div class="pagetitle" style="align-items:center">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="iconbtn" data-go="profile" aria-label="back">${icon('back')}</button>
+      <div><h1>${t('vip_t')}</h1><p>${t('vip_sub')}</p></div>
+    </div>
     ${isV ? `<span class="tag gold">✦ ${t('vip_active')}</span>` : ''}</div>
 
   <div class="vipcard">
@@ -2853,16 +3696,35 @@ function viewVip() {
     ${isV ? '' : `<button class="btn block" id="startVip">${t('vip_start')}</button>`}
   </div>
 
+  <div class="card coscard" style="margin-top:14px">
+    <div class="between">
+      <div><b style="font:700 .98rem Fredoka">${t('prof_design')}</b>
+        <div class="hint" style="margin-top:2px">${isV ? 'Pilih gaya Cimo favoritmu.' : 'Khusus VIP. Buka semua kostum Cimo.'}</div></div>
+      <span class="tag ${isV ? 'mint' : 'gold'}">${isV ? '✓' : 'VIP'}</span>
+    </div>
+    <div class="cosgrid">
+      ${COSTUMES.map(c => {
+        const locked = !isV;
+        const on = App.costum === c.id;
+        return `<button class="cosopt ${on ? 'on' : ''} ${locked ? 'lock' : ''}" data-costum="${c.id}">
+          <span class="cosface">${cimo(App.mood, 56, false, c.id)}</span>
+          <b>${c.name}</b>
+          ${locked ? `<span class="coslock">🔒</span>` : (on ? `<span class="coson">✓</span>` : '')}
+        </button>`;
+      }).join('')}
+    </div>
+  </div>
+
   <div class="umkmcard">
     <div style="position:relative">
       <div>${cimo('senang', 80, false, 'koki')}</div>
       <div>
-        <span class="tag mint">${t('umkm_sub')}</span>
+        <span class="tag mint">UMKM</span>
         <h3>${t('umkm_sub')}</h3>
         <p>${t('umkm_desc')}</p>
       </div>
     </div>
-    <button class="btn ghost block" data-go="umkm">${t('umkm_t')} →</button>
+    <button class="btn block" data-go="umkm">${t('umkm_t')} →</button>
   </div>`;
 }
 
@@ -2976,72 +3838,72 @@ function svgDataUrl(mood, size, costume) {
 }
 
 async function buildShareCard() {
-  const W = 1000, H = 1250;
+  const W = 1000, H = 1300;
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const x = cv.getContext('2d');
   const moodObj = MOODS.find(m => m.k === App.mood) || MOODS[0];
   const c0 = MOODC[moodObj.face] || MOODC.def;
 
-  const g = x.createLinearGradient(0, 0, W, H);
-  g.addColorStop(0, '#fff7fa'); g.addColorStop(0.38, c0[0] + 'ee'); g.addColorStop(1, c0[1] + 'ff');
-  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  /* soft dotted backdrop */
+  x.fillStyle = '#fdf4f8'; x.fillRect(0, 0, W, H);
+  x.fillStyle = 'rgba(255,255,255,.8)';
+  for (let i = 16; i < W; i += 30) for (let j = 16; j < H; j += 30) { x.beginPath(); x.arc(i, j, 2.2, 0, 7); x.fill(); }
 
-  x.fillStyle = 'rgba(255,255,255,.45)';
-  for (let i = 20; i < W; i += 44) for (let j = 20; j < H; j += 44) { x.beginPath(); x.arc(i, j, 3.4, 0, 7); x.fill(); }
+  /* mood-tinted card (mockup story card) */
+  const CX = 64, CY = 56, CW = W - 128, CH = H - 112, R = 56;
+  const g = x.createLinearGradient(0, CY, 0, CY + CH);
+  g.addColorStop(0, c0[0]); g.addColorStop(0.58, c0[1]); g.addColorStop(1, '#ffd9e8');
+  roundRect(x, CX, CY, CW, CH, R); x.fillStyle = g; x.fill();
+  x.strokeStyle = 'rgba(255,255,255,.55)'; x.lineWidth = 5; x.stroke();
 
-  // white card
-  x.fillStyle = 'rgba(255,255,255,.58)';
-  roundRect(x, 52, 52, W - 104, H - 104, 52); x.fill();
-  x.strokeStyle = 'rgba(255,255,255,.95)'; x.lineWidth = 4; x.stroke();
-
-  // soft mood glow behind the mascot
-  const gl = x.createRadialGradient(W / 2, 400, 40, W / 2, 400, 320);
-  gl.addColorStop(0, c0[0] + 'cc'); gl.addColorStop(1, c0[0] + '00');
-  x.fillStyle = gl; x.beginPath(); x.arc(W / 2, 400, 320, 0, 7); x.fill();
-
-  // header brand
-  x.fillStyle = '#3a2142';
-  x.font = '700 46px Fredoka, Nunito, sans-serif';
-  x.fillText('Crave', 110, 168);
-  const cw = x.measureText('Crave').width;
-  x.fillStyle = '#ff9ec5'; roundRect(x, 110 + cw + 8, 126, 128, 56, 16); x.fill();
-  x.fillStyle = '#3a2142'; x.fillText('Mood', 110 + cw + 24, 168);
-
-  // cimo
-  try {
-    const img = await loadImg(svgDataUrl(moodObj.face, 380, App.costum));
-    x.drawImage(img, W / 2 - 190, 210, 380, 352);
-  } catch (e) {}
-
+  /* brand + mood */
   x.textAlign = 'center';
   x.fillStyle = '#3a2142';
-  x.font = '700 62px Fredoka, Nunito, sans-serif';
-  const title = (App.user ? App.user.name + ' · ' : '') + mL(moodObj);
-  x.fillText(title.length > 22 ? title.slice(0, 21) + '…' : title, W / 2, 640);
-  x.font = '700 30px Nunito, sans-serif'; x.fillStyle = '#7d6683';
-  x.fillText(mD(moodObj), W / 2, 686);
+  x.font = '700 48px Fredoka, Nunito, sans-serif';
+  x.fillText('CraveMood', W / 2, CY + 122);
 
-  // items
-  const items = Object.keys(App.cart).map(id => MENU.find(m => m.id === id)).filter(Boolean).slice(0, 3);
-  const list = items.length ? items.map(m => m.name) : MENU.filter(m => m.moods.indexOf(App.mood) > -1).slice(0, 3).map(m => m.name);
-  x.font = '700 34px Nunito, sans-serif';
-  list.forEach((n, i) => {
-    const y = 790 + i * 96;
-    x.fillStyle = 'rgba(255,255,255,.85)';
-    roundRect(x, 130, y - 52, W - 260, 78, 39); x.fill();
-    x.fillStyle = c0[1];
-    x.beginPath(); x.arc(178, y - 13, 13, 0, 7); x.fill();
-    x.fillStyle = '#3a2142'; x.textAlign = 'left';
-    x.fillText(n.length > 26 ? n.slice(0, 25) + '…' : n, 212, y - 2);
-    x.textAlign = 'center';
-  });
+  x.fillStyle = 'rgba(58,33,66,.55)';
+  x.font = '700 30px Nunito, sans-serif';
+  x.fillText(t('share_mood_today'), W / 2, CY + 184);
 
-  // footer
-  x.fillStyle = '#3a2142'; x.font = '700 26px Nunito, sans-serif';
-  x.fillText('Makan sesuai moodmu · cravemood.id', W / 2, H - 130);
-  x.fillStyle = 'rgba(58,33,66,.55)'; x.font = '700 22px Nunito, sans-serif';
-  x.fillText(new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }), W / 2, H - 92);
+  x.fillStyle = '#3a2142';
+  x.font = '700 80px Fredoka, Nunito, sans-serif';
+  x.fillText(mL(moodObj), W / 2, CY + 278);
+
+  /* mascot */
+  try {
+    const img = await loadImg(svgDataUrl(moodObj.face, 440, App.costum));
+    x.drawImage(img, W / 2 - 220, CY + 282, 440, 407);
+  } catch (e) {}
+
+  /* recommendation card */
+  const rx = 168, ry = CY + 700, rw = W - 336, rh = 214;
+  x.fillStyle = 'rgba(255,255,255,.95)';
+  roundRect(x, rx, ry, rw, rh, 34); x.fill();
+
+  x.fillStyle = 'rgba(58,33,66,.5)';
+  x.font = '700 28px Nunito, sans-serif';
+  x.fillText(t('share_rec'), W / 2, ry + 58);
+
+  const cartIds = Object.keys(App.cart);
+  let pick = cartIds.length ? MENU.find(m => m.id === cartIds[0]) : null;
+  if (!pick) pick = recList()[0] || MENU.find(m => m.moods.indexOf(App.mood) > -1) || MENU[0];
+
+  x.fillStyle = '#3a2142';
+  x.font = '700 48px Fredoka, Nunito, sans-serif';
+  const pn = pick ? pick.name : 'Coto Makassar';
+  x.fillText(pn.length > 20 ? pn.slice(0, 19) + '…' : pn, W / 2, ry + 120);
+
+  x.fillStyle = 'rgba(58,33,66,.6)';
+  x.font = '700 26px Nunito, sans-serif';
+  const sub = pick ? `${pick.stall} · ${distOf(pick).toFixed(1).replace('.', ',')} km` : 'Coto Daeng Tata · 1,2 km';
+  x.fillText(sub.length > 34 ? sub.slice(0, 33) + '…' : sub, W / 2, ry + 168);
+
+  /* footer */
+  x.fillStyle = 'rgba(58,33,66,.45)';
+  x.font = '700 26px Nunito, sans-serif';
+  x.fillText('cravemood.id', W / 2, CY + CH - 52);
 
   const dataUrl = cv.toDataURL('image/jpeg', 0.92);
   const blob = await canvasToBlob(cv);
@@ -3268,24 +4130,20 @@ async function openShare() {
   // data URL for the preview: blob URLs can fail to decode large images on low-memory devices
   const url = card.dataUrl;
   const caption = shareCaption(items);
+  const nm = (App.user && App.user.name) || (App.lang === 'en' ? 'you' : App.lang === 'zh' ? '你' : App.lang === 'hi' ? 'तुम' : 'kamu');
   $('#shareBody').innerHTML = `
-    <img class="preview" src="${url}" alt="CraveMood card">
-    <p class="hint" style="text-align:center;margin:12px 0 4px">${t('share_t')}</p>
-    <div class="sharegrid">
-      <button class="soc" data-soc="ig"><i style="background:${SOC.ig[0]}"><svg viewBox="0 0 24 24">${SOC.ig[1]}</svg></i>Instagram</button>
-      <button class="soc" data-soc="wa"><i style="background:${SOC.wa[0]}"><svg viewBox="0 0 24 24">${SOC.wa[1]}</svg></i>WhatsApp</button>
-      <button class="soc" data-soc="tg"><i style="background:${SOC.tg[0]}"><svg viewBox="0 0 24 24">${SOC.tg[1]}</svg></i>Telegram</button>
-      <button class="soc" data-soc="x"><i style="background:${SOC.x[0]}"><svg viewBox="0 0 24 24">${SOC.x[1]}</svg></i>X</button>
-      <button class="soc" data-soc="fb"><i style="background:${SOC.fb[0]}"><svg viewBox="0 0 24 24">${SOC.fb[1]}</svg></i>Facebook</button>
+    <div class="sharehero"><h3>${esc(t('share_done').replace('{name}', nm))}</h3></div>
+    <img class="sharepreview" src="${url}" alt="CraveMood card">
+    <div class="sharebtns">
+      <button class="sharebtn ig" data-soc="ig" aria-label="Instagram"><svg viewBox="0 0 24 24">${SOC.ig[1]}</svg></button>
+      <button class="sharebtn wa" data-soc="wa" aria-label="WhatsApp"><svg viewBox="0 0 24 24">${SOC.wa[1]}</svg></button>
+      <button class="sharebtn dl" id="dlCard" aria-label="Download"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 11l5 5 5-5M4 20h16"/></svg></button>
+      <button class="sharebtn more" id="nativeShare" aria-label="More"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.7" fill="#fff" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="#fff" stroke="none"/><circle cx="19" cy="12" r="1.7" fill="#fff" stroke="none"/></svg></button>
     </div>
-    <div class="shareacts">
-      <button class="btn sm" id="nativeShare">${icon('share')} ${t('share_native')}</button>
-      <button class="btn sm ghost" id="dlCard">${icon('down')} ${t('share_dl')}</button>
-      <button class="btn sm ghost" id="copyCap">${t('share_copy')}</button>
-    </div>
-    <p class="hint" style="margin-top:10px">Instagram tidak menerima unggahan langsung dari web. Tombol Instagram akan membuka panel bagikan HP (pilih Instagram), atau menyimpan gambar + menyalin caption supaya kamu bisa posting manual.</p>`;
+    <div class="sharelabels"><span>Instagram</span><span>WhatsApp</span><span>${t('share_dl')}</span><span>${t('share_more')}</span></div>
+    <p class="sharetip">${t('share_hint')}</p>`;
 
-  const shareUrl = location.href.split('#')[0];
+  const shareUrl = appLink();
   $('#nativeShare').onclick = async () => {
     const file = new File([blob], 'cravemood.jpg', { type: 'image/jpeg' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -3293,8 +4151,7 @@ async function openShare() {
       catch (e) { downloadBlob(blob); }
     } else { downloadBlob(blob); copyText(caption); toast(t('copied')); }
   };
-  $('#dlCard').onclick = () => downloadBlob(blob);
-  $('#copyCap').onclick = () => { copyText(caption); toast(t('copied')); SFX.play('pop'); };
+  $('#dlCard').onclick = () => { downloadBlob(blob); SFX.play('pop'); };
 
   $$('#shareBody [data-soc]').forEach(b => b.onclick = () => shareTo(b.dataset.soc, blob, caption, shareUrl));
 }
@@ -3342,72 +4199,156 @@ function fallbackCopy(txt) {
 
 /* ---------- admin ---------- */
 /* ---------- onboarding ---------- */
-let obStep = 1, obLang = 'id', obMode = 'register';
+let obStep = 0, obLang = 'id', obMode = 'login';
 function showOnboard() {
   const o = $('#onboard');
   o.classList.remove('hide');
-  o.innerHTML = `<div class="box">
-    <div class="cimo" id="obCimo">${cimo('def', 170, true)}</div>
-    <div class="sheetbox" id="obBox"></div>
-  </div>`;
+  obLang = App.lang || 'id';
+  obStep = 0;
   obRender();
 }
+
 function obRender() {
-  const box = $('#obBox');
+  const o = $('#onboard');
+
+  /* ---- 0. splash ---- */
+  if (obStep === 0) {
+    o.className = 'onboard splashwrap';
+    o.innerHTML = `<div class="splash">
+      <div class="doodle d1">${cimo('senang', 54)}</div>
+      <div class="doodle d2">${cimo('bingung', 46)}</div>
+      <div class="doodle d3">${cimo('kecewa', 44)}</div>
+      <div class="doodle d4">${cimo('sedih', 52)}</div>
+      <div class="hero-cimo">${cimo('def', 238)}</div>
+      <div class="wordmark"><span>Crave</span><mark>Mood</mark></div>
+      <div class="tagline">${t('splash_tag')}</div>
+      <button class="startbtn" id="obStart">${t('on_go')} →</button>
+      <div class="dots"><i class="on"></i><i></i><i></i><i></i></div>
+    </div>`;
+    $('#obStart').onclick = () => { SFX.init(); SFX.play('tap'); obStep = 1; obRender(); };
+    return;
+  }
+
+  o.className = 'onboard';
+
+  /* ---- 1. how it works ---- */
   if (obStep === 1) {
-    box.innerHTML = `
-      <h2 style="font-size:1.35rem">${t('on_title')}</h2>
-      <p class="sub" style="color:var(--mu);font-size:.82rem;margin:4px 0 14px">${t('on_sub')}</p>
-      <div class="field"><label>${t('on_name')}</label><input id="obName" maxlength="20" placeholder="${t('on_name_ph')}" value="${esc(App.tmpName || '')}"></div>
-      <div class="field"><label>${t('on_lang')}</label>
-        <div class="langs">${LANGS.map(l => `<button class="langopt ${l.k === obLang ? 'on' : ''}" data-obl="${l.k}"><i>${l.short}</i>${l.label}</button>`).join('')}</div>
+    o.innerHTML = `<div class="box">
+      <div class="cimo">${cimo('def', 150, true)}</div>
+      <div class="sheetbox">
+        <div class="how">
+          <div style="text-align:center"><span class="bubble-say">${t('how_sub')}</span></div>
+          <h2>${t('how_t')}</h2>
+          <div class="howsteps">
+            <div class="howstep s1"><span class="num">1</span><span class="ico">${cimo('senang', 44)}</span>
+              <div><b>${t('how_1t')}</b><small>${t('how_1s')}</small></div></div>
+            <div class="howstep s2"><span class="num">2</span><span class="ico">${cimo('bingung', 44)}</span>
+              <div><b>${t('how_2t')}</b><small>${t('how_2s')}</small></div></div>
+            <div class="howstep s3"><span class="num">3</span><span class="ico">${cimo('senang', 44)}</span>
+              <div><b>${t('how_3t')}</b><small>${t('how_3s')}</small></div></div>
+          </div>
+          <button class="btn block" id="obHowNext" style="margin-top:16px">${t('how_next')}</button>
+        </div>
       </div>
-      <div class="err" id="obErr"></div>
-      <button class="btn block" id="obNext">${t('on_go')} →</button>
-      <button class="btn block ghost sm" id="obGuest" style="margin-top:8px">${t('on_guest')}</button>`;
-    $$('#obBox [data-obl]').forEach(b => b.onclick = () => {
+    </div>`;
+    $('#obHowNext').onclick = () => { SFX.play('tap'); obStep = 2; obRender(); };
+    return;
+  }
+
+  /* ---- 2. kenalan (name) ---- */
+  if (obStep === 2) {
+    o.innerHTML = `<div class="box">
+      <div class="cimo">${cimo('def', 168)}</div>
+      <div class="sheetbox">
+        <h2 style="font-size:1.3rem;line-height:1.25">${t('kenalan_t')}</h2>
+        <div class="field" style="margin-top:14px"><label>${t('reg_name')}</label>
+          <input id="obName" maxlength="20" placeholder="${t('on_name_ph')}" value="${esc(App.tmpName || '')}"></div>
+        <div class="field"><label>${t('on_lang')}</label>
+          <div class="langs">${LANGS.map(l => `<button class="langopt ${l.k === obLang ? 'on' : ''}" data-obl="${l.k}" title="${esc(l.label)}" aria-label="${esc(l.label)}"><i>${l.short}</i></button>`).join('')}</div>
+          <div class="langnow">${esc((LANGS.find(l => l.k === obLang) || LANGS[0]).label)}</div>
+        </div>
+        <div class="err" id="obErr"></div>
+        <button class="btn block" id="obNext">${t('kenalan_btn')}</button>
+        <p class="obnote">${t('kenalan_note')}</p>
+      </div>
+    </div>`;
+    $$('#onboard [data-obl]').forEach(b => b.onclick = () => {
       obLang = b.dataset.obl; App.lang = obLang;
       Voice.set('lang', obLang); App.settings.voiceLang = obLang;
+      SFX.play('tap');
       obRender();
     });
     $('#obNext').onclick = () => {
       const v = $('#obName').value.trim();
       if (!v) { $('#obErr').textContent = t('on_need_name'); SFX.play('error'); return; }
-      App.tmpName = v; obStep = 2; obRender();
+      App.tmpName = v; SFX.play('tap'); obStep = 3; obMode = 'register'; obRender();
     };
-    $('#obGuest').onclick = () => doRegister(true);
-  } else {
-    box.innerHTML = `
-      <h2 style="font-size:1.3rem">${obMode === 'login' ? t('login_t') : t('on_acc')}</h2>
-      <p class="sub" style="color:var(--mu);font-size:.8rem;margin:4px 0 14px">${obMode === 'login' ? t('on_have') : t('on_acc_sub')}</p>
-      <div class="field"><label>${t('on_email')}</label><input id="obContact" type="text" placeholder="nama@email.com / 08xx"></div>
-      <div class="field"><label>${t('on_pass')}</label><input id="obPass" type="password" placeholder="••••••••"></div>
-      <div class="err" id="obErr"></div>
-      <button class="btn block" id="obSubmit">${obMode === 'login' ? t('on_login') : t('on_reg')}</button>
-      <button class="btn block ghost sm" id="obSkip" style="margin-top:8px">${obMode === 'login' ? t('on_guest') : t('on_skip')}</button>
-      <p class="hint" style="text-align:center;margin-top:10px">
-        <a href="#" id="obToggle" style="color:var(--pk2);font-weight:800">${obMode === 'login' ? t('on_acc') : t('on_have')}</a>
-      </p>`;
-    $('#obToggle').onclick = e => { e.preventDefault(); obMode = obMode === 'login' ? 'register' : 'login'; obRender(); };
-    $('#obSkip').onclick = () => doRegister(true);
-    $('#obSubmit').onclick = async () => {
-      const c = $('#obContact').value.trim(), p = $('#obPass').value;
-      if (!c || !p) { $('#obErr').textContent = t('on_need_cred'); SFX.play('error'); return; }
-      $('#obSubmit').disabled = true;
-      let r;
-      if (obMode === 'login') {
-        r = await DB.login({ contact: c, password: p });
-        if (!r.ok) { $('#obErr').textContent = t('login_bad'); SFX.play('error'); $('#obSubmit').disabled = false; return; }
-        SFX.play('success'); toast(t('login_ok'));
-      } else {
-        r = await DB.register({ name: App.tmpName, contact: c, password: p, lang: obLang });
-        if (!r.ok) { $('#obErr').textContent = r.error === 'exists' ? 'Kontak sudah terdaftar. Coba masuk.' : 'Gagal mendaftar'; SFX.play('error'); $('#obSubmit').disabled = false; return; }
-        SFX.play('success'); toast(t('reg_ok'));
-      }
-      App.user = r.user; DB.setSetting('session', r.user.id);
-      finishOnboard();
-    };
+    return;
   }
+
+  /* ---- 3. masuk / daftar ---- */
+  const isLogin = obMode === 'login';
+  o.innerHTML = `<div class="box">
+    <div class="cimo">${cimo('def', 138)}</div>
+    <div class="sheetbox">
+      <div class="obtabs">
+        <button data-obmode="login" class="${isLogin ? 'on' : ''}">${t('tab_masuk')}</button>
+        <button data-obmode="register" class="${!isLogin ? 'on' : ''}">${t('tab_daftar')}</button>
+      </div>
+      <div class="obwelcome">${isLogin ? t('login_welcome') : t('reg_t')}</div>
+
+      ${isLogin ? `
+        <button class="obbtn" id="obGoogle"><span class="gicon">G</span>${t('login_google')}</button>
+        <div class="field"><label>${t('login_wa')}</label><input id="obContact" type="text" placeholder="+62 812 3456 7890"></div>
+        <div class="field"><label>${t('on_pass')}</label><input id="obPass" type="password" placeholder="••••••••"></div>
+        <div class="err" id="obErr"></div>
+        <button class="obbtn primary" id="obSubmit">${t('tab_masuk')}</button>
+        <div class="obor">${t('login_or')}</div>
+        <button class="obbtn ghostline" id="obSkip">${t('login_guest')}</button>
+        <p class="obnote">${t('login_terms')}</p>
+      ` : `
+        <div class="field"><label>${t('reg_name')}</label><input id="obName2" maxlength="20" value="${esc(App.tmpName || '')}" placeholder="${t('on_name_ph')}"></div>
+        <div class="field"><label>${t('login_wa')}</label><input id="obContact" type="text" placeholder="+62 812 3456 7890"></div>
+        <div class="field"><label>${t('on_pass')}</label><input id="obPass" type="password" placeholder="••••••••"></div>
+        <label class="obterms"><input type="checkbox" id="obTerms"> <span>${t('reg_terms')}</span></label>
+        <div class="err" id="obErr"></div>
+        <button class="obbtn primary" id="obSubmit">${t('reg_btn')}</button>
+        <div class="obor">${t('login_or')}</div>
+        <button class="obbtn" id="obGoogle"><span class="gicon">G</span>${t('reg_google')}</button>
+        <button class="obbtn ghostline" id="obSkip" style="margin-top:9px">${t('on_guest')}</button>
+      `}
+    </div>
+  </div>`;
+
+  $$('#onboard [data-obmode]').forEach(b => b.onclick = () => {
+    obMode = b.dataset.obmode; SFX.play('tap'); obRender();
+  });
+  const g = $('#obGoogle');
+  if (g) g.onclick = () => { toast('Google login segera hadir, pakai nomor WhatsApp dulu ya'); SFX.play('tap'); };
+  $('#obSkip').onclick = () => doRegister(true);
+  $('#obSubmit').onclick = async () => {
+    const nameEl = $('#obName2');
+    const nm = nameEl ? nameEl.value.trim() : (App.tmpName || '');
+    const c = $('#obContact').value.trim(), p = $('#obPass').value;
+    if (nameEl && !nm) { $('#obErr').textContent = t('on_need_name'); SFX.play('error'); return; }
+    if (!c || !p) { $('#obErr').textContent = t('on_need_cred'); SFX.play('error'); return; }
+    const terms = $('#obTerms');
+    if (terms && !terms.checked) { $('#obErr').textContent = t('reg_terms'); SFX.play('error'); return; }
+    $('#obSubmit').disabled = true;
+    let r;
+    if (isLogin) {
+      r = await DB.login({ contact: c, password: p });
+      if (!r.ok) { $('#obErr').textContent = t('login_bad'); SFX.play('error'); $('#obSubmit').disabled = false; return; }
+      SFX.play('success'); toast(t('login_ok'));
+    } else {
+      App.tmpName = nm;
+      r = await DB.register({ name: nm, contact: c, password: p, lang: obLang });
+      if (!r.ok) { $('#obErr').textContent = r.error === 'exists' ? 'Kontak sudah terdaftar. Coba masuk.' : 'Gagal mendaftar'; SFX.play('error'); $('#obSubmit').disabled = false; return; }
+      SFX.play('success'); toast(t('reg_ok'));
+    }
+    App.user = r.user; DB.setSetting('session', r.user.id);
+    finishOnboard();
+  };
 }
 async function doRegister(guest) {
   const r = await DB.register({ name: App.tmpName || t('guest'), contact: '', password: '', lang: obLang, guest: true });
@@ -3471,7 +4412,7 @@ function petSay(txt) {
   const b = $('#petBubble'); if (!b) return;
   b.textContent = txt; b.classList.add('on');
   clearTimeout(petSay._t);
-  petSay._t = setTimeout(() => b.classList.remove('on'), 3200);
+  petSay._t = setTimeout(() => b.classList.remove('on'), 2300);
 }
 
 /* ---------- install / download (PWA) ---------- */
@@ -3488,7 +4429,6 @@ const PLAT_ICON = {
   desktop: '<rect x="3" y="4.5" width="18" height="12" rx="2"/><rect x="4.8" y="6.2" width="14.4" height="8.6" rx="1" fill="#fff"/><rect x="8" y="18" width="8" height="1.8" rx=".9"/>',
 };
 let installEvt = null;
-let installTab = PLAT.ios ? 'ios' : PLAT.android ? 'android' : 'desktop';
 const IL = () => INSTALL_I18N[App.lang] || INSTALL_I18N.id;
 
 window.addEventListener('beforeinstallprompt', e => {
@@ -3515,7 +4455,6 @@ function maybeShowBanner() {
     <div style="flex:1;min-width:0"><b>${L.banner}</b><small>${L.banner_sub}</small></div>
     <div class="act">
       <button class="go" id="barInstall">${L.install}</button>
-      <a href="https://www.pwabuilder.com/reportcard?site=https://cravemood.apps.workbuddy.host" target="_blank" rel="noopener" class="go" style="background:#00aa13;text-decoration:none;display:inline-block">APK</a>
       <button class="no" id="barLater">${L.later}</button>
     </div>`;
   b.classList.add('on');
@@ -3523,55 +4462,82 @@ function maybeShowBanner() {
   $('#barInstall').onclick = () => { b.classList.remove('on'); sessionStorage.setItem('cm_install_bar', '1'); openInstall(); };
 }
 
-function openInstall(tab) {
-  if (tab) installTab = tab;
+function openInstall() {
   $('#installModal').classList.add('on');
   renderInstall();
 }
 
+/* the canonical, always-complete app link (keeps ?sharecode=… so the host gate passes) */
 function renderInstall() {
   const L = IL();
-  const steps = installTab === 'ios' ? L.stepsI : installTab === 'android' ? L.stepsA : L.stepsD;
-  const canPrompt = installTab === 'android' && !!installEvt;
-  const ico = installTab === 'ios' ? PLAT_ICON.ios : installTab === 'android' ? PLAT_ICON.android : PLAT_ICON.desktop;
-  const iconBg = installTab === 'ios' ? 'var(--ink)' : installTab === 'android' ? '#3ddc84' : 'var(--pk)';
-  const iconCol = installTab === 'ios' ? 'var(--bg)' : installTab === 'android' ? '#0b3d24' : '#3a2142';
-  $('#installBody').innerHTML = `
-    <div class="itabs">
-      <button data-itab="android" class="${installTab === 'android' ? 'on' : ''}">${L.tabA}</button>
-      <button data-itab="ios" class="${installTab === 'ios' ? 'on' : ''}">${L.tabI}</button>
-      <button data-itab="desktop" class="${installTab === 'desktop' ? 'on' : ''}">${L.tabD}</button>
-    </div>
-    <div class="installhero">
-      <img src="icon-192.png" alt="CraveMood" style="width:56px;height:56px;border-radius:16px;flex:none;box-shadow:0 4px 14px rgba(122,42,85,.25)">
-      <div style="flex:1;min-width:0">
-        <b>${L.title}</b>
-        <small>${PLAT.standalone ? L.off : L.on}</small>
-      </div>
-      ${PLAT.standalone ? `<span class="tag mint">✓</span>` : ''}
-    </div>
-    ${canPrompt && !PLAT.standalone ? `<button class="btn block" id="pwaGo">${icon('down')} ${L.install}</button>` : ''}
-    <ol class="isteps" style="margin-top:${canPrompt && !PLAT.standalone ? 14 : 0}px">
-      ${steps.map(s => `<li class="istep"><em></em><span>${s}</span></li>`).join('')}
-    </ol>
-    <div class="iacts">
-      <button class="btn sm ghost" id="dlOffline">${icon('down')} ${L.offline}</button>
-      <button class="btn sm ghost" id="copyLink">${icon('share')} ${L.copy}</button>
-    </div>
-    <div class="card" style="margin-top:14px;padding:14px;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-color:#81c784">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <span style="font-size:1.8rem">📦</span>
-        <div><b style="font-size:.95rem;color:#2e7d32">${L.apk}</b><small style="display:block;color:#388e3c;font-size:.72rem">${L.apk_note}</small></div>
-      </div>
-      <a href="https://www.pwabuilder.com/reportcard?site=https://cravemood.apps.workbuddy.host" target="_blank" rel="noopener" class="btn block" style="background:#00aa13;box-shadow:0 5px 0 #007a0e;text-decoration:none">📲 Unduh APK Android</a>
-    </div>
-    <div class="inote">${L.note}</div>`;
+  const platform = PLAT.ios ? 'ios' : PLAT.android ? 'android' : 'desktop';
+  const steps = platform === 'ios' ? L.stepsI : platform === 'android' ? L.stepsA : L.stepsD;
+  const canPrompt = platform === 'android' && !!installEvt && !PLAT.standalone;
+  const link = appLink();
 
-  $$('#installBody [data-itab]').forEach(b => b.onclick = () => { installTab = b.dataset.itab; renderInstall(); SFX.play('tap'); });
+  $('#installBody').innerHTML = `
+    <div class="dlhero">
+      <img src="icon-192.png" alt="CraveMood">
+      <div class="dlinfo">
+        <b>CraveMood</b>
+        <small>${L.version} 2.0 · ${L.light}</small>
+        <div class="dltags">
+          <span class="tag mint">${L.free}</span>
+          <span class="tag">${platform === 'ios' ? L.dl_ios : platform === 'android' ? L.dl_android : L.dl_desktop}</span>
+        </div>
+      </div>
+      ${PLAT.standalone ? `<span class="tag gold">✓ ${L.installed}</span>` : ''}
+    </div>
+
+    ${PLAT.standalone
+      ? `<div class="dlok">${cimo(App.mood, 54)}<span>${L.off}</span></div>`
+      : canPrompt
+        ? `<button class="btn block dlmain" id="pwaGo">${icon('down')} ${L.install}</button>`
+        : platform !== 'desktop'
+          ? `<button class="btn block dlmain" id="shareTop">${icon('share')} ${L.share}</button>`
+          : ''}
+
+    <div class="dlsteps">
+      <b>${L.howto}</b>
+      <ol class="isteps">
+        ${steps.map(s => `<li class="istep"><em></em><span>${s}</span></li>`).join('')}
+      </ol>
+    </div>
+
+    ${platform === 'desktop' ? `
+    <div class="dlqr">
+      <img id="qrImg" src="${assetUrl('qr-app.png')}" alt="QR code" width="128" height="128"
+           onerror="this.parentNode.style.display='none'">
+      <div><b>${L.qr_t}</b><small>${L.qr_s}</small></div>
+    </div>` : ''}
+
+    <div class="dllink">
+      <div class="between"><b>${L.link_t}</b><span class="tag mint">?sharecode</span></div>
+      <code id="fullLink">${esc(link)}</code>
+      <p class="hint">${L.link_s}</p>
+      <div class="iacts">
+        <button class="btn sm" id="copyLink">${icon('share')} ${L.copy_full}</button>
+        <button class="btn sm ghost" id="shareLink">${icon('arrow')} ${L.share}</button>
+      </div>
+    </div>`;
+
   const go = $('#pwaGo');
   if (go) go.onclick = doPwaInstall;
-  $('#dlOffline').onclick = downloadOffline;
-  $('#copyLink').onclick = () => { copyText(location.href); toast(L.copied); SFX.play('pop'); };
+  const st = $('#shareTop');
+  if (st) st.onclick = async () => {
+    try {
+      if (navigator.share) await navigator.share({ title: 'CraveMood', text: 'Coba CraveMood, makanan sesuai moodmu', url: link });
+      else { copyText(link); toast(L.copied); }
+    } catch (e) { copyText(link); toast(L.copied); }
+  };
+  $('#copyLink').onclick = () => { copyText(link); toast(L.copied); SFX.play('pop'); };
+  const sh = $('#shareLink');
+  if (sh) sh.onclick = async () => {
+    try {
+      if (navigator.share) await navigator.share({ title: 'CraveMood', text: 'Coba CraveMood, makanan sesuai moodmu', url: link });
+      else { copyText(link); toast(L.copied); }
+    } catch (e) { copyText(link); toast(L.copied); }
+  };
 }
 
 async function doPwaInstall() {
@@ -3589,26 +4555,6 @@ async function doPwaInstall() {
   renderInstall();
 }
 
-async function downloadOffline() {
-  const L = IL();
-  SFX.play('pop');
-  try {
-    let html = '';
-    try {
-      const r = await fetch('index.html', { cache: 'no-store' });
-      if (r.ok) html = await r.text();
-    } catch (e) { /* file:// */ }
-    if (!html) html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'cravemood-offline.html';
-    document.body.appendChild(a); a.click();
-    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
-    toast(L.saved);
-  } catch (e) { toast(L.fail); SFX.play('error'); }
-}
-
 function registerSW() {
   if (!('serviceWorker' in navigator)) return;
   if (!/^https?:$/.test(location.protocol)) return;
@@ -3620,12 +4566,14 @@ const RENDER = { home: viewHome, spin: viewSpin, chat: viewChat, cart: viewCart,
 
 function go(v) {
   if (!RENDER[v]) v = 'home';
+  Voice.stop();          /* leaving a screen silences Cimo */
   currentView = v;
   location.hash = '#/' + v;
   render();
 }
 function render() {
   const v = currentView;
+  applyMoodBg();
   $('#view').innerHTML = RENDER[v]();
   $$('#navlist .navbtn, #tabbar button').forEach(b => b.classList.toggle('on', b.dataset.go === v));
   if (v === 'home') { renderRecs(); }
@@ -3686,15 +4634,26 @@ function bindGlobal() {
     if (dec) { decCart(dec.dataset.dec); return; }
     const mood = e.target.closest('[data-mood]');
     if (mood) {
+      const firstPick = !App.moodPicked;
       App.mood = mood.dataset.mood;
+      App.moodPicked = true;
       ChatEngine.setMood(App.mood);
       SFX.play('pop');
       savePrefs();
-      const hc = $('#heroCimo');
-      if (hc) { hc.innerHTML = cimo(App.mood, 190, false, App.costum); hc.classList.add('hop'); setTimeout(() => hc.classList.remove('hop'), 650); }
-      $$('#moods .mood').forEach(b => b.classList.toggle('on', b.dataset.mood === App.mood));
-      renderRecs();
-      updatePetFace();
+      if (firstPick) {
+        /* reveal the whole recommendation block for the first time */
+        render();
+        updatePetFace();
+      } else {
+        applyMoodBg();
+        const hc = $('#heroCimo');
+        if (hc) { hc.innerHTML = cimo(App.mood, 40, false, App.costum); hc.classList.add('hop'); setTimeout(() => hc.classList.remove('hop'), 650); }
+        const sc = $('#sayCimo');
+        if (sc) { sc.innerHTML = cimo(App.mood, 208, false, App.costum); sc.classList.add('hop'); setTimeout(() => sc.classList.remove('hop'), 650); }
+        $$('#moods .mpill').forEach(b => b.classList.toggle('on', b.dataset.mood === App.mood));
+        renderRecs();
+        updatePetFace();
+      }
       if (App.user) DB.addMood(App.user.id, App.mood).catch(() => {});
       const mo = MOODS.find(m => m.k === App.mood);
       if (mo) {
@@ -3706,8 +4665,13 @@ function bindGlobal() {
           sayEl.style.animation = 'none'; void sayEl.offsetWidth; sayEl.style.animation = '';
         }
         const tagEl = $('#moodTag'); if (tagEl) tagEl.textContent = mS(mo);
-        petSay(line.length > 62 ? line.slice(0, 60) + '…' : line);
-        if (App.settings.speak) Voice.speak(line, { lang: App.settings.voiceLang || App.lang, mood: mo.k });
+        /* on Beranda the speech bubble already says it — don't cover the CTA with the pet bubble */
+        if (currentView !== 'home') petSay(line.length > 62 ? line.slice(0, 60) + '…' : line);
+        if (App.settings.speak) {
+          if (sayEl) sayEl.classList.add('talking');
+          const pr = Voice.speakMood(mo.k, top ? top.id : '', line);
+          if (pr && pr.then) pr.then(() => { const e2 = $('#say'); if (e2) e2.classList.remove('talking'); });
+        }
       }
       return;
     }
@@ -3715,16 +4679,17 @@ function bindGlobal() {
     if (cat) { App.cat = cat.dataset.cat; SFX.play('tap'); $$('#cats .chip').forEach(b => b.classList.toggle('on', b.dataset.cat === App.cat)); renderRecs(); return; }
     const plat = e.target.closest('[data-plat]');
     if (plat) { openPlatform(plat.dataset.plat); return; }
-    const lang = e.target.closest('[data-lang]');
-    if (lang) { setLang(lang.dataset.lang); return; }
-    const vo = e.target.closest('[data-voice]');
-    if (vo) {
-      App.settings.voice = vo.dataset.voice; saveSettings();
-      $$('#voiceCards .vopt').forEach(b => b.classList.toggle('on', b.dataset.voice === App.settings.voice));
-      Voice.set('profile', App.settings.voice);
-      Voice.preview(App.settings.voice, App.settings.voiceLang);
+    const shop = e.target.closest('[data-shop]');
+    if (shop) { try { window.open(shop.dataset.shop, '_blank', 'noopener'); } catch (err) {} return; }
+    const cos = e.target.closest('[data-costum]');
+    if (cos) {
+      if (!isVip()) { toast(t('vip_only')); SFX.play('error'); return; }
+      App.costum = cos.dataset.costum || '';
+      savePrefs(); SFX.play('pop'); render(); toast(t('prof_saved'));
       return;
     }
+    const lang = e.target.closest('[data-lang]');
+    if (lang) { setLang(lang.dataset.lang); return; }
     const chip = e.target.closest('[data-chip]');
     if (chip) { sendChat(chip.dataset.chip); return; }
     const soc = e.target.closest('[data-soc]');
@@ -3740,20 +4705,12 @@ function bindGlobal() {
       toast('Lokasi: ' + curStreet().name);
     }
     if (id === 'soundSw') { App.settings.sound = e.target.checked; SFX.enabled = e.target.checked; saveSettings(); if (e.target.checked) SFX.play('add'); }
-    if (id === 'speakSw') { App.settings.speak = e.target.checked; saveSettings(); if (e.target.checked) Voice.preview(App.settings.voice, App.settings.voiceLang); }
+    if (id === 'speakSw') { App.settings.speak = e.target.checked; Voice.set('enabled', e.target.checked); saveSettings(); if (e.target.checked) Voice.preview(); }
     if (id === 'darkSw') { App.settings.theme = e.target.checked ? 'dark' : 'light'; saveSettings(); applyTheme(); }
-    if (id === 'voiceLang') { App.settings.voiceLang = e.target.value; Voice.set('lang', e.target.value); saveSettings(); Voice.preview(App.settings.voice, e.target.value); }
-    if (id === 'costumSel') {
-      const c = COSTUMES.find(x => x.id === e.target.value);
-      if (c && c.vip && !isVip()) { toast(t('vip_only')); SFX.play('error'); render(); return; }
-      App.costum = e.target.value; savePrefs(); render(); toast(t('prof_saved'));
-    }
   });
 
   document.addEventListener('input', e => {
     const id = e.target.id;
-    if (id === 'rate') { App.settings.rate = +e.target.value; $('#rateV').textContent = (+e.target.value).toFixed(2) + '×'; Voice.set('rate', App.settings.rate); saveSettings(); }
-    if (id === 'pitch') { App.settings.pitch = +e.target.value; $('#pitchV').textContent = (+e.target.value).toFixed(2); Voice.set('pitch', App.settings.pitch); saveSettings(); }
     if (id === 'vol') { App.settings.vol = +e.target.value; $('#volV').textContent = Math.round(e.target.value * 100) + '%'; Voice.set('volume', App.settings.vol); saveSettings(); }
     if (id === 'chatInput') {
       const el = e.target;
@@ -3773,13 +4730,12 @@ function bindGlobal() {
   // delegated handlers for dynamically rendered blocks (target may be a child svg/path)
   document.addEventListener('click', e => {
     const hit = sel => e.target.closest(sel);
+    if (hit('#shuffleBtn')) { openSpinPop(); return; }
     if (hit('#spinBtn')) { doSpin(); return; }
     if (hit('#spinAgain')) { doSpin(); return; }
     if (hit('#openShare') || hit('#recapShare')) { openShare(); return; }
-    if (hit('#testVoice')) { Voice.preview(App.settings.voice, App.settings.voiceLang); return; }
+    if (hit('#testVoice')) { Voice.preview(); return; }
     if (hit('#startVip')) { openVipModal(); return; }
-    if (hit('#expJson')) { DB.exportJSON(); return; }
-    if (hit('#dlOffline2')) { downloadOffline(); return; }
     if (hit('#logoutBtn')) { DB.setSetting('session', null); location.reload(); return; }
     if (hit('#chatReset')) {
       App.messages = []; ChatEngine.reset();
@@ -3791,13 +4747,14 @@ function bindGlobal() {
       App.settings.speak = !App.settings.speak; saveSettings();
       toast(App.settings.speak ? 'Suara Cimo: ON' : 'Suara Cimo: OFF');
       hit('#voiceToggle').style.color = App.settings.speak ? 'var(--pk2)' : 'var(--mu)';
-      if (App.settings.speak) Voice.preview(App.settings.voice, App.settings.voiceLang);
+      if (App.settings.speak) Voice.preview();
       return;
     }
     if (hit('#sendBtn')) { const v = $('#chatInput').value.trim(); if (v) sendChat(v); return; }
     if (hit('#micBtn')) { startMic(); return; }
     if (e.target.closest('#shareModal .closebtn') || e.target.id === 'shareModal') { $('#shareModal').classList.remove('on'); return; }
     if (e.target.closest('#installModal .closebtn') || e.target.id === 'installModal') { $('#installModal').classList.remove('on'); return; }
+    if (e.target.closest('#spinModal .closebtn') || e.target.id === 'spinModal') { $('#spinModal').classList.remove('on'); SFX.stopTicks(); return; }
   });
 
   window.addEventListener('hashchange', () => {
@@ -3885,11 +4842,98 @@ async function boot() {
   }
 }
 
+/* ---------- a soft click on every tappable ---------- */
+function initClickSound() {
+  if (window.__clickInit) return;
+  window.__clickInit = true;
+  const SEL = 'button, [role="button"], .chip, .mpill, .langopt, .cosopt, .plat, .fadd, .iconbtn, .tabbar button, .step button, .card, .pickcard, select';
+  /* any tap anywhere silences Cimo first; the tap handler below may start a new line */
+  document.addEventListener('click', () => Voice.stop(), { capture: true, passive: true });
+  document.addEventListener('pointerdown', e => {
+    const el = e.target.closest(SEL);
+    if (!el || el.disabled) return;
+    if (el.hasAttribute('data-add') || el.hasAttribute('data-dec') || el.hasAttribute('data-inc')) return;
+    SFX.init();
+    SFX.play('tap');
+  }, { passive: true, capture: true });
+}
+
+/* ---------- Cimo looks at your finger / cursor ---------- */
+function initEyeTracking() {
+  if (window.__eyeInit) return;
+  window.__eyeInit = true;
+  let raf = 0, px = 0, py = 0, has = false;
+  const SEL = '.bigcimo .ceye, .avatar-lg .ceye, .pet .ceye, .splash .hero-cimo .ceye, .cosopt .ceye';
+
+  function apply() {
+    raf = 0;
+    if (!has) return;
+    const eyes = document.querySelectorAll(SEL);
+    for (const g of eyes) {
+      const svg = g.ownerSVGElement;
+      if (!svg) continue;
+      const r = svg.getBoundingClientRect();
+      if (r.width < 20) continue;
+      const cx = r.left + r.width * 0.5;
+      const cy = r.top + r.height * 0.42;
+      const dx = px - cx, dy = py - cy;
+      const d = Math.hypot(dx, dy) || 1;
+      const reach = Math.min(1, d / Math.max(120, r.width * 0.9));
+      const ox = (dx / d) * 5 * reach;
+      const oy = (dy / d) * 4 * reach;
+      g.setAttribute('transform', `translate(${ox.toFixed(2)} ${oy.toFixed(2)})`);
+    }
+  }
+  function onMove(e) {
+    const t = e.touches && e.touches[0] ? e.touches[0] : e;
+    if (t.clientX == null) return;
+    px = t.clientX; py = t.clientY; has = true;
+    if (!raf) raf = requestAnimationFrame(apply);
+  }
+  window.addEventListener('mousemove', onMove, { passive: true });
+  window.addEventListener('touchstart', onMove, { passive: true });
+  window.addEventListener('touchmove', onMove, { passive: true });
+  window.addEventListener('scroll', () => { if (has && !raf) raf = requestAnimationFrame(apply); }, { passive: true });
+}
+
+/* ---------- self-update: an already-open app refreshes after a new deploy ---------- */
+function checkBuild() {
+  try {
+    const m = document.querySelector('meta[name="build"]');
+    if (!m || !m.content) return;
+    fetch('build.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => {
+        if (!j || !j.v || j.v === m.content) return;
+        const u = new URL(location.href);
+        if (u.searchParams.get('v') === j.v) return;   // already tried this build
+        u.searchParams.set('v', j.v);
+        location.replace(u.toString());
+      })
+      .catch(() => {});
+  } catch (e) {}
+}
+
 function boot2() {
+  checkBuild();
   $('#app').classList.remove('hide');
   renderNav();
   mountPet();
   registerSW();
+  initEyeTracking();
+  initClickSound();
+  Voice.set('name', (App.user && App.user.name) || '');
+  /* costumes are a VIP perk — plain users always see the plain Cimo */
+  if (!isVip() && App.costum) { App.costum = ''; savePrefs(); }
+  /* system voices arrive asynchronously, refresh the picker once they do */
+  if (window.speechSynthesis && window.speechSynthesis.addEventListener) {
+    let refreshed = false;
+    window.speechSynthesis.addEventListener('voiceschanged', () => {
+      if (refreshed) return;
+      refreshed = true;
+      if (currentView === 'profile') render();
+    });
+  }
   const hash = (location.hash || '#/home').replace('#/', '');
   currentView = RENDER[hash] ? hash : 'home';
   render();
@@ -3897,7 +4941,6 @@ function boot2() {
   if (App.user) DB.touch(App.user.id).catch(() => {});
   // seed a mood for today so the recap is alive
   if (App.user) DB.addMood(App.user.id, App.mood).catch(() => {});
-  setTimeout(() => petSay('Hai! Geser aku ke mana aja ya 👋'), 2600);
   if (PLAT.mobile && !PLAT.standalone) setTimeout(maybeShowBanner, 5200);
 }
 

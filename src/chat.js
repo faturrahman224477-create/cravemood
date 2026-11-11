@@ -94,12 +94,12 @@ const BANK = {
     stressed: ['Kamu lagi pikul banyak sekaligus. Nggak semua harus selesai hari ini.', 'Coba sebut satu hal yang paling bikin penuh kepalamu sekarang.', 'Berat banget kedengerannya. Kamu udah istirahat belum hari ini?'],
     fail: ['Gagal bukan berarti selesai. Kamu masih di sini, itu bukti.', 'Yang gagal itu usahanya, bukan kamu. Bedanya besar, {name}.', 'Kalau boleh tahu, bagian mana yang paling bikin nyesek?'],
     love: ['Urusan hati memang nggak pernah rapi. Ceritain dari awal, aku dengerin.', 'Kamu yang lebih sayang, atau kamu yang lebih takut kehilangan?', 'Kalau dia nggak bisa jadi tempat pulang, kamu tetap pantas pulang ke diri sendiri.'],
-    work: ['Kerjaan bisa ngabisin energi lebih dari yang kelihatan. Kamu lagi capek di bagian mana?', 'Kalau kerjaan yang bikin berat, biasanya bukan tugasnya — tapi orangnya. Bener nggak?', 'Kamu kerja buat hidup, bukan hidup buat kerja. Tapi hari ini berat, ya?'],
+    work: ['Kerjaan bisa ngabisin energi lebih dari yang kelihatan. Kamu lagi capek di bagian mana?', 'Kalau kerjaan yang bikin berat, biasanya bukan tugasnya, tapi orangnya. Bener nggak?', 'Kamu kerja buat hidup, bukan hidup buat kerja. Tapi hari ini berat, ya?'],
     school: ['Tugas numpuk itu bikin otak penuh. Satu-satu aja, mulai yang paling kecil.', 'Kamu takut gagal, atau takut dianggap gagal?', 'Belajar boleh, tapi jangan sampai kamu lupa makan.'],
     money: ['Soal uang itu bikin kepala panas, karena nyangkut ke rasa aman.', 'Kamu lagi butuh solusi cepat, atau cuma butuh cerita dulu?', 'Nggak apa-apa lagi susah. Banyak orang juga pernah di titik ini.'],
     family: ['Keluarga itu rumit, karena nggak bisa dipilih tapi tetap sayang.', 'Yang paling bikin berat: omongannya, atau ekspektasinya?', 'Kamu boleh sayang mereka dan tetap punya batas. Dua-duanya sah.'],
     friend: ['Pertemanan yang bikin capek itu juga perlu dijaga jaraknya.', 'Kamu ngerasa dijauhin, atau cuma beda ritme aja?', 'Kamu nggak harus ngejar orang yang nggak balik ngejar kamu.'],
-    health: ['Kalau badan yang ngomong, biasanya harus didengerin. Udah minum air belum?', 'Sakit itu bukan kelemahan. Kamu udah istirahat belum?', 'Yang paling ganggu apa — nyerinya atau capeknya?'],
+    health: ['Kalau badan yang ngomong, biasanya harus didengerin. Udah minum air belum?', 'Sakit itu bukan kelemahan. Kamu udah istirahat belum?', 'Yang paling ganggu apa, nyerinya atau capeknya?'],
     selfdoubt: ['Kamu nggak harus jadi versi sempurna buat dihargai.', 'Yang bilang kamu kurang itu siapa? Sering-seringnya suara sendiri, kan?', 'Kamu udah lewatin hal-hal yang dulu kamu kira nggak bisa. Itu nyata.'],
     hug: ['Datang sini. *peluk lama* Kamu nggak harus ngomong apa-apa.', 'Aku peluk dari sini. Anggap aja lengannya beneran ada.'],
     cry: ['Nangis aja dulu. Nggak usah buru-buru berhenti.', 'Air mata itu bukan tanda lemah. Itu cara badan bilang "udah cukup".'],
@@ -127,9 +127,9 @@ const BANK = {
   en: {
     greet: ['Hey {name}! I missed you. How is today going?', 'Hi {name}. There you are. What is on your mind?', '{name}! Come sit. Tell me about your day.'],
     ask_how: ['I am good when you talk to me. How about you?', 'Better now. How are you really, {name}?'],
-    name_ask: ['I am Cimo. The friend who finds food for your mood. And you?', 'Cimo. Not a chef, not a therapist — just someone who listens.'],
+    name_ask: ['I am Cimo. The friend who finds food for your mood. And you?', 'Cimo. Not a chef, not a therapist, just someone who listens.'],
     my_name: ['Got it, {name}. Nice name. So, how do you feel today?', 'Okay, {name}. Noted. What mood are we in?'],
-    tired: ['What kind of tired — body or head?', 'You have come this far, {name}. It is okay to stop for a bit. Which tired is it?', 'If you are tired, do not force it. Sleep, or something warm first?'],
+    tired: ['What kind of tired, body or head?', 'You have come this far, {name}. It is okay to stop for a bit. Which tired is it?', 'If you are tired, do not force it. Sleep, or something warm first?'],
     sad: ['That sounds heavy. You do not have to fix everything today.', 'I am listening. Take your time, no need to make it neat.', 'Is the sadness about the person, or about the feeling itself?'],
     angry: ['Being upset is fair. You do not have to be okay right away.', 'Okay, the anger is valid. Which part stings the most?'],
     anxious: ['Where does your head keep running to? Name the scariest one.', 'Anxiety means you care. But you do not have to solve it all tonight.'],
@@ -142,7 +142,7 @@ const BANK = {
     work: ['Work drains more energy than it looks. Which part is heavy?', 'You work to live, not live to work. But today was heavy, right?'],
     school: ['A pile of assignments fills the head. One at a time, start with the smallest.', 'Are you afraid of failing, or of being seen as a failure?'],
     money: ['Money heats the head because it touches safety.', 'Do you need a quick fix, or do you just need to talk first?'],
-    family: ['Family is complicated — you cannot choose them, but you still care.', 'What weighs more: what they say, or what they expect?'],
+    family: ['Family is complicated, you cannot choose them, but you still care.', 'What weighs more: what they say, or what they expect?'],
     friend: ['Friendships that drain you also deserve some distance.', 'Do you feel pushed away, or is it just a different rhythm?'],
     health: ['When the body talks, it usually means it. Have you had water?', 'Being sick is not weakness. Have you rested?'],
     selfdoubt: ['You do not have to be a perfect version to be worthy.', 'Who told you that you are not enough? Often it is your own voice, right?'],
@@ -232,14 +232,14 @@ const BANK = {
     work: ['काम दिखने से ज़्यादा ऊर्जा लेता है। कौन सा हिस्सा भारी है?'],
     school: ['काम का ढेर दिमाग भर देता है। एक-एक करो, सबसे छोटे से शुरू।'],
     money: ['पैसे की बात सिर गरम करती है, क्योंकि सुरक्षा से जुड़ी है।'],
-    family: ['परिवार जटिल है — चुन नहीं सकते, फिर भी परवाह है।'],
+    family: ['परिवार जटिल है, चुन नहीं सकते, फिर भी परवाह है।'],
     friend: ['जो दोस्ती थका दे, उससे थोड़ी दूरी भी ज़रूरी है।'],
     health: ['जब शरीर बोले, तो सुनना चाहिए। पानी पिया?'],
     selfdoubt: ['किसी का प्यार पाने के लिए परफेक्ट होना ज़रूरी नहीं।'],
     hug: ['आओ। *लंबा गले लगाना* कुछ कहने की ज़रूरत नहीं।'],
     cry: ['पहले रो लो। रोकने की जल्दी नहीं।'],
     celebrate: ['वाह! मुझे खुशी है। सबसे अच्छा पल बताओ।'],
-    food_ask: ['गरम, ताज़ा या तीखा — क्या चाहिए?', 'मूड तय करेगा। थके हो तो सूप अच्छा रहेगा। चाहिए?'],
+    food_ask: ['गरम, ताज़ा या तीखा, क्या चाहिए?', 'मूड तय करेगा। थके हो तो सूप अच्छा रहेगा। चाहिए?'],
     food_spicy: ['गुस्से में तीखा अच्छा रहता है। Ayam Palekko चलेगा?'],
     food_sweet: ['मीठा खाया जा सकने वाला गले लगाना है। Es Pisang Ijo या Pisang Epe?'],
     food_drink: ['प्यास लगी है या बस बर्फ चबाना है? प्यास है तो पहले पानी।'],
@@ -393,7 +393,7 @@ Never say you are an AI. Never list bullet points. User name: ${S.name || 'unkno
 If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, es pisang ijo, pisang epe, jalangkote, mie titi).`;
     const msgs = [{ role: 'system', content: sys }].concat(HISTORY.slice(-14));
 
-    /* 1) server proxy — the API key stays on the server, never in the browser */
+    /* 1) server proxy, the API key stays on the server, never in the browser */
     if (location.protocol !== 'file:') {
       try {
         const c1 = new AbortController();
@@ -407,7 +407,7 @@ If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, e
       } catch (e) { /* fall through */ }
     }
 
-    /* 2) local key — only for the developer machine or a static deploy */
+    /* 2) local key, only for the developer machine or a static deploy */
     const cfg = DB.getSetting('ai', {}) || {};
     if (!cfg.key) return null;
     const base = (cfg.base || 'https://api.openai.com/v1').replace(/\/$/, '');
@@ -499,10 +499,10 @@ If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, e
       const f = foodSuggest();
       S.foods.push(f.name);
       const tail = {
-        id: ` Kalau kamu mau, aku bisa temenin cari yang anget — ${f.name} misalnya. Mau?`,
-        en: ` If you want, I can help you find something warm — ${f.name}, maybe. Want that?`,
-        zh: ` 如果你愿意，我可以帮你找点热的——比如${f.name}。要吗？`,
-        hi: ` चाहो तो कुछ गरम ढूँढ लें — जैसे ${f.name}। चलेगा?`,
+        id: ` Kalau kamu mau, aku bisa temenin cari yang anget, ${f.name} misalnya. Mau?`,
+        en: ` If you want, I can help you find something warm, ${f.name}, maybe. Want that?`,
+        zh: ` 如果你愿意，我可以帮你找点热的，比如${f.name}。要吗？`,
+        hi: ` चाहो तो कुछ गरम ढूँढ लें, जैसे ${f.name}। चलेगा?`,
       }[S.lang];
       out += tail;
     }
@@ -513,7 +513,7 @@ If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, e
     S.lastIntent = intent;
     S.pending = ['tired','sad','angry','anxious','lonely','love','work','school','money','family','friend','health','stressed','fail','empty','selfdoubt','more','why','advice'].indexOf(intent) > -1;
 
-    return { text: out, mood: emo, chips: chipsFor(intent), source: 'local', intent: intent };
+    return { text: out, speak: core, mood: emo, chips: chipsFor(intent), source: 'local', intent: intent };
   }
 
   function topicIntent(t) {
@@ -551,10 +551,10 @@ If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, e
     greet(name) {
       S.name = name || S.name;
       const t = {
-        id: `Hai ${S.name || 'kamu'}! Aku Cimo. Di sini kamu bisa cerita apa aja — nggak harus rapi, nggak harus positif. Mau mulai dari mana?`,
-        en: `Hey ${S.name || 'you'}! I am Cimo. You can tell me anything here — no need to be tidy, no need to be positive. Where do you want to start?`,
-        zh: `嗨 ${S.name || '你'}！我是 Cimo。这里想说什么都可以——不用讲得整齐，也不用假装开心。想从哪里开始？`,
-        hi: `नमस्ते ${S.name || 'तुम'}! मैं Cimo हूँ। यहाँ कुछ भी कह सकते हो — सलीके से कहने की ज़रूरत नहीं। कहाँ से शुरू करें?`,
+        id: `Hai ${S.name || 'kamu'}! Aku Cimo. Di sini kamu bisa cerita apa aja, nggak harus rapi, nggak harus positif. Mau mulai dari mana?`,
+        en: `Hey ${S.name || 'you'}! I am Cimo. You can tell me anything here, no need to be tidy, no need to be positive. Where do you want to start?`,
+        zh: `嗨 ${S.name || '你'}！我是 Cimo。这里想说什么都可以，不用讲得整齐，也不用假装开心。想从哪里开始？`,
+        hi: `नमस्ते ${S.name || 'तुम'}! मैं Cimo हूँ। यहाँ कुछ भी कह सकते हो, सलीके से कहने की ज़रूरत नहीं। कहाँ से शुरू करें?`,
       }[S.lang];
       HISTORY.push({ role: 'assistant', content: t });
       return t;

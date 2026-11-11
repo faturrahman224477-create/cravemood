@@ -16,3 +16,18 @@ probe.cjs
 v9.cjs
 probe.cjs
 live9.cjs
+
+# --- private / local only (never publish) ---
+chats.csv
+moods.csv
+snapshot-live.json
+db/
+dev.html
+capacitor.config.json
+*.zip
+
+# --- heavy local build artefacts (videos, prototypes, sound pack sources) ---
+video/
+proto/
+sound/
+shots2/
