@@ -31,3 +31,9 @@ video/
 proto/
 sound/
 shots2/
+
+# --- dev scratch ---
+.srv*.cjs
+shots3/
+gh-live.png
+social/

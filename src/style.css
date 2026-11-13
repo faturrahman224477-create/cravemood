@@ -848,9 +848,50 @@ td .tag{font-size:.6rem}
 }
 @media(min-width:981px){
   .hometop .brandrow{display:none}
-  .moodrow .mpill{max-width:132px}
   .saycimo{width:104px}
   .saycimo svg{width:104px}
+
+  /* ---- beranda di layar lebar: Cimo di kiri, ucapan di kanan ----
+     tanpa ini, konten hanya menumpuk di tengah dan menyisakan ruang kosong besar */
+  .hero2{
+    flex-direction:row;justify-content:center;align-items:center;
+    gap:36px;margin:10px auto 26px;max-width:900px;
+  }
+  .bigcimo{width:252px;flex:none}
+  .saybubble{
+    max-width:540px;text-align:left;padding:22px 28px;font-size:1.04rem;line-height:1.55;
+  }
+  .saybubble:before{
+    top:50%;left:-12px;transform:translateY(-50%);
+    border:12px solid transparent;border-left:0;border-right-color:#fff;
+  }
+  .pickhint{max-width:520px;margin:10px auto 22px}
+
+  /* kartu mood melebar mengikuti lebar layar */
+  .moodrow{justify-content:safe center;gap:16px;overflow-x:auto;padding:6px 0 16px}
+  .moodrow .mpill{max-width:190px;padding:16px 12px}
+  .mpill .mf{width:66px;height:66px}
+  .mpill .mf svg{width:64px}
+  .mpill b{font-size:.95rem}
+
+  /* bar lokasi & chip kategori ikut melebar */
+  .locbar{max-width:none}
+  .chips{justify-content:safe center}
+}
+/* konten beranda di tengah vertikal supaya tidak menggantung di atas */
+@media(min-width:981px){#view > .homebody{min-height:calc(100vh - 150px);display:flex;flex-direction:column;justify-content:center}}
+
+/* monitor besar: naikkan skala supaya konten tidak terlihat kecil di tengah */
+@media(min-width:1400px){
+  .hero2{max-width:1040px;gap:46px}
+  .bigcimo{width:300px}
+  .saybubble{max-width:620px;font-size:1.14rem;padding:26px 32px}
+  .pickhint{max-width:620px;font-size:.9rem}
+  .moodrow{gap:20px;padding:10px 0 18px}
+  .moodrow .mpill{max-width:224px;padding:22px 14px}
+  .mpill .mf{width:80px;height:80px}
+  .mpill .mf svg{width:78px}
+  .mpill b{font-size:1.02rem}
 }
 @media(max-width:400px){
   .mpill{min-width:52px;padding:6px 3px 5px}

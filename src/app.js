@@ -216,6 +216,8 @@ function viewHome() {
     </div>
   </div>
 
+  <div class="homebody">
+
   <div class="hero2">
     <div class="bigcimo ${picked ? 'picked' : ''}" id="sayCimo">${cimo(picked ? App.mood : 'def', 208)}</div>
     <div class="saybubble" id="say" role="status" aria-live="polite">${picked ? esc(mSay(moodObj, (recList()[0] || {}).name)) : esc(ask)}</div>
@@ -246,7 +248,8 @@ function viewHome() {
     <span style="flex:1;min-width:0"><b>${t('shuffle_t')}</b><small>${t('shuffle_s')}</small></span>
     <span class="go">›</span>
   </button>
-  ` : `<p class="pickhint">${t('home_hint')}</p>`}`;
+  ` : `<p class="pickhint">${t('home_hint')}</p>`}
+  </div>`;
 }
 
 function recList() {
