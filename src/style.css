@@ -972,3 +972,63 @@ body{
   .recs{grid-template-columns:repeat(3,minmax(0,1fr))}
   .rec .recbody h4{font-size:.95rem}
 }
+
+/* ==========================================================================
+   MOBILE SHELL — disamakan dengan 12 layar mockup (tab bar mengapung,
+   balon ucapan penuh, kartu mood berwarna, header 3 tombol bulat)
+   ========================================================================== */
+@media(max-width:980px){
+  /* tab bar mengapung */
+  .tabbar{
+    left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));
+    border-top:0;border-radius:26px;background:rgba(255,255,255,.97);
+    box-shadow:0 10px 26px rgba(58,33,66,.16);
+    padding:8px 6px;
+  }
+  [data-theme=dark] .tabbar{background:rgba(53,34,59,.97)}
+  .tabbar button{border-radius:18px;padding:9px 2px;font-size:.6rem;gap:3px}
+  .tabbar button.on{background:#ffe0ec;color:#b8346f}
+  .tabbar button.on svg{fill:rgba(255,95,152,.22);stroke:#e04d86}
+  [data-theme=dark] .tabbar button.on{background:#5a3550;color:#ffc6dd}
+
+  /* header: sapaan + logo + 3 tombol bulat */
+  .hometop{margin-bottom:6px}
+  .hometop .greet{font-size:.72rem;color:var(--mu);font-weight:700}
+  .hometop .brandrow{font-size:1.16rem}
+  .iconbtn{width:34px;height:34px;border-radius:50%;background:#fff;border:1.5px solid var(--ln);
+    display:grid;place-items:center}
+  .iconbtn svg{width:17px;height:17px}
+  .avatarbtn{width:34px;height:34px}
+  .avatarbtn svg{width:26px}
+
+  /* balon ucapan jadi kartu putih penuh */
+  .saybubble{
+    max-width:100%;text-align:center;border-radius:20px;padding:16px 18px;
+    font-size:.94rem;line-height:1.45;box-shadow:0 6px 16px rgba(58,33,66,.08);
+  }
+  .saybubble:before{display:none}
+  .bigcimo{width:min(196px,54vw)}
+
+  /* kartu mood berwarna pekat seperti mockup */
+  .moodrow{gap:8px;padding:4px 0 8px}
+  .mpill{
+    border:0;border-radius:16px;padding:8px 3px 7px;gap:3px;
+    background:color-mix(in srgb,var(--c,#ffd9e6) 62%,#fff);
+    box-shadow:0 6px 14px rgba(58,33,66,.10);
+  }
+  .mpill .mf{width:46px;height:46px}
+  .mpill .mf svg{width:44px}
+  .mpill b{font-size:.72rem}
+  .mpill.on{background:color-mix(in srgb,var(--c,#ffd9e6) 62%,#fff);border:2px solid #3a2142;
+    box-shadow:0 6px 14px rgba(58,33,66,.14);transform:translateY(-2px)}
+  .pickhint{font-size:.8rem;max-width:330px;margin:10px auto 14px}
+}
+
+@media(max-width:980px){
+  /* logo header juga pakai pil kuning seperti mockup */
+  .hometop .brandrow mark{background:#ffebb0;color:#3a2142;border:1.5px solid rgba(253,221,98,.55);
+    box-shadow:0 .1em 0 #fddd62;border-radius:.24em;transform:rotate(-2.5deg)}
+  .iconbtn.vipbtn{font-size:15px;line-height:1}
+  /* maskot mengapung tidak ada di mockup */
+  .pet{display:none!important}
+}

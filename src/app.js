@@ -212,7 +212,8 @@ function viewHome() {
     </div>
     <div style="display:flex;align-items:center;gap:7px">
       <button class="iconbtn" data-go="chat" aria-label="chat" title="${t('nav_chat')}">${icon('chat')}</button>
-      <button class="avatarbtn" data-go="profile" aria-label="profile" id="heroCimo">${cimo(App.mood, 40)}</button>
+      <button class="iconbtn vipbtn" data-go="vip" aria-label="VIP" title="CraveMood VIP">👑</button>
+      <button class="avatarbtn" data-go="profile" aria-label="profile" id="heroCimo">${cimo('def', 40)}</button>
     </div>
   </div>
 
