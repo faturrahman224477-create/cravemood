@@ -466,7 +466,7 @@ function viewChat() {
   return `
   <div class="chatwrap">
     <div class="chathead">
-      <div class="av">${cimo(App.mood, 38)}<i class="dot"></i></div>
+      <div class="av">${cimo('def', 38)}<i class="dot"></i></div>
       <div style="flex:1;min-width:0">
         <b>${t('chat_t')}</b>
         <small id="chatStatus">${t('chat_on')}</small>
@@ -519,7 +519,7 @@ async function sendChat(text) {
   const b = $('#chatBody');
   const typing = document.createElement('div');
   typing.className = 'msg'; typing.id = 'typing';
-  typing.innerHTML = `<div class="av">${cimo(App.mood, 26)}</div><div class="typing"><i></i><i></i><i></i></div>`;
+  typing.innerHTML = `<div class="av">${cimo('def', 26)}</div><div class="typing"><i></i><i></i><i></i></div>`;
   b.appendChild(typing); b.scrollTop = b.scrollHeight;
 
   const res = await ChatEngine.reply(text);
@@ -658,7 +658,7 @@ function viewProfile() {
   return `<div class="pagetitle"><div><h1>${t('prof_t')}</h1><p>${t('tagline')}</p></div></div>
 
   <div class="profhero">
-    <div class="avatar-lg">${cimo(App.mood, 82, false, App.costum)}</div>
+    <div class="avatar-lg">${cimo('def', 82, false, App.costum)}</div>
     <h3>${esc(App.user ? App.user.name : t('guest'))}</h3>
     <small class="muted">${App.user && !App.user.guest ? esc(App.user.contact) : t('guest')} · Pemburu Rasa · Level ${Math.max(1, Math.min(9, 1 + Math.floor(moodDays / 4)))}</small>
     <div class="row" style="justify-content:center;margin-top:10px">
@@ -746,7 +746,7 @@ function viewVip() {
 
   <div class="vipcard">
     <div class="viphead">
-      <div>${cimo(App.mood, 90, false, isV ? App.costum : '')}</div>
+      <div>${cimo('def', 90, false, isV ? App.costum : '')}</div>
       <div>
         <h2>${t('vip_t')}</h2>
         <p>${t('vip_sub')}</p>
@@ -1023,7 +1023,7 @@ function renderVipModal() {
   if (vipStep === 'pkg') {
     body.innerHTML = `
       <div style="text-align:center;margin-bottom:14px">
-        <div style="width:80px;height:80px;margin:0 auto">${cimo(App.mood, 76, false, 'crown')}</div>
+        <div style="width:80px;height:80px;margin:0 auto">${cimo('def', 76, false, 'crown')}</div>
         <h3 style="margin-top:6px;font-size:1.1rem">${t('vip_t')}</h3>
         <p class="hint" style="font-size:.8rem">${t('vip_sub')}</p>
       </div>
@@ -1636,6 +1636,7 @@ function go(v) {
 }
 function render() {
   const v = currentView;
+  document.body.dataset.view = v;
   applyMoodBg();
   $('#view').innerHTML = RENDER[v]();
   $$('#navlist .navbtn, #tabbar button').forEach(b => b.classList.toggle('on', b.dataset.go === v));

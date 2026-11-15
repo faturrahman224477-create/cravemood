@@ -1117,3 +1117,22 @@ body{
 }
 .modal .closebtn{width:38px;height:38px;font-size:1.05rem;box-shadow:0 3px 8px rgba(58,33,66,.12)}
 .modal .closebtn:hover{background:#ffd9e6}
+
+/* ==========================================================================
+   LATAR PER LAYAR — mengikuti warna tiap layar di mockup
+   ========================================================================== */
+body[data-view="recap"]{background-image:linear-gradient(180deg,#dff5e8 0%,#f2fbf5 45%,#fff7f0 100%)}
+body[data-view="vip"]{background-image:linear-gradient(180deg,#e7dcf8 0%,#f4e8f6 50%,#fff2ee 100%)}
+body[data-view="umkm"]{background-image:linear-gradient(180deg,#dcf6e8 0%,#f4fbf7 50%,#fff7f0 100%)}
+body[data-view="profile"]{background-image:linear-gradient(180deg,#efe4fb 0%,#f8f0fb 50%,#fff5f2 100%)}
+body[data-view="cart"]{background-image:linear-gradient(180deg,#ffe6ef 0%,#fff0f5 45%,#fff7f0 100%)}
+body[data-view="chat"]{background-image:linear-gradient(180deg,#ffe8f0 0%,#fff3f6 50%,#fff8f2 100%)}
+body[data-view="spin"]{background-image:linear-gradient(180deg,#ffe4ee 0%,#fff0f5 50%,#fff8f2 100%)}
+
+/* recap: kartu statistik putih seperti mockup */
+[data-view="recap"] .card{background:#fff}
+[data-view="recap"] .stat, [data-view="recap"] .statcard{background:#fff}
+
+/* profil & vip: kartu ungu muda */
+[data-view="profile"] .card, [data-view="vip"] .card{background:rgba(255,255,255,.86)}
+[data-view="umkm"] .card{background:rgba(255,255,255,.9)}
