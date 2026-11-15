@@ -235,7 +235,7 @@ function viewHome() {
     <select id="streetSel" aria-label="location">
       ${STREETS.map(s => `<option value="${s.id}" ${s.id === App.street ? 'selected' : ''}>${s.name}</option>`).join('')}
     </select>
-    <span class="dist">${esc(curStreet().area)}</span>
+    <span class="dist">${recList().length} rekomendasi</span>
   </div>
 
   <div class="chips" id="cats">
@@ -265,37 +265,39 @@ function renderRecs() {
   const box = $('#recs'); if (!box) return;
   const list = recList();
   if (!list.length) { box.innerHTML = `<div class="empty"><div class="big">${cimo('bingung', 90)}</div><p>${t('home_none')}</p></div>`; return; }
+  /* palet kartu pastel seperti mockup */
+  const PAL = [
+    { bg: '#ffe9c9', ink: '#8a5a2a' },
+    { bg: '#ffdfe6', ink: '#b8346f' },
+    { bg: '#dcf3e0', ink: '#2f7d4f' }
+  ];
   box.innerHTML = list.map((m, i) => {
     const q = App.cart[m.id] || 0;
-    const d = distOf(m).toFixed(1).replace('.', ',');
-    const lbl = i === 0 ? t('pick_t')
-      : m.viral ? '✦ ' + t('viral')
-      : (CATS.indexOf(m.cat) > -1 ? cL(m.cat) : '');
-    const c = MOODC[m.moods[0]] || MOODC.def;
-    const media = m.photo
-      ? `<img class="fphoto" src="${esc(m.photo)}" alt="${esc(m.name)}" loading="lazy"
-             onerror="this.style.display='none'">`
-      : `<div class="fart">${art(m.art, 96)}</div>`;
-    return `<article class="pickcard fcard">
-      <div class="pickhead"><b>${lbl}</b><span class="mini">${cimo(m.moods[0], 30)}</span></div>
-      <div class="fmedia" style="--c1:${c[0]}22;--c2:${c[1]}18" ${m.shopee ? `data-shop="${esc(m.shopee)}"` : ''}>
-        ${media}
-        <span class="frate">★ ${m.r}</span>
-        <span class="fdist">${icon('pin')}${d} km</span>
-        ${m.viral ? `<span class="fviral">🔥 ${t('viral')}</span>` : ''}
-      </div>
-      <div class="fbody">
-        <b class="fname">${esc(m.name)}</b>
-        <small class="fstall">${esc(m.stall)}</small>
-        <div class="frow">
-          <span class="fprice">${rp(m.lo)} – ${String(m.hi).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</span>
-          ${q ? `<span class="step"><button data-dec="${m.id}">−</button><i>${q}</i><button data-inc="${m.id}">+</button></span>`
-              : `<button class="fadd" data-add="${m.id}">${icon('plus')} ${t('home_add')}</button>`}
+    const lbl = i === 0 ? t('pick_t') : (m.viral ? '✦ ' + t('viral') : cL(m.cat));
+    const pal = PAL[i % PAL.length];
+    const hi = String(m.hi).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return `<article class="pickcard fcard" style="--cb:${pal.bg};--ci:${pal.ink}">
+      <div class="fc-top"><span class="fc-badge">${lbl}</span></div>
+      <div class="fc-slot">
+        <svg viewBox="0 0 24 24" class="fc-ico"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.5" cy="10" r="1.6"/><path d="M4 17l5-4 4 3 3-2 4 3"/></svg>
+        <b>Foto menu</b>
+        <div class="fc-plat">
+          <span><i style="background:#ee2737"></i>GoFood</span>
+          <span><i style="background:#00b14f"></i>GrabFood</span>
+          <span><i style="background:#ee4d2d"></i>ShopeeFood</span>
         </div>
+      </div>
+      <b class="fc-name">${esc(m.name)}</b>
+      <small class="fc-meta">${esc(m.stall)} · ${esc(curStreet().area)} · ±${m.eta || 15} mnt</small>
+      <div class="fc-foot">
+        <div><small>Perkiraan</small><b class="fc-price">${rp(m.lo)} – ${hi}</b></div>
+        ${q ? `<span class="step"><button data-dec="${m.id}">−</button><i>${q}</i><button data-inc="${m.id}">+</button></span>`
+            : `<button class="fadd" data-add="${m.id}">+ ${t('home_add')}</button>`}
       </div>
     </article>`;
   }).join('');
 }
+
 
 /* "Putar acak" — a real spinning-wheel popup */
 let popItems = [], popRot = 0, popSpinning = false;
@@ -1274,7 +1276,7 @@ function obRender() {
 
   /* ---- 0. splash ---- */
   if (obStep === 0) {
-    o.className = 'onboard splashwrap';
+    o.className = 'onboard splashwrap ob0';
     o.innerHTML = `<div class="splash">
       <div class="doodle d1">${cimo('senang', 54)}</div>
       <div class="doodle d2">${cimo('bingung', 46)}</div>
@@ -1290,7 +1292,7 @@ function obRender() {
     return;
   }
 
-  o.className = 'onboard';
+  o.className = 'onboard ob'+obStep+(obStep===3?(obMode==='login'?' login':' reg'):'');
 
   /* ---- 1. how it works ---- */
   if (obStep === 1) {

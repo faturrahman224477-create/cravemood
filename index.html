@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
-<meta name="build" content="1794761947823">
+<meta name="build" content="1794763044432">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7FA" media="(prefers-color-scheme: light)">
@@ -1061,6 +1061,75 @@ body{
   /* maskot mengapung tidak ada di mockup */
   .pet{display:none!important}
 }
+
+/* ==========================================================================
+   ONBOARDING — disamakan dengan 5 layar mockup
+   ========================================================================== */
+.onboard.ob0{background:linear-gradient(180deg,#ffe0ec 0%,#ffe8ef 45%,#ffeadb 100%)}
+.onboard.ob1{background:linear-gradient(180deg,#fff7ec 0%,#ffeade 100%)}
+.onboard.ob2{background:linear-gradient(180deg,#ffe4ef 0%,#ffeade 100%)}
+.onboard.login{background:linear-gradient(180deg,#e4d9f7 0%,#f6e6f4 55%,#ffeade 100%)}
+.onboard.reg{background:linear-gradient(180deg,#dcf6e8 0%,#fff7ec 60%,#ffeadb 100%)}
+
+/* splash */
+.onboard .doodle{display:none}
+.splash .wordmark mark{background:#ffebb0;color:#3a2142;border:1.5px solid rgba(253,221,98,.55);
+  box-shadow:0 4px 0 #fddd62;border-radius:14px}
+.splash .startbtn{background:#ff8fb8;box-shadow:0 6px 0 #d63f74;color:#fff;font:700 1rem Fredoka}
+.splash .tagline{color:#7d6683}
+
+/* cara kerja */
+.onboard .sheetbox{border-radius:28px}
+.howstep{border:0;box-shadow:0 6px 16px rgba(58,33,66,.08)}
+.howstep .ico{border-radius:16px;background:rgba(255,255,255,.55)}
+.onboard .bubble-say{background:#fff;border-radius:99px;padding:8px 16px;font:700 .8rem Fredoka;
+  box-shadow:0 4px 12px rgba(58,33,66,.10);display:inline-block}
+
+/* masuk / daftar */
+.obtabs{background:rgba(255,255,255,.6)}
+.obtabs button.on{background:#3a2142;color:#fff}
+.obbtn.primary{background:#ff8fb8;box-shadow:0 5px 0 #e05c8f}
+.obbtn{border-radius:14px;background:#fff}
+
+/* ==========================================================================
+   KARTU MENU — mengikuti kartu pastel mockup (badge, slot foto, platform)
+   ========================================================================== */
+.pickcard.fcard{
+  background:var(--cb,#ffe9c9);border:0;border-radius:22px;padding:14px 14px 16px;
+  box-shadow:0 8px 18px rgba(58,33,66,.10);display:flex;flex-direction:column;gap:8px;
+}
+.fc-top{display:flex}
+.fc-badge{background:rgba(255,255,255,.78);color:var(--ci,#8a5a2a);border-radius:99px;
+  padding:4px 11px;font:600 .68rem Fredoka}
+.fc-slot{
+  border:1.5px dashed rgba(58,33,66,.22);border-radius:14px;background:rgba(255,255,255,.55);
+  padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;
+}
+.fc-ico{width:24px;height:24px;fill:none;stroke:rgba(58,33,66,.45);stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round;margin-bottom:2px}
+.fc-slot b{font:600 .78rem Fredoka;color:#3a2142}
+.fc-plat{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:3px}
+.fc-plat span{display:inline-flex;align-items:center;gap:3px;font:600 .58rem Nunito;color:rgba(58,33,66,.72)}
+.fc-plat i{width:6px;height:6px;border-radius:50%;display:block}
+.fc-name{font:700 1.06rem Fredoka;color:var(--ci,#8a5a2a);letter-spacing:-.2px;margin-top:2px}
+.fc-meta{font:700 .7rem Nunito;color:rgba(58,33,66,.62);line-height:1.4}
+.fc-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:auto;padding-top:6px}
+.fc-foot small{display:block;font:700 .62rem Nunito;color:rgba(58,33,66,.6)}
+.fc-price{font:700 .95rem Fredoka;color:var(--ci,#8a5a2a)}
+.fcard .fadd{background:#ff8fb8;color:#fff;border:0;border-radius:99px;padding:8px 16px;
+  font:700 .78rem Fredoka;box-shadow:0 4px 0 #e05c8f;cursor:pointer;white-space:nowrap}
+.fcard .fadd svg{display:none}
+.fcard .step{background:#fff;border-radius:99px;padding:4px;display:inline-flex;align-items:center;gap:6px}
+.fcard .step button{width:26px;height:26px;border-radius:50%;border:0;background:#3a2142;color:#fff;font:700 1rem Fredoka}
+.fcard .step i{font:700 .82rem Fredoka;min-width:14px;text-align:center;font-style:normal}
+
+/* banner putar acak ala mockup */
+.shuffle{background:#4a2a5e;border-radius:18px;box-shadow:0 8px 18px rgba(74,42,94,.28);padding:14px 16px}
+.shuffle .sico{background:rgba(255,255,255,.14);border-radius:12px}
+
+/* splash: latar penuh, tanpa kilau dari body */
+.onboard.splashwrap{background:linear-gradient(180deg,#ffe0ec 0%,#ffe8ef 45%,#ffeadb 100%)}
+.splash .startbtn{box-shadow:0 6px 0 #d63f74;border:0}
 
 </style>
 </head>
@@ -3335,7 +3404,7 @@ function viewHome() {
     <select id="streetSel" aria-label="location">
       ${STREETS.map(s => `<option value="${s.id}" ${s.id === App.street ? 'selected' : ''}>${s.name}</option>`).join('')}
     </select>
-    <span class="dist">${esc(curStreet().area)}</span>
+    <span class="dist">${recList().length} rekomendasi</span>
   </div>
 
   <div class="chips" id="cats">
@@ -3365,37 +3434,39 @@ function renderRecs() {
   const box = $('#recs'); if (!box) return;
   const list = recList();
   if (!list.length) { box.innerHTML = `<div class="empty"><div class="big">${cimo('bingung', 90)}</div><p>${t('home_none')}</p></div>`; return; }
+  /* palet kartu pastel seperti mockup */
+  const PAL = [
+    { bg: '#ffe9c9', ink: '#8a5a2a' },
+    { bg: '#ffdfe6', ink: '#b8346f' },
+    { bg: '#dcf3e0', ink: '#2f7d4f' }
+  ];
   box.innerHTML = list.map((m, i) => {
     const q = App.cart[m.id] || 0;
-    const d = distOf(m).toFixed(1).replace('.', ',');
-    const lbl = i === 0 ? t('pick_t')
-      : m.viral ? '✦ ' + t('viral')
-      : (CATS.indexOf(m.cat) > -1 ? cL(m.cat) : '');
-    const c = MOODC[m.moods[0]] || MOODC.def;
-    const media = m.photo
-      ? `<img class="fphoto" src="${esc(m.photo)}" alt="${esc(m.name)}" loading="lazy"
-             onerror="this.style.display='none'">`
-      : `<div class="fart">${art(m.art, 96)}</div>`;
-    return `<article class="pickcard fcard">
-      <div class="pickhead"><b>${lbl}</b><span class="mini">${cimo(m.moods[0], 30)}</span></div>
-      <div class="fmedia" style="--c1:${c[0]}22;--c2:${c[1]}18" ${m.shopee ? `data-shop="${esc(m.shopee)}"` : ''}>
-        ${media}
-        <span class="frate">★ ${m.r}</span>
-        <span class="fdist">${icon('pin')}${d} km</span>
-        ${m.viral ? `<span class="fviral">🔥 ${t('viral')}</span>` : ''}
-      </div>
-      <div class="fbody">
-        <b class="fname">${esc(m.name)}</b>
-        <small class="fstall">${esc(m.stall)}</small>
-        <div class="frow">
-          <span class="fprice">${rp(m.lo)} – ${String(m.hi).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</span>
-          ${q ? `<span class="step"><button data-dec="${m.id}">−</button><i>${q}</i><button data-inc="${m.id}">+</button></span>`
-              : `<button class="fadd" data-add="${m.id}">${icon('plus')} ${t('home_add')}</button>`}
+    const lbl = i === 0 ? t('pick_t') : (m.viral ? '✦ ' + t('viral') : cL(m.cat));
+    const pal = PAL[i % PAL.length];
+    const hi = String(m.hi).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return `<article class="pickcard fcard" style="--cb:${pal.bg};--ci:${pal.ink}">
+      <div class="fc-top"><span class="fc-badge">${lbl}</span></div>
+      <div class="fc-slot">
+        <svg viewBox="0 0 24 24" class="fc-ico"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.5" cy="10" r="1.6"/><path d="M4 17l5-4 4 3 3-2 4 3"/></svg>
+        <b>Foto menu</b>
+        <div class="fc-plat">
+          <span><i style="background:#ee2737"></i>GoFood</span>
+          <span><i style="background:#00b14f"></i>GrabFood</span>
+          <span><i style="background:#ee4d2d"></i>ShopeeFood</span>
         </div>
+      </div>
+      <b class="fc-name">${esc(m.name)}</b>
+      <small class="fc-meta">${esc(m.stall)} · ${esc(curStreet().area)} · ±${m.eta || 15} mnt</small>
+      <div class="fc-foot">
+        <div><small>Perkiraan</small><b class="fc-price">${rp(m.lo)} – ${hi}</b></div>
+        ${q ? `<span class="step"><button data-dec="${m.id}">−</button><i>${q}</i><button data-inc="${m.id}">+</button></span>`
+            : `<button class="fadd" data-add="${m.id}">+ ${t('home_add')}</button>`}
       </div>
     </article>`;
   }).join('');
 }
+
 
 /* "Putar acak" — a real spinning-wheel popup */
 let popItems = [], popRot = 0, popSpinning = false;
@@ -4374,7 +4445,7 @@ function obRender() {
 
   /* ---- 0. splash ---- */
   if (obStep === 0) {
-    o.className = 'onboard splashwrap';
+    o.className = 'onboard splashwrap ob0';
     o.innerHTML = `<div class="splash">
       <div class="doodle d1">${cimo('senang', 54)}</div>
       <div class="doodle d2">${cimo('bingung', 46)}</div>
@@ -4390,7 +4461,7 @@ function obRender() {
     return;
   }
 
-  o.className = 'onboard';
+  o.className = 'onboard ob'+obStep+(obStep===3?(obMode==='login'?' login':' reg'):'');
 
   /* ---- 1. how it works ---- */
   if (obStep === 1) {

@@ -1032,3 +1032,72 @@ body{
   /* maskot mengapung tidak ada di mockup */
   .pet{display:none!important}
 }
+
+/* ==========================================================================
+   ONBOARDING — disamakan dengan 5 layar mockup
+   ========================================================================== */
+.onboard.ob0{background:linear-gradient(180deg,#ffe0ec 0%,#ffe8ef 45%,#ffeadb 100%)}
+.onboard.ob1{background:linear-gradient(180deg,#fff7ec 0%,#ffeade 100%)}
+.onboard.ob2{background:linear-gradient(180deg,#ffe4ef 0%,#ffeade 100%)}
+.onboard.login{background:linear-gradient(180deg,#e4d9f7 0%,#f6e6f4 55%,#ffeade 100%)}
+.onboard.reg{background:linear-gradient(180deg,#dcf6e8 0%,#fff7ec 60%,#ffeadb 100%)}
+
+/* splash */
+.onboard .doodle{display:none}
+.splash .wordmark mark{background:#ffebb0;color:#3a2142;border:1.5px solid rgba(253,221,98,.55);
+  box-shadow:0 4px 0 #fddd62;border-radius:14px}
+.splash .startbtn{background:#ff8fb8;box-shadow:0 6px 0 #d63f74;color:#fff;font:700 1rem Fredoka}
+.splash .tagline{color:#7d6683}
+
+/* cara kerja */
+.onboard .sheetbox{border-radius:28px}
+.howstep{border:0;box-shadow:0 6px 16px rgba(58,33,66,.08)}
+.howstep .ico{border-radius:16px;background:rgba(255,255,255,.55)}
+.onboard .bubble-say{background:#fff;border-radius:99px;padding:8px 16px;font:700 .8rem Fredoka;
+  box-shadow:0 4px 12px rgba(58,33,66,.10);display:inline-block}
+
+/* masuk / daftar */
+.obtabs{background:rgba(255,255,255,.6)}
+.obtabs button.on{background:#3a2142;color:#fff}
+.obbtn.primary{background:#ff8fb8;box-shadow:0 5px 0 #e05c8f}
+.obbtn{border-radius:14px;background:#fff}
+
+/* ==========================================================================
+   KARTU MENU — mengikuti kartu pastel mockup (badge, slot foto, platform)
+   ========================================================================== */
+.pickcard.fcard{
+  background:var(--cb,#ffe9c9);border:0;border-radius:22px;padding:14px 14px 16px;
+  box-shadow:0 8px 18px rgba(58,33,66,.10);display:flex;flex-direction:column;gap:8px;
+}
+.fc-top{display:flex}
+.fc-badge{background:rgba(255,255,255,.78);color:var(--ci,#8a5a2a);border-radius:99px;
+  padding:4px 11px;font:600 .68rem Fredoka}
+.fc-slot{
+  border:1.5px dashed rgba(58,33,66,.22);border-radius:14px;background:rgba(255,255,255,.55);
+  padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;
+}
+.fc-ico{width:24px;height:24px;fill:none;stroke:rgba(58,33,66,.45);stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round;margin-bottom:2px}
+.fc-slot b{font:600 .78rem Fredoka;color:#3a2142}
+.fc-plat{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:3px}
+.fc-plat span{display:inline-flex;align-items:center;gap:3px;font:600 .58rem Nunito;color:rgba(58,33,66,.72)}
+.fc-plat i{width:6px;height:6px;border-radius:50%;display:block}
+.fc-name{font:700 1.06rem Fredoka;color:var(--ci,#8a5a2a);letter-spacing:-.2px;margin-top:2px}
+.fc-meta{font:700 .7rem Nunito;color:rgba(58,33,66,.62);line-height:1.4}
+.fc-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:auto;padding-top:6px}
+.fc-foot small{display:block;font:700 .62rem Nunito;color:rgba(58,33,66,.6)}
+.fc-price{font:700 .95rem Fredoka;color:var(--ci,#8a5a2a)}
+.fcard .fadd{background:#ff8fb8;color:#fff;border:0;border-radius:99px;padding:8px 16px;
+  font:700 .78rem Fredoka;box-shadow:0 4px 0 #e05c8f;cursor:pointer;white-space:nowrap}
+.fcard .fadd svg{display:none}
+.fcard .step{background:#fff;border-radius:99px;padding:4px;display:inline-flex;align-items:center;gap:6px}
+.fcard .step button{width:26px;height:26px;border-radius:50%;border:0;background:#3a2142;color:#fff;font:700 1rem Fredoka}
+.fcard .step i{font:700 .82rem Fredoka;min-width:14px;text-align:center;font-style:normal}
+
+/* banner putar acak ala mockup */
+.shuffle{background:#4a2a5e;border-radius:18px;box-shadow:0 8px 18px rgba(74,42,94,.28);padding:14px 16px}
+.shuffle .sico{background:rgba(255,255,255,.14);border-radius:12px}
+
+/* splash: latar penuh, tanpa kilau dari body */
+.onboard.splashwrap{background:linear-gradient(180deg,#ffe0ec 0%,#ffe8ef 45%,#ffeadb 100%)}
+.splash .startbtn{box-shadow:0 6px 0 #d63f74;border:0}
