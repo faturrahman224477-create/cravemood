@@ -1101,3 +1101,19 @@ body{
 /* splash: latar penuh, tanpa kilau dari body */
 .onboard.splashwrap{background:linear-gradient(180deg,#ffe0ec 0%,#ffe8ef 45%,#ffeadb 100%)}
 .splash .startbtn{box-shadow:0 6px 0 #d63f74;border:0}
+
+/* ==========================================================================
+   MODAL: header (judul + tombol tutup) tetap di atas, isi saja yang scroll
+   ========================================================================== */
+.modal .mbox:has(.mhead){display:flex;flex-direction:column;overflow:hidden;padding:0}
+.modal .mbox:has(.mhead) .mhead{
+  flex:none;margin:0;padding:20px 22px 12px;background:var(--bg);
+  position:relative;z-index:3;border-radius:30px 30px 0 0;
+}
+.modal .mbox:has(.mhead) .mhead h3{margin:0}
+.modal .mbox:has(.mhead) .mhead + *{
+  flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  padding:0 22px 22px;scrollbar-gutter:stable;
+}
+.modal .closebtn{width:38px;height:38px;font-size:1.05rem;box-shadow:0 3px 8px rgba(58,33,66,.12)}
+.modal .closebtn:hover{background:#ffd9e6}

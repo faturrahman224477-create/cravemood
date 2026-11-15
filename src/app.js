@@ -1815,6 +1815,7 @@ function bindGlobal() {
     }
     if (hit('#sendBtn')) { const v = $('#chatInput').value.trim(); if (v) sendChat(v); return; }
     if (hit('#micBtn')) { startMic(); return; }
+    if (e.target.closest('#vipModal .closebtn') || e.target.id === 'vipModal') { $('#vipModal').classList.remove('on'); return; }
     if (e.target.closest('#shareModal .closebtn') || e.target.id === 'shareModal') { $('#shareModal').classList.remove('on'); return; }
     if (e.target.closest('#installModal .closebtn') || e.target.id === 'installModal') { $('#installModal').classList.remove('on'); return; }
     if (e.target.closest('#spinModal .closebtn') || e.target.id === 'spinModal') { $('#spinModal').classList.remove('on'); SFX.stopTicks(); return; }
