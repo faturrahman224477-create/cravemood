@@ -108,8 +108,8 @@ function applyMoodBg() {
   const m = MOODS.find(x => x.k === App.mood);
   const picked = !!App.moodPicked;
   const c = (picked && m) ? m.c : '#ff9ec5';
-  const A = mixHex('#ffffff', c, picked ? 0.40 : 0.26);
-  const B = mixHex('#ffffff', c, picked ? 0.24 : 0.16);
+  const A = mixHex('#ffffff', c, picked ? 0.46 : 0.26);
+  const B = mixHex('#ffffff', c, picked ? 0.30 : 0.16);
   const C = mixHex('#fff2ea', c, picked ? 0.11 : 0.07);
   const D = mixHex('#fff6ef', c, picked ? 0.04 : 0.02);
   root.style.setProperty('--bgA', A);
