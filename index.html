@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
-<meta name="build" content="1794531330266">
+<meta name="build" content="1794760790283">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7FA" media="(prefers-color-scheme: light)">
@@ -945,6 +945,62 @@ td .tag{font-size:.6rem}
 .profstats>div{background:#fff;border:1px solid var(--ln);border-radius:20px;padding:12px 6px;text-align:center;box-shadow:var(--sh2)}
 .profstats b{display:block;font:700 1.35rem Fredoka;color:var(--ink);line-height:1.15}
 .profstats span{font:700 .68rem Nunito;color:var(--mu)}
+
+/* ==========================================================================
+   MOCKUP THEME — tampilan disamakan dengan prototype/cravemood-prototype.html
+   ========================================================================== */
+
+/* latar bersih, tanpa pola bintang */
+body{
+  background-image:linear-gradient(180deg,#fff5f9 0%,#fff8f2 50%,#fff7fa 100%);
+  background-size:100% 100%;background-repeat:no-repeat;
+}
+[data-theme=dark] body{
+  background-image:linear-gradient(180deg,#2e1a33 0%,#281630 55%,#241529 100%);
+}
+
+/* sidebar */
+.sidebar{background:rgba(255,255,255,.92);border-right:1.5px solid var(--ln);padding:18px 14px;gap:8px}
+[data-theme=dark] .sidebar{background:rgba(45,28,52,.94)}
+.brand{padding:10px 10px 16px;border-bottom:1px dashed var(--ln);justify-content:flex-start}
+.lg mark{background:#ffebb0;color:#3a2142;border:1.5px solid rgba(253,221,98,.55);
+  box-shadow:0 .11em 0 #fddd62,0 .2em .38em rgba(253,221,98,.26);border-radius:.24em;transform:rotate(-2.5deg)}
+.navbtn{border-radius:15px;padding:10px 13px;font-weight:600;color:var(--ink)}
+.navbtn:hover{background:rgba(255,143,184,.16);transform:none}
+.navbtn.on{background:#ffe0ec;color:#3a2142;box-shadow:none}
+.navbtn.on .bdg{background:var(--pk2);color:#fff}
+
+/* kartu mood */
+.mpill{border:2px solid transparent;border-radius:20px;padding:10px 6px 8px;
+  box-shadow:0 7px 14px rgba(58,33,66,.1)}
+.mpill.on{background:color-mix(in srgb,var(--c,#ffd9e6) 30%,#fff);border-color:#3a2142;
+  box-shadow:0 7px 14px rgba(58,33,66,.14);transform:translateY(-2px)}
+
+/* kartu makanan, panel, chip */
+.pickcard{border:2px solid rgba(58,33,66,.1);border-radius:26px;box-shadow:0 6px 14px rgba(58,33,66,.08)}
+.card{border:1.5px solid var(--ln);border-radius:24px}
+.chip{border-radius:99px;padding:6px 15px}
+.chip.on{background:#3a2142;color:#fff8ef}
+.locbar{border-radius:18px;background:rgba(255,255,255,.92)}
+
+/* beranda: tumpuk tengah seperti mockup, dibatasi selebar konten mockup */
+@media(min-width:981px){
+  .hero2{flex-direction:column;gap:12px;max-width:720px;width:100%;margin:0 auto 14px}
+  .bigcimo{width:212px}
+  .saybubble{max-width:640px;text-align:center;font-size:.98rem;padding:14px 20px}
+  .saybubble:before{top:-9px;left:50%;transform:translateX(-50%);
+    border:10px solid transparent;border-top:0;border-bottom-color:#fff}
+  .moodrow{max-width:720px;width:100%;margin:0 auto;gap:12px;justify-content:safe center}
+  .moodrow .mpill{max-width:none}
+  #view > .homebody{max-width:760px;margin:0 auto}
+  .pickhint{max-width:520px}
+}
+
+/* tiga kartu sejajar seperti mockup */
+@media(min-width:981px){
+  .recs{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .rec .recbody h4{font-size:.95rem}
+}
 
 </style>
 </head>

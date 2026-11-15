@@ -1,0 +1,3753 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CraveMood — Product Design Mockup &amp; Prototype</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23fff8ef'/%3E%3Crect x='7' y='37' width='50' height='21' rx='8' fill='%23fddd62'/%3E%3Crect x='7' y='33' width='50' height='21' rx='8' fill='%23ffebb0'/%3E%3Cellipse cx='32' cy='27' rx='18' ry='15.5' fill='%23ffa9c9' stroke='%23f27aa8' stroke-width='1.8'/%3E%3Cg transform='translate(41 13) rotate(18)'%3E%3Cellipse cx='-3.5' rx='3.5' ry='2.2' fill='%23ff7aa8'/%3E%3Cellipse cx='3.5' rx='3.5' ry='2.2' fill='%23ff7aa8'/%3E%3Ccircle r='1.8' fill='%23ff5c92'/%3E%3C/g%3E%3Cellipse cx='25' cy='26' rx='3.2' ry='3.8' fill='%232f2a6b'/%3E%3Ccircle cx='26.2' cy='24.4' r='1.2' fill='%23fff'/%3E%3Cellipse cx='39' cy='26' rx='3.2' ry='3.8' fill='%232f2a6b'/%3E%3Ccircle cx='40.2' cy='24.4' r='1.2' fill='%23fff'/%3E%3Cellipse cx='20' cy='30' rx='2.6' ry='1.6' fill='%23ff6f9c' opacity='.48'/%3E%3Cellipse cx='44' cy='30' rx='2.6' ry='1.6' fill='%23ff6f9c' opacity='.48'/%3E%3Cpath d='M28.5 31.5Q32 34.5 35.5 31.5' fill='none' stroke='%232f2a6b' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='14' cy='34' r='5.2' fill='%23ffa9c9' stroke='%23f27aa8' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='34' r='5.2' fill='%23ffa9c9' stroke='%23f27aa8' stroke-width='1.5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   CraveMood — Mockup Awal Typography & Colors + Developer Prototype Polish
+   Latar bersih polos/gradasi lembut — TANPA pattern bintik atau bintang.
+   ========================================================================== */
+:root {
+  --bg: #fff7fa;
+  --ink: #3a2142;
+  --mu: #7d6683;
+  --sf: #ffffff;
+  --cr: #fff8ef;
+  --ln: rgba(90, 50, 100, .14);
+  --pk: #ffb6d0;
+  --pkb: #ff8fb8;
+  --pk2: #ff5f98;
+  --plum: #4a2a5e;
+  --le: #f4f87f;
+  --sk: #9fd6ff;
+  --pe: #ffb98a;
+  --mi: #a8ecd6;
+  --li: #dccbff;
+  --gd: #ffd300;
+  --sh: 0 10px 26px rgba(58, 33, 66, .10);
+  --sh-sm: 0 6px 14px rgba(58, 33, 66, .08);
+  --nav: 256px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; scroll-behavior: smooth; }
+body {
+  background: linear-gradient(180deg, #fff5f9 0%, #fff8f2 50%, #fff7fa 100%);
+  color: var(--ink);
+  font: 400 1rem/1.55 'Nunito', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4, b, button, .f {
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+}
+h1, h2, h3, h4, p { margin: 0; }
+button, input, select { font-family: inherit; }
+button { cursor: pointer; }
+
+/* ===== Sticky Header ===== */
+header.top {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: rgba(255, 248, 252, .94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1.5px solid var(--ln);
+  padding: 10px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.lg2 {
+  font: 700 1.55rem/1 'Fredoka', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: .16em;
+  color: var(--ink);
+  letter-spacing: -.015em;
+  white-space: nowrap;
+}
+.lg2.has-mascot {
+  padding-top: 1.42em;
+  padding-bottom: .16em;
+}
+.lg2.no-mascot {
+  padding-bottom: .14em;
+}
+.lg2 .mood-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-2.5deg);
+}
+.lg2 .lg-peek-head,
+.lg2 .lg-peek-paws {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% - .26em);
+  width: 2.55em;
+  height: 1.581em;
+  transform: translateX(-50%);
+  pointer-events: none;
+  overflow: visible;
+  display: block;
+}
+.lg2 .lg-peek-head { z-index: 1; }
+.lg2 .lg-peek-paws { z-index: 3; }
+.lg2 mark,
+.lg2 .mood-pill {
+  position: relative;
+  z-index: 2;
+  background: #ffebb0;
+  color: #3a2142;
+  padding: .20em .34em .16em;
+  border-radius: .24em;
+  display: inline-block;
+  border: 1.5px solid rgba(253, 221, 98, .55);
+  box-shadow: 0 .11em 0 #fddd62, 0 .20em .38em rgba(253, 221, 98, .26);
+}
+.lg2.no-mascot .mood-pill {
+  transform: rotate(-2.5deg);
+  padding: .13em .34em .14em;
+}
+.lg2-lockup {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .20em;
+}
+.lg2-tag {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: .41em;
+  color: var(--ink);
+  letter-spacing: -.005em;
+  line-height: 1.15;
+}
+.top-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.top-nav a {
+  text-decoration: none;
+  font: 600 .84rem 'Fredoka', sans-serif;
+  color: var(--ink);
+  background: var(--sf);
+  border: 1.5px solid var(--ln);
+  border-radius: 99px;
+  padding: 6px 14px;
+  transition: .16s;
+}
+.top-nav a:hover {
+  background: #ff9ec5;
+  border-color: transparent;
+}
+
+/* ===== Page Sections ===== */
+.wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+.hero-intro {
+  text-align: center;
+  padding: 22px 16px 10px;
+}
+.hero-intro h1 {
+  font-size: clamp(1.75rem, 3.6vw, 2.55rem);
+  margin: 14px 0 8px;
+}
+.hero-intro p {
+  color: var(--mu);
+  max-width: 680px;
+  margin: 0 auto;
+  font-size: .96rem;
+}
+.sec {
+  margin-top: 46px;
+}
+.sec-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid var(--ln);
+}
+.sec-num {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #ff8fb8;
+  color: #3a2142;
+  font: 700 1.2rem 'Fredoka', sans-serif;
+  box-shadow: 0 5px 12px rgba(242, 122, 168, .35);
+}
+.sec-head h2 {
+  font-size: 1.5rem;
+}
+.sec-head p {
+  color: var(--mu);
+  font-size: .9rem;
+  margin-top: 2px;
+}
+
+/* ===== Clean Containers & Helpers ===== */
+.card {
+  background: var(--sf);
+  border: 1.5px solid var(--ln);
+  border-radius: 26px;
+  padding: 22px;
+  box-shadow: var(--sh-sm);
+}
+.glow {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.glow::before {
+  content: "";
+  position: absolute;
+  width: var(--h, 240px);
+  height: var(--h, 240px);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, .92) 0%, rgba(255, 255, 255, .48) 52%, transparent 74%);
+  pointer-events: none;
+}
+.glow > * {
+  position: relative;
+  z-index: 1;
+}
+.cm-float {
+  display: flex;
+  justify-content: center;
+}
+.board-card {
+  background: rgba(255, 255, 255, .86);
+  border: 1.5px solid var(--ln);
+  border-radius: 26px;
+  padding: 18px;
+  box-shadow: var(--sh);
+}
+.board-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ln);
+}
+.board-label b {
+  font-size: 1rem;
+}
+.board-label span {
+  background: #fdeef5;
+  color: #b8346f;
+  font: 600 .75rem 'Fredoka', sans-serif;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+.g-auto { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.g-2 { display: grid; gap: 20px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.g-3 { display: grid; gap: 18px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.g-4 { display: grid; gap: 14px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 980px) {
+  .g-2, .g-3, .g-4 { grid-template-columns: 1fr; }
+}
+
+/* ===== Section 1: Panduan Desain Mockup Awal ===== */
+.an-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  align-items: stretch;
+}
+.pk-box {
+  background: linear-gradient(180deg, #f6d7e2, #fbe8dc);
+  border-radius: 26px;
+  padding: 24px;
+  display: grid;
+  place-items: center;
+}
+.pt-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 11px;
+}
+.pt-list li {
+  display: flex;
+  gap: 12px;
+}
+.pt-list i {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #ff8fb8;
+  margin-top: 7px;
+}
+.pt-list b {
+  font: 600 .98rem 'Fredoka', sans-serif;
+  display: block;
+}
+.pt-list span {
+  color: var(--mu);
+  font-size: .88rem;
+}
+.mc-card {
+  border-radius: 22px;
+  padding: 14px;
+  text-align: center;
+  color: #3a2142;
+  border: 1.5px solid rgba(58, 33, 66, .08);
+}
+.mc-card h4 { font-size: 1.05rem; margin: 4px 0 2px; }
+.mc-card p { font-size: .84rem; color: #5b4363; }
+.mc-card small { display: block; margin-top: 6px; font: 600 .76rem 'Fredoka', sans-serif; opacity: .8; }
+.swatch-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+.swatch {
+  border-radius: 18px;
+  padding: 13px;
+  min-height: 102px;
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid rgba(58, 33, 66, .10);
+  box-shadow: 0 5px 12px rgba(58, 33, 66, .07);
+}
+.swatch b { font: 700 .9rem 'Fredoka', sans-serif; }
+.swatch span { font: 600 .8rem 'Nunito', sans-serif; opacity: .9; }
+.swatch small { margin-top: auto; font: 600 .72rem 'Nunito', sans-serif; opacity: .82; }
+.ratio-bar {
+  display: flex;
+  height: 28px;
+  border-radius: 99px;
+  overflow: hidden;
+  margin: 8px 0;
+  border: 1.5px solid var(--ln);
+}
+.ts-row {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 6px 16px;
+  align-items: baseline;
+  padding: 10px 0;
+  border-top: 1px solid var(--ln);
+}
+.ts-row:first-child { border-top: 0; }
+.ts-row small { color: var(--mu); font-size: .78rem; font-weight: 700; }
+
+/* ===== Browser & Phone Mockup Frames ===== */
+.bw {
+  width: 100%;
+  border: 1.5px solid var(--ln);
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--sf);
+  box-shadow: 0 18px 36px rgba(58, 33, 66, .13);
+}
+.bw-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  background: rgba(58, 33, 66, .07);
+}
+.bw-bar i { width: 10px; height: 10px; border-radius: 50%; background: #ff8fb8; display: inline-block; }
+.bw-bar i:nth-child(2) { background: #f4f87f; }
+.bw-bar i:nth-child(3) { background: #a8ecd6; }
+.bw-bar span {
+  flex: 1;
+  max-width: 320px;
+  margin-left: 12px;
+  background: #fff;
+  color: var(--mu);
+  border-radius: 99px;
+  padding: 3px 13px;
+  font: 600 .72rem 'Fredoka', sans-serif;
+}
+.vp {
+  position: relative;
+  min-height: 430px;
+  overflow: hidden;
+  color: #3a2142;
+}
+
+/* Mobile Phone Frame */
+.ph-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 26px;
+  align-items: flex-start;
+}
+.ph-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 320px;
+}
+.ph-cap {
+  text-align: center;
+  margin-top: 12px;
+}
+.ph-cap b {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ff8fb8;
+  color: #3a2142;
+  font: 700 .78rem 'Fredoka', sans-serif;
+  margin-right: 6px;
+}
+.ph-cap h4 { display: inline; font-size: 1rem; }
+.ph-cap p { margin-top: 4px; font-size: .8rem; color: var(--mu); }
+
+.ph {
+  position: relative;
+  width: 312px;
+  height: 640px;
+  border: 8px solid #2b2030;
+  border-radius: 44px;
+  overflow: hidden;
+  box-shadow: 0 22px 40px rgba(58, 33, 66, .20);
+  background: #2b2030;
+  flex: none;
+}
+.ph::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 82px;
+  height: 20px;
+  border-radius: 12px;
+  background: #2b2030;
+  transform: translateX(-50%);
+  z-index: 20;
+}
+.ph-sb {
+  position: absolute;
+  top: 10px;
+  left: 22px;
+  right: 22px;
+  display: flex;
+  justify-content: space-between;
+  font: 600 .66rem 'Fredoka', sans-serif;
+  z-index: 15;
+  color: #3a2142;
+}
+.ph-sr {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  color: #3a2142;
+  display: flex;
+  flex-direction: column;
+}
+.ph-hb {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  width: 90px;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(58, 33, 66, .5);
+  transform: translateX(-50%);
+  z-index: 20;
+}
+
+/* ===== Simulator Controls & Shell ===== */
+.sim-bar {
+  background: var(--sf);
+  border: 1.5px solid var(--ln);
+  border-radius: 22px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  box-shadow: var(--sh-sm);
+}
+.sim-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.sim-pill {
+  border: 1.5px solid var(--ln);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 99px;
+  padding: 6px 13px;
+  font: 600 .78rem 'Fredoka', sans-serif;
+  transition: .14s;
+}
+.sim-pill:hover { background: #fdeef5; }
+.sim-pill.on {
+  background: #3a2142;
+  color: #fff8ef;
+  border-color: transparent;
+}
+.sim-shell {
+  display: flex;
+  justify-content: center;
+}
+.sim-subbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 14px;
+  background: rgba(255, 255, 255, .86);
+  border: 1.5px solid var(--ln);
+  border-radius: 16px;
+  padding: 8px 14px;
+  margin-bottom: 16px;
+  font-size: .78rem;
+}
+.sim-subgrp {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+}
+.sim-subgrp small {
+  font: 700 .74rem 'Fredoka', sans-serif;
+  color: var(--mu);
+  margin-right: 2px;
+}
+.sim-mini-pill {
+  border: 1.5px solid var(--ln);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 99px;
+  padding: 3px 10px;
+  font: 600 .72rem 'Fredoka', sans-serif;
+}
+.sim-mini-pill.on {
+  background: #ff8fb8;
+  color: #3a2142;
+  border-color: transparent;
+}
+
+/* ===== App Shell (Desktop Web + Mobile Phone) ===== */
+.app-desktop {
+  width: 100%;
+  border-radius: 26px;
+  overflow: hidden;
+  border: 1.5px solid var(--ln);
+  box-shadow: 0 22px 48px rgba(58, 33, 66, .13);
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  min-height: 620px;
+  position: relative;
+  color: var(--ink);
+}
+.app-desktop.theme-dark, .ph-sr.theme-dark {
+  --ink: #fff0f7;
+  --mu: #d3b9cd;
+  --sf: #35223b;
+  --ln: rgba(255, 255, 255, .15);
+  color: #fff0f7;
+}
+@media (max-width: 900px) {
+  .app-desktop { grid-template-columns: 1fr; }
+  .app-sidebar { display: none; }
+}
+
+.app-sidebar {
+  background: rgba(255, 255, 255, .92);
+  border-right: 1.5px solid var(--ln);
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.app-desktop.theme-dark .app-sidebar {
+  background: rgba(45, 28, 52, .94);
+}
+.side-brand {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px 10px 16px;
+  border-bottom: 1px dashed var(--ln);
+}
+.side-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 6px;
+}
+.navbtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 13px;
+  border: 0;
+  border-radius: 15px;
+  background: transparent;
+  color: var(--ink);
+  font: 600 .9rem 'Fredoka', sans-serif;
+  text-align: left;
+  transition: .14s;
+}
+.navbtn:hover { background: rgba(255, 143, 184, .16); }
+.navbtn.on {
+  background: #ffe0ec;
+  color: #3a2142;
+}
+.navbtn svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.navbtn.on svg { fill: #f4b8d2; stroke: #3a2142; }
+.nav-bdg {
+  margin-left: auto;
+  background: #ff5f98;
+  color: #fff;
+  border-radius: 99px;
+  padding: 1px 8px;
+  font-size: .72rem;
+}
+.app-main {
+  padding: 24px 26px;
+  position: relative;
+  min-width: 0;
+}
+.app-main.has-float { padding-bottom: 104px; }
+
+.ph-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 40px 14px 76px;
+  min-height: 0;
+}
+.ph-scroll.has-float { padding-bottom: 126px; }
+.ph-scroll::-webkit-scrollbar { width: 4px; }
+.ph-scroll::-webkit-scrollbar-thumb { background: rgba(58, 33, 66, .18); border-radius: 99px; }
+
+.ph-botnav {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, .96);
+  border-top: 1px solid var(--ln);
+  border-radius: 22px 22px 0 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 7px 6px 14px;
+  box-shadow: 0 -6px 18px rgba(58, 33, 66, .08);
+}
+.ph-sr.theme-dark .ph-botnav { background: #2d1b34; }
+.p-nav-btn {
+  border: 0;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font: 600 .66rem 'Fredoka', sans-serif;
+  color: var(--mu);
+  padding: 4px;
+  border-radius: 12px;
+  position: relative;
+}
+.p-nav-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.p-nav-btn.on {
+  background: #ffe0ec;
+  color: #3a2142;
+}
+.p-nav-btn.on svg { fill: #f4b8d2; stroke: #3a2142; }
+.p-nav-bdg {
+  position: absolute;
+  top: 0;
+  right: 16px;
+  background: #ff5f98;
+  color: #fff;
+  font: 700 .6rem 'Fredoka', sans-serif;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 99px;
+  display: grid;
+  place-items: center;
+  padding: 0 4px;
+}
+
+/* Clean Mood & Screen Gradient Backgrounds (Zero Patterns) */
+.bg-main      { background: linear-gradient(180deg, #fff4f8 0%, #fffaf2 100%); }
+.bg-senang    { background: linear-gradient(180deg, #fafbd0 0%, #fffaf4 100%); }
+.bg-sedih     { background: linear-gradient(180deg, #e0f1ff 0%, #f6f9ff 100%); }
+.bg-marah     { background: linear-gradient(180deg, #ffe3cf 0%, #fff7f1 100%); }
+.bg-bingung   { background: linear-gradient(180deg, #dbf8ed 0%, #f4fcf9 100%); }
+.bg-vip       { background: linear-gradient(180deg, #efe8fc 0%, #f9ebf2 100%); }
+.bg-umkm      { background: linear-gradient(180deg, #dff4eb 0%, #effaf4 100%); }
+.bg-splash    { background: linear-gradient(180deg, #ffe3ec 0%, #ffd9e6 55%, #ffe8d8 100%); }
+.bg-carakerja { background: #fff6ee; }
+.bg-masuk     { background: linear-gradient(180deg, #eadffd 0%, #f3e9ff 100%); }
+.bg-daftar    { background: linear-gradient(180deg, #d6f8eb 0%, #e8fbf3 100%); }
+.bg-kenalan   { background: linear-gradient(180deg, #f6d7e2 0%, #fbe8dc 100%); }
+.theme-dark.bg-main, .theme-dark.bg-senang, .theme-dark.bg-sedih, .theme-dark.bg-marah, .theme-dark.bg-bingung, .theme-dark.bg-vip, .theme-dark.bg-umkm {
+  background: linear-gradient(180deg, #241529 0%, #2f1b36 100%);
+}
+
+/* ===== Mockup Awal Buttons, Inputs, Bubbles, Onboarding Sheets ===== */
+.bt {
+  border: 0;
+  border-radius: 99px;
+  padding: 11px 22px;
+  font: 600 .95rem 'Fredoka', sans-serif;
+  color: #fff8ef;
+  background: #3a2142;
+  box-shadow: 0 6px 14px rgba(58, 33, 66, .20);
+  transition: .14s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.bt:hover { transform: translateY(-1px); }
+.bt.pk { background: #ff8fb8; color: #3a2142; box-shadow: 0 7px 15px rgba(255, 143, 184, .42); }
+.bt.pk2 { background: #ff5f98; color: #fff; box-shadow: 0 5px 0 #d63370; }
+.bt.o { background: #fff; color: #3a2142; box-shadow: inset 0 0 0 2px #3a2142; }
+.bt.full { width: 100%; border-radius: 18px; padding: 12px 16px; }
+.bt.sm { padding: 7px 14px; font-size: .82rem; }
+
+.bub {
+  position: relative;
+  display: inline-block;
+  background: #ffffff;
+  color: #3a2142;
+  border: 2px solid rgba(58, 33, 66, .16);
+  border-radius: 20px;
+  padding: 10px 18px;
+  font: 600 .95rem/1.35 'Fredoka', sans-serif;
+  box-shadow: 0 8px 16px rgba(58, 33, 66, .09);
+  max-width: 100%;
+}
+.bub.down-tip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 13px;
+  height: 13px;
+  background: #ffffff;
+  border-right: 2px solid rgba(58, 33, 66, .16);
+  border-bottom: 2px solid rgba(58, 33, 66, .16);
+  transform: translateX(-50%) rotate(45deg);
+}
+.in {
+  width: 100%;
+  border: 2px solid rgba(58, 33, 66, .16);
+  border-radius: 15px;
+  background: #fff;
+  padding: 10px 14px;
+  font: 600 .88rem 'Nunito', sans-serif;
+  color: #3a2142;
+  display: block;
+}
+.in-ro {
+  margin-bottom: 9px;
+}
+
+/* Mockup Awal Onboarding Cards & Peeking Bottom Sheet */
+.ob-st {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border-radius: 20px;
+  padding: 9px 12px;
+  margin-bottom: 10px;
+  position: relative;
+  color: #3a2142;
+  box-shadow: 0 7px 16px rgba(58, 33, 66, .09);
+}
+.ob-st.v {
+  flex-direction: column;
+  text-align: center;
+  padding: 20px 14px 16px;
+  margin-bottom: 0;
+  gap: 8px;
+}
+.ob-st em {
+  position: absolute;
+  top: -10px;
+  left: -7px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #3a2142;
+  color: #fff8ef;
+  display: grid;
+  place-items: center;
+  font: 700 .8rem 'Fredoka', sans-serif;
+  font-style: normal;
+}
+.ob-st.v em { top: -11px; left: 50%; transform: translateX(-50%); }
+.ob-tl {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.ob-st.v .ob-tl { width: 84px; height: 84px; }
+.ob-st h3 { font-size: .95rem; }
+.ob-st p { font-size: .74rem; opacity: .85; line-height: 1.3; margin-top: 2px; }
+.ob-st.v h3 { font-size: 1.04rem; }
+.ob-st.v p { font-size: .82rem; }
+
+.nx-box {
+  background: #fff;
+  border: 2px solid rgba(58, 33, 66, .14);
+  border-radius: 22px;
+  padding: 10px 12px;
+  box-shadow: 0 10px 24px rgba(58, 33, 66, .14);
+  text-align: center;
+}
+.onb-sheet-wrap {
+  position: relative;
+  width: min(410px, 100%);
+  z-index: 2;
+}
+.sh-mob-wrap {
+  position: relative;
+  margin-top: auto;
+  z-index: 2;
+}
+.wsh {
+  position: relative;
+  width: 100%;
+  background: #fff8ef;
+  color: #3a2142;
+  border-radius: 28px;
+  padding: 26px 22px 22px;
+  box-shadow: 0 18px 40px rgba(58, 33, 66, .15);
+  z-index: 2;
+}
+.sh-mob {
+  position: relative;
+  background: #fff8ef;
+  color: #3a2142;
+  border-radius: 28px 28px 0 0;
+  padding: 26px 16px 24px;
+  box-shadow: 0 -10px 28px rgba(58, 33, 66, .14);
+  z-index: 2;
+}
+.pkw-head {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(100% - 29px);
+  z-index: 1;
+  pointer-events: none;
+}
+.pkw-paws {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(100% - 29px);
+  z-index: 5;
+  pointer-events: none;
+}
+.sh-mob-wrap .pkw-head,
+.sh-mob-wrap .pkw-paws {
+  bottom: calc(100% - 26px);
+}
+.sg-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: rgba(58, 33, 66, .08);
+  border-radius: 14px;
+  padding: 3px;
+  margin-bottom: 10px;
+}
+.sg-tab {
+  border: 0;
+  background: transparent;
+  padding: 7px;
+  border-radius: 11px;
+  font: 600 .84rem 'Fredoka', sans-serif;
+  color: rgba(58, 33, 66, .62);
+}
+.sg-tab.on {
+  background: #3a2142;
+  color: #fff8ef;
+}
+.gb-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: #fff;
+  border: 2px solid rgba(58, 33, 66, .16);
+  border-radius: 15px;
+  padding: 9px 12px;
+  font: 600 .86rem 'Fredoka', sans-serif;
+  color: #3a2142;
+  margin-bottom: 9px;
+}
+.or-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 600 .72rem 'Fredoka', sans-serif;
+  color: rgba(58, 33, 66, .58);
+  margin: 4px 0 8px;
+}
+.or-line::before, .or-line::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  background: rgba(58, 33, 66, .18);
+}
+
+/* ===== Mood Cards & Strictly 3 Recommendation Cards (Zero FD Food Art) ===== */
+.mood-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 680px;
+  margin: 16px auto 0;
+}
+.mood-row.mob {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 12px;
+}
+.mood-btn {
+  border: 2px solid transparent;
+  border-radius: 20px;
+  padding: 10px 6px 8px;
+  text-align: center;
+  color: #3a2142;
+  font: 600 .88rem 'Fredoka', sans-serif;
+  box-shadow: 0 7px 14px rgba(58, 33, 66, .10);
+  transition: .16s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.mood-row.mob .mood-btn {
+  border-radius: 15px;
+  padding: 6px 2px;
+  font-size: .68rem;
+}
+.mood-btn.on {
+  border-color: #3a2142;
+  transform: translateY(-2px);
+}
+
+.loc-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: rgba(255, 255, 255, .92);
+  border: 1.5px solid var(--ln);
+  border-radius: 18px;
+  padding: 9px 14px;
+  margin: 16px 0 12px;
+}
+.cat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.cat-chip {
+  border: 1.5px solid var(--ln);
+  background: #fff;
+  color: #3a2142;
+  border-radius: 99px;
+  padding: 6px 15px;
+  font: 600 .8rem 'Fredoka', sans-serif;
+}
+.cat-chip.on {
+  background: #3a2142;
+  color: #fff8ef;
+  border-color: transparent;
+}
+
+.rec3-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+.rec3-grid.mob {
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media (max-width: 780px) {
+  .rec3-grid { grid-template-columns: 1fr; }
+}
+.rc-card {
+  border-radius: 26px;
+  padding: 16px;
+  color: #3a2142;
+  border: 2px solid rgba(58, 33, 66, .10);
+  box-shadow: var(--sh-sm);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.rc-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.rc-badge {
+  background: #fffaf5;
+  color: #3a2142;
+  border-radius: 99px;
+  padding: 3px 10px;
+  font: 600 .72rem 'Fredoka', sans-serif;
+}
+.rc-badge.viral { background: #ffe0ec; color: #b8346f; }
+
+/* Clean Platform Photo Placeholder Slot (Menggantikan Ilustrasi Kuliner FD) */
+.food-photo-slot {
+  height: 112px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .94), rgba(255, 248, 239, .86));
+  border: 1.5px dashed rgba(58, 33, 66, .24);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.rec3-grid.mob .food-photo-slot { height: 84px; }
+.food-photo-slot svg { opacity: .55; margin-bottom: 4px; }
+.food-photo-slot b { font: 600 .76rem 'Fredoka', sans-serif; color: #3a2142; }
+.food-photo-dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+  font: 600 .66rem 'Nunito', sans-serif;
+  color: #6b5272;
+}
+.food-photo-dots i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.badge-corner {
+  position: absolute;
+  top: 7px;
+  font: 700 .68rem 'Fredoka', sans-serif;
+  background: rgba(255, 255, 255, .92);
+  color: #3a2142;
+  border-radius: 99px;
+  padding: 2px 8px;
+  border: 1px solid rgba(58, 33, 66, .10);
+}
+.badge-corner.left { left: 7px; color: #b45309; }
+.badge-corner.right { right: 7px; }
+
+.rc-title { font: 700 1.2rem 'Fredoka', sans-serif; line-height: 1.2; }
+.rc-meta { font: 600 .8rem/1.4 'Nunito', sans-serif; opacity: .78; margin-top: 3px; }
+.rc-foot {
+  margin-top: auto;
+  padding-top: 12px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+}
+.rc-price { font: 700 .96rem 'Fredoka', sans-serif; color: #b8346f; display: block; }
+.tmb-btn {
+  border: 2px solid #3a2142;
+  background: #ff9ec5;
+  color: #3a2142;
+  border-radius: 99px;
+  padding: 6px 18px;
+  font: 700 .9rem 'Fredoka', sans-serif;
+  box-shadow: 0 4px 8px rgba(58, 33, 66, .14);
+}
+.qs-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: #3a2142;
+  color: #fff8ef;
+  border-radius: 99px;
+  padding: 4px 12px;
+  font: 700 .9rem 'Fredoka', sans-serif;
+}
+.qs-step button {
+  border: 0;
+  background: none;
+  color: #fff8ef;
+  font: 700 1.05rem 'Fredoka', sans-serif;
+  padding: 0 3px;
+}
+
+/* Putar Acak Banner & Floating Order Bar */
+.spin-banner {
+  width: 100%;
+  margin-top: 16px;
+  border: 0;
+  border-radius: 22px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #4a2a5e, #5b3470);
+  color: #fff8ef;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  box-shadow: 0 10px 22px rgba(58, 33, 66, .22);
+}
+.spin-ico {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .16);
+  border: 1.5px solid rgba(255, 255, 255, .32);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.float-cart {
+  position: sticky;
+  bottom: 14px;
+  z-index: 25;
+  max-width: 560px;
+  margin: 18px auto 0;
+  background: linear-gradient(135deg, #4a2a5e, #5b3470);
+  color: #fff8ef;
+  border-radius: 99px;
+  padding: 7px 8px 7px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  box-shadow: 0 12px 26px rgba(58, 33, 66, .30);
+}
+.float-cart.mob-float {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 72px;
+  margin: 0;
+  padding: 6px 7px 6px 12px;
+}
+.float-cart button {
+  border: 0;
+  background: #fff8ef;
+  color: #3a2142;
+  border-radius: 99px;
+  padding: 8px 16px;
+  font: 700 .86rem 'Fredoka', sans-serif;
+  flex: none;
+}
+.float-cart.mob-float button { padding: 6px 12px; font-size: .74rem; }
+
+/* ===== Pesananmu (#/cart) + Tombol Platform Lurus di Tengah ===== */
+.cart-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 20px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  border: 2px solid rgba(58, 33, 66, .08);
+  color: #3a2142;
+}
+.cart-row.mob {
+  gap: 9px;
+  padding: 10px;
+  border-radius: 16px;
+}
+.cart-photo-mini {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .86);
+  border: 1.5px dashed rgba(58, 33, 66, .24);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  flex: none;
+  font: 600 .56rem 'Fredoka', sans-serif;
+  color: #5b4363;
+}
+.cart-row.mob .cart-photo-mini { width: 44px; height: 44px; border-radius: 12px; }
+.cart-info { flex: 1; min-width: 0; }
+.cart-info b { display: block; font-size: .96rem; line-height: 1.25; }
+.cart-info small { display: block; font-size: .76rem; opacity: .76; margin-top: 2px; }
+.cart-price { display: block; font: 700 .86rem 'Fredoka', sans-serif; color: #b8346f; margin-top: 2px; }
+
+/* Panduan Logo & Area Aman */
+.logo-surface {
+  border-radius: 20px;
+  padding: 24px 18px;
+  border: 1.5px solid var(--ln);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+}
+.logo-surface.light {
+  background: linear-gradient(135deg, #fff6fa 0%, #fffaf3 100%);
+}
+.logo-surface.dark {
+  background: linear-gradient(135deg, #241529 0%, #3a2142 100%);
+  color: #fff0f7;
+  --ink: #fff0f7;
+  --mu: #d9c2d6;
+}
+.logo-clearspace {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 30px 18px;
+  border: 1.5px dashed rgba(230, 69, 127, .42);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .65);
+}
+.logo-clearspace span.cs-tag {
+  position: absolute;
+  top: -9px;
+  left: 12px;
+  background: #ffe0ec;
+  color: #3a2142;
+  font: 700 .66rem 'Fredoka', sans-serif;
+  padding: 1px 8px;
+  border-radius: 99px;
+}
+
+/* Platform Delivery Buttons: ShopeeFood di Atas, GoFood & GrabFood Sejajar di Bawah */
+.deliv-center-wrap {
+  margin: 16px auto 12px;
+  text-align: center;
+}
+.deliv-stack {
+  max-width: 440px;
+  margin: 10px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.deliv-top-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 5px;
+  width: 100%;
+  background: linear-gradient(135deg, #fff5f1 0%, #fffaf5 100%);
+  color: #3a2142;
+  border: 2px solid rgba(238, 77, 45, .34);
+  border-radius: 18px;
+  padding: 12px 14px;
+  box-shadow: 0 5px 14px rgba(238, 77, 45, .10);
+  transition: .15s;
+}
+.deliv-top-card:hover { transform: translateY(-1px); }
+.deliv-top-card.on {
+  border-color: #ee4d2d;
+  box-shadow: 0 0 0 3px rgba(238, 77, 45, .20), 0 8px 18px rgba(238, 77, 45, .14);
+}
+.deliv-top-card .pf-ico {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.deliv-top-card b { font: 700 .94rem 'Fredoka', sans-serif; display: block; line-height: 1.15; }
+.deliv-top-card small { font: 600 .7rem 'Nunito', sans-serif; color: var(--mu); display: block; }
+.deliv-pair-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.deliv-pill-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 5px;
+  background: #fffaf5;
+  color: #3a2142;
+  border: 2px solid rgba(58, 33, 66, .14);
+  border-radius: 18px;
+  padding: 11px 8px;
+  box-shadow: 0 5px 12px rgba(58, 33, 66, .08);
+  transition: .15s;
+}
+.deliv-pill-btn:hover { transform: translateY(-1px); }
+.deliv-pill-btn.on {
+  border-color: var(--pcol, #3a2142);
+  box-shadow: 0 0 0 3px rgba(255, 95, 152, .22);
+}
+.deliv-pill-btn .pf-ico {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+.deliv-pill-btn b { font: 700 .86rem 'Fredoka', sans-serif; display: block; }
+.deliv-pill-btn small { font: 600 .68rem 'Nunito', sans-serif; color: var(--mu); display: block; }
+
+/* ===== Poin #5: Spinner Mengikuti Prototype Developer ===== */
+.spin-dialog {
+  background: linear-gradient(180deg, #fff2f7 0%, #ffeef5 100%);
+  color: #3a2142;
+  border-radius: 28px;
+  padding: 20px 20px 22px;
+  max-width: 390px;
+  width: 100%;
+  margin: 0 auto;
+  box-shadow: 0 22px 46px rgba(58, 33, 66, .22);
+  border: 1.5px solid rgba(255, 143, 184, .35);
+}
+.spin-dialog.mob {
+  max-width: 284px;
+  padding: 14px 14px 16px;
+  border-radius: 24px;
+}
+.spin-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.spin-head h3 { font-size: 1.35rem; font-weight: 700; }
+.spin-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 0;
+  background: #fff8eb;
+  color: #3a2142;
+  font: 700 .95rem 'Fredoka', sans-serif;
+  display: grid;
+  place-items: center;
+}
+.wheel-wrap {
+  position: relative;
+  width: 224px;
+  height: 224px;
+  margin: 14px auto 16px;
+}
+.spin-dialog.mob .wheel-wrap {
+  width: 196px;
+  height: 196px;
+  margin: 10px auto 12px;
+}
+.wheel-pointer {
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  transform: translateX(-50%);
+  z-index: 6;
+  filter: drop-shadow(0 3px 6px rgba(255, 79, 142, .35));
+}
+.wheel-disc {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #ffffff;
+  padding: 10px;
+  box-shadow: 0 12px 26px rgba(58, 33, 66, .14);
+}
+.wheel-rotor {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  transition: transform 2.5s cubic-bezier(.16, .88, .22, 1);
+  background: conic-gradient(
+    #ffdfe8 0deg 60deg,
+    #fff0c2 60deg 120deg,
+    #dcf5e8 120deg 180deg,
+    #dcebfb 180deg 240deg,
+    #ebdffb 240deg 300deg,
+    #ffe4d1 300deg 360deg
+  );
+}
+.wheel-slice-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 32px;
+  height: 32px;
+  margin: -16px 0 0 -16px;
+  display: grid;
+  place-items: center;
+  font-size: 1.35rem;
+}
+.wheel-hub {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 4px solid #ff9ec5;
+  display: grid;
+  place-items: center;
+  z-index: 5;
+  box-shadow: 0 6px 14px rgba(58, 33, 66, .16);
+}
+.spin-dialog.mob .wheel-hub { width: 62px; height: 62px; }
+.spin-result-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 6px 16px rgba(58, 33, 66, .08);
+  text-align: left;
+}
+.spin-result-card h4 { font-size: 1rem; color: #3a2142; line-height: 1.2; }
+.spin-result-card small { display: block; font-size: .76rem; color: #7d6683; margin-top: 2px; }
+
+/* ===== Poin #6: Kartu Bagikan Mockup Awal ===== */
+.story-card {
+  width: 248px;
+  margin: 12px auto;
+  border-radius: 24px;
+  padding: 20px 18px 16px;
+  background: linear-gradient(180deg, #9fc9e6 0%, #d6cdee 70%, #f0d6e2 100%);
+  color: #3a2142;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 16px 32px rgba(58, 33, 66, .20);
+}
+.story-card.sm {
+  width: 214px;
+  padding: 15px 14px 12px;
+  border-radius: 20px;
+}
+.story-rec {
+  background: #fffaf5;
+  border-radius: 16px;
+  padding: 10px 14px;
+  width: 100%;
+  margin: 10px 0 12px;
+  box-shadow: 0 6px 14px rgba(58, 33, 66, .13);
+}
+.shr-row {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 10px;
+}
+.shr-btn {
+  border: 0;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--ink);
+  font: 600 .72rem 'Fredoka', sans-serif;
+}
+.shr-btn i {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 12px rgba(58, 33, 66, .20);
+}
+
+/* ===== Poin #7: Recap Mood Mengikuti Prototype Developer ===== */
+.recap-share-btn {
+  border: 2px solid #ff5f98;
+  background: #e9f8f2;
+  color: #3a2142;
+  border-radius: 99px;
+  padding: 8px 16px;
+  font: 700 .86rem 'Fredoka', sans-serif;
+  box-shadow: 0 4px 0 #f2387d;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.recap-white-card {
+  background: #ffffff;
+  color: #3a2142;
+  border-radius: 26px;
+  padding: 18px;
+  box-shadow: 0 10px 24px rgba(58, 33, 66, .08);
+  margin-bottom: 14px;
+}
+.recap-stats-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.recap-stat-pill {
+  background: #fff0f5;
+  border-radius: 20px;
+  padding: 14px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.recap-stat-pill b { font: 700 1.65rem 'Fredoka', sans-serif; color: #ff5f98; line-height: 1.1; }
+.recap-stat-pill small { font: 600 .8rem 'Nunito', sans-serif; color: #6e5676; line-height: 1.25; }
+.recap-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 7px;
+  text-align: center;
+}
+.recap-cal-hd { font: 700 .76rem 'Nunito', sans-serif; color: #7d6683; padding-bottom: 4px; }
+.recap-day {
+  background: #fff0f5;
+  border-radius: 12px;
+  min-height: 48px;
+  padding: 4px 5px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.recap-day.mob { min-height: 35px; border-radius: 10px; padding: 2px; }
+.recap-day-n {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font: 700 .68rem 'Fredoka', sans-serif;
+  color: #5b4363;
+  line-height: 1;
+}
+.recap-day.mob .recap-day-n { font-size: .56rem; top: 3px; left: 4px; }
+.recap-day.today { border: 2px solid #ff5f98; }
+.recap-bars { display: flex; flex-direction: column; gap: 11px; margin-top: 12px; }
+.recap-bar-row {
+  display: grid;
+  grid-template-columns: 118px 1fr 24px;
+  align-items: center;
+  gap: 10px;
+}
+.recap-bar-track {
+  height: 11px;
+  border-radius: 99px;
+  background: #fff0f5;
+  overflow: hidden;
+}
+.recap-bar-fill { height: 100%; border-radius: 99px; }
+
+/* ===== Poin #8: CraveMood VIP Mengikuti Mockup Awal ===== */
+.vip-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+}
+.vip-grid.mob { grid-template-columns: 1fr; gap: 12px; }
+@media (max-width: 820px) { .vip-grid { grid-template-columns: 1fr; } }
+.xvip-card {
+  background: linear-gradient(135deg, #e9b6d4, #cdbbf0);
+  color: #3a2142;
+  border-radius: 26px;
+  padding: 22px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 22px rgba(58, 33, 66, .14);
+  border: 2px solid rgba(255, 250, 245, .65);
+  min-height: 292px;
+  display: flex;
+  flex-direction: column;
+}
+.xvip-umkm {
+  background: linear-gradient(135deg, #3a2142, #6a3b80);
+  color: #fff8ef;
+  border-radius: 26px;
+  padding: 22px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 22px rgba(58, 33, 66, .18);
+  min-height: 292px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.xvip-card.mob, .xvip-umkm.mob { padding: 14px; min-height: 0; border-radius: 22px; }
+.xck {
+  display: inline-grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #3a2142;
+  color: #fff;
+  font-size: .62rem;
+  font-weight: 700;
+  margin-right: 8px;
+}
+
+/* Modal Backdrop inside Web/Phone Simulator */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(42, 20, 48, .50);
+  backdrop-filter: blur(4px);
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  overflow-y: auto;
+}
+.phone-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(42, 20, 48, .52);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+}
+
+/* ===== Clean Simulator Toggle Bar ===== */
+.sim-bar-clean {
+  justify-content: center;
+  padding: 10px 16px;
+}
+.ph.dark-phone .ph-sb {
+  color: #fff0f7;
+}
+
+/* ===== Dark Mode Extras inside Simulator ===== */
+.theme-dark .bt.o {
+  background: rgba(255, 255, 255, .08);
+  color: #fff0f7;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .32);
+}
+.theme-dark .in {
+  background: rgba(255, 255, 255, .08);
+  color: #fff0f7;
+  border-color: rgba(255, 255, 255, .20);
+}
+.theme-dark .bub {
+  background: #3f2847;
+  color: #fff0f7;
+  border-color: rgba(255, 255, 255, .18);
+}
+.theme-dark .recap-stat-pill {
+  background: rgba(255, 143, 184, .16);
+  border-color: rgba(255, 143, 184, .30);
+}
+.theme-dark .prof-opt-btn {
+  background: rgba(255, 255, 255, .07) !important;
+  color: #fff0f7 !important;
+}
+.theme-dark .cat-chip {
+  background: rgba(255, 255, 255, .08);
+  color: #fff0f7;
+  border-color: rgba(255, 255, 255, .18);
+}
+.theme-dark .cat-chip.on {
+  background: #ff8fb8;
+  color: #3a2142;
+}
+
+/* ===== Profil Developer Prototype Cards ===== */
+.prof-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.prof-dev-card {
+  background: var(--sf);
+  border: 1.5px solid var(--ln);
+  border-radius: 22px;
+  padding: 16px 18px;
+  box-shadow: var(--sh-sm);
+}
+.prof-dev-card.mob { padding: 13px 14px; border-radius: 18px; }
+.prof-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.prof-lang-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+.prof-lang-btn {
+  border: 1.5px solid var(--ln);
+  background: #fff7fa;
+  color: var(--ink);
+  border-radius: 99px;
+  padding: 7px 6px;
+  font: 700 .78rem 'Fredoka', sans-serif;
+  transition: .14s;
+}
+.prof-lang-btn.on {
+  background: #fff;
+  border-color: #ff5f98;
+  color: #ff5f98;
+  box-shadow: 0 3px 10px rgba(255, 95, 152, .16);
+}
+.bdg-aktif {
+  background: #d1fae5;
+  color: #065f46;
+  border-radius: 99px;
+  padding: 3px 10px;
+  font: 700 .72rem 'Fredoka', sans-serif;
+}
+.bdg-tamu {
+  background: #fff4df;
+  color: #6d4c13;
+  border-radius: 99px;
+  padding: 3px 10px;
+  font: 700 .72rem 'Fredoka', sans-serif;
+}
+.suara-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0 12px;
+}
+.suara-ava {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #ffe3ec;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.suara-eq {
+  position: absolute;
+  right: -3px;
+  bottom: -2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ff5f98;
+  color: #fff;
+  border: 2px solid var(--sf);
+  display: grid;
+  place-items: center;
+  font-size: .56rem;
+}
+.suara-vol-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.cm-range {
+  width: 150px;
+  max-width: 55%;
+  accent-color: #ff5f98;
+  cursor: pointer;
+}
+.prof-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--ln);
+}
+.prof-toggle-row:first-child { padding-top: 2px; }
+.prof-toggle-row:last-child { padding-bottom: 2px; border-bottom: 0; }
+.cm-sw {
+  width: 46px;
+  height: 26px;
+  border-radius: 99px;
+  border: 0;
+  background: rgba(125, 102, 131, .28);
+  position: relative;
+  flex: none;
+  transition: background .18s ease;
+  padding: 0;
+}
+.cm-sw.on { background: #ff5f98; }
+.cm-sw::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(58, 33, 66, .22);
+  transition: transform .18s ease;
+}
+.cm-sw.on::after { transform: translateX(20px); }
+
+/* ===== Interactive Cimo Mascot & Floating Companion ===== */
+@keyframes cmBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  30% { transform: translateY(-9px) scale(1.06) rotate(-4deg); }
+  65% { transform: translateY(2px) scale(.97) rotate(3deg); }
+}
+.cm-tap-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform .15s ease;
+}
+.cm-tap-btn:hover { transform: scale(1.04); }
+.cm-tap-btn:active { transform: scale(.94); }
+.cm-bounce { animation: cmBounce .48s ease; }
+
+.cimo-buddy-wrap {
+  position: absolute;
+  right: 20px;
+  bottom: 18px;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+}
+.cimo-buddy-wrap.up-clear { bottom: 82px; }
+.cimo-buddy-wrap.mob { right: 10px; bottom: 72px; z-index: 26; }
+.cimo-buddy-wrap.mob.up-clear { bottom: 122px; }
+
+.cimo-buddy-btn {
+  pointer-events: auto;
+  position: relative;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  filter: drop-shadow(0 6px 12px rgba(58, 33, 66, .20));
+  transition: transform .16s ease;
+}
+.cimo-buddy-btn:hover { transform: translateY(-3px) scale(1.06); }
+.cimo-buddy-btn:active { transform: scale(.93); }
+.cimo-buddy-ring {
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ff5f98;
+  border: 2.5px solid #fff;
+  box-shadow: 0 2px 6px rgba(255, 95, 152, .45);
+}
+.cimo-buddy-pop {
+  pointer-events: auto;
+  width: 242px;
+  max-width: calc(100vw - 60px);
+  background: var(--sf);
+  color: var(--ink);
+  border: 1.5px solid var(--ln);
+  border-radius: 18px;
+  padding: 11px 12px;
+  box-shadow: 0 14px 28px rgba(58, 33, 66, .22);
+  text-align: left;
+}
+.cimo-buddy-wrap.mob .cimo-buddy-pop { width: 220px; padding: 9px 10px; }
+.cimo-buddy-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+.cimo-buddy-chip {
+  border: 1.5px solid var(--ln);
+  background: #fff7fa;
+  color: #3a2142;
+  border-radius: 99px;
+  padding: 3px 9px;
+  font: 700 .7rem 'Fredoka', sans-serif;
+}
+.sim-toast {
+  position: absolute;
+  left: 50%;
+  top: 16px;
+  transform: translateX(-50%);
+  z-index: 60;
+  background: #3a2142;
+  color: #fff8ef;
+  border-radius: 99px;
+  padding: 7px 15px;
+  font: 600 .78rem 'Fredoka', sans-serif;
+  box-shadow: 0 8px 20px rgba(58, 33, 66, .26);
+  max-width: 88%;
+  text-align: center;
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div id="top-brand-logo"></div>
+  <nav class="top-nav">
+    <a href="#p0s">Simulator</a>
+    <a href="#p1s">1. Logo &amp; Desain</a>
+    <a href="#p2s">2. Favicon &amp; Kostum</a>
+    <a href="#p3s">3. Onboarding</a>
+    <a href="#p4s">4. Aplikasi Inti</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <div class="hero-intro">
+    <div id="hero-brand-logo"></div>
+    <h1>Product Design Mockup &amp; Interactive Prototype</h1>
+    <p>Aplikasi rekomendasi kuliner Makassar berbasis mood dengan maskot Cimo dan integrasi pemesanan ShopeeFood, GoFood, serta GrabFood untuk Web &amp; Mobile.</p>
+  </div>
+
+  <!-- =========================================================
+       0. INTERACTIVE SIMULATOR
+       ========================================================= -->
+  <section class="sec" id="p0s" style="margin-top:26px">
+    <div class="sec-head">
+      <div class="sec-num">▶</div>
+      <div>
+        <h2>Simulator Interaktif (Web &amp; HP)</h2>
+        <p>Uji langsung alur pengguna, pilihan mood, putar acak, keranjang pesanan, hingga tampilan Web dan HP.</p>
+      </div>
+    </div>
+
+    <div class="sim-bar sim-bar-clean">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;width:100%">
+        <button class="sim-pill on" id="btn-dev-web" onclick="setDev('web')">🖥️ Web</button>
+        <button class="sim-pill" id="btn-dev-hp" onclick="setDev('hp')">📱 HP</button>
+        <button class="sim-pill" id="btn-dark" onclick="toggleSimDark()">🌙 Gelap</button>
+      </div>
+    </div>
+
+    <div class="sim-shell" id="live-sim-mount"></div>
+  </section>
+
+  <!-- =========================================================
+       1. PANDUAN DESAIN
+       ========================================================= -->
+  <section class="sec" id="p1s">
+    <div class="sec-head">
+      <div class="sec-num">1</div>
+      <div>
+        <h2>Desain Logo &amp; Sistem Visual</h2>
+        <p>Logo resmi CraveMood, anatomi maskot Cimo, sistem warna, tipografi, slot foto menu, dan tata letak tombol pemesanan.</p>
+      </div>
+    </div>
+    <div id="p1-mount"></div>
+  </section>
+
+  <!-- =========================================================
+       2. FAVICON & KOSTUM
+       ========================================================= -->
+  <section class="sec" id="p2s">
+    <div class="sec-head">
+      <div class="sec-num">2</div>
+      <div>
+        <h2>Identitas Aplikasi: Favicon &amp; Kostum Cimo</h2>
+        <p>Ikon browser, ikon aplikasi layar utama HP, serta koleksi kostum standar dan VIP Cimo.</p>
+      </div>
+    </div>
+    <div id="p2-mount"></div>
+  </section>
+
+  <!-- =========================================================
+       3. ONBOARDING (WEB & HP)
+       ========================================================= -->
+  <section class="sec" id="p3s">
+    <div class="sec-head">
+      <div class="sec-num">3</div>
+      <div>
+        <h2>Onboarding (Splash, Cara Kerja, Masuk, Daftar, Kenalan)</h2>
+        <p>Alur pengalaman pertama pengguna di versi Web maupun perangkat mobile.</p>
+      </div>
+    </div>
+    <div id="p3-mount"></div>
+  </section>
+
+  <!-- =========================================================
+       4. APLIKASI INTI (WEB & HP SHOWCASE)
+       ========================================================= -->
+  <section class="sec" id="p4s">
+    <div class="sec-head">
+      <div class="sec-num">4</div>
+      <div>
+        <h2>Aplikasi Inti (Web &amp; HP Lengkap)</h2>
+        <p>Seluruh layar utama aplikasi mulai dari Beranda, Spinner Putar Acak, Pesananmu, Bagikan Story, Recap Mood, VIP, Daftar UMKM, Profil, hingga Live Chat.</p>
+      </div>
+    </div>
+    <div id="p4-mount"></div>
+  </section>
+</main>
+
+<script>
+/* ==========================================================================
+   1. MASKOT CIMO & KOSTUM 100% VERBATIM MOCKUP AWAL
+   ========================================================================== */
+const P = {
+  def:     ['#ffa9c9', '#f27aa8'],
+  senang:  ['#eef26b', '#c9d445'],
+  sedih:   ['#8fd3ff', '#5eb0ee'],
+  marah:   ['#ffac78', '#f2864c'],
+  capek:   ['#f3f6fc', '#cfd5e6'],
+  kecewa:  ['#ecd7ab', '#cdb27e'],
+  bingung: ['#9fead0', '#68cdaa']
+};
+
+const VIP_COLORS = [
+  { id: 'pink',  name: 'Pink Cimo',  pair: ['#ffa9c9', '#f27aa8'] },
+  { id: 'lemon', name: 'Lemon',      pair: ['#eef26b', '#c9d445'] },
+  { id: 'sky',   name: 'Biru Langit',pair: ['#8fd3ff', '#5eb0ee'] },
+  { id: 'peach', name: 'Persik',     pair: ['#ffac78', '#f2864c'] },
+  { id: 'mint',  name: 'Mint',       pair: ['#9fead0', '#68cdaa'] },
+  { id: 'lilac', name: 'Lilac VIP',  pair: ['#dccbff', '#b79cf0'] }
+];
+
+let _uid = 0;
+const BOW = '<g transform="translate(130 36) rotate(18)"><ellipse cx="-10" rx="10" ry="6" fill="#ff7aa8"/><ellipse cx="10" rx="10" ry="6" fill="#ff7aa8"/><circle r="4.5" fill="#ff5c92"/></g>';
+
+function cimo(m = 'def', s = 120, peek = 0, customCol = null) {
+  const [a, b] = customCol || P[m] || P.def;
+  const g = 'cm' + (++_uid), k = '#2f2a6b';
+  const eye = (x, ry = 14, py = 0) =>
+    `<ellipse cx="${x}" cy="${88 + py}" rx="12" ry="${ry}" fill="${k}"/><circle cx="${x + 4}" cy="${82 + py}" r="4.6" fill="#fff"/><circle cx="${x - 3}" cy="${95 + py}" r="2.2" fill="#fff"/>`;
+  const st = (d, w = 4) =>
+    `<path d="${d}" fill="none" stroke="${k}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+  let e = eye(76) + eye(124);
+  let x = '';
+  let mo = st('M90 110Q100 119 110 110');
+  const TY = { def: 0, senang: 0, sedih: 4, marah: 2, capek: 0, kecewa: 6, bingung: 0 };
+  if (m !== 'marah') {
+    x += `<g transform="translate(0 ${TY[m] || 0})">` + st('M60 74l-6-4M64 69l-3-6M140 74l6-4M136 69l3-6', 3) + '</g>';
+    x += BOW;
+  }
+
+  if (m === 'senang') {
+    mo = '<path d="M84 106Q100 134 116 106Z" fill="#7a2a55"/><ellipse cx="100" cy="122" rx="8" ry="4.5" fill="#ff8fa8"/>';
+    x += '<path d="M24 40l3 8 8 3-8 3-3 8-3-8-8-3 8-3zM168 30l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" fill="#ffc800"/>';
+  }
+  if (m === 'sedih') {
+    e = eye(76, 15, 4) + eye(124, 15, 4);
+    x += '<path d="M64 108q-6 10 0 13q6-3 0-13z" fill="#fff" opacity=".9"/>';
+    mo = st('M88 122Q100 110 112 122');
+  }
+  if (m === 'marah') {
+    e = `<ellipse cx="76" cy="88" rx="13" ry="13.5" fill="${k}"/><circle cx="81" cy="82" r="5" fill="#fff"/><circle cx="72" cy="95" r="2.2" fill="#fff"/>`
+      + `<ellipse cx="124" cy="88" rx="13" ry="13.5" fill="${k}"/><circle cx="129" cy="82" r="5" fill="#fff"/><circle cx="120" cy="95" r="2.2" fill="#fff"/>`;
+    x += '<g transform="translate(124 33) rotate(18)"><ellipse cx="-10" rx="10" ry="6" fill="#ff7aa8"/><ellipse cx="10" rx="10" ry="6" fill="#ff7aa8"/><circle r="4.5" fill="#ff5c92"/></g>';
+    x += st('M63 63L89 72M137 63L111 72', 6.5);
+    x += '<path d="M153 26l14 14M167 26l-14 14" stroke="#f24442" stroke-width="6" stroke-linecap="round"/>';
+    mo = st('M86 115Q100 103 114 115', 5.5);
+  }
+  if (m === 'capek') {
+    e += `<rect x="62" y="68" width="28" height="20" fill="${a}"/><rect x="110" y="68" width="28" height="20" fill="${a}"/>` + st('M62 88h28M110 88h28');
+    mo = st('M91 119h18');
+    x += '<path d="M72 12v16M86 6v22M100 4v24M114 6v22M128 12v16" stroke="#8a8fa8" stroke-width="2.5" stroke-linecap="round"/>';
+  }
+  if (m === 'kecewa') {
+    e = eye(76, 12, 6) + eye(124, 12, 6);
+    x += '<path d="M154 50q-6 10 0 13q6-3 0-13z" fill="#bfe6ff" stroke="#6db6f3" stroke-width="2"/>';
+    mo = st('M89 121Q100 113 111 121');
+  }
+  if (m === 'bingung') {
+    e = eye(76, 14) + eye(124, 10, -2);
+    x += '<g fill="none" stroke="#2fae8a" stroke-width="3" stroke-linecap="round"><path d="M36 38a8 8 0 1 1 8 8a4 4 0 1 1-4-4"/><path d="M160 36a8 8 0 1 1 8 8a4 4 0 1 1-4-4"/></g><text x="92" y="28" font-size="28" font-weight="700" fill="#2fae8a" font-family="Fredoka,sans-serif">?</text>';
+    mo = st('M86 117q7-8 14 0t14 0');
+  }
+
+  const blushCol = m === 'marah' ? '#ff7f8f' : '#ff6f9c';
+  const blushOp = m === 'marah' ? '.58' : '.42';
+  const sparkles = m === 'marah' ? '' : '<g fill="#fff" opacity=".6"><circle cx="146" cy="130" r="2"/><circle cx="156" cy="124" r="1.6"/><circle cx="52" cy="132" r="1.8"/><circle cx="62" cy="138" r="1.5"/></g>';
+  const core = `<ellipse cx="100" cy="96" rx="70" ry="62" fill="${b}"/><g clip-path="url(#${g})"><ellipse cx="93" cy="89" rx="68" ry="60" fill="${a}"/></g><ellipse cx="62" cy="56" rx="15" ry="8" transform="rotate(-28 62 56)" fill="#fff" opacity=".55"/><circle cx="82" cy="45" r="3.4" fill="#fff" opacity=".55"/><ellipse cx="52" cy="108" rx="11" ry="7" fill="${blushCol}" opacity="${blushOp}"/><ellipse cx="148" cy="108" rx="11" ry="7" fill="${blushCol}" opacity="${blushOp}"/>${sparkles}${e}${x}${mo}`;
+  const defs = `<defs><clipPath id="${g}"><ellipse cx="100" cy="96" rx="70" ry="62"/></clipPath><clipPath id="${g}c"><rect x="-10" y="0" width="220" height="148"/></clipPath></defs>`;
+  const bigPaw = (cx) =>
+    `<circle cx="${cx}" cy="136" r="18.2" fill="#3a2142" opacity=".11"/>`
+    + `<circle cx="${cx}" cy="132" r="18" fill="${a}" stroke="${b}" stroke-width="2.2"/>`
+    + `<circle cx="${cx - 5.5}" cy="125.5" r="4.2" fill="#fff" opacity=".58"/>`;
+
+  if (peek === 'head') {
+    return `<svg viewBox="0 14 200 146" width="${s}" style="overflow:visible;display:block" role="img" aria-label="Cimo mengintip ${m}">${defs}<g clip-path="url(#${g}c)">${core}</g></svg>`;
+  }
+  if (peek === 'paws') {
+    return `<svg viewBox="0 14 200 146" width="${s}" style="overflow:visible;display:block" aria-hidden="true">${bigPaw(40)}${bigPaw(160)}</svg>`;
+  }
+  if (peek) {
+    return `<svg viewBox="0 14 200 146" width="${s}" style="overflow:visible;display:block" role="img" aria-label="Cimo mengintip ${m}">${defs}<g clip-path="url(#${g}c)">${core}</g>${bigPaw(40)}${bigPaw(160)}</svg>`;
+  }
+  const arms = m === 'marah'
+    ? `<ellipse cx="28" cy="100" rx="12" ry="14" fill="${a}"/><ellipse cx="172" cy="100" rx="12" ry="14" fill="${a}"/>`
+    : `<ellipse cx="32" cy="106" rx="12" ry="14" transform="rotate(-20 32 106)" fill="${a}"/><ellipse cx="168" cy="100" rx="12" ry="14" transform="rotate(20 168 100)" fill="${a}"/>`;
+  return `<svg viewBox="0 0 200 185" width="${s}" style="display:inline-block;vertical-align:middle" role="img" aria-label="Cimo ${m}">${defs}<ellipse cx="100" cy="173" rx="56" ry="7" fill="#3a2142" opacity=".1"/><ellipse cx="78" cy="159" rx="17" ry="9" fill="${b}"/><ellipse cx="122" cy="159" rx="17" ry="9" fill="${b}"/>${arms}${core}</svg>`;
+}
+
+function cos(m = 'def', s = 120, t = '', col = null) {
+  const g = 'ck' + (++_uid);
+  const base = cimo(m, s, 0, col);
+  const dk = (col || P[m] || P.def)[1];
+  let o = '';
+  const hc = `<clipPath id="${g}"><ellipse cx="100" cy="96" rx="70" ry="62"/></clipPath><pattern id="${g}p" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="#7a4a2a"/><g fill="none" stroke="#e0b25a" stroke-width="1.4"><ellipse cx="10" cy="5" rx="4" ry="5.5"/><ellipse cx="10" cy="15" rx="4" ry="5.5"/><ellipse cx="5" cy="10" rx="5.5" ry="4"/><ellipse cx="15" cy="10" rx="5.5" ry="4"/></g></pattern>`;
+
+  if (t === 'batik') {
+    o += `<g clip-path="url(#${g})"><path d="M24 132Q100 152 176 132V176H24Z" fill="url(#${g}p)"/><path d="M24 132Q100 152 176 132" fill="none" stroke="#e0b25a" stroke-width="3.5"/></g><path d="M72 46Q74 18 100 16Q126 18 128 46Z" fill="#8a5a36"/><rect x="70" y="40" width="60" height="9" rx="4" fill="#6b4226"/><path d="M76 44.5H124" stroke="#e0b25a" stroke-width="1.6"/><circle cx="100" cy="16" r="3.2" fill="#e0b25a"/>`;
+  }
+  if (t === 'koki') {
+    o += `<g stroke="${dk}" stroke-width="2.5"><circle cx="72" cy="26" r="16" fill="#fff"/><circle cx="100" cy="16" r="20" fill="#fff"/><circle cx="128" cy="26" r="16" fill="#fff"/></g><rect x="64" y="30" width="72" height="19" rx="5" fill="#fff" stroke="${dk}" stroke-width="2.5"/><g clip-path="url(#${g})"><path d="M44 128Q100 144 156 128V176H44Z" fill="#fff"/></g><path d="M78 126H122L100 150Z" fill="#ff8fb8"/><ellipse cx="78" cy="161" rx="18" ry="8" fill="#fff"/><ellipse cx="122" cy="161" rx="18" ry="8" fill="#fff"/>`;
+  }
+  if (t === 'crown' || t === 'mahkota') {
+    o += `<path d="M68 46L72 20L88 34L100 12L112 34L128 20L132 46Z" fill="#ffd25e" stroke="#e0a82e" stroke-width="3" stroke-linejoin="round"/><circle cx="72" cy="20" r="4" fill="#ff8fb8"/><circle cx="100" cy="12" r="4.5" fill="#8fd3ff"/><circle cx="128" cy="20" r="4" fill="#ff8fb8"/>`;
+  }
+  if (t && t !== 'asli') o += BOW;
+  return `<div style="position:relative;display:inline-block;line-height:0">${base}<svg viewBox="0 0 200 185" width="${s}" style="position:absolute;left:0;top:0;pointer-events:none"><defs>${hc}</defs>${o}</svg></div>`;
+}
+
+const cs = (s, customCol = null) => {
+  const o = P.senang;
+  P.senang = customCol || P.def;
+  const h = cimo('senang', s);
+  P.senang = o;
+  return h;
+};
+
+/* ==========================================================================
+   2. DATA APLIKASI (3 REKOMENDASI PER MOOD + KONSEP FOTO PLATFORM REAL-TIME)
+   ========================================================================== */
+const PL_BRANDS = {
+  ShopeeFood: { col: '#ee4d2d', sub: 'Salin & buka', ico: '<path d="M7 9h10l-1 10H8zM9.5 9a2.5 2.5 0 0 1 5 0" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/>' },
+  GoFood:     { col: '#ee2737', sub: 'Buka aplikasi', ico: '<circle cx="12" cy="12" r="5.5" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="12" cy="12" r="1.8" fill="#fff"/>' },
+  GrabFood:   { col: '#00b14f', sub: 'Salin & buka', ico: '<path d="M16.5 9.5A5.5 5.5 0 1 0 17 14h-4.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>' }
+};
+
+const TI_NAV = {
+  home:    { label: 'Beranda',    svg: '<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>' },
+  recap:   { label: 'Recap Mood', svg: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>' },
+  cart:    { label: 'Pesanan',    svg: '<path d="M6 8h12l-1 11H7zM9 8a3 3 0 0 1 6 0"/>' },
+  vip:     { label: 'VIP',        svg: '<path d="M4 8l4 4 4-7 4 7 4-4-2 11H6z"/>' },
+  profile: { label: 'Profil',     svg: '<circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/>' },
+  chat:    { label: 'Live Chat',  svg: '<path d="M21 11.5a8.4 8.4 0 0 1-9 8.5 8.5 8.5 0 0 1-3.8-.9L3 20.5l1.4-4.7A8.4 8.4 0 0 1 3.5 11.5a8.5 8.5 0 0 1 8.5-8.5h.5a8.5 8.5 0 0 1 8.5 8.5z"/>' }
+};
+
+const MD_INFO = {
+  senang:  { name: 'Senang',  bgCard: '#f4f87f', bgSoft: '#f3f3c4', bgClass: 'bg-senang',  quote: 'Wah, Aisyah lagi senang! Yuk pilih yang segar dan manis biar makin seru.', ids: ['pisangijo', 'pisangepe', 'jalangkote'] },
+  sedih:   { name: 'Sedih',   bgCard: '#9fd6ff', bgSoft: '#d3e6f5', bgClass: 'bg-sedih',   quote: 'Aku ikut merasakan… yuk makan yang hangat dan berkuah supaya hati lebih nyaman.', ids: ['coto', 'konro', 'saudara'] },
+  marah:   { name: 'Marah',   bgCard: '#ffb98a', bgSoft: '#f7dcc8', bgClass: 'bg-marah',   quote: 'Tarik napas dulu ya. Yang pedas gurih atau minuman segar bisa bantu meredakan kesalmu!', ids: ['palekko', 'ikanbakar', 'markisa'] },
+  bingung: { name: 'Bingung', bgCard: '#a8ecd6', bgSoft: '#cdeadf', bgClass: 'bg-bingung', quote: 'Lagi bingung mau makan apa? Cimo pilihkan 3 menu aman khas Makassar ini aja!', ids: ['nasicampur', 'mietiti', 'kopiaren'] }
+};
+
+const MENU_CAT = {
+  pisangijo:  { id:'pisangijo',  name:'Es Pisang Ijo',        shop:'Warung Daeng Sirua',   area:'Losari',        cat:'Beverage',   tag:'Paling cocok', rate:'4,8', km:'1,2 km', eta:'±14 mnt', min:17000, max:25000, cardBg:'#f6e3b4', accent:'#c7801f' },
+  pisangepe:  { id:'pisangepe',  name:'Pisang Epe Coklat Keju',shop:'Kios Losari Manis',    area:'Pantai Losari', cat:'Snack',      tag:'✦ Viral',      rate:'4,7', km:'1,1 km', eta:'±12 mnt', min:15000, max:20000, cardBg:'#f4d2d2', accent:'#cc524e', viral:true },
+  jalangkote: { id:'jalangkote', name:'Jalangkote Hangat',    shop:'Dapur Mama Ani',       area:'Panakkukang',   cat:'Snack',      tag:'Snack',        rate:'4,6', km:'0,9 km', eta:'±10 mnt', min:10000, max:16000, cardBg:'#d6ecc8', accent:'#4a9a3a' },
+  coto:       { id:'coto',       name:'Coto Makassar',        shop:'Coto Daeng Tata',      area:'Panakkukang',   cat:'Heavy Meal', tag:'Paling cocok', rate:'4,8', km:'1,2 km', eta:'±17 mnt', min:25000, max:32000, cardBg:'#f6e3b4', accent:'#c7801f', viral:true },
+  konro:      { id:'konro',      name:'Sup Konro',            shop:'Konro Karebosi Asli',  area:'Ujung Pandang', cat:'Heavy Meal', tag:'Hangat',       rate:'4,9', km:'2,4 km', eta:'±25 mnt', min:42000, max:50000, cardBg:'#f4d2d2', accent:'#cc524e' },
+  saudara:    { id:'saudara',    name:'Sop Saudara',          shop:'Warung Bu Hajjah',     area:'Tamalate',      cat:'Heavy Meal', tag:'Heavy Meal',   rate:'4,6', km:'0,8 km', eta:'±12 mnt', min:22000, max:28000, cardBg:'#d6ecc8', accent:'#4a9a3a' },
+  palekko:    { id:'palekko',    name:'Ayam Palekko',         shop:'Palekko Daeng Rani',   area:'Rappocini',     cat:'Heavy Meal', tag:'✦ Viral',      rate:'4,8', km:'1,5 km', eta:'±18 mnt', min:30000, max:38000, cardBg:'#f6e3b4', accent:'#c7801f', viral:true },
+  ikanbakar:  { id:'ikanbakar',  name:'Ikan Bakar Dabu-dabu', shop:'Seafood Paotere Jaya', area:'Ujung Tanah',   cat:'Heavy Meal', tag:'Pedas',        rate:'4,7', km:'3,0 km', eta:'±26 mnt', min:38000, max:48000, cardBg:'#f4d2d2', accent:'#cc524e' },
+  markisa:    { id:'markisa',    name:'Jus Markisa Segar',    shop:'Jus Buah Segar 21',    area:'Panakkukang',   cat:'Beverage',   tag:'Segar',        rate:'4,6', km:'0,9 km', eta:'±11 mnt', min:12000, max:18000, cardBg:'#d6ecc8', accent:'#4a9a3a' },
+  nasicampur: { id:'nasicampur', name:'Nasi Campur',          shop:'Dapur Mama Ani',       area:'Panakkukang',   cat:'Heavy Meal', tag:'Paling cocok', rate:'4,5', km:'1,1 km', eta:'±15 mnt', min:20000, max:27000, cardBg:'#f6e3b4', accent:'#c7801f' },
+  mietiti:    { id:'mietiti',    name:'Mie Titi Makassar',    shop:'Mie Titi Koh Ahong',   area:'Boulevard',     cat:'Heavy Meal', tag:'Favorit',      rate:'4,7', km:'1,8 km', eta:'±20 mnt', min:28000, max:35000, cardBg:'#f4d2d2', accent:'#cc524e' },
+  kopiaren:   { id:'kopiaren',   name:'Kopi Susu Gula Aren',  shop:'Kopi Jalanan 09',      area:'Rappocini',     cat:'Beverage',   tag:'Minuman',      rate:'4,7', km:'1,6 km', eta:'±14 mnt', min:15000, max:23000, cardBg:'#d6ecc8', accent:'#4a9a3a' },
+  nasgor:     { id:'nasgor',     name:'Nasi Goreng Kampung',  shop:'Nasi Goreng Pak Iwan', area:'Rappocini',     cat:'Heavy Meal', tag:'Putar Acak',   rate:'4,7', km:'2,3 km', eta:'±21 mnt', min:20000, max:28000, cardBg:'#f6e3b4', accent:'#c7801f' }
+};
+
+const fmtRp = n => 'Rp ' + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const fmtRange = (a, b) => fmtRp(a) + ' – ' + String(b).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+function logoPeekSvg(layer) {
+  const id = 'lgc' + (++_uid);
+  const pink = '#ffa9c9', shade = '#f27aa8';
+  if (layer === 'head') {
+    return `<svg class="lg-peek-head" viewBox="0 18 200 124" aria-hidden="true">
+      <defs>
+        <clipPath id="${id}b"><ellipse cx="100" cy="96" rx="70" ry="62"/></clipPath>
+        <clipPath id="${id}c"><rect x="-10" y="0" width="220" height="126"/></clipPath>
+      </defs>
+      <g clip-path="url(#${id}c)">
+        <ellipse cx="100" cy="96" rx="70" ry="62" fill="${shade}"/>
+        <g clip-path="url(#${id}b)"><ellipse cx="93" cy="89" rx="68" ry="60" fill="${pink}"/></g>
+        <ellipse cx="62" cy="56" rx="15" ry="8" transform="rotate(-28 62 56)" fill="#fff" opacity=".55"/>
+        <circle cx="82" cy="45" r="3.4" fill="#fff" opacity=".55"/>
+        <ellipse cx="52" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/>
+        <ellipse cx="148" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/>
+        <ellipse cx="76" cy="88" rx="12" ry="14" fill="#2f2a6b"/>
+        <circle cx="80" cy="82" r="4.6" fill="#fff"/><circle cx="73" cy="95" r="2.2" fill="#fff"/>
+        <ellipse cx="124" cy="88" rx="12" ry="14" fill="#2f2a6b"/>
+        <circle cx="128" cy="82" r="4.6" fill="#fff"/><circle cx="121" cy="95" r="2.2" fill="#fff"/>
+        <path d="M60 74l-6-4M64 69l-3-6M140 74l6-4M136 69l3-6" fill="none" stroke="#2f2a6b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <g transform="translate(130,36) rotate(18)">
+          <ellipse cx="-10" cy="0" rx="10" ry="6" fill="#ff7aa8"/>
+          <ellipse cx="10" cy="0" rx="10" ry="6" fill="#ff7aa8"/>
+          <circle cx="0" cy="0" r="4.5" fill="#ff5c92"/>
+        </g>
+        <path d="M90 110Q100 119 110 110" fill="none" stroke="#2f2a6b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </svg>`;
+  }
+  const paw = cx => `<circle cx="${cx}" cy="122" r="19" fill="${pink}" stroke="${shade}" stroke-width="2.4"/>`;
+  return `<svg class="lg-peek-paws" viewBox="0 18 200 124" aria-hidden="true">${paw(33)}${paw(167)}</svg>`;
+}
+
+const logoHtml = (size = 1.45, withMascot = true) => withMascot
+  ? `<div class="lg2 has-mascot" style="font-size:${size}rem"><span>Crave</span><span class="mood-wrap">${logoPeekSvg('head')}<mark class="mood-pill">Mood</mark>${logoPeekSvg('paws')}</span></div>`
+  : `<div class="lg2 no-mascot" style="font-size:${size}rem"><span>Crave</span><mark class="mood-pill">Mood</mark></div>`;
+
+const logoLockupHtml = (size = 2.05, withMascot = true) =>
+  `<div class="lg2-lockup" style="font-size:${size}rem">${logoHtml(size, withMascot)}<span class="lg2-tag">your mood, your food!</span></div>`;
+
+/* Simulator State */
+const sim = {
+  screen: 'home',
+  device: 'web',
+  dark: false,
+  userName: 'Aisyah',
+  mood: 'sedih',
+  cat: 'Semua',
+  platform: 'ShopeeFood',
+  cart: { coto: 1, pisangijo: 2 },
+  costume: 'asli',
+  colorId: 'pink',
+  lang: 'ID',
+  voiceVol: 100,
+  sfx: true,
+  autoVoice: true,
+  buddyOpen: false,
+  buddyIdx: 0,
+  heroTapIdx: -1,
+  bounceTick: 0,
+  toastMsg: '',
+  spinAngle: 0,
+  spinResult: 'nasgor',
+  umkmSent: false,
+  chatInput: '',
+  chatMsgs: []
+};
+
+const CIMO_QUOTES = [
+  'Hai! Lagi mood makan apa hari ini? Cimo siap pilihkan 3 menu terbaik!',
+  'Jangan lupa minum air putih dulu ya, habis itu kita pesan yang hangat!',
+  'Masih bingung pilih menu? Yuk klik Putar Acak biar seru!',
+  'Kalau mau curhat santai, ketuk Live Chat — Cimo selalu siap dengerin 💕',
+  'Tips Cimo: Semua harga dan foto terhubung ke ShopeeFood, GoFood & GrabFood!'
+];
+let _toastTimer = null;
+
+function playCimoSfx(kind = 'pop') {
+  if (!sim.sfx) return;
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    const ctx = new AC();
+    const gain = ctx.createGain();
+    const vol = Math.max(0.03, (sim.voiceVol / 100) * 0.14);
+    gain.connect(ctx.destination);
+    const notes = kind === 'chime' ? [523.25, 659.25, 783.99] : (kind === 'tap' ? [587.33, 783.99] : [659.25]);
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const t = ctx.currentTime + i * 0.08;
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(vol, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+      osc.connect(gain);
+      osc.start(t);
+      osc.stop(t + 0.17);
+    });
+    setTimeout(() => ctx.close && ctx.close().catch(() => {}), 500);
+  } catch (e) {}
+}
+
+function showSimToast(msg) {
+  sim.toastMsg = msg;
+  clearTimeout(_toastTimer);
+  renderSim();
+  _toastTimer = setTimeout(() => {
+    sim.toastMsg = '';
+    const el = document.getElementById('sim-toast-el');
+    if (el) el.remove();
+  }, 2600);
+}
+
+function speakCimo(text = 'Hai! Aku Cimo, siap menemani mood makanmu hari ini!') {
+  playCimoSfx('chime');
+  try {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = sim.lang === 'EN' ? 'en-US' : 'id-ID';
+      u.volume = Math.max(0.05, sim.voiceVol / 100);
+      u.pitch = 1.15;
+      u.rate = 0.98;
+      window.speechSynthesis.speak(u);
+    }
+  } catch (e) {}
+  showSimToast(`🔊 "${text}"`);
+}
+
+function tapHeroCimo() {
+  sim.heroTapIdx = (sim.heroTapIdx + 1) % CIMO_QUOTES.length;
+  sim.bounceTick = Date.now();
+  playCimoSfx('tap');
+  renderSim();
+}
+
+function tapFloatingCimo() {
+  playCimoSfx('tap');
+  setSim('chat');
+}
+
+function sendChatMsg(presetText = null) {
+  const txt = (presetText !== null ? presetText : sim.chatInput).trim();
+  if (!txt) return;
+  sim.chatMsgs.push({ from: 'user', text: txt });
+  sim.chatInput = '';
+  const lo = txt.toLowerCase();
+  let reply = 'Cerita aja ke Cimo ya! Mau Cimo pilihkan menu hangat atau segar untukmu sekarang? 💕';
+  let moodReply = 'def';
+  if (lo.includes('capek') || lo.includes('lelah')) {
+    reply = 'Peluk dulu ya 🤗 Habis seharian beraktivitas enaknya makan Coto Makassar hangat atau Sup Konro biar tenagamu pulih!';
+    moodReply = 'capek';
+  } else if (lo.includes('sedih') || lo.includes('galau')) {
+    reply = 'Nggak apa-apa kok ngerasa sedih. Cimo temani ya — Coto hangat atau Es Pisang Ijo manis bisa bikin hati lebih tenang 💙';
+    moodReply = 'sedih';
+  } else if (lo.includes('makan') || lo.includes('lapar') || lo.includes('laper')) {
+    reply = 'Langsung aja pilih mood di Beranda atau ketuk Putar Acak 🎡 biar Cimo siapkan 3 menu Makassar terbaik!';
+    moodReply = 'senang';
+  } else if (lo.includes('marah') || lo.includes('kesal') || lo.includes('sebel')) {
+    reply = 'Tarik napas pelan-pelan ya! Coba Nasu Palekko pedas gurih atau Jus Markisa dingin biar hati adem lagi 🔥';
+    moodReply = 'marah';
+  }
+  sim.chatMsgs.push({ from: 'cimo', mood: moodReply, text: reply });
+  playCimoSfx('chime');
+  renderSim();
+}
+
+function activeColPair() {
+  if (sim.colorId === 'pink') return null;
+  const found = VIP_COLORS.find(c => c.id === sim.colorId);
+  return found ? found.pair : null;
+}
+function simCimo(mood, sz, peek = 0) {
+  const col = activeColPair();
+  if (sim.costume && sim.costume !== 'asli' && !peek) {
+    return cos(mood, sz, sim.costume, col);
+  }
+  return cimo(mood, sz, peek, col);
+}
+function cartTotals(cartMap) {
+  let count = 0, min = 0, max = 0;
+  for (const [id, q] of Object.entries(cartMap)) {
+    const it = MENU_CAT[id];
+    if (it && q > 0) {
+      count += q;
+      min += it.min * q;
+      max += it.max * q;
+    }
+  }
+  return { count, min, max };
+}
+function adjCart(id, d) {
+  sim.cart[id] = Math.max(0, (sim.cart[id] || 0) + d);
+  if (sim.cart[id] === 0) delete sim.cart[id];
+  if (d > 0) playCimoSfx('pop');
+  renderSim();
+}
+function setSim(s) {
+  sim.screen = s;
+  sim.buddyOpen = false;
+  sim.heroTapIdx = -1;
+  renderSim();
+}
+function setDev(d) {
+  sim.device = d === 'hp' ? 'hp' : 'web';
+  const bw = document.getElementById('btn-dev-web');
+  const bh = document.getElementById('btn-dev-hp');
+  if (bw) bw.classList.toggle('on', sim.device === 'web');
+  if (bh) bh.classList.toggle('on', sim.device === 'hp');
+  renderSim();
+}
+function toggleSimDark() {
+  sim.dark = !sim.dark;
+  const bd = document.getElementById('btn-dark');
+  if (bd) {
+    bd.classList.toggle('on', sim.dark);
+    bd.innerHTML = sim.dark ? '☀️ Terang' : '🌙 Gelap';
+  }
+  playCimoSfx('pop');
+  renderSim();
+}
+function triggerSpinWheel() {
+  const keys = Object.keys(MENU_CAT);
+  const pick = keys[Math.floor(Math.random() * keys.length)];
+  sim.spinAngle += 720 + Math.floor(Math.random() * 300);
+  sim.spinResult = pick;
+  playCimoSfx('tap');
+  const rotor = document.getElementById('sim-wheel-rotor');
+  if (rotor) {
+    rotor.style.transform = `rotate(${sim.spinAngle}deg)`;
+    setTimeout(() => { renderSim(); }, 1800);
+  } else {
+    renderSim();
+  }
+}
+
+/* ==========================================================================
+   3. RENDERERS PER BAGIAN (SESUAI 12 POIN SPESIFIKASI)
+   ========================================================================== */
+
+/* Poin #10: ONBOARDING PERSIS MOCKUP AWAL (Splash, Cara Kerja, Masuk, Daftar, Kenalan) */
+function renderOnboardingScreen(kind, isMob = false, interactive = true) {
+  if (kind === 'onb1') {
+    return `
+      <div class="bg-splash" style="min-height:${isMob?'100%':'440px'};display:flex;flex-direction:column;justify-content:center;align-items:center;padding:${isMob?'44px 18px 26px':'40px 24px'};text-align:center">
+        <div class="glow" style="--h:${isMob?240:300}px">
+          <div class="cm-float">${cimo('def', isMob ? 176 : 230)}</div>
+        </div>
+        <div style="margin-top:${isMob?26:20}px">${logoHtml(isMob ? 1.85 : 2.3, false)}</div>
+        <p style="margin:12px 0 ${isMob?24:22}px;font-weight:700;color:#3a2142;opacity:.86;font-size:${isMob?'.88rem':'1rem'}">Rekomendasi Makanan Sesuai Moodmu</p>
+        ${interactive ? `<button class="bt pk" onclick="setSim('onb2')">Mulai sekarang →</button>` : `<span class="bt pk">Mulai sekarang →</span>`}
+      </div>`;
+  }
+
+  if (kind === 'onb2') {
+    const stepsData = [
+      [1, '#fafcc4', 'senang', 'Pilih mood-mu', 'Senang, sedih, marah, atau bingung.'],
+      [2, '#d6eeff', 'bingung', 'Dapatkan rekomendasi', '3 menu khas Makassar dari Cimo.'],
+      [3, '#ffe1cc', 'senang', 'Nikmati makanannya', 'Pesan via GoFood, GrabFood, ShopeeFood.']
+    ];
+    if (isMob) {
+      return `
+        <div class="bg-carakerja" style="min-height:100%;display:flex;flex-direction:column;padding:42px 14px 20px;color:#3a2142">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <div class="glow" style="--h:80px">${cimo('def', 62)}</div>
+            <div class="bub" style="padding:6px 12px;font-size:.76rem">Gampang! Cuma 3 langkah 💕</div>
+          </div>
+          <h3 style="font-size:1.3rem;margin:2px 0 12px">Cara kerja CraveMood</h3>
+          <div>
+            ${stepsData.map(([n, bg, m, t, d]) => `
+              <div class="ob-st" style="background:${bg}">
+                <em>${n}</em>
+                <div class="ob-tl">${cimo(m, 44)}</div>
+                <div><h3>${t}</h3><p>${d}</p></div>
+              </div>`).join('')}
+          </div>
+          <div class="nx-box" style="margin-top:auto">
+            ${interactive ? `<button class="bt pk full" onclick="setSim('masuk')">Selanjutnya →</button>` : `<span class="bt pk full">Selanjutnya →</span>`}
+          </div>
+        </div>`;
+    }
+    return `
+      <div class="bg-carakerja" style="min-height:440px;padding:24px 30px 36px;color:#3a2142;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+          <div class="glow" style="--h:106px">${cimo('def', 82)}</div>
+          <div class="bub">Gampang! Cuma 3 langkah 💕</div>
+        </div>
+        <h2 style="font-size:clamp(1.6rem,3vw,2.2rem);margin-bottom:22px">Cara kerja CraveMood</h2>
+        <div class="g-3" style="max-width:860px;margin:0 auto">
+          ${stepsData.map(([n, bg, m, t, d]) => `
+            <div class="ob-st v" style="background:${bg}">
+              <em>${n}</em>
+              <div class="ob-tl">${cimo(m, 76)}</div>
+              <h3>${t}</h3>
+              <p>${d}</p>
+            </div>`).join('')}
+        </div>
+        <div class="nx-box" style="max-width:340px;margin:24px auto 0">
+          ${interactive ? `<button class="bt pk full" onclick="setSim('masuk')">Selanjutnya →</button>` : `<span class="bt pk full">Selanjutnya →</span>`}
+        </div>
+      </div>`;
+  }
+
+  if (kind === 'masuk' || kind === 'daftar') {
+    const isDaftar = kind === 'daftar';
+    const sheetInner = isDaftar ? `
+      <h3 style="font-size:1.15rem;margin-bottom:10px">Yuk, buat akun!</h3>
+      <div class="in in-ro" style="color:#7d6683">Nama panggilan</div>
+      <div class="in in-ro" style="color:#7d6683">+62 Nomor WhatsApp</div>
+      <div style="display:flex;gap:8px;align-items:flex-start;font-size:.72rem;margin:4px 0 11px;text-align:left">
+        <span style="flex:none;width:18px;height:18px;border:2px solid #3a2142;border-radius:6px;background:#a8ecd6;display:grid;place-items:center;font-weight:700">✓</span>
+        <span>Aku setuju dengan Syarat &amp; Kebijakan Privasi</span>
+      </div>
+      ${interactive
+        ? `<button class="bt pk full" style="margin-bottom:8px" onclick="setSim('kenalan')">Buat akun ✨</button>
+           <button style="border:0;background:none;width:100%;font:600 .82rem Fredoka;text-decoration:underline;color:#3a2142" onclick="setSim('kenalan')">atau daftar dengan Google</button>`
+        : `<div class="bt pk full" style="margin-bottom:8px">Buat akun ✨</div>
+           <div style="text-align:center;font:600 .82rem Fredoka;text-decoration:underline">atau daftar dengan Google</div>`}`
+      : `
+      <h3 style="font-size:1.15rem;margin-bottom:10px">Selamat datang kembali!</h3>
+      ${interactive
+        ? `<button class="gb-btn" onclick="setSim('kenalan')"><b style="color:#ea4335;font-size:1rem">G</b> Lanjut dengan Google</button>`
+        : `<div class="gb-btn"><b style="color:#ea4335;font-size:1rem">G</b> Lanjut dengan Google</div>`}
+      <div class="in in-ro" style="color:#7d6683">+62 Nomor WhatsApp</div>
+      ${interactive
+        ? `<button class="bt pk full" style="margin-bottom:8px" onclick="setSim('kenalan')">Kirim kode 💬</button>`
+        : `<div class="bt pk full" style="margin-bottom:8px">Kirim kode 💬</div>`}
+      <div class="or-line">atau</div>
+      ${interactive
+        ? `<button style="border:0;background:none;width:100%;font:600 .82rem Fredoka;text-decoration:underline;color:#3a2142" onclick="setSim('kenalan')">Coba dulu sebagai Tamu →</button>`
+        : `<div style="text-align:center;font:600 .82rem Fredoka;text-decoration:underline">Coba dulu sebagai Tamu →</div>`}
+      <p style="font-size:.66rem;text-align:center;opacity:.68;margin-top:8px">Dengan masuk, kamu setuju dengan Syarat &amp; Kebijakan Privasi</p>
+      ${interactive ? `<button style="border:0;background:none;width:100%;font:600 .72rem Fredoka;color:#6b5272;margin-top:6px" onclick="setSim('onb1')">← Lihat Splash &amp; Cara Kerja</button>` : ''}`;
+
+    const peekSz = isMob ? 186 : 206;
+    const peekMood = isDaftar ? 'senang' : 'def';
+    const peekHead = cimo(peekMood, peekSz, 'head');
+    const peekPaws = cimo(peekMood, peekSz, 'paws');
+    const tabsHtml = `
+      <div class="sg-tabs">
+        ${interactive
+          ? `<button class="sg-tab ${!isDaftar?'on':''}" onclick="setSim('masuk')">Masuk</button>
+             <button class="sg-tab ${isDaftar?'on':''}" onclick="setSim('daftar')">Daftar</button>`
+          : `<span class="sg-tab ${!isDaftar?'on':''}">Masuk</span>
+             <span class="sg-tab ${isDaftar?'on':''}">Daftar</span>`}
+      </div>`;
+
+    if (isMob) {
+      return `
+        <div class="${isDaftar?'bg-daftar':'bg-masuk'}" style="min-height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding-top:138px;position:relative">
+          <div class="sh-mob-wrap">
+            <div class="pkw-head">${peekHead}</div>
+            <div class="sh-mob">
+              ${tabsHtml}${sheetInner}
+            </div>
+            <div class="pkw-paws">${peekPaws}</div>
+          </div>
+        </div>`;
+    }
+    return `
+      <div class="${isDaftar?'bg-daftar':'bg-masuk'}" style="min-height:460px;display:flex;justify-content:center;align-items:flex-start;padding:144px 20px 36px;position:relative">
+        <div class="onb-sheet-wrap">
+          <div class="pkw-head">${peekHead}</div>
+          <div class="wsh">
+            ${tabsHtml}${sheetInner}
+          </div>
+          <div class="pkw-paws">${peekPaws}</div>
+        </div>
+      </div>`;
+  }
+
+  /* Kenalan */
+  return `
+    <div class="bg-kenalan" style="min-height:${isMob?'100%':'440px'};display:flex;flex-direction:column;align-items:center;justify-content:center;padding:${isMob?'44px 16px 22px':'32px 24px'};text-align:center;color:#3a2142">
+      <div class="glow" style="--h:${isMob?200:230}px">${cs(isMob ? 142 : 184)}</div>
+      <div class="bub down-tip" style="margin-top:8px;font-size:${isMob?'.92rem':'1.1rem'}">Halo! Aku Cimo. Siapa namamu?</div>
+      <div class="card" style="width:min(${isMob?'100%':'400px'},100%);margin-top:16px;padding:16px;text-align:left">
+        <small style="font:700 .76rem Fredoka;color:#7d6683">Nama panggilan</small>
+        ${interactive
+          ? `<input class="in" style="margin-top:6px;margin-bottom:12px" value="${sim.userName}" oninput="sim.userName=this.value||'Aisyah'" placeholder="Tulis nama panggilan">`
+          : `<div class="in" style="margin-top:6px;margin-bottom:12px">Aisyah</div>`}
+        ${interactive
+          ? `<button class="bt pk full" onclick="setSim('home')">Kenalan! →</button>`
+          : `<div class="bt pk full" style="text-align:center">Kenalan! →</div>`}
+      </div>
+      <small style="margin-top:8px;font-weight:600;color:#7d6683;font-size:.74rem">Bisa diganti nanti di Profil</small>
+    </div>`;
+}
+
+/* Food Photo Slot Helper (Tanpa Ilustrasi Kuliner — dari GoFood / GrabFood / ShopeeFood) */
+function renderPhotoSlot(it, compact = false) {
+  return `
+    <div class="food-photo-slot" style="${compact?'height:84px;margin-bottom:8px':''}">
+      <span class="badge-corner left">★ ${it.rate}</span>
+      <span class="badge-corner right">📍 ${it.km}</span>
+      <svg viewBox="0 0 24 24" width="${compact?20:24}" height="${compact?20:24}" fill="none" stroke="#3a2142" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 16-5-5-6 6-3-3-4 4"/>
+      </svg>
+      <b>Foto menu</b>
+      <div class="food-photo-dots">
+        <i style="background:#ee2737"></i>GoFood ·
+        <i style="background:#00b14f"></i>GrabFood ·
+        <i style="background:#ee4d2d"></i>ShopeeFood
+      </div>
+    </div>`;
+}
+
+/* Home Screen: Strictly 3 Recommendations (#9), No FD art (#3) */
+function renderHome(mood = 'sedih', isMob = false, interactive = true) {
+  const mKey = mood === 'neutral' ? 'def' : mood;
+  const info = MD_INFO[mood] || MD_INFO.sedih;
+  const cat = interactive ? sim.cat : 'Semua';
+  const cartMap = interactive ? sim.cart : { coto: 1, pisangijo: 2 };
+  const tots = cartTotals(cartMap);
+
+  const mobTop = isMob ? `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px">
+      <div><small style="color:var(--mu);font-weight:700;display:block;font-size:.66rem;line-height:1.1;margin-bottom:3px">Selamat siang</small>${logoHtml(1.06, false)}</div>
+      <div style="display:flex;gap:5px;flex:none">
+        ${interactive ? `<button title="Live Chat" onclick="setSim('chat')" style="width:30px;height:30px;border-radius:50%;border:1.5px solid var(--ln);background:#fff;display:grid;place-items:center">💬</button>
+                         <button title="CraveMood VIP" onclick="setSim('vip')" style="width:30px;height:30px;border-radius:50%;border:1.5px solid var(--ln);background:#fff;display:grid;place-items:center">👑</button>
+                         <button title="Profil" onclick="setSim('profile')" style="width:30px;height:30px;border-radius:50%;border:1.5px solid var(--ln);background:#fff;padding:0;display:grid;place-items:center">${simCimo('def',24)}</button>`
+                      : `<span style="width:30px;height:30px;border-radius:50%;border:1.5px solid var(--ln);background:#fff;display:grid;place-items:center">💬</span>
+                         <span style="width:30px;height:30px;border-radius:50%;border:1.5px solid var(--ln);background:#fff;display:grid;place-items:center">👑</span>
+                         <span style="width:30px;height:30px;border-radius:50%;border:1.5px solid var(--ln);background:#fff;display:grid;place-items:center">${cimo('def',24)}</span>`}
+      </div>
+    </div>` : '';
+
+  const baseQuote = mood === 'neutral'
+    ? `Halo ${interactive ? sim.userName : 'Aisyah'}! Lagi mood apa hari ini?`
+    : info.quote.replace('Aisyah', interactive ? sim.userName : 'Aisyah');
+  const speechText = (interactive && sim.heroTapIdx >= 0) ? CIMO_QUOTES[sim.heroTapIdx] : baseQuote;
+  const isBouncing = interactive && sim.bounceTick && (Date.now() - sim.bounceTick < 900);
+
+  const moodSelector = `
+    <div class="mood-row ${isMob?'mob':''}">
+      ${Object.entries(MD_INFO).map(([k, v]) => `
+        <button class="mood-btn ${mood===k?'on':''}" style="background:${v.bgSoft}" ${interactive?`onclick="sim.mood='${k}';sim.heroTapIdx=-1;playCimoSfx('pop');renderSim()"`:''}>
+          ${cimo(k, isMob ? 36 : 58)}
+          <span>${v.name}</span>
+        </button>`).join('')}
+    </div>`;
+
+  if (mood === 'neutral') {
+    return `
+      ${mobTop}
+      <div style="text-align:center;padding:${isMob?'12px 4px':'20px 10px'}">
+        <div class="glow" style="--h:${isMob?180:230}px">
+          ${interactive
+            ? `<button type="button" class="cm-tap-btn cm-float ${isBouncing?'cm-bounce':''}" onclick="tapHeroCimo()" title="Ketuk Cimo!">${simCimo('def', isMob ? 140 : 185)}</button>`
+            : `<div class="cm-float">${cimo('def', isMob ? 140 : 185)}</div>`}
+        </div>
+        <div class="bub" style="margin-top:8px">${speechText}</div>
+        ${moodSelector}
+        <p style="color:var(--mu);font-size:.86rem;margin-top:16px">Pilih salah satu mood di atas atau ketuk Cimo untuk sapaan interaktif.</p>
+      </div>`;
+  }
+
+  let items = info.ids.map(id => MENU_CAT[id]).filter(it => cat === 'Semua' || it.cat === cat).slice(0, 3);
+
+  const cardsHtml = items.map(it => {
+    const qty = cartMap[it.id] || 0;
+    return `
+      <article class="rc-card" style="background:${it.cardBg}">
+        <div class="rc-top">
+          <span class="rc-badge ${it.viral?'viral':''}">${it.tag}</span>
+        </div>
+        ${renderPhotoSlot(it, isMob)}
+        <div class="rc-title" style="color:${it.accent};font-size:${isMob?'1.02rem':'1.16rem'}">${it.name}</div>
+        <div class="rc-meta">${it.shop} · ${it.area} · ${it.eta}</div>
+        <div class="rc-foot">
+          <div>
+            <small style="display:block;font-size:.68rem;opacity:.75">Perkiraan</small>
+            <span class="rc-price">${fmtRange(it.min, it.max)}</span>
+          </div>
+          ${qty > 0
+            ? `<div class="qs-step">${interactive?`<button onclick="adjCart('${it.id}',-1)">−</button>`:'<b>−</b>'}<span>${qty}</span>${interactive?`<button onclick="adjCart('${it.id}',1)">+</button>`:'<b>+</b>'}</div>`
+            : `<button class="tmb-btn" ${interactive?`onclick="adjCart('${it.id}',1)"`:''}>+ Tambah</button>`}
+        </div>
+      </article>`;
+  }).join('');
+
+  return `
+    ${mobTop}
+    <div style="text-align:center">
+      <div class="glow" style="--h:${isMob?140:180}px">
+        ${interactive
+          ? `<button type="button" class="cm-tap-btn ${isBouncing?'cm-bounce':''}" onclick="tapHeroCimo()" title="Ketuk Cimo!">${simCimo(mKey, isMob ? 106 : 138)}</button>`
+          : cimo(mKey, isMob ? 106 : 138)}
+      </div>
+      <div class="bub" style="margin-top:6px;font-size:${isMob?'.82rem':'.94rem'}">${speechText}</div>
+      ${moodSelector}
+    </div>
+    <div class="loc-bar">
+      <div style="display:flex;align-items:center;gap:6px;font-size:.84rem;font-weight:700">
+        <span>📍</span>
+        <span>Jl. Raya Pendidikan, Rappocini</span>
+      </div>
+      <span style="background:#ffe0ec;color:#3a2142;padding:2px 10px;border-radius:99px;font:600 .72rem Fredoka">3 rekomendasi</span>
+    </div>
+    <div class="cat-row">
+      ${['Semua', 'Snack', 'Heavy Meal', 'Beverage'].map(c => `
+        <button class="cat-chip ${cat===c?'on':''}" ${interactive?`onclick="sim.cat='${c}';renderSim()"`:''}>${c}</button>`).join('')}
+    </div>
+    <div class="rec3-grid ${isMob?'mob':''}">${cardsHtml}</div>
+    <button class="spin-banner" ${interactive?`onclick="setSim('spin')"`:''}>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="spin-ico">🎡</div>
+        <div><b style="display:block;font-size:${isMob?'.86rem':'.96rem'}">Putar acak</b><small style="opacity:.82;font-size:${isMob?'.7rem':'.78rem'}">Nggak cocok? Cimo pilihkan yang lain</small></div>
+      </div>
+      <b style="font-size:1.3rem">›</b>
+    </button>
+    ${tots.count > 0 ? `
+      <div class="float-cart ${isMob?'mob-float':''}" style="${!interactive && !isMob ? 'position:relative;bottom:auto;margin-top:16px' : ''}">
+        <span style="font:700 ${isMob?'.74rem':'.88rem'} Fredoka">🛒 ${tots.count} item · ±${fmtRange(tots.min, tots.max)}</span>
+        <button ${interactive?`onclick="setSim('cart')"`:''}>Lihat Pesanan</button>
+      </div>` : ''}`;
+}
+
+/* Helper: ShopeeFood di Atas, GoFood & GrabFood Sejajar di Bawah */
+function renderDeliveryButtons(selectedPlatform = 'ShopeeFood', interactive = true) {
+  const shopee = PL_BRANDS.ShopeeFood;
+  const shopeeOn = selectedPlatform === 'ShopeeFood';
+  const secondary = ['GoFood', 'GrabFood'];
+  return `
+    <div class="deliv-stack">
+      <button type="button" class="deliv-top-card ${shopeeOn?'on':''}" ${interactive?`onclick="sim.platform='ShopeeFood';renderSim()"`:''}>
+        <span class="pf-ico" style="background:${shopee.col}"><svg viewBox="0 0 24 24" width="20">${shopee.ico}</svg></span>
+        <b>ShopeeFood</b>
+        <small>${shopee.sub}</small>
+      </button>
+      <div class="deliv-pair-grid">
+        ${secondary.map(name => {
+          const info = PL_BRANDS[name];
+          const on = selectedPlatform === name;
+          return `
+            <button type="button" class="deliv-pill-btn ${on?'on':''}" style="--pcol:${info.col}" ${interactive?`onclick="sim.platform='${name}';renderSim()"`:''}>
+              <span class="pf-ico" style="background:${info.col}"><svg viewBox="0 0 24 24" width="19">${info.ico}</svg></span>
+              <b>${name}</b>
+              <small>${info.sub}</small>
+            </button>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+/* Pesananmu (#/cart) — ShopeeFood Highlighted on Top, GoFood & GrabFood Sejajar di Bawah */
+function renderCart(isMob = false, interactive = true, forceEmpty = false) {
+  const cartMap = forceEmpty ? {} : (interactive ? sim.cart : { coto: 1, pisangijo: 2 });
+  const entries = Object.entries(cartMap).filter(([, q]) => q > 0);
+  const tots = cartTotals(cartMap);
+  const activePl = interactive ? sim.platform : 'ShopeeFood';
+
+  if (entries.length === 0) {
+    return `
+      <h2 style="font-size:${isMob?'1.35rem':'1.7rem'};margin-bottom:14px">Pesananmu 🛒</h2>
+      <div class="card" style="text-align:center;padding:34px 18px">
+        ${cimo('kecewa', isMob ? 105 : 132)}
+        <p style="color:var(--mu);font-weight:700;margin:12px 0 16px">Keranjangmu masih kosong. Yuk pilih makanan dulu!</p>
+        <button class="bt pk" ${interactive?`onclick="setSim('home')"`:''}>Kembali ke Beranda</button>
+      </div>`;
+  }
+
+  return `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div>
+        <h2 style="font-size:${isMob?'1.3rem':'1.65rem'}">Pesananmu 🛒</h2>
+        <p style="color:var(--mu);font-size:${isMob?'.78rem':'.88rem'}">Atur jumlah, lalu lanjut lewat aplikasi pilihanmu.</p>
+      </div>
+      ${interactive ? `<button class="bt o sm" onclick="sim.cart={};renderSim()">Kosongkan</button>` : ''}
+    </div>
+    <div class="card" style="padding:${isMob?'14px':'22px'}">
+      ${entries.map(([id, qty]) => {
+        const it = MENU_CAT[id] || MENU_CAT.coto;
+        return `
+          <div class="cart-row ${isMob?'mob':''}" style="background:${it.cardBg}">
+            <div class="cart-photo-mini">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#3a2142" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 16-5-5-6 6-3-3-4 4"/></svg>
+            </div>
+            <div class="cart-info">
+              <b style="color:${it.accent};font-size:${isMob?'.84rem':'.98rem'}">${it.name}</b>
+              <small>${it.shop} · ${it.km}</small>
+              <span class="cart-price">Perkiraan ${fmtRange(it.min * qty, it.max * qty)}</span>
+            </div>
+            <div class="qs-step" style="padding:3px 10px;font-size:${isMob?'.78rem':'.88rem'}">
+              ${interactive?`<button onclick="adjCart('${it.id}',-1)">−</button>`:'<b>−</b>'}
+              <span>${qty}</span>
+              ${interactive?`<button onclick="adjCart('${it.id}',1)">+</button>`:'<b>+</b>'}
+            </div>
+          </div>`;
+      }).join('')}
+
+      <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 2px;border-top:1.5px dashed var(--ln);border-bottom:1.5px dashed var(--ln);margin:12px 0">
+        <span style="font:700 ${isMob?'.82rem':'.98rem'} Fredoka">Perkiraan total makanan</span>
+        <b style="font-size:${isMob?'1rem':'1.2rem'};color:#b8346f">±${fmtRange(tots.min, tots.max)}</b>
+      </div>
+      <p style="font-size:${isMob?'.72rem':'.82rem'};color:var(--mu);text-align:center">Total akhir termasuk ongkir &amp; promo tampil di aplikasi pilihanmu.</p>
+
+      <div class="deliv-center-wrap">
+        <b style="font-size:${isMob?'.84rem':'.96rem'}">Lanjut pesan lewat:</b>
+        ${renderDeliveryButtons(activePl, interactive)}
+      </div>
+
+      <button class="bt pk2 full" style="margin-top:10px" ${interactive?`onclick="setSim('orderSent')"`:''}>Lanjut ke ${activePl} →</button>
+      <button class="bt o full" style="margin-top:8px" ${interactive?`onclick="setSim('share')"`:''}>Bagikan Pilihanku</button>
+    </div>`;
+}
+
+/* Pesanan Diteruskan (#/order-sent) */
+function renderOrderSent(isMob = false, interactive = true) {
+  const plName = interactive ? sim.platform : 'ShopeeFood';
+  const pl = PL_BRANDS[plName] || PL_BRANDS.ShopeeFood;
+  const cartMap = Object.keys(interactive ? sim.cart : {}).length ? sim.cart : { coto: 1, pisangijo: 2 };
+  const tots = cartTotals(cartMap);
+  return `
+    <div style="max-width:520px;margin:0 auto;text-align:center">
+      <div class="glow" style="--h:${isMob?130:170}px">${interactive ? simCimo('senang', isMob ? 104 : 136) : cimo('senang', isMob ? 104 : 136)}</div>
+      <div class="bub" style="margin-top:6px;font-size:${isMob?'.84rem':'.96rem'}">Yay! Daftar pesananmu sudah disalin ke ${plName} 🎉</div>
+      <div class="card" style="margin-top:14px;padding:${isMob?'16px':'22px'};text-align:left">
+        <div style="display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1.5px dashed var(--ln)">
+          <span style="width:42px;height:42px;border-radius:50%;background:${pl.col};display:grid;place-items:center;flex:none">
+            <svg viewBox="0 0 24 24" width="22">${pl.ico}</svg>
+          </span>
+          <div style="flex:1;min-width:0">
+            <small style="color:var(--mu);font-weight:700;display:block">Diteruskan ke aplikasi</small>
+            <b style="font-size:1.12rem;color:#3a2142">${plName}</b>
+          </div>
+          <span style="background:#dff8ec;color:#0f5132;border-radius:99px;padding:4px 10px;font:700 .72rem Fredoka">Tersalin ✓</span>
+        </div>
+        <div style="margin:12px 0;font-size:${isMob?'.8rem':'.88rem'}">
+          ${Object.entries(cartMap).map(([id, q]) => {
+            const it = MENU_CAT[id] || MENU_CAT.coto;
+            return `<div style="display:flex;justify-content:space-between;padding:4px 0"><span>${q}× ${it.name}</span><b>${fmtRange(it.min*q, it.max*q)}</b></div>`;
+          }).join('')}
+        </div>
+        <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1.5px dashed var(--ln);font-weight:700">
+          <span>Perkiraan total</span>
+          <b style="color:#b8346f">±${fmtRange(tots.min, tots.max)}</b>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:${isMob?'1fr':'1fr 1fr'};gap:10px;margin-top:14px">
+        <button class="bt pk2 full" ${interactive?`onclick="setSim('share')"`:''}>Bagikan Pilihanku</button>
+        <button class="bt o full" ${interactive?`onclick="setSim('cart')"`:''}>← Kembali ke Pesanan</button>
+      </div>
+    </div>`;
+}
+
+/* Poin #5: SPINNER MENGIKUTI PROTOTYPE DEVELOPER (step_26 + step_30 rapi tanpa scrollbar) */
+function renderSpinnerModal(isMob = false, interactive = true, showResult = true) {
+  const it = MENU_CAT[interactive ? sim.spinResult : 'nasgor'] || MENU_CAT.nasgor;
+  const sliceIcons = ['🍲', '🍙', '🍛', '🍱', '🥘', '🍚'];
+  return `
+    <div class="spin-dialog ${isMob?'mob':''}">
+      <div class="spin-head">
+        <h3>Putar acak</h3>
+        <button class="spin-close" ${interactive?`onclick="setSim('home')"`:''}>✕</button>
+      </div>
+      <p style="color:#7d6683;font-size:${isMob?'.76rem':'.86rem'};text-align:center">Nggak cocok? Biar Cimo pilihkan yang lain.</p>
+      <div class="wheel-wrap">
+        <svg class="wheel-pointer" viewBox="0 0 28 32" width="26" height="30">
+          <path d="M14 30 L3 8 A12 12 0 0 1 25 8 Z" fill="#ff4f8e" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
+        </svg>
+        <div class="wheel-disc">
+          <div class="wheel-rotor" id="${interactive?'sim-wheel-rotor':''}" style="transform:rotate(${interactive?sim.spinAngle:24}deg)">
+            ${sliceIcons.map((ic, i) => {
+              const deg = i * 60 + 30;
+              return `<span class="wheel-slice-label" style="transform:rotate(${deg}deg) translateY(${isMob?-58:-68}px) rotate(${-deg}deg)">${ic}</span>`;
+            }).join('')}
+          </div>
+        </div>
+        <div class="wheel-hub">${cimo('bingung', isMob ? 46 : 54)}</div>
+      </div>
+
+      ${!showResult ? `
+        <button class="bt pk2 full" ${interactive?'onclick="triggerSpinWheel()"':''}>🎡 Putar sekarang</button>
+      ` : `
+        <div class="spin-result-card">
+          <div class="cart-photo-mini" style="background:#fdf6ee">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#3a2142" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 16-5-5-6 6-3-3-4 4"/></svg>
+          </div>
+          <div style="flex:1;min-width:0">
+            <h4>${it.name}</h4>
+            <small>${it.shop} · ${it.km}</small>
+            <strong style="font:700 .84rem Fredoka;color:#b8346f;display:block;margin-top:2px">${fmtRange(it.min, it.max)}</strong>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button class="bt o sm" style="width:100%" ${interactive?'onclick="triggerSpinWheel()"':''}>🔄 Putar lagi</button>
+          <button class="bt pk2 sm" style="width:100%" ${interactive?`onclick="adjCart('${it.id}',1);setSim('cart')"`:''}>+ Tambah</button>
+        </div>
+      `}
+    </div>`;
+}
+
+/* Poin #6: KARTU BAGIKAN MENGIKUTI MOCKUP AWAL */
+function renderShareCard(isMob = false, interactive = true) {
+  const mKey = (interactive ? sim.mood : 'sedih') === 'neutral' ? 'sedih' : (interactive ? sim.mood : 'sedih');
+  const mName = (MD_INFO[mKey] || MD_INFO.sedih).name;
+  const firstId = Object.keys(interactive ? sim.cart : { coto: 1 })[0] || (MD_INFO[mKey] || MD_INFO.sedih).ids[0];
+  const dish = MENU_CAT[firstId] || MENU_CAT.coto;
+  const uname = interactive ? sim.userName : 'Aisyah';
+
+  const icons = [
+    ['Instagram', 'linear-gradient(135deg,#f9a03f,#e1306c,#7f4fd6)', '<rect x="5" y="5" width="14" height="14" rx="4" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.4" cy="7.6" r="1" fill="#fff"/>'],
+    ['WhatsApp', '#3fbf6f', '<path d="M12 4a8 8 0 0 0-6.9 12L4 20l4.1-1.1A8 8 0 1 0 12 4z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.2 8.6c0 3 3 6 6 6l.9-1.4-2-1-.9.8c-1-.5-1.9-1.4-2.4-2.4l.8-.9z" fill="#fff"/>'],
+    ['Unduh', '#3a2142', '<path d="M12 4v10m0 0l-4-4m4 4l4-4M5 19h14" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'],
+    ['Lainnya', '#8c7590', '<circle cx="6" cy="12" r="1.8" fill="#fff"/><circle cx="12" cy="12" r="1.8" fill="#fff"/><circle cx="18" cy="12" r="1.8" fill="#fff"/>']
+  ];
+
+  return `
+    <div style="background:#fffaf5;color:#3a2142;border-radius:26px;padding:${isMob?'14px':'22px'};max-width:390px;width:100%;margin:0 auto;text-align:center;box-shadow:0 20px 44px rgba(58,33,66,.18)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="width:28px"></span>
+        <b style="font-size:${isMob?'1rem':'1.2rem'}">Selamat makan, ${uname}!</b>
+        ${interactive ? `<button class="spin-close" style="background:#fdeef5;width:28px;height:28px" onclick="setSim('cart')">✕</button>` : '<span style="width:28px"></span>'}
+      </div>
+      <div class="story-card ${isMob?'sm':''}">
+        <div style="font:700 .88rem Fredoka">CraveMood</div>
+        <div style="font:600 .7rem Nunito;opacity:.75;margin-top:6px">Mood hari ini</div>
+        <div style="font:700 1.65rem Fredoka;line-height:1.05;margin-bottom:6px">${mName}</div>
+        ${cimo(mKey, isMob ? 102 : 122)}
+        <div class="story-rec">
+          <div style="font:600 .64rem Nunito;opacity:.68">Rekomendasi Cimo</div>
+          <b style="font:700 .96rem Fredoka;display:block">${dish.name}</b>
+          <div style="font:600 .66rem Nunito;opacity:.72">${dish.shop} · ${dish.km}</div>
+        </div>
+        <div style="font:600 .66rem Nunito;opacity:.7">cravemood.id</div>
+      </div>
+      <div class="shr-row">
+        ${icons.map(([lbl, bg, path]) => `
+          <button class="shr-btn"><i style="background:${bg}"><svg viewBox="0 0 24 24" width="22">${path}</svg></i><span>${lbl}</span></button>`).join('')}
+      </div>
+    </div>`;
+}
+
+/* Poin #7: RECAP MOOD MENGIKUTI PROTOTYPE DEVELOPER (step_55 + step_57) */
+function renderRecap(isMob = false, interactive = true) {
+  const calData = { 2:'senang', 3:'sedih', 5:'marah', 6:'bingung', 8:'senang', 9:'sedih', 11:'marah', 13:'bingung', 14:'bingung' };
+  const days = Array.from({ length: 30 }, (_, i) => i + 1);
+  const blanks = Array.from({ length: 6 }, () => '<div></div>').join('');
+  const stats = [
+    ['Senang',  '#c9d445', 2, '66%'],
+    ['Sedih',   '#5eb0ee', 2, '66%'],
+    ['Marah',   '#f2864c', 2, '66%'],
+    ['Bingung', '#68cdaa', 3, '100%']
+  ];
+
+  return `
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+      <div>
+        <h2 style="font-size:${isMob?'1.4rem':'1.75rem'}">Recap Mood</h2>
+        <p style="color:var(--mu);font-size:${isMob?'.8rem':'.9rem'}">Perjalanan perasaanmu bulan ini.</p>
+      </div>
+      <button class="recap-share-btn" style="${isMob?'font-size:.78rem;padding:6px 13px':''}" ${interactive?`onclick="setSim('share')"`:''}>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6l-6.8 3.9"/></svg>
+        Bagikan pilihanku
+      </button>
+    </div>
+
+    <div class="recap-white-card" style="${isMob?'padding:12px':''}">
+      <div class="recap-stats-3" style="${isMob?'gap:8px':''}">
+        <div class="recap-stat-pill" style="${isMob?'padding:10px 4px':''}">
+          <b style="${isMob?'font-size:1.3rem':''}">9</b>
+          <small style="${isMob?'font-size:.66rem':''}">Hari<br>tercatat</small>
+        </div>
+        <div class="recap-stat-pill" style="${isMob?'padding:10px 4px':''}">
+          <b style="${isMob?'font-size:1.3rem':''}">2</b>
+          <small style="${isMob?'font-size:.66rem':''}">Hari<br>beruntun</small>
+        </div>
+        <div class="recap-stat-pill" style="${isMob?'padding:10px 4px':''}">
+          ${cimo('bingung', isMob ? 34 : 44)}
+          <small style="${isMob?'font-size:.66rem':''}">Mood<br>terbanyak</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="recap-white-card" style="${isMob?'padding:12px':''}">
+      <b style="display:block;font-size:${isMob?'1rem':'1.18rem'};margin-bottom:10px">November 2026</b>
+      <div class="recap-cal-grid" style="${isMob?'gap:4px':''}">
+        ${['Sen','Sel','Rab','Kam','Jum','Sab','Min'].map(d => `<div class="recap-cal-hd">${d}</div>`).join('')}
+        ${blanks}
+        ${days.map(d => {
+          const m = calData[d];
+          return `
+            <div class="recap-day ${isMob?'mob':''} ${d===14?'today':''}">
+              <span class="recap-day-n">${d}</span>
+              ${m ? `<div style="margin-top:${isMob?'8px':'10px'}">${cimo(m, isMob ? 20 : 28)}</div>` : ''}
+            </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="recap-white-card" style="margin-bottom:0;${isMob?'padding:12px':''}">
+      <b style="display:block;font-size:${isMob?'1rem':'1.15rem'}">Recap Mood</b>
+      <div class="recap-bars">
+        ${stats.map(([lbl, fill, cnt, pct]) => `
+          <div class="recap-bar-row" style="${isMob?'grid-template-columns:96px 1fr 20px;gap:8px':''}">
+            <div style="display:flex;align-items:center;gap:6px;font:700 ${isMob?'.78rem':'.88rem'} Fredoka">
+              ${cimo(lbl.toLowerCase(), isMob ? 24 : 30)}<span>${lbl}</span>
+            </div>
+            <div class="recap-bar-track"><div class="recap-bar-fill" style="width:${pct};background:${fill}"></div></div>
+            <b style="text-align:right;font-size:${isMob?'.84rem':'.96rem'}">${cnt}</b>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+/* Poin #8: CRAVEMOOD VIP PERSIS MOCKUP AWAL */
+function renderVip(isMob = false, interactive = true) {
+  return `
+    <div class="vip-grid ${isMob?'mob':''}">
+      <div class="xvip-card ${isMob?'mob':''}">
+        <div style="position:relative;z-index:2;max-width:${isMob?'175px':'240px'}">
+          <span style="display:inline-block;background:#fffaf5;color:#3a2142;border-radius:99px;padding:3px 11px;font:700 .72rem Fredoka">Fase 2</span>
+          <h3 style="font-size:${isMob?'1.2rem':'1.75rem'};margin:8px 0 2px">CraveMood VIP</h3>
+          <small style="display:block;font:600 ${isMob?'.74rem':'.88rem'} Nunito;opacity:.85">Cimo makin gaya, makin dekat</small>
+          <div style="margin:14px 0;font:600 ${isMob?'.74rem':'.9rem'}/1.95 Nunito">
+            <div><span class="xck">✓</span>Kostum Cimo eksklusif</div>
+            <div><span class="xck">✓</span>Warna Cimo premium</div>
+            <div><span class="xck">✓</span>Prioritas Live Chat</div>
+            <div><span class="xck">✓</span>Recap bulanan lengkap</div>
+          </div>
+          <span class="bt" style="padding:${isMob?'8px 14px':'11px 22px'};font-size:${isMob?'.78rem':'.92rem'};display:inline-flex">Mulai VIP · Rp19rb/bulan</span>
+        </div>
+        <div style="position:absolute;right:${isMob?'-8px':'8px'};bottom:${isMob?'12px':'18px'};pointer-events:none">
+          ${cos('def', isMob ? 98 : 162, 'crown')}
+        </div>
+      </div>
+
+      <div class="xvip-umkm ${isMob?'mob':''}">
+        <div style="position:relative;z-index:2;max-width:${isMob?'170px':'250px'}">
+          <span style="display:inline-block;background:#f4f87f;color:#3a2142;border-radius:99px;padding:3px 11px;font:700 .72rem Fredoka">Untuk pemilik usaha</span>
+          <h3 style="font-size:${isMob?'1.15rem':'1.55rem'};margin:10px 0 6px">Punya usaha kuliner?</h3>
+          <p style="font:600 ${isMob?'.74rem':'.86rem'}/1.45 Nunito;opacity:.9;margin-bottom:14px">Tampil di rekomendasi mood dan pantau klik pesan dari dashboard.</p>
+          ${interactive
+            ? `<button class="bt pk" style="padding:${isMob?'8px 14px':'10px 20px'};font-size:${isMob?'.78rem':'.9rem'}" onclick="setSim('umkm')">Daftar UMKM →</button>`
+            : `<span class="bt pk" style="padding:${isMob?'8px 14px':'10px 20px'};font-size:${isMob?'.78rem':'.9rem'}">Daftar UMKM →</span>`}
+        </div>
+        <div style="position:absolute;right:${isMob?'-6px':'8px'};bottom:${isMob?'0':'2px'};pointer-events:none">
+          ${cos('senang', isMob ? 96 : 152, 'koki')}
+        </div>
+      </div>
+    </div>`;
+}
+
+/* Daftar UMKM + Profil + Live Chat */
+function renderUmkm(isMob = false, interactive = true) {
+  return `
+    <h2 style="font-size:${isMob?'1.35rem':'1.7rem'};margin-bottom:6px">Daftar UMKM</h2>
+    <p style="color:var(--mu);font-size:${isMob?'.78rem':'.88rem'};margin-bottom:14px">Tampil di rekomendasi mood dan pantau klik pesan dari dashboard.</p>
+    <div style="display:grid;grid-template-columns:${isMob?'1fr':'240px 1fr'};gap:18px;align-items:start">
+      <div style="text-align:center">
+        <div class="glow" style="--h:170px">${cos('senang', isMob ? 110 : 146, 'koki')}</div>
+        <div class="bub" style="margin-top:6px;font-size:.86rem">Yuk gabung, jadi pilihan Cimo!</div>
+      </div>
+      <div class="card" style="padding:${isMob?'14px':'20px'}">
+        ${interactive && sim.umkmSent ? `
+          <div style="background:#dff8ec;border:1.5px solid #59c894;color:#0f5132;border-radius:16px;padding:10px 14px;margin-bottom:12px;font:700 .84rem Fredoka">
+            ✓ Pendaftaran diterima! Tim CraveMood akan menghubungi lewat WhatsApp.
+          </div>` : ''}
+        <div style="display:grid;grid-template-columns:${isMob?'1fr':'1fr 1fr'};gap:10px">
+          <div><small style="font:700 .74rem Fredoka;color:var(--mu)">Nama usaha</small><input class="in" value="Warung Daeng Sirua"></div>
+          <div><small style="font:700 .74rem Fredoka;color:var(--mu)">Nama pemilik</small><input class="in" value="Daeng Rowa"></div>
+          <div><small style="font:700 .74rem Fredoka;color:var(--mu)">Nomor WhatsApp</small><input class="in" value="0812-3456-7890"></div>
+          <div><small style="font:700 .74rem Fredoka;color:var(--mu)">Alamat di Makassar</small><input class="in" value="Jl. Boulevard, Panakkukang"></div>
+        </div>
+        <button class="bt pk full" style="margin-top:14px" ${interactive?'onclick="sim.umkmSent=true;renderSim()"':''}>Kirim pendaftaran</button>
+      </div>
+    </div>`;
+}
+
+function renderProfile(isMob = false, interactive = true) {
+  const uname = interactive ? sim.userName : 'Aisyah';
+  const curLang = interactive ? sim.lang : 'ID';
+  const curVol = interactive ? sim.voiceVol : 100;
+  const sfxOn = interactive ? sim.sfx : true;
+  const autoVoiceOn = interactive ? sim.autoVoice : true;
+  const darkOn = interactive ? sim.dark : false;
+  const langNames = { ID: 'Bahasa Indonesia', EN: 'English', '中文': '中文', 'हि': 'हिन्दी' };
+  const mobCls = isMob ? 'mob' : '';
+
+  return `
+    <div class="prof-page">
+      <div>
+        <h2 style="font-size:${isMob?'1.28rem':'1.55rem'};line-height:1.15">Profil</h2>
+        <small style="color:var(--mu);font-weight:700;font-size:${isMob?'.74rem':'.82rem'}">Makan sesuai moodmu</small>
+      </div>
+
+      <!-- Bagian Atas: Tetap Mengikuti Desain Mockup Kita (Foto 3) -->
+      <div class="prof-dev-card ${mobCls}" style="text-align:center;padding:${isMob?'16px':'20px'}">
+        <div ${interactive ? `onclick="tapHeroCimo()" title="Ketuk Cimo!" style="cursor:pointer;display:inline-block"` : ''}>
+          <div class="glow" style="--h:118px">${interactive ? simCimo('def', 98) : cimo('def', 98)}</div>
+        </div>
+        <h3 style="font-size:1.3rem;margin-top:4px">${uname}</h3>
+        <small style="color:var(--mu);font-weight:700">Pemburu Rasa · Level 3</small>
+        <div style="margin:12px 0;background:linear-gradient(135deg,#e9b6d4,#cdbbf0);color:#3a2142;border-radius:18px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;text-align:left;gap:10px">
+          <div><b style="font-size:.94rem">Paket Gratis</b><small style="display:block;font-size:.74rem;opacity:.88">Buka kostum &amp; warna Cimo</small></div>
+          <button type="button" class="bt sm" ${interactive?`onclick="playCimoSfx('pop');setSim('vip')"`:''}>Jadi VIP</button>
+        </div>
+        <div class="recap-stats-3">
+          <div class="recap-stat-pill"><b>24</b><small>Mood</small></div>
+          <div class="recap-stat-pill"><b>12</b><small>Menu</small></div>
+          <div class="recap-stat-pill"><b>5</b><small>Beruntun</small></div>
+        </div>
+      </div>
+
+      <!-- Kartu Prototype Developer (Foto 2) -->
+      <div class="prof-dev-card ${mobCls}">
+        <b style="display:block;font-size:.92rem;margin-bottom:3px">Pasang Aplikasi CraveMood</b>
+        <p style="font-size:.76rem;color:var(--mu);margin-bottom:10px">Tambahkan ke layar utama dan buka seperti aplikasi biasa. Tanpa Play Store, tanpa App Store.</p>
+        <button type="button" class="bt pk2 full" style="border-radius:99px;box-shadow:none;padding:10px 16px;font-size:.86rem" ${interactive?`onclick="playCimoSfx('chime');showSimToast('Siap dipasang! Ketuk Tambah ke Layar Utama browsermu.')"` : ''}>⬇ Pasang Aplikasi</button>
+      </div>
+
+      <div class="prof-dev-card ${mobCls}">
+        <div class="prof-head-row">
+          <b style="font-size:.92rem">Bahasa aplikasi</b>
+          <small style="color:var(--mu);font-weight:700;font-size:.74rem">${langNames[curLang] || 'Bahasa Indonesia'}</small>
+        </div>
+        <div class="prof-lang-grid">
+          ${[['ID','ID'],['EN','EN'],['中文','中'],['हि','हि']].map(([cd, lbl]) => `
+            <button type="button" class="prof-lang-btn prof-opt-btn ${curLang===cd?'on':''}" ${interactive?`onclick="sim.lang='${cd}';playCimoSfx('pop');renderSim()"`:''}>${lbl}</button>`).join('')}
+        </div>
+      </div>
+
+      <div class="prof-dev-card ${mobCls}">
+        <div class="prof-head-row">
+          <span style="font:700 .78rem Fredoka;color:var(--mu)">Suara Cimo</span>
+          <span class="bdg-aktif">Aktif</span>
+        </div>
+        <div class="suara-row">
+          <div class="suara-ava">
+            ${interactive ? simCimo('senang', 38) : cimo('senang', 38)}
+            <span class="suara-eq">ılıl</span>
+          </div>
+          <div>
+            <b style="display:block;font-size:.88rem">Suara Cimo</b>
+            <small style="color:var(--mu);font-size:.73rem;display:block;line-height:1.3">Satu suara untuk Cimo, diucapkan jelas dan tidak terburu-buru</small>
+          </div>
+        </div>
+        <div class="suara-vol-row">
+          <div>
+            <b style="display:block;font-size:.82rem">Volume</b>
+            <small style="color:var(--mu);font-weight:700;font-size:.74rem">${curVol}%</small>
+          </div>
+          <input type="range" class="cm-range" min="0" max="100" value="${curVol}" ${interactive?`oninput="sim.voiceVol=+this.value" onchange="playCimoSfx('pop');renderSim()"`:'disabled'}>
+        </div>
+        <button type="button" class="bt pk2 full" style="border-radius:99px;box-shadow:none;padding:9px 16px;font-size:.84rem" ${interactive?`onclick="speakCimo('Hai! Aku Cimo, siap menemani mood makanmu hari ini!')"` : ''}>🔊 Coba suara</button>
+      </div>
+
+      <div class="prof-dev-card ${mobCls}">
+        <div class="prof-toggle-row">
+          <div>
+            <b style="display:block;font-size:.88rem">Efek suara</b>
+            <small style="color:var(--mu);font-size:.73rem">Bunyi klik saat menambah makanan</small>
+          </div>
+          <button type="button" class="cm-sw ${sfxOn?'on':''}" aria-label="Efek suara" ${interactive?`onclick="sim.sfx=!sim.sfx;if(sim.sfx)playCimoSfx('pop');renderSim()"`:''}></button>
+        </div>
+        <div class="prof-toggle-row">
+          <div>
+            <b style="display:block;font-size:.88rem">Cimo Live Chat auto voice</b>
+            <small style="color:var(--mu);font-size:.73rem">Suara Cimo</small>
+          </div>
+          <button type="button" class="cm-sw ${autoVoiceOn?'on':''}" aria-label="Auto voice" ${interactive?`onclick="sim.autoVoice=!sim.autoVoice;playCimoSfx('pop');renderSim()"`:''}></button>
+        </div>
+        <div class="prof-toggle-row">
+          <div>
+            <b style="display:block;font-size:.88rem">Dark mode</b>
+            <small style="color:var(--mu);font-size:.73rem">Profil</small>
+          </div>
+          <button type="button" class="cm-sw ${darkOn?'on':''}" aria-label="Dark mode" ${interactive?`onclick="toggleSimDark()"`:''}></button>
+        </div>
+      </div>
+
+      <div class="prof-dev-card ${mobCls}">
+        <div class="prof-head-row" style="margin-bottom:10px">
+          <b style="font-size:.9rem">Kostum &amp; Warna Cimo</b>
+          <span style="background:#3a2142;color:#fff;border-radius:99px;padding:2px 10px;font:700 .7rem Fredoka">VIP</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin-bottom:10px">
+          ${[['asli','Asli'],['crown','Mahkota'],['koki','Koki'],['batik','Batik']].map(([k, lbl]) => {
+            const on = (interactive ? sim.costume : 'asli') === k;
+            return `
+              <button type="button" class="prof-opt-btn" style="background:#fffaf5;border:2px solid ${on?'#ff5f98':'var(--ln)'};border-radius:14px;padding:6px 2px" ${interactive?`onclick="sim.costume='${k}';playCimoSfx('pop');renderSim()"`:''}>
+                ${k==='asli' ? cimo('def', 40) : cos('def', 40, k)}
+                <small style="display:block;font:600 .66rem Fredoka">${lbl}</small>
+              </button>`;
+          }).join('')}
+        </div>
+        <div style="display:flex;gap:8px;justify-content:center">
+          ${VIP_COLORS.map(c => {
+            const on = (interactive ? sim.colorId : 'pink') === c.id;
+            return `<button type="button" title="${c.name}" style="width:24px;height:24px;border-radius:50%;border:2.5px solid #fff;background:${c.pair[0]};box-shadow:0 0 0 2px ${on?'#ff5f98':'rgba(58,33,66,.2)'}" ${interactive?`onclick="sim.colorId='${c.id}';playCimoSfx('pop');renderSim()"`:''}></button>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="prof-dev-card ${mobCls}">
+        <div class="prof-head-row" style="margin-bottom:10px">
+          <b style="font-size:.9rem">Akun</b>
+          <span class="bdg-tamu">Tamu</span>
+        </div>
+        <button type="button" class="bt o sm" style="border-radius:99px" ${interactive?`onclick="playCimoSfx('pop');setSim('masuk')"` : ''}>← Keluar</button>
+      </div>
+    </div>`;
+}
+
+function renderChat(isMob = false, interactive = true) {
+  const uname = interactive ? sim.userName : 'Aisyah';
+  const chips = ['Lagi capek banget', 'Aku lagi sedih', 'Mau makan apa ya?', 'Butuh teman cerita'];
+  const extraMsgs = interactive ? sim.chatMsgs : [];
+  return `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:10px">
+        ${interactive ? simCimo('def', 42) : cimo('def', 42)}
+        <div><h3 style="font-size:1.15rem">Cimo Live Chat</h3><small style="color:#16a34a;font-weight:700">● Online · siap dengerin</small></div>
+      </div>
+      ${interactive ? `<button class="bt o sm" style="flex:none;white-space:nowrap" onclick="setSim('home')">← Beranda</button>` : ''}
+    </div>
+    <div class="card" style="padding:${isMob?'12px':'18px'};display:flex;flex-direction:column;gap:10px">
+      <small style="text-align:center;color:var(--mu);font-weight:700">Hari ini</small>
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        ${cimo('def', 32)}
+        <div style="background:#fdeef5;color:#3a2142;border-radius:18px 18px 18px 4px;padding:10px 14px;max-width:82%;font-size:.86rem">
+          Halo ${uname}! Aku Cimo. Di sini kamu bisa cerita apa aja, nggak harus rapi. Mau mulai dari mana?
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end">
+        <div style="background:#3a2142;color:#fff8ef;border-radius:18px 18px 4px 18px;padding:10px 14px;max-width:75%;font-size:.86rem">
+          Lagi capek banget nih…
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        ${cimo('sedih', 32)}
+        <div style="background:#fdeef5;color:#3a2142;border-radius:18px 18px 18px 4px;padding:10px 14px;max-width:82%;font-size:.86rem">
+          Peluk dulu ya. Capek badan atau pikiran? Mau Cimo carikan yang hangat dan berkuah?
+        </div>
+      </div>
+      ${extraMsgs.map(msg => msg.from === 'user' ? `
+        <div style="display:flex;justify-content:flex-end">
+          <div style="background:#3a2142;color:#fff8ef;border-radius:18px 18px 4px 18px;padding:10px 14px;max-width:75%;font-size:.86rem">${msg.text}</div>
+        </div>` : `
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          ${cimo(msg.mood || 'def', 32)}
+          <div style="background:#fdeef5;color:#3a2142;border-radius:18px 18px 18px 4px;padding:10px 14px;max-width:82%;font-size:.86rem">${msg.text}</div>
+        </div>`).join('')}
+      <div style="display:flex;flex-wrap:wrap;gap:6px;padding-top:6px;border-top:1px solid var(--ln)">
+        ${chips.map(ch => `<button class="cat-chip" style="font-size:.74rem;padding:4px 11px" ${interactive?`onclick="sendChatMsg('${ch}')"`:''}>${ch}</button>`).join('')}
+      </div>
+      <div style="display:flex;gap:8px">
+        <input class="in" style="margin:0;border-radius:99px" value="${interactive?sim.chatInput:''}" placeholder="Tulis pesan ke Cimo…" ${interactive?`oninput="sim.chatInput=this.value" onkeydown="if(event.key==='Enter')sendChatMsg()"`:''}>
+        <button class="bt pk sm" style="flex:none" ${interactive?`onclick="sendChatMsg()"`:''}>Kirim ➤</button>
+      </div>
+    </div>`;
+}
+
+/* ==========================================================================
+   4. SIMULATOR CONTROLLER + STATIC SHOWCASE RENDERER
+   ========================================================================== */
+function buildSidebar(activeTab, cartCount) {
+  const tabs = ['home', 'recap', 'cart', 'vip', 'profile', 'chat'];
+  return `
+    <aside class="app-sidebar">
+      <div class="side-brand">${logoHtml(1.24, true)}</div>
+      <nav class="side-nav">
+        ${tabs.map(t => {
+          const item = TI_NAV[t];
+          return `
+            <button class="navbtn ${activeTab===t?'on':''}" onclick="setSim('${t}')">
+              <svg viewBox="0 0 24 24">${item.svg}</svg>
+              <span>${item.label}</span>
+              ${t==='cart' && cartCount>0 ? `<span class="nav-bdg">${cartCount}</span>` : ''}
+            </button>`;
+        }).join('')}
+      </nav>
+    </aside>`;
+}
+
+function renderInteractiveBuddy(isMob = false, hasFloat = false) {
+  const mKey = sim.mood === 'neutral' ? 'def' : sim.mood;
+  const isBouncing = sim.bounceTick && (Date.now() - sim.bounceTick < 900);
+  return `
+    <div class="cimo-buddy-wrap ${isMob?'mob':''} ${hasFloat?'up-clear':''}" id="sim-cimo-buddy">
+      <button type="button" class="cimo-buddy-btn ${isBouncing?'cm-bounce':''}" onclick="tapFloatingCimo()" title="Chat langsung bersama Cimo!" aria-label="Buka Cimo Live Chat">
+        ${simCimo(mKey, isMob ? 44 : 54)}
+        <span class="cimo-buddy-ring"></span>
+      </button>
+    </div>`;
+}
+
+function buildDeviceFrame(isMob) {
+  const s = sim.screen;
+  const darkCls = sim.dark ? 'theme-dark' : '';
+  const tots = cartTotals(sim.cart);
+
+  if (['onb1', 'onb2', 'masuk', 'daftar', 'kenalan'].includes(s)) {
+    const inner = renderOnboardingScreen(s, isMob, true);
+    if (isMob) {
+      return `<div class="${sim.dark ? 'ph dark-phone' : 'ph'}"><div class="ph-sb"><span>9:41</span><span>▂▄▆ ▮</span></div><div class="ph-sr ${darkCls}">${inner}</div><i class="ph-hb"></i></div>`;
+    }
+    return `<div class="bw" style="max-width:1020px"><div class="bw-bar"><i></i><i></i><i></i><span>cravemood.id/${s==='onb1'?'':s}</span></div><div class="vp">${inner}</div></div>`;
+  }
+
+  let body = '', activeTab = s, bgCls = 'bg-main';
+  if (s === 'home') { bgCls = sim.mood === 'neutral' ? 'bg-main' : MD_INFO[sim.mood].bgClass; body = renderHome(sim.mood, isMob, true); }
+  else if (s === 'spin') {
+    bgCls = MD_INFO[sim.mood]?.bgClass || 'bg-sedih';
+    body = renderHome(sim.mood, isMob, true) + (isMob ? `<div class="phone-modal-overlay">${renderSpinnerModal(true, true, true)}</div>` : `<div class="modal-overlay">${renderSpinnerModal(false, true, true)}</div>`);
+  }
+  else if (s === 'cart') { body = renderCart(isMob, true); }
+  else if (s === 'orderSent') { activeTab = 'cart'; body = renderOrderSent(isMob, true); }
+  else if (s === 'share') {
+    activeTab = 'cart';
+    body = renderCart(isMob, true) + (isMob ? `<div class="phone-modal-overlay">${renderShareCard(true, true)}</div>` : `<div class="modal-overlay">${renderShareCard(false, true)}</div>`);
+  }
+  else if (s === 'recap') { bgCls = 'bg-bingung'; body = renderRecap(isMob, true); }
+  else if (s === 'vip') { bgCls = 'bg-vip'; body = renderVip(isMob, true); }
+  else if (s === 'umkm') { activeTab = 'vip'; bgCls = 'bg-umkm'; body = renderUmkm(isMob, true); }
+  else if (s === 'profile') { bgCls = 'bg-vip'; body = renderProfile(isMob, true); }
+  else if (s === 'chat') { bgCls = 'bg-main'; body = renderChat(isMob, true); }
+
+  const hasFloat = s === 'home' && sim.mood !== 'neutral' && tots.count > 0;
+  const showBuddy = ['home', 'recap', 'cart', 'orderSent', 'vip', 'umkm', 'profile'].includes(s);
+  const toastEl = sim.toastMsg ? `<div class="sim-toast" id="sim-toast-el">${sim.toastMsg}</div>` : '';
+
+  if (isMob) {
+    const botTabs = ['home', 'recap', 'cart', 'profile'];
+    return `
+      <div class="${sim.dark ? 'ph dark-phone' : 'ph'}">
+        <div class="ph-sb"><span>9:41</span><span>▂▄▆ ▮</span></div>
+        <div class="ph-sr ${bgCls} ${darkCls}">
+          ${toastEl}
+          <div class="ph-scroll ${hasFloat?'has-float':''}">${body}</div>
+          ${showBuddy ? renderInteractiveBuddy(true, hasFloat) : ''}
+          <nav class="ph-botnav">
+            ${botTabs.map(t => `
+              <button class="p-nav-btn ${activeTab===t?'on':''}" onclick="setSim('${t}')">
+                ${t==='cart'&&tots.count>0?`<span class="p-nav-bdg">${tots.count}</span>`:''}
+                <svg viewBox="0 0 24 24">${TI_NAV[t].svg}</svg>
+                <span>${TI_NAV[t].label}</span>
+              </button>`).join('')}
+          </nav>
+        </div>
+        <i class="ph-hb"></i>
+      </div>`;
+  }
+  return `
+    <div class="app-desktop ${bgCls} ${darkCls}">
+      ${toastEl}
+      ${buildSidebar(activeTab, tots.count)}
+      <main class="app-main ${hasFloat?'has-float':''}">${body}</main>
+      ${showBuddy ? renderInteractiveBuddy(false, hasFloat) : ''}
+    </div>`;
+}
+
+function renderSim() {
+  const mount = document.getElementById('live-sim-mount');
+  if (!mount) return;
+  mount.innerHTML = buildDeviceFrame(sim.device === 'hp');
+}
+
+function renderStaticBoards() {
+  /* P1: Panduan Desain */
+  const MO_LIST = [
+    ['def', 'Cimo bawaan', 'Hangat dan ramah', 'Layar netral & kenalan'],
+    ['senang', 'Senang', 'Cerah bersemangat', 'Menu manis, segar, ringan'],
+    ['sedih', 'Sedih', 'Menemani pelan', 'Menu hangat & berkuah'],
+    ['marah', 'Marah', 'Meredakan kesal', 'Pedas, gurih, bertenaga'],
+    ['bingung', 'Bingung', 'Membantu memilih', 'Tiga pilihan terkurasi'],
+    ['capek', 'Capek', 'Pelan & lembut', 'Live Chat malam hari'],
+    ['kecewa', 'Kecewa', 'Mengakui perasaan', 'Keranjang kosong']
+  ];
+  const PAL = [
+    ['Plum tinta', '#3a2142', 'Teks & tombol utama'],
+    ['Krem', '#fff8ef', 'Kartu & bottom sheet'],
+    ['Blush', '#fff7fa', 'Latar utama aplikasi'],
+    ['Pink Cimo', '#ffb6d0', 'Maskot bawaan & aksen'],
+    ['Senang lemon', '#f4f87f', 'Mood senang'],
+    ['Sedih langit', '#9fd6ff', 'Mood sedih'],
+    ['Marah persik', '#ffb98a', 'Mood marah'],
+    ['Bingung mint', '#a8ecd6', 'Mood bingung'],
+    ['Lilac VIP', '#dccbff', 'VIP & profil'],
+    ['GoFood', '#ee2737', 'Tombol platform'],
+    ['GrabFood', '#00b14f', 'Tombol platform'],
+    ['ShopeeFood', '#ee4d2d', 'Tombol platform']
+  ];
+  const LOGO_PAL = [
+    ['Plum Tinta', '#3a2142', 'Teks & tagline'],
+    ['Kuning Mood', '#ffebb0', 'Pil "Mood" (tint #FFD300)'],
+    ['Pink Cimo', '#ffa9c9', 'Maskot & tangan bulat'],
+    ['Candy Pink', '#ff7aa8', 'Pita Cimo & aksen']
+  ];
+  const darkCheck = h => {
+    const n = parseInt(h.slice(1), 16);
+    return (.299 * (n >> 16) + .587 * ((n >> 8) & 255) + .114 * (n & 255)) < 150;
+  };
+
+  document.getElementById('p1-mount').innerHTML = `
+    <div class="card" style="margin-bottom:18px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+        <h3>Desain Logo CraveMood</h3>
+        <span style="font:600 .8rem Fredoka;color:var(--mu)">Logo Utama Maskot · Variasi Latar · Lockup Ringkas &amp; Area Aman</span>
+      </div>
+      <div class="g-2" style="margin-bottom:14px">
+        <div class="logo-surface light">
+          <div class="logo-clearspace">
+            <span class="cs-tag">Clear space ≥ 1× M</span>
+            ${logoLockupHtml(2.1, true)}
+          </div>
+          <small style="color:var(--mu);font-weight:700">Logo Utama — Latar Terang (Cimo Mengintip + Tagline)</small>
+        </div>
+        <div class="logo-surface dark">
+          <div style="padding:10px 20px">${logoLockupHtml(2.1, true)}</div>
+          <small style="color:#d3b9cd;font-weight:700">Varian Latar Gelap (Dark Mode)</small>
+        </div>
+      </div>
+      <div class="g-2" style="align-items:stretch">
+        <div class="logo-surface light" style="padding:18px;gap:14px">
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px">
+            <div style="display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap">
+              ${logoHtml(1.45, true)}
+              <span style="color:var(--ln);font-weight:700">|</span>
+              ${logoHtml(1.45, false)}
+            </div>
+          </div>
+          <small style="color:var(--mu);font-weight:700">Varian Navbar (Maskot) &amp; Splash Ringkas (Tanpa Maskot)</small>
+          <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px">
+            <span style="background:#ffe0ec;color:#3a2142;padding:3px 10px;border-radius:99px;font:600 .72rem Fredoka">Font: Fredoka Bold</span>
+            <span style="background:#ffe0ec;color:#3a2142;padding:3px 10px;border-radius:99px;font:600 .72rem Fredoka">Pil miring -2,5°</span>
+            <span style="background:#ffe0ec;color:#3a2142;padding:3px 10px;border-radius:99px;font:600 .72rem Fredoka">Maskot Cimo + tangan bulat</span>
+          </div>
+        </div>
+        <div style="background:#fff7fa;border-radius:20px;padding:16px;border:1.5px solid var(--ln);display:flex;flex-direction:column;justify-content:center">
+          <b style="margin-bottom:10px;display:block">Konstruksi &amp; Warna Logo</b>
+          <div class="g-4" style="gap:8px;margin-bottom:10px">
+            ${LOGO_PAL.map(([nm, hx, role]) => `
+              <div style="background:${hx};color:${darkCheck(hx)?'#fff8ef':'#3a2142'};border:1.5px solid rgba(58,33,66,.12);border-radius:14px;padding:9px;min-height:76px;display:flex;flex-direction:column">
+                <b style="font-size:.76rem">${nm}</b>
+                <span style="font-size:.68rem;opacity:.9">${hx.toUpperCase()}</span>
+                <small style="margin-top:auto;font-size:.64rem;opacity:.82">${role}</small>
+              </div>`).join('')}
+          </div>
+          <small style="color:var(--mu);font-size:.76rem">Menggunakan aset asli <b>Maskot Cimo Pink</b> (#FFA9C9/#F27AA8) bertangan bulat besar mengintip di atas pil kuning pastel lembut (#FFEBB0 · tint #FFD300) berbayangan emas (#FDDD62), dipadukan tipografi bulat <b>Fredoka Bold</b> warna plum tinta (#3A2142).</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="an-grid" style="margin-bottom:18px">
+      <div class="pk-box"><div class="glow" style="--h:250px">${cimo('def', 220)}</div></div>
+      <div class="card">
+        <h3 style="margin-bottom:12px">Anatomi Maskot Cimo</h3>
+        <ul class="pt-list">
+          <li><i></i><div><b>Badan bulat lembut</b><span>Lengkung mulus tanpa sudut tajam dengan sisi bawah sedikit lebih gelap sebagai dimensi.</span></div></li>
+          <li><i></i><div><b>Mata besar berkilau</b><span>Warna #2f2a6b dengan dua titik cahaya putih agar ekspresif dan ramah.</span></div></li>
+          <li><i></i><div><b>Pipi merona &amp; kilau</b><span>Blush #ff6f9c lembut serta empat titik cahaya putih di pipi bawah.</span></div></li>
+          <li><i></i><div><b>Pita pink</b><span>Pita khas di sisi kanan atas (#ff7aa8) yang tetap hadir di setiap variasi kostum VIP.</span></div></li>
+          <li><i></i><div><b>Pose penuh &amp; mengintip</b><span>Pose berdiri untuk layar utama serta pose mengintip di tepi atas sheet masuk/daftar.</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <h3 style="margin-bottom:12px">7 Ekspresi Mood Cimo</h3>
+      <div class="g-auto">${MO_LIST.map(([m, t, a, b]) => `
+        <div class="mc-card" style="background:color-mix(in srgb,${P[m][0]} 42%,#fff)">
+          <div class="glow" style="--h:120px">${cimo(m, 96)}</div>
+          <h4>${t}</h4><p>${a}</p><small>${b}</small>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="g-2" style="margin-bottom:18px">
+      <div class="card">
+        <h3 style="margin-bottom:10px">Palet Warna</h3>
+        <div class="swatch-grid">
+          ${PAL.map(([nm, hx, us]) => `
+            <div class="swatch" style="background:${hx};color:${darkCheck(hx)?'#fff8ef':'#3a2142'}">
+              <b>${nm}</b><span>${hx.toUpperCase()}</span><small>${us}</small>
+            </div>`).join('')}
+        </div>
+        <div style="margin-top:14px">
+          <small style="font-weight:700;color:var(--mu)">Proporsi warna layar: 55% Krem/Blush · 25% Pastel Mood · 12% Plum · 8% Pink</small>
+          <div class="ratio-bar">
+            <i style="width:55%;background:#fff8ef"></i><i style="width:25%;background:#dccbff"></i>
+            <i style="width:12%;background:#4a2a5e"></i><i style="width:8%;background:#ff8fb8"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:10px">Tipografi — Fredoka &amp; Nunito</h3>
+        <div class="g-2" style="gap:10px;margin-bottom:12px">
+          <div style="background:#fff7fa;border-radius:18px;padding:12px;border:1px solid var(--ln)">
+            <div class="f" style="font-size:2.4rem;font-weight:700;line-height:1">Aa</div>
+            <b>Fredoka (500–700)</b>
+            <p style="font-size:.82rem;color:var(--mu)">Judul, tombol, harga, nama menu, badge.</p>
+          </div>
+          <div style="background:#fff7fa;border-radius:18px;padding:12px;border:1px solid var(--ln)">
+            <div class="f" style="font-size:2.4rem;font-weight:700;line-height:1">Aa</div>
+            <b style="font-family:Nunito,sans-serif">Nunito (400–700)</b>
+            <p style="font-size:.82rem;color:var(--mu)">Deskripsi, nama UMKM, jarak, catatan form.</p>
+          </div>
+        </div>
+        <div class="ts-row"><small>Display · 42 px</small><div class="f" style="font:700 2rem/1.1 Fredoka">Halo Aisyah!</div></div>
+        <div class="ts-row"><small>Judul · 28 px</small><div class="f" style="font:700 1.45rem Fredoka">Pilihan Cimo</div></div>
+        <div class="ts-row"><small>Nama menu · 20 px</small><div class="f" style="font:700 1.2rem Fredoka;color:#c7801f">Coto Makassar</div></div>
+        <div class="ts-row"><small>Isi · 15 px</small><div style="font:.94rem Nunito">Coto Daeng Tata · Panakkukang, 1,2 km.</div></div>
+        <div class="ts-row"><small>Harga · 16 px</small><div class="f" style="font:700 1rem Fredoka;color:#b8346f">Rp 25.000 – 32.000</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:10px">Komponen Kartu Menu &amp; Tombol Platform Pemesanan</h3>
+      <div class="g-2">
+        <div>
+          <p style="font-size:.88rem;color:var(--mu);margin-bottom:10px">Area foto pada setiap kartu menu menampilkan foto hidangan langsung dari ShopeeFood, GoFood, dan GrabFood.</p>
+          <div style="max-width:300px">${renderPhotoSlot(MENU_CAT.coto, false)}</div>
+        </div>
+        <div>
+          <p style="font-size:.88rem;color:var(--mu);margin-bottom:10px">Susunan tombol pemesanan dengan ShopeeFood pada posisi teratas dan GoFood serta GrabFood sejajar di bawahnya.</p>
+          ${renderDeliveryButtons('ShopeeFood', false)}
+        </div>
+      </div>
+    </div>`;
+
+  /* P2: Favicon & Kostum */
+  document.getElementById('p2-mount').innerHTML = `
+    <div class="g-2">
+      <div class="card">
+        <h3 style="margin-bottom:14px">Favicon Tab Browser &amp; Ikon PWA</h3>
+        <div style="display:flex;align-items:center;justify-content:space-around;flex-wrap:wrap;gap:14px;background:#fff7fa;padding:22px;border-radius:20px;border:1px solid var(--ln)">
+          ${[['32 px Tab',32,9],['64 px Shortcut',56,16],['180 px PWA Home',92,24]].map(([lbl,sz,r]) => `
+            <div style="text-align:center">
+              <div style="width:${sz}px;height:${sz}px;border-radius:${r}px;overflow:hidden;border:1.5px solid var(--ln);margin:0 auto 6px;box-shadow:0 4px 12px rgba(58,33,66,.10)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="${sz}" height="${sz}" style="display:block">
+                  <rect width="64" height="64" rx="16" fill="#fff8ef"/>
+                  <rect x="7" y="37" width="50" height="21" rx="8" fill="#fddd62"/>
+                  <rect x="7" y="33" width="50" height="21" rx="8" fill="#ffebb0"/>
+                  <ellipse cx="32" cy="27" rx="18" ry="15.5" fill="#ffa9c9" stroke="#f27aa8" stroke-width="1.8"/>
+                  <g transform="translate(41 13) rotate(18)">
+                    <ellipse cx="-3.5" rx="3.5" ry="2.2" fill="#ff7aa8"/><ellipse cx="3.5" rx="3.5" ry="2.2" fill="#ff7aa8"/><circle r="1.8" fill="#ff5c92"/>
+                  </g>
+                  <ellipse cx="25" cy="26" rx="3.2" ry="3.8" fill="#2f2a6b"/><circle cx="26.2" cy="24.4" r="1.2" fill="#fff"/>
+                  <ellipse cx="39" cy="26" rx="3.2" ry="3.8" fill="#2f2a6b"/><circle cx="40.2" cy="24.4" r="1.2" fill="#fff"/>
+                  <ellipse cx="20" cy="30" rx="2.6" ry="1.6" fill="#ff6f9c" opacity=".48"/>
+                  <ellipse cx="44" cy="30" rx="2.6" ry="1.6" fill="#ff6f9c" opacity=".48"/>
+                  <path d="M28.5 31.5Q32 34.5 35.5 31.5" fill="none" stroke="#2f2a6b" stroke-width="2.2" stroke-linecap="round"/>
+                  <circle cx="14" cy="34" r="5.2" fill="#ffa9c9" stroke="#f27aa8" stroke-width="1.5"/>
+                  <circle cx="50" cy="34" r="5.2" fill="#ffa9c9" stroke="#f27aa8" stroke-width="1.5"/>
+                </svg>
+              </div>
+              <small>${lbl}</small>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:14px">4 Kostum Cimo</h3>
+        <div class="g-4" style="text-align:center;background:#fff7fa;padding:16px;border-radius:20px;border:1px solid var(--ln)">
+          <div>${cimo('def',74)}<b style="display:block;font-size:.82rem;margin-top:4px">Standar</b></div>
+          <div>${cos('def',74,'crown')}<b style="display:block;font-size:.82rem;margin-top:4px">Mahkota (VIP)</b></div>
+          <div>${cos('senang',74,'koki')}<b style="display:block;font-size:.82rem;margin-top:4px">Koki (UMKM)</b></div>
+          <div>${cos('def',74,'batik')}<b style="display:block;font-size:.82rem;margin-top:4px">Batik Makassar</b></div>
+        </div>
+      </div>
+    </div>`;
+
+  /* P3: Onboarding Web & HP */
+  const onbList = [
+    ['onb1', 1, 'Splash Screen', 'Layar pembuka dengan maskot Cimo, logo CraveMood, dan tagline utama.'],
+    ['onb2', 2, 'Cara Kerja', 'Panduan 3 langkah memilih mood, melihat rekomendasi, dan menikmati makanan.'],
+    ['masuk', 3, 'Masuk', 'Bottom sheet masuk akun dengan Cimo mengintip di tepi atas sheet.'],
+    ['daftar', 4, 'Daftar', 'Form pembuatan akun baru dengan sapaan Cimo ceria.'],
+    ['kenalan', 5, 'Kenalan Dulu', 'Pengaturan nama panggilan pengguna sebelum masuk ke Beranda.']
+  ];
+  document.getElementById('p3-mount').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:22px;margin-bottom:32px">
+      ${onbList.slice(1).map(([k, n, t, note]) => `
+        <div class="board-card">
+          <div class="board-label"><b>Web Onboarding ${n} — ${t}</b><span>${note}</span></div>
+          <div class="bw"><div class="bw-bar"><i></i><i></i><i></i><span>cravemood.id/${k==='onb2'?'cara-kerja':k}</span></div>
+          <div class="vp">${renderOnboardingScreen(k, false, false)}</div></div>
+        </div>`).join('')}
+    </div>
+    <h3 style="text-align:center;font-size:1.3rem;margin:10px 0 20px">Tampilan HP Onboarding (1–5)</h3>
+    <div class="ph-grid">
+      ${onbList.map(([k, n, t, note]) => `
+        <div class="ph-item">
+          <div class="ph"><div class="ph-sb"><span>9:41</span><span>▂▄▆ ▮</span></div><div class="ph-sr">${renderOnboardingScreen(k, true, false)}</div><i class="ph-hb"></i></div>
+          <div class="ph-cap"><b>${n}</b><h4>${t}</h4><p>${note}</p></div>
+        </div>`).join('')}
+    </div>`;
+
+  /* P4: Aplikasi Inti Web & Mobile */
+  const botNav = active => `
+    <nav class="ph-botnav">
+      ${['home','recap','cart','profile'].map(t => `
+        <div class="p-nav-btn ${active===t?'on':''}">
+          <svg viewBox="0 0 24 24">${TI_NAV[t].svg}</svg><span>${TI_NAV[t].label}</span>
+        </div>`).join('')}
+    </nav>`;
+
+  document.getElementById('p4-mount').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:24px;margin-bottom:36px">
+      <div class="board-card">
+        <div class="board-label"><b>Web 1 — Beranda Netral</b><span>#/ · Tampilan awal sebelum memilih mood</span></div>
+        <div class="app-desktop bg-main">${buildSidebar('home', 3)}<main class="app-main">${renderHome('neutral', false, false)}</main></div>
+      </div>
+
+      <div class="board-card">
+        <div class="board-label"><b>Web 2 — Beranda Mood Sedih</b><span>#/ · 3 rekomendasi menu hangat dengan slot foto menu</span></div>
+        <div class="app-desktop bg-sedih">${buildSidebar('home', 3)}<main class="app-main">${renderHome('sedih', false, false)}</main></div>
+      </div>
+
+      <div class="board-card">
+        <div class="board-label"><b>Web 3 — Pesananmu</b><span>#/cart · ShopeeFood di atas dengan GoFood &amp; GrabFood sejajar di bawah</span></div>
+        <div class="app-desktop bg-main">${buildSidebar('cart', 3)}<main class="app-main">${renderCart(false, false)}</main></div>
+      </div>
+
+      <div class="board-card">
+        <div class="board-label"><b>Web 4 — Pesanan Diteruskan &amp; Daftar UMKM Koki</b><span>#/order-sent &amp; #/umkm</span></div>
+        <div class="g-2">
+          <div class="card bg-main">${renderOrderSent(false, false)}</div>
+          <div class="card bg-umkm">${renderUmkm(false, false)}</div>
+        </div>
+      </div>
+
+      <div class="g-2">
+        <div class="board-card">
+          <div class="board-label"><b>Web 5 — Spinner Putar Acak</b><span>Modal #/ · Roda 6 pilihan menu &amp; kartu hasil</span></div>
+          <div style="background:#f3e8ee;border-radius:20px;padding:18px">${renderSpinnerModal(false, false, true)}</div>
+        </div>
+        <div class="board-card">
+          <div class="board-label"><b>Web 6 — Kartu Bagikan Pilihanku</b><span>Kartu Story media sosial &amp; opsi berbagi</span></div>
+          <div style="background:#eef4fb;border-radius:20px;padding:18px">${renderShareCard(false, false)}</div>
+        </div>
+      </div>
+
+      <div class="board-card">
+        <div class="board-label"><b>Web 7 — Recap Mood</b><span>#/recap · Statistik bulanan, kalender mood, dan grafik</span></div>
+        <div class="app-desktop bg-bingung">${buildSidebar('recap', 3)}<main class="app-main">${renderRecap(false, false)}</main></div>
+      </div>
+
+      <div class="board-card">
+        <div class="board-label"><b>Web 8 — CraveMood VIP &amp; Kemitraan</b><span>#/vip · Kartu keanggotaan VIP dan ajakan mitra UMKM</span></div>
+        <div class="app-desktop bg-vip">${buildSidebar('vip', 3)}<main class="app-main">${renderVip(false, false)}</main></div>
+      </div>
+
+      <div class="board-card">
+        <div class="board-label"><b>Web 9 — Profil, Kostum VIP &amp; Live Chat</b><span>#/profile &amp; #/chat</span></div>
+        <div class="g-2">
+          <div class="card bg-vip">${renderProfile(false, false)}</div>
+          <div class="card bg-main">${renderChat(false, false)}</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="text-align:center;font-size:1.35rem;margin:14px 0 22px">Tampilan Aplikasi Mobile (12 Layar Lengkap · 312×640 Frame)</h3>
+    <div class="ph-grid">
+      <div class="ph-item">
+        <div class="ph"><div class="ph-sb"><span>9:41</span><span>▂▄▆ ▮</span></div><div class="ph-sr bg-main"><div class="ph-scroll">${renderHome('neutral', true, false)}</div>${botNav('home')}</div><i class="ph-hb"></i></div>
+        <div class="ph-cap"><b>1</b><h4>Beranda Netral</h4><p>Tampilan awal sebelum pilih mood dengan pintasan Chat, VIP, dan Profil.</p></div>
+      </div>
+      <div class="ph-item">
+        <div class="ph"><div class="ph-sb"><span>9:41</span><span>▂▄▆ ▮</span></div><div class="ph-sr bg-sedih"><div class="ph-scroll has-float">${renderHome('sedih', true, false)}</div>${botNav('home')}</div><i class="ph-hb"></i></div>
+        <div class="ph-cap"><b>2</b><h4>Beranda Mood</h4><p>Tiga rekomendasi menu sesuai mood lengkap dengan ringkasan pesanan.</p></div>
+      </div>
+      <div class="ph-item">
+        <div class="ph"><div class="ph-sb"><span>9:41</span><span>▂▄▆ ▮</span></div><div class="ph-sr bg-main"><div class="ph-scroll" style="display:grid;place-items:center;padding:34px 10px 74px">${renderSpinnerModal(true, false, true)}</div>${botNav('home')}</div><i class="ph-hb"></i></div>
+        <div class="ph-cap"><b>3</b><h4>Spinner Putar Acak</h4><p>Roda 6 pilihan menu acak dengan kartu hasil instan.</p></div>
+      </div>
+      <div class="ph-item">
+        <div class="ph"><div class="ph-sb"><span>9:41</span><span>▂▄▆ ▮</span></div><div class="ph-sr bg-main"><div class="ph-scroll">${renderCart(true, false)}</div>${botNav('cart')}</div><i class="ph-hb"></i></div>
+        <div class="ph-cap"><b>4</b><h4>Pesananmu</h4><p>Tombol ShopeeFood di posisi teratas, diikuti GoFood dan GrabFood sejajar.</p></div>
+      </div>
+      <div class="ph-item">
+        <div class="ph"><div class="ph-sb"><span>9:41</span><span>▂▄▆ ▮</span></div><div class="ph-sr bg-main"><div class="ph-scroll">${renderCart(true, false, true)}</div>${botNav('cart')}</div><i class="ph-hb"></i></div>
+        <div class="ph-cap"><b>5</b><h4>Keranjang Kosong</h4><p>Tampilan pengingat ramah ketika belum ada menu yang ditambahkan.</p></div>
+      </div>
+      <div class="ph-item">
+        <div class="ph"><div class="ph-sb"><span>9:41</span><span>▂▄▆ ▮</span></div><div class="ph-sr bg-main"><div class="ph-scroll">${renderOrderSent(true, false)}</div>${botNav('cart')}</div><i class="ph-hb"></i></div>
+        <div class="ph-cap"><b>6</b><h4>Pesanan Diteruskan</h4><p>Konfirmasi daftar menu tersalin ke aplikasi pengantaran pilihan.</p></div>
+      </div>
+      <div class="ph-item">
+        <div class="ph"><div class="ph-sb"><span>9:41</span><span>▂▄▆ ▮</span></div><div class="ph-sr bg-sedih"><div class="ph-scroll" style="display:grid;place-items:center;padding:38px 12px 24px">${renderShareCard(true, false)}</div></div><i class="ph-hb"></i></div>
+        <div class="ph-cap"><b>7</b><h4>Bagikan Pilihanku</h4><p>Kartu Story siap unggah ke Instagram, WhatsApp, atau unduh gambar.</p></div>
+      </div>
+      <div class="ph-item">
+        <div class="ph"><div class="ph-sb"><span>9:41</span><span>▂▄▆ ▮</span></div><div class="ph-sr bg-bingung"><div class="ph-scroll">${renderRecap(true, false)}</div>${botNav('recap')}</div><i class="ph-hb"></i></div>
+        <div class="ph-cap"><b>8</b><h4>Recap Mood</h4><p>Statistik bulanan, kalender mood, serta grafik ringkasan rasa.</p></div>
+      </div>
+      <div class="ph-item">
+        <div class="ph"><div class="ph-sb"><span>9:41</span><span>▂▄▆ ▮</span></div><div class="ph-sr bg-vip"><div class="ph-scroll">${renderVip(true, false)}</div>${botNav('vip')}</div><i class="ph-hb"></i></div>
+        <div class="ph-cap"><b>9</b><h4>CraveMood VIP</h4><p>Paket keanggotaan VIP dan informasi kemitraan UMKM kuliner.</p></div>
+      </div>
+      <div class="ph-item">
+        <div class="ph"><div class="ph-sb"><span>9:41</span><span>▂▄▆ ▮</span></div><div class="ph-sr bg-umkm"><div class="ph-scroll">${renderUmkm(true, false)}</div>${botNav('vip')}</div><i class="ph-hb"></i></div>
+        <div class="ph-cap"><b>10</b><h4>Daftar UMKM (Koki)</h4><p>Formulir pendaftaran usaha kuliner lokal Makassar.</p></div>
+      </div>
+      <div class="ph-item">
+        <div class="ph"><div class="ph-sb"><span>9:41</span><span>▂▄▆ ▮</span></div><div class="ph-sr bg-vip"><div class="ph-scroll">${renderProfile(true, false)}</div>${botNav('profile')}</div><i class="ph-hb"></i></div>
+        <div class="ph-cap"><b>11</b><h4>Profil &amp; Kostum VIP</h4><p>Kustomisasi kostum Cimo (Asli, Mahkota, Koki, Batik), warna, dan bahasa.</p></div>
+      </div>
+      <div class="ph-item">
+        <div class="ph"><div class="ph-sb"><span>9:41</span><span>▂▄▆ ▮</span></div><div class="ph-sr bg-main"><div class="ph-scroll">${renderChat(true, false)}</div>${botNav('home')}</div><i class="ph-hb"></i></div>
+        <div class="ph-cap"><b>12</b><h4>Cimo Live Chat</h4><p>Ruang percakapan interaktif bersama Cimo dengan balasan cepat.</p></div>
+      </div>
+    </div>`;
+}
+
+const topLogoEl = document.getElementById('top-brand-logo');
+if (topLogoEl) topLogoEl.innerHTML = logoHtml(1.08, true);
+const heroLogoEl = document.getElementById('hero-brand-logo');
+if (heroLogoEl) heroLogoEl.innerHTML = logoLockupHtml(2.3, true);
+renderSim();
+renderStaticBoards();
+</script>
+</body>
+</html>
