@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
-<meta name="build" content="1794765487674">
+<meta name="build" content="1794766103883">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7FA" media="(prefers-color-scheme: light)">
@@ -1165,6 +1165,58 @@ body[data-view="spin"]{background-image:linear-gradient(180deg,#ffe4ee 0%,#fff0f
 /* profil & vip: kartu ungu muda */
 [data-view="profile"] .card, [data-view="vip"] .card{background:rgba(255,255,255,.86)}
 [data-view="umkm"] .card{background:rgba(255,255,255,.9)}
+
+/* ==========================================================================
+   DARK MODE — perbaikan kontras (kartu terang jangan dipaksa di mode gelap)
+   ========================================================================== */
+[data-theme=dark] .saybubble{background:var(--sf);color:var(--ink);box-shadow:0 6px 16px rgba(0,0,0,.28)}
+[data-theme=dark] .saybubble:before{border-bottom-color:var(--sf)}
+[data-theme=dark] .locbar{background:rgba(53,34,59,.92);border-color:rgba(255,255,255,.14)}
+[data-theme=dark] .locbar select{color:var(--ink)}
+[data-theme=dark] .locbar .dist{background:rgba(255,255,255,.12);color:var(--ink)}
+[data-theme=dark] .iconbtn{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.18);color:var(--ink)}
+[data-theme=dark] .hometop .greet{color:var(--mu)}
+[data-theme=dark] .pagetitle h1,[data-theme=dark] .pagetitle p{color:var(--ink)}
+[data-theme=dark] .mpill{background:color-mix(in srgb,var(--c,#ffd9e6) 26%,#2a1730);border-color:transparent}
+[data-theme=dark] .mpill b{color:var(--ink)}
+[data-theme=dark] .mpill.on{background:color-mix(in srgb,var(--c,#ffd9e6) 34%,#2a1730);border-color:#ffd9e6}
+[data-theme=dark] .pickcard.fcard{
+  background:color-mix(in srgb,var(--cb,#ffe9c9) 22%,#2a1730);box-shadow:0 8px 18px rgba(0,0,0,.3);
+}
+[data-theme=dark] .fc-badge{background:rgba(255,255,255,.14);color:var(--ink)}
+[data-theme=dark] .fc-slot{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.22)}
+[data-theme=dark] .fc-slot b,[data-theme=dark] .fc-name{color:#ffe6f0}
+[data-theme=dark] .fc-meta,[data-theme=dark] .fc-plat span,[data-theme=dark] .fc-foot small{color:rgba(255,240,247,.7)}
+[data-theme=dark] .fc-price{color:#ffd9e6}
+[data-theme=dark] .card,[data-theme=dark] .pickcard{background:var(--sf);border-color:rgba(255,255,255,.12)}
+[data-theme=dark] .card *{color:inherit}
+[data-theme=dark] .chip{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:var(--ink)}
+[data-theme=dark] .chip.on{background:#ffd9e6;color:#2a1730;border-color:#ffd9e6}
+[data-theme=dark] .shuffle{background:#3a2350}
+
+/* latar per layar versi gelap */
+[data-theme=dark] body[data-view="recap"]{background-image:linear-gradient(180deg,#15301f 0%,#1b2620 45%,#241a17 100%)}
+[data-theme=dark] body[data-view="vip"]{background-image:linear-gradient(180deg,#2a1c3d 0%,#241a30 50%,#2b1c22 100%)}
+[data-theme=dark] body[data-view="umkm"]{background-image:linear-gradient(180deg,#17301f 0%,#1d2a22 50%,#241a17 100%)}
+[data-theme=dark] body[data-view="profile"]{background-image:linear-gradient(180deg,#2b1d3d 0%,#251a2e 50%,#2a1b20 100%)}
+[data-theme=dark] body[data-view="cart"],
+[data-theme=dark] body[data-view="chat"],
+[data-theme=dark] body[data-view="spin"]{background-image:linear-gradient(180deg,#331b2b 0%,#2a1826 50%,#241a20 100%)}
+[data-theme=dark] [data-view="profile"] .card,[data-theme=dark] [data-view="vip"] .card,
+[data-theme=dark] [data-view="umkm"] .card,[data-theme=dark] [data-view="recap"] .card{
+  background:var(--sf);border-color:rgba(255,255,255,.12);
+}
+
+/* dark: profil & kartu statistik */
+[data-theme=dark] .profhero{background:var(--sf);border-color:rgba(255,255,255,.12)}
+[data-theme=dark] .profhero h3{color:var(--ink)}
+[data-theme=dark] .profhero small{color:var(--mu)}
+[data-theme=dark] .profstats>div{background:var(--sf);border-color:rgba(255,255,255,.12);box-shadow:none}
+[data-theme=dark] .profstats b{color:var(--ink)}
+[data-theme=dark] .profstats span{color:var(--mu)}
+[data-theme=dark] .vipplan{background:linear-gradient(120deg,#3b2450,#4a2a3e)}
+[data-theme=dark] .vipplan b,[data-theme=dark] .vipplan small{color:var(--ink)}
+[data-theme=dark] .tag{background:rgba(255,255,255,.12);color:var(--ink)}
 
 </style>
 </head>
@@ -3312,10 +3364,11 @@ function applyMoodBg() {
   const m = MOODS.find(x => x.k === App.mood);
   const picked = !!App.moodPicked;
   const c = (picked && m) ? m.c : '#ff9ec5';
-  const A = mixHex('#ffffff', c, picked ? 0.46 : 0.26);
-  const B = mixHex('#ffffff', c, picked ? 0.30 : 0.16);
-  const C = mixHex('#fff2ea', c, picked ? 0.11 : 0.07);
-  const D = mixHex('#fff6ef', c, picked ? 0.04 : 0.02);
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const A = dark ? mixHex('#2a1730', c, picked ? 0.30 : 0.20) : mixHex('#ffffff', c, picked ? 0.46 : 0.26);
+  const B = dark ? mixHex('#241529', c, picked ? 0.22 : 0.14) : mixHex('#ffffff', c, picked ? 0.30 : 0.16);
+  const C = dark ? mixHex('#201226', c, 0.10) : mixHex('#fff2ea', c, picked ? 0.11 : 0.07);
+  const D = dark ? mixHex('#1d1022', c, 0.06) : mixHex('#fff6ef', c, picked ? 0.04 : 0.02);
   root.style.setProperty('--bgA', A);
   root.style.setProperty('--bgB', B);
   root.style.setProperty('--bgC', C);

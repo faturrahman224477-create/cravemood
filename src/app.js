@@ -108,10 +108,11 @@ function applyMoodBg() {
   const m = MOODS.find(x => x.k === App.mood);
   const picked = !!App.moodPicked;
   const c = (picked && m) ? m.c : '#ff9ec5';
-  const A = mixHex('#ffffff', c, picked ? 0.46 : 0.26);
-  const B = mixHex('#ffffff', c, picked ? 0.30 : 0.16);
-  const C = mixHex('#fff2ea', c, picked ? 0.11 : 0.07);
-  const D = mixHex('#fff6ef', c, picked ? 0.04 : 0.02);
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const A = dark ? mixHex('#2a1730', c, picked ? 0.30 : 0.20) : mixHex('#ffffff', c, picked ? 0.46 : 0.26);
+  const B = dark ? mixHex('#241529', c, picked ? 0.22 : 0.14) : mixHex('#ffffff', c, picked ? 0.30 : 0.16);
+  const C = dark ? mixHex('#201226', c, 0.10) : mixHex('#fff2ea', c, picked ? 0.11 : 0.07);
+  const D = dark ? mixHex('#1d1022', c, 0.06) : mixHex('#fff6ef', c, picked ? 0.04 : 0.02);
   root.style.setProperty('--bgA', A);
   root.style.setProperty('--bgB', B);
   root.style.setProperty('--bgC', C);
