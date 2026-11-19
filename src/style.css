@@ -607,11 +607,13 @@ td .tag{font-size:.6rem}
 
 /* ---------- beranda hero (big centered Cimo) ---------- */
 .hero2{display:flex;flex-direction:column;align-items:center;gap:14px;margin:2px 0 16px;position:relative}
-.bigcimo{width:min(232px,62vw);display:grid;place-items:center;position:relative}
-.bigcimo:before{content:"";position:absolute;left:50%;top:50%;width:126%;height:126%;transform:translate(-50%,-50%);
-  border-radius:50%;z-index:0;pointer-events:none;
-  background:radial-gradient(circle,color-mix(in srgb,var(--moodc,#ffd9e6) 42%,transparent),transparent 66%)}
+.bigcimo{width:min(232px,62vw);display:grid;place-items:center;position:relative;isolation:isolate}
+.bigcimo:before{content:"";position:absolute;left:50%;top:50%;width:150%;height:150%;transform:translate(-50%,-50%);
+  border-radius:50%;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.96) 0%,rgba(255,255,255,.62) 40%,
+    color-mix(in srgb,var(--moodc,#ffd9e6) 30%,transparent) 56%,transparent 74%)}
 .bigcimo svg{width:100%;height:auto;position:relative;z-index:1}
+[data-theme=dark] .bigcimo:before{background:radial-gradient(circle,rgba(255,255,255,.24) 0%,rgba(255,255,255,.08) 46%,transparent 70%)}
 .bigcimo.hop{animation:hop .62s cubic-bezier(.3,1.7,.5,1)}
 .saybubble{position:relative;background:#fff;border-radius:20px;padding:14px 20px;font:700 .95rem/1.5 Fredoka;
   color:var(--ink);box-shadow:0 6px 0 rgba(122,42,85,.08);text-align:center;max-width:min(430px,94%)}

@@ -54,7 +54,7 @@ jobs:
           set -e
           rm -rf _site
           mkdir -p _site
-          cp index.html build.json manifest.json _site/
+          cp index.html build.json manifest.json sw.js _site/
           [ -d audio ] && cp -r audio _site/
           for f in favicon.png favicon-16.png favicon-64.png apple-touch-icon.png \
                    icon-192.png icon-512.png icon-maskable-512.png gopay-logo.png qr-app.png; do

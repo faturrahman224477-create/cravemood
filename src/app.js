@@ -1967,6 +1967,7 @@ function setLang(l) {
 
 /* ---------- boot ---------- */
 async function boot() {
+  checkBuild();   /* refresh stale tabs immediately, before onboarding/session checks */
   await DB.init();
   loadPrefs(); loadCart(); applyTheme();
   SFX.enabled = App.settings.sound;
