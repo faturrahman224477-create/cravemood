@@ -1354,7 +1354,7 @@ function obRender() {
 
   /* ---- 4. pengenalan maskot Cimo ---- */
   if (obStep === 4) {
-    const CM = ['def','senang','sedih','marah','capek','kecewa','bingung'];
+    const CM = ['def','senang','sedih','marah','bingung'];
     o.innerHTML = `<div class="box">
       <div class="cimo" id="meetHero">${cimo(obMeetSel, 132)}</div>
       <div class="sheetbox">

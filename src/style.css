@@ -768,8 +768,10 @@ td .tag{font-size:.6rem}
 .onboard.ob4{display:flex;align-items:center;justify-content:flex-start;overflow-y:auto}
 .onboard.ob4 .box{margin:auto}
 .onboard.ob4 .cimo{width:132px;margin-bottom:-6px}
-.onboard.ob4 .meetgrid{grid-template-columns:repeat(4,1fr)}
-@media(max-width:420px){.onboard.ob4 .meetgrid{grid-template-columns:repeat(2,1fr)}}
+/* 5 ekspresi: sebar rata, sisa satu di baris bawah tetap di tengah */
+.onboard.ob4 .meetgrid{display:flex;flex-wrap:wrap;justify-content:center}
+.onboard.ob4 .meetitem{flex:0 0 calc(20% - 8px);max-width:calc(20% - 8px)}
+@media(max-width:420px){.onboard.ob4 .meetitem{flex:0 0 calc(50% - 5px);max-width:calc(50% - 5px)}}
 
 /* ---------- beranda (mockup layout) ---------- */
 .hometop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
