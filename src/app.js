@@ -565,7 +565,7 @@ function viewOrderSent() {
         <span class="oscopy">${t('os_copied')}</span>
       </div>
       <div class="osrows">${rows}</div>
-      <div class="ostotal"><span>${t('os_total')}</span><b>${rp(lo)} – ${rp(hi)}</b></div>
+      <div class="ostotal"><span>${t('cart_total')}</span><b>±${rp(lo)} – ${rp(hi)}</b></div>
     </div>
     <div class="osbtns">
       <button class="btn block" id="osShare">${icon('share')} ${t('cart_share')}</button>
@@ -576,7 +576,7 @@ function viewOrderSent() {
 
 /* ---------- cart view ---------- */
 function viewCart() {
-  return `<div class="pagetitle"><div><h1>${t('cart_t')}</h1><p>${t('cart_note')}</p></div></div>
+  return `<div class="pagetitle"><div><h1>${t('cart_t')} 🛒</h1><p>${t('cart_sub')}</p></div></div>
   <div class="card" id="cartCard"></div>`;
 }
 
@@ -591,14 +591,19 @@ function renderCart() {
   const { c, lo, hi } = cartTotals();
   box.innerHTML = ids.map(id => {
     const m = MENU.find(x => x.id === id); if (!m) return '';
-    return `<div class="cartitem">
-      <div class="pic" style="background:linear-gradient(135deg,${MOODC[m.moods[0]][0]}66,${MOODC[m.moods[0]][1]}44)">${art(m.art, 44)}</div>
-      <div class="inf"><b>${esc(m.name)}</b><small>${esc(m.stall)}</small>
-        <div class="pr">${rp(m.lo * App.cart[id])} – ${rp(m.hi * App.cart[id])}</div></div>
-      <span class="step"><button data-dec="${id}">−</button><i>${App.cart[id]}</i><button data-inc="${id}">+</button></span>
+    const mood = MOODC[m.moods[0]] || MOODC.def;
+    const q = App.cart[id];
+    return `<div class="cartrow" style="background:${mood[0]}55;border-color:${mood[1]}44">
+      <div class="cphoto"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#3a2142" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 16-5-5-6 6-3-3-4 4"/></svg></div>
+      <div class="cinfo">
+        <b style="color:${mood[1]}">${esc(m.name)}</b>
+        <small>${esc(m.stall)} · ${distOf(m).toFixed(1).replace('.', ',')} km</small>
+        <span class="cprice">${t('est')} ${rp(m.lo * q)} – ${rp(m.hi * q)}</span>
+      </div>
+      <span class="cstep"><button data-dec="${id}">−</button><i>${q}</i><button data-inc="${id}">+</button></span>
     </div>`;
   }).join('') + `
-    <div class="totline"><span>${t('cart_total')}</span><span style="color:var(--pk2)">${rp(lo)} – ${rp(hi)}</span></div>
+    <div class="totline"><span>${t('cart_total')}</span><span style="color:var(--pk2)">±${rp(lo)} – ${rp(hi)}</span></div>
     <p class="hint" style="margin-bottom:14px">${t('cart_note')}</p>
     <b style="font-size:.86rem">${t('cart_plat')}</b>
     <div class="platmain">

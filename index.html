@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
-<meta name="build" content="1795100938817">
+<meta name="build" content="1795102553031">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7FA" media="(prefers-color-scheme: light)">
@@ -333,6 +333,23 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 .cartitem b{font-size:.9rem;display:block;line-height:1.25}
 .cartitem small{display:block;font-size:.72rem;color:var(--mu);font-weight:700}
 .cartitem .pr{font:700 .8rem Fredoka;color:var(--pk2);margin-top:2px}
+/* ---------- kartu item Pesananmu (prototipe) ---------- */
+.cartrow{display:flex;align-items:center;gap:12px;border-radius:20px;padding:12px 14px;margin-bottom:9px;
+  border:2px solid rgba(58,33,66,.08);color:var(--ink)}
+.cartrow .cphoto{width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,.86);
+  border:1.5px dashed rgba(58,33,66,.24);display:grid;place-items:center;flex:none}
+.cartrow .cinfo{flex:1;min-width:0}
+.cartrow .cinfo b{display:block;font:700 .96rem Fredoka;line-height:1.25}
+.cartrow .cinfo small{display:block;font:700 .76rem Nunito;opacity:.76;margin-top:2px}
+.cartrow .cprice{display:block;font:700 .86rem Fredoka;color:var(--pk2);margin-top:2px}
+.cartrow .cstep{display:inline-flex;align-items:center;gap:9px;background:#3a2142;color:#fff8ef;
+  border-radius:99px;padding:4px 12px;font:700 .9rem Fredoka;flex:none}
+.cartrow .cstep button{border:0;background:none;color:#fff8ef;font:700 1.05rem Fredoka;padding:0 3px;cursor:pointer}
+.cartrow .cstep i{font-style:normal;min-width:12px;text-align:center}
+@media(max-width:980px){
+  .cartrow{gap:9px;padding:10px;border-radius:16px}
+  .cartrow .cphoto{width:44px;height:44px;border-radius:12px}
+}
 .totline{display:flex;justify-content:space-between;align-items:baseline;font:700 1.02rem Fredoka;margin:14px 0 2px}
 .plats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
 /* ShopeeFood hero button + smaller Grab/Go row */
@@ -496,9 +513,9 @@ td .tag{font-size:.6rem}
   .hero .cimobox{order:-1}
   .hero .cimobox .halo{width:180px;height:180px}
   .chatwrap{height:calc(100vh - 172px);min-height:420px;border-radius:24px}
-  .cartbar{left:14px;right:92px;width:auto;transform:translateY(140%);bottom:calc(70px + env(safe-area-inset-bottom,0px));padding:7px 7px 7px 14px;font-size:.74rem}
+  .cartbar{left:10px;right:10px;width:auto;transform:translateY(140%);bottom:calc(76px + env(safe-area-inset-bottom,0px));padding:7px 8px 7px 14px;font-size:.76rem}
   .cartbar.on{transform:translateY(0)}
-  .cartbar button{padding:8px 12px;font-size:.7rem;white-space:nowrap}
+  .cartbar button{padding:8px 14px;font-size:.72rem;white-space:nowrap}
   #cbt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .pet{bottom:calc(70px + env(safe-area-inset-bottom,0px));right:10px;width:56px;height:56px;opacity:.94}
   .sharegrid{grid-template-columns:repeat(5,1fr);gap:6px}
@@ -1078,7 +1095,7 @@ body{
     left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));
     border-top:0;border-radius:26px;background:rgba(255,255,255,.97);
     box-shadow:0 10px 26px rgba(58,33,66,.16);
-    padding:8px;gap:6px;
+    padding:8px;gap:8px;
   }
   [data-theme=dark] .tabbar{background:rgba(53,34,59,.97)}
   .tabbar button{border-radius:18px;padding:9px 2px;font-size:.6rem;gap:3px;flex:1 1 0;min-width:0}
@@ -1625,8 +1642,8 @@ const I18N = {
     spin_need:'Pilih mood dulu di Beranda biar putarannya lebih pas.',
     chat_t:'Cimo Live Chat', chat_on:'Online · siap dengerin', chat_ph:'Cerita apa aja, aku dengerin…',
     chat_quick:['Lagi capek banget','Aku lagi sedih','Mau makan apa ya?','Aku butuh teman cerita'],
-    cart_t:'Pesananmu', cart_empty:'Keranjangmu masih kosong. Yuk pilih makanan dulu.',
-    cart_total:'Perkiraan total', cart_plat:'Lanjut pesan lewat', cart_go:'Buka aplikasi', cart_share:'Bagikan pilihanku',
+    cart_t:'Pesananmu', cart_sub:'Atur jumlah, lalu lanjut lewat aplikasi pilihanmu.', cart_empty:'Keranjangmu masih kosong. Yuk pilih makanan dulu.',
+    cart_total:'Perkiraan total makanan', est:'Perkiraan', cart_plat:'Lanjut pesan lewat', cart_go:'Buka aplikasi', cart_share:'Bagikan pilihanku',
     cart_note:'Harga adalah perkiraan per porsi. Total akhir (ongkir, biaya layanan, promo) dihitung di aplikasi platform.',
     recap_t:'Recap Mood', recap_sub:'Perjalanan perasaanmu bulan ini.', recap_day:'Hari tercatat', recap_streak:'Hari beruntun', recap_top:'Mood terbanyak',
     prof_t:'Profil', prof_acc:'Akun', prof_lang:'Bahasa aplikasi', prof_voice:'Suara Cimo', prof_sound:'Efek suara',
@@ -1704,8 +1721,8 @@ const I18N = {
     spin_need:'Pick a mood on Home first for a better spin.',
     chat_t:'Cimo Live Chat', chat_on:'Online · here to listen', chat_ph:'Tell me anything, I am listening…',
     chat_quick:['I am so tired','I feel sad','What should I eat?','I need someone to talk to'],
-    cart_t:'Your order', cart_empty:'Your cart is empty. Pick some food first.',
-    cart_total:'Estimated total', cart_plat:'Continue on', cart_go:'Open app', cart_share:'Share my picks',
+    cart_t:'Your order', cart_sub:'Set the quantity, then continue via your preferred app.', cart_empty:'Your cart is empty. Pick some food first.',
+    cart_total:'Estimated total food', est:'Estimate', cart_plat:'Continue on', cart_go:'Open app', cart_share:'Share my picks',
     cart_note:'Prices are per-portion estimates. Final total (delivery, service fee, promo) is calculated in the platform app.',
     recap_t:'Mood Recap', recap_sub:'Your feeling journey this month.', recap_day:'Days logged', recap_streak:'Day streak', recap_top:'Top mood',
     prof_t:'Profile', prof_acc:'Account', prof_lang:'App language', prof_voice:'Cimo voice', prof_sound:'Sound effects',
@@ -1780,8 +1797,8 @@ const I18N = {
     spin_need:'先在首页选心情，转盘会更准。',
     chat_t:'Cimo 实时聊天', chat_on:'在线 · 愿意听你说', chat_ph:'想说什么都可以，我在听…',
     chat_quick:['我好累','我有点难过','我该吃什么？','我想找人聊聊'],
-    cart_t:'你的订单', cart_empty:'购物车还是空的，先选点吃的吧。',
-    cart_total:'预估总计', cart_plat:'继续在以下平台下单', cart_go:'打开应用', cart_share:'分享我的选择',
+    cart_t:'你的订单', cart_sub:'调整数量，然后通过你喜欢的应用继续。', cart_empty:'购物车还是空的，先选点吃的吧。',
+    cart_total:'预估餐费总计', est:'预估', cart_plat:'继续在以下平台下单', cart_go:'打开应用', cart_share:'分享我的选择',
     cart_note:'价格为每份预估价。最终总价（配送费、服务费、优惠）以平台应用为准。',
     recap_t:'心情回顾', recap_sub:'这个月的心情轨迹。', recap_day:'记录天数', recap_streak:'连续天数', recap_top:'最常见心情',
     prof_t:'我的', prof_acc:'账号', prof_lang:'应用语言', prof_voice:'Cimo 声音', prof_sound:'音效',
@@ -1856,8 +1873,8 @@ const I18N = {
     spin_need:'पहले होम पर मूड चुनें, फिर स्पिन बेहतर होगा।',
     chat_t:'Cimo लाइव चैट', chat_on:'ऑनलाइन · सुनने के लिए तैयार', chat_ph:'कुछ भी कहें, मैं सुन रहा हूँ…',
     chat_quick:['मैं बहुत थक गया हूँ','मन उदास है','क्या खाऊँ?','किसी से बात करनी है'],
-    cart_t:'आपका ऑर्डर', cart_empty:'कार्ट खाली है। पहले कुछ चुनें।',
-    cart_total:'अनुमानित कुल', cart_plat:'आगे ऑर्डर करें', cart_go:'ऐप खोलें', cart_share:'मेरी पसंद शेयर करें',
+    cart_t:'आपका ऑर्डर', cart_sub:'मात्रा तय करें, फिर अपनी पसंदीदा ऐप से आगे बढ़ें।', cart_empty:'कार्ट खाली है। पहले कुछ चुनें।',
+    cart_total:'अनुमानित कुल भोजन', est:'अनुमानित', cart_plat:'आगे ऑर्डर करें', cart_go:'ऐप खोलें', cart_share:'मेरी पसंद शेयर करें',
     cart_note:'कीमतें प्रति भाग अनुमानित हैं। अंतिम कुल (डिलीवरी, सेवा शुल्क, प्रोमो) प्लेटफ़ॉर्म ऐप में तय होगा।',
     recap_t:'मूड रिकैप', recap_sub:'इस महीने की भावनाओं की यात्रा।', recap_day:'दर्ज दिन', recap_streak:'लगातार दिन', recap_top:'सबसे ज़्यादा मूड',
     prof_t:'प्रोफ़ाइल', prof_acc:'खाता', prof_lang:'ऐप भाषा', prof_voice:'Cimo की आवाज़', prof_sound:'साउंड इफ़ेक्ट',
@@ -3932,7 +3949,7 @@ function viewOrderSent() {
         <span class="oscopy">${t('os_copied')}</span>
       </div>
       <div class="osrows">${rows}</div>
-      <div class="ostotal"><span>${t('os_total')}</span><b>${rp(lo)} – ${rp(hi)}</b></div>
+      <div class="ostotal"><span>${t('cart_total')}</span><b>±${rp(lo)} – ${rp(hi)}</b></div>
     </div>
     <div class="osbtns">
       <button class="btn block" id="osShare">${icon('share')} ${t('cart_share')}</button>
@@ -3943,7 +3960,7 @@ function viewOrderSent() {
 
 /* ---------- cart view ---------- */
 function viewCart() {
-  return `<div class="pagetitle"><div><h1>${t('cart_t')}</h1><p>${t('cart_note')}</p></div></div>
+  return `<div class="pagetitle"><div><h1>${t('cart_t')} 🛒</h1><p>${t('cart_sub')}</p></div></div>
   <div class="card" id="cartCard"></div>`;
 }
 
@@ -3958,14 +3975,19 @@ function renderCart() {
   const { c, lo, hi } = cartTotals();
   box.innerHTML = ids.map(id => {
     const m = MENU.find(x => x.id === id); if (!m) return '';
-    return `<div class="cartitem">
-      <div class="pic" style="background:linear-gradient(135deg,${MOODC[m.moods[0]][0]}66,${MOODC[m.moods[0]][1]}44)">${art(m.art, 44)}</div>
-      <div class="inf"><b>${esc(m.name)}</b><small>${esc(m.stall)}</small>
-        <div class="pr">${rp(m.lo * App.cart[id])} – ${rp(m.hi * App.cart[id])}</div></div>
-      <span class="step"><button data-dec="${id}">−</button><i>${App.cart[id]}</i><button data-inc="${id}">+</button></span>
+    const mood = MOODC[m.moods[0]] || MOODC.def;
+    const q = App.cart[id];
+    return `<div class="cartrow" style="background:${mood[0]}55;border-color:${mood[1]}44">
+      <div class="cphoto"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#3a2142" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 16-5-5-6 6-3-3-4 4"/></svg></div>
+      <div class="cinfo">
+        <b style="color:${mood[1]}">${esc(m.name)}</b>
+        <small>${esc(m.stall)} · ${distOf(m).toFixed(1).replace('.', ',')} km</small>
+        <span class="cprice">${t('est')} ${rp(m.lo * q)} – ${rp(m.hi * q)}</span>
+      </div>
+      <span class="cstep"><button data-dec="${id}">−</button><i>${q}</i><button data-inc="${id}">+</button></span>
     </div>`;
   }).join('') + `
-    <div class="totline"><span>${t('cart_total')}</span><span style="color:var(--pk2)">${rp(lo)} – ${rp(hi)}</span></div>
+    <div class="totline"><span>${t('cart_total')}</span><span style="color:var(--pk2)">±${rp(lo)} – ${rp(hi)}</span></div>
     <p class="hint" style="margin-bottom:14px">${t('cart_note')}</p>
     <b style="font-size:.86rem">${t('cart_plat')}</b>
     <div class="platmain">
