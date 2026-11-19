@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
-<meta name="build" content="1795097053557">
+<meta name="build" content="1795099999901">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7FA" media="(prefers-color-scheme: light)">
@@ -480,7 +480,7 @@ td .tag{font-size:.6rem}
 /* ===== responsive ===== */
 @media(max-width:1080px){
   .moods{grid-template-columns:repeat(3,1fr)}
-  .recs{grid-template-columns:repeat(2,1fr)}
+  .recs{grid-template-columns:1fr}
   .spinwrap{grid-template-columns:1fr;gap:16px}
   .wheel{width:min(300px,70vw)}
 }
@@ -797,6 +797,18 @@ td .tag{font-size:.6rem}
 .onboard.ob4{display:flex;align-items:center;justify-content:flex-start;overflow-y:auto}
 .onboard.ob4 .box{margin:auto}
 .onboard.ob4 .cimo{width:132px;margin-bottom:-6px}
+/* cahaya highlight lembut di belakang emosi Cimo (sama seperti prototipe) */
+.onboard.ob4 .cimo{position:relative;isolation:isolate}
+.onboard.ob4 .cimo:before{content:"";position:absolute;left:50%;top:48%;width:230px;height:230px;
+  transform:translate(-50%,-50%);border-radius:50%;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.96) 0%,rgba(255,255,255,.6) 46%,rgba(255,255,255,0) 72%)}
+.onboard.ob4 .meetitem{position:relative;isolation:isolate}
+.onboard.ob4 .meetitem:before{content:"";position:absolute;left:50%;top:34%;width:70px;height:70px;
+  transform:translate(-50%,-50%);border-radius:50%;z-index:0;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.9),rgba(255,255,255,0) 70%)}
+.onboard.ob4 .meetitem > *{position:relative;z-index:1}
+[data-theme=dark] .onboard.ob4 .cimo:before,
+[data-theme=dark] .onboard.ob4 .meetitem:before{background:radial-gradient(circle,rgba(255,255,255,.22),rgba(255,255,255,0) 70%)}
 /* 5 ekspresi: sebar rata, sisa satu di baris bawah tetap di tengah */
 .onboard.ob4 .meetgrid{display:flex;flex-wrap:wrap;justify-content:center}
 .onboard.ob4 .meetitem{flex:0 0 calc(20% - 8px);max-width:calc(20% - 8px)}
@@ -864,6 +876,38 @@ td .tag{font-size:.6rem}
 .shuffleres .pic svg{height:44px}
 .shuffleres b{font:700 .92rem Fredoka;display:block;line-height:1.2}
 .shuffleres small{font:700 .7rem Nunito;color:var(--mu);display:block}
+
+/* ---------- cahaya highlight di belakang emosi Cimo ---------- */
+.cimo-glow{position:relative;display:grid;place-items:center;margin:0 auto;width:max-content;isolation:isolate}
+.cimo-glow:before{content:"";position:absolute;left:50%;top:50%;width:250px;height:250px;
+  transform:translate(-50%,-50%);border-radius:50%;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.95) 0%,rgba(255,255,255,.5) 46%,transparent 72%)}
+[data-theme=dark] .cimo-glow:before{background:radial-gradient(circle,rgba(255,255,255,.2),transparent 70%)}
+
+/* ---------- pesanan diteruskan (order-sent) ---------- */
+.ordersent{max-width:520px;margin:0 auto;text-align:center}
+.ordersent .saybubble{margin:4px auto 14px}
+.oshead{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1.5px dashed var(--ln)}
+.oslogo{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;flex:none;
+  color:#fff;font:700 1.2rem Fredoka}
+.oshead small{display:block;color:var(--mu);font-weight:700;font-size:.72rem}
+.oshead b{font:700 1.12rem Fredoka;color:var(--ink)}
+.oscopy{background:#dff8ec;color:#0f5132;border-radius:99px;padding:4px 10px;font:700 .72rem Fredoka;white-space:nowrap}
+.osrows{margin:12px 0;font-size:.86rem}
+.osrows>div{display:flex;justify-content:space-between;gap:10px}
+.ostotal{display:flex;justify-content:space-between;padding-top:10px;border-top:1.5px dashed var(--ln);font-weight:700}
+.ostotal b{color:var(--pk2)}
+.osbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+
+/* ---------- hasil putar acak (modal) ---------- */
+.spinresult{background:#fff;border:1px solid var(--ln);border-radius:18px;padding:11px 13px;margin-top:12px;
+  display:flex;align-items:center;gap:11px;animation:say .4s cubic-bezier(.34,1.56,.64,1)}
+.spinresult .srpic{width:58px;height:58px;border-radius:14px;display:grid;place-items:center;flex:none;background:#fff5ea}
+.spinresult b{font:700 .92rem Fredoka;display:block;line-height:1.2;color:var(--ink)}
+.spinresult small{font:700 .7rem Nunito;color:var(--mu);display:block}
+.spinresult strong{font:700 .84rem Fredoka;color:var(--pk2);display:block;margin-top:2px}
+.srbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.btn.hide{display:none}
 
 /* ---------- share card modal ---------- */
 .sharehero{text-align:center;margin-bottom:6px}
@@ -1032,10 +1076,10 @@ body{
     left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));
     border-top:0;border-radius:26px;background:rgba(255,255,255,.97);
     box-shadow:0 10px 26px rgba(58,33,66,.16);
-    padding:8px 6px;
+    padding:8px;gap:6px;
   }
   [data-theme=dark] .tabbar{background:rgba(53,34,59,.97)}
-  .tabbar button{border-radius:18px;padding:9px 2px;font-size:.6rem;gap:3px}
+  .tabbar button{border-radius:18px;padding:9px 2px;font-size:.6rem;gap:3px;flex:1 1 0;min-width:0}
   .tabbar button.on{background:#ffe0ec;color:#b8346f}
   .tabbar button.on svg{fill:rgba(255,95,152,.22);stroke:#e04d86}
   [data-theme=dark] .tabbar button.on{background:#5a3550;color:#ffc6dd}
@@ -1373,15 +1417,15 @@ function cimo(mood, size, peek, costume) {
     x += '<g fill="none" stroke="#2fae8a" stroke-width="3" stroke-linecap="round"><path d="M36 38a8 8 0 1 1 8 8a4 4 0 1 1-4-4"/><path d="M160 36a8 8 0 1 1 8 8a4 4 0 1 1-4-4"/></g><text x="92" y="28" font-size="28" font-weight="700" fill="#2fae8a" font-family="Fredoka,sans-serif">?</text>';
     mo = st('M86 117q7-8 14 0t14 0');
   }
-  /* pita (bow) on the top-left of the head — signature detail from the mockup */
-  const pita = costume === 'crown' ? '' : `<g transform="translate(50 42) rotate(-20)">
+  /* pita (bow) on the top-RIGHT of the head — signature detail from the mockup */
+  const pita = `<g transform="translate(150 42) rotate(20)">
       <ellipse cx="-12" cy="0" rx="12.5" ry="7.6" fill="#ff7aa8"/>
       <ellipse cx="12" cy="0" rx="12.5" ry="7.6" fill="#ff7aa8"/>
       <ellipse cx="-11" cy="-1" rx="7.4" ry="4.2" fill="#ffa8c6" opacity=".8"/>
       <ellipse cx="11" cy="-1" rx="7.4" ry="4.2" fill="#ffa8c6" opacity=".8"/>
       <ellipse cx="-19" cy="1" rx="5" ry="3" fill="#f26394" opacity=".55"/>
       <ellipse cx="19" cy="1" rx="5" ry="3" fill="#f26394" opacity=".55"/>
-      <circle r="5.2" fill="#ff5c92"/><circle cx="-1.6" cy="-1.6" r="1.8" fill="#ffd0e0" opacity=".9"/>
+      <circle r="5.2" fill="#ff5c92"/><circle cx="1.6" cy="-1.6" r="1.8" fill="#ffd0e0" opacity=".9"/>
     </g>`;
   const core = `<ellipse cx="100" cy="96" rx="70" ry="62" fill="${b}"/><g clip-path="url(#${g})"><ellipse cx="93" cy="89" rx="68" ry="60" fill="${a}"/></g><ellipse cx="62" cy="56" rx="15" ry="8" transform="rotate(-28 62 56)" fill="#fff" opacity=".55"/><circle cx="82" cy="45" r="3.4" fill="#fff" opacity=".55"/><ellipse cx="52" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><ellipse cx="148" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><g fill="#fff" opacity=".6"><circle cx="146" cy="130" r="2"/><circle cx="156" cy="124" r="1.6"/><circle cx="52" cy="132" r="1.8"/><circle cx="62" cy="138" r="1.5"/></g>${pita}<g class="ceye">${e}</g>${x}${mo}`;
   const defs = `<defs><clipPath id="${g}"><ellipse cx="100" cy="96" rx="70" ry="62"/></clipPath><clipPath id="${g}c"><rect x="-10" y="0" width="220" height="138"/></clipPath></defs>`;
@@ -1622,7 +1666,7 @@ const I18N = {
     reg_btn:'Buat akun', reg_google:'atau daftar dengan Google',
     meet_t:'Ini Cimo, teman makanmu!', meet_sub:'Cimo akan bantu pilih makanan sesuai perasaanmu. Kenalin ekspresinya:',
     meet_def:'Biasa', meet_senang:'Senang', meet_sedih:'Sedih', meet_marah:'Marah', meet_bingung:'Bingung',
-    meet_desc_def:'Wajah netral Cimo — siap menemani dan membantu memilih makanan.',
+    meet_desc_def:'Wajah netral Cimo, siap menemani dan membantu memilih makanan.',
     meet_desc_senang:'Lagi bahagia! Cimo ikut senang dan cariin makanan yang bikin makin happy.',
     meet_desc_sedih:'Lagi sedih? Cimo temenin dengan makanan yang bikin nyaman.',
     meet_desc_marah:'Lagi marah? Cimo cariin makanan yang bisa menenangkan.',
@@ -1634,6 +1678,9 @@ const I18N = {
     home_hint:'Pilih satu mood di atas dulu ya, Cimo langsung carikan makanannya.',
     spin_pop_t:'Putar acak', spin_pop_sub:'Nggak cocok? Biar Cimo pilihkan yang lain.',
     spin_pop_btn:'Putar sekarang', spin_pop_again:'Putar lagi', spin_pop_close:'Tutup',
+    spin_now:'🎡 Putar sekarang', spin_again2:'🔄 Putar lagi', spin_add:'+ Tambah',
+    os_done:'Yay! Daftar pesananmu sudah disalin ke {plat} 🎉', os_to:'Diteruskan ke aplikasi',
+    os_copied:'Tersalin ✓', os_total:'Perkiraan total', os_back:'← Kembali ke Pesanan',
     /* share */
     share_done:'Selamat makan, {name}!', share_mood_today:'Mood hari ini', share_rec:'Rekomendasi Cimo',
     share_more:'Lainnya', share_hint:'Ketuk ikon untuk bagikan ke story atau simpan gambarnya.',
@@ -1708,6 +1755,9 @@ const I18N = {
     home_hint:'Pick a mood above first, Cimo will find your food right away.',
     spin_pop_t:'Random spin', spin_pop_sub:'Not feeling it? Let Cimo pick another.',
     spin_pop_btn:'Spin now', spin_pop_again:'Spin again', spin_pop_close:'Close',
+    spin_now:'🎡 Spin now', spin_again2:'🔄 Spin again', spin_add:'+ Add',
+    os_done:'Yay! Your order list was copied to {plat} 🎉', os_to:'Forwarded to app',
+    os_copied:'Copied ✓', os_total:'Estimated total', os_back:'← Back to Order',
     share_done:'Enjoy your meal, {name}!', share_mood_today:'Mood today', share_rec:'Cimo recommends',
     share_more:'More', share_hint:'Tap an icon to share to your story or save the image.',
   },
@@ -1781,6 +1831,9 @@ const I18N = {
     home_hint:'先在上面选一个心情，Cimo 马上帮你找吃的。',
     spin_pop_t:'随机转一下', spin_pop_sub:'不合适？让 Cimo 再挑一个。',
     spin_pop_btn:'现在转', spin_pop_again:'再转一次', spin_pop_close:'关闭',
+    spin_now:'🎡 现在转', spin_again2:'🔄 再转一次', spin_add:'+ 添加',
+    os_done:'太好了！订单清单已复制到 {plat} 🎉', os_to:'已跳转到应用',
+    os_copied:'已复制 ✓', os_total:'预估总计', os_back:'← 返回订单',
     share_done:'好好吃，{name}！', share_mood_today:'今天的心情', share_rec:'Cimo 推荐',
     share_more:'更多', share_hint:'点图标分享到动态，或保存图片。',
   },
@@ -1854,6 +1907,9 @@ const I18N = {
     home_hint:'पहले ऊपर एक मूड चुनें, Cimo तुरंत खाना ढूँढ देगा।',
     spin_pop_t:'रैंडम स्पिन', spin_pop_sub:'पसंद नहीं? Cimo कुछ और चुनेगा।',
     spin_pop_btn:'अभी घुमाएं', spin_pop_again:'फिर घुमाएं', spin_pop_close:'बंद करें',
+    spin_now:'🎡 अभी घुमाएं', spin_again2:'🔄 फिर घुमाएं', spin_add:'+ जोड़ें',
+    os_done:'वाह! आपकी सूची {plat} में कॉपी हो गई 🎉', os_to:'ऐप पर भेजा गया',
+    os_copied:'कॉपी ✓', os_total:'अनुमानित कुल', os_back:'← ऑर्डर पर वापस',
     share_done:'मज़े से खाइए, {name}!', share_mood_today:'आज का मूड', share_rec:'Cimo की सलाह',
     share_more:'और', share_hint:'स्टोरी पर शेयर करने या इमेज सेव करने के लिए आइकन दबाएँ।',
   },
@@ -3640,7 +3696,7 @@ function renderSpinPop() {
       </div>
     </div>
     <div id="popResult"></div>
-    <button class="btn block" id="popSpinBtn" style="margin-top:14px">${icon('wheel')} ${t('spin_pop_btn')}</button>`;
+    <button class="btn block" id="popSpinBtn" style="margin-top:14px">${t('spin_now')}</button>`;
   $('#popSpinBtn').onclick = spinPopGo;
 }
 
@@ -3655,7 +3711,7 @@ function spinPopGo() {
   popRot += turns * 360 + (360 - center) + jitter;
   popSpinning = true;
   const btn = $('#popSpinBtn');
-  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  if (btn) { btn.disabled = true; btn.classList.add('hide'); }
   const res = $('#popResult'); if (res) res.innerHTML = '';
   SFX.play('spin');
   SFX.spinTicks(3800);
@@ -3667,16 +3723,19 @@ function spinPopGo() {
     App.lastSpin = pick;
     SFX.play('success');
     const q = App.cart[pick.id] || 0;
-    if (res) res.innerHTML = `<div class="shuffleres" style="margin:12px 0 0">
-      <div class="pic">${art(pick.art, 44)}</div>
+    if (res) res.innerHTML = `<div class="spinresult">
+      <div class="srpic">${art(pick.art, 46)}</div>
       <div style="flex:1;min-width:0">
         <b>${esc(pick.name)}</b>
         <small>${esc(pick.stall)} · ${distOf(pick).toFixed(1).replace('.', ',')} km</small>
+        <strong>${rp(pick.lo)} – ${rp(pick.hi)}</strong>
       </div>
-      ${q ? `<span class="step"><button data-dec="${pick.id}">−</button><i>${q}</i><button data-inc="${pick.id}">+</button></span>`
-          : `<button class="btn sm" data-add="${pick.id}" style="padding:7px 13px">${icon('plus')} ${t('home_add')}</button>`}
+    </div>
+    <div class="srbtns">
+      <button class="btn block ghost" id="popAgainBtn">${t('spin_again2')}</button>
+      <button class="btn block" data-add="${pick.id}">${t('spin_add')}</button>
     </div>`;
-    if (btn) { btn.disabled = false; btn.innerHTML = `${icon('wheel')} ${t('spin_pop_again')}`; }
+    const again = $('#popAgainBtn'); if (again) again.onclick = spinPopGo;
     if (App.user) DB.logSpin(App.user.id, pick.id).catch(() => {});
   }, 3900);
 }
@@ -3849,6 +3908,37 @@ async function sendChat(text) {
   updatePetFace();
 }
 
+/* ---------- order forwarded (prototipe: "Daftar pesananmu sudah disalin") ---------- */
+function viewOrderSent() {
+  const k = App.lastPlatform || 'shopeefood';
+  const info = { shopeefood:['ShopeeFood','#f05a28'], grabfood:['GrabFood','#00a651'], gofood:['GoFood','#ee2737'] }[k] || ['ShopeeFood','#f05a28'];
+  const { lo, hi } = cartTotals();
+  const ids = Object.keys(App.cart);
+  const rows = ids.map(id => {
+    const m = MENU.find(x => x.id === id); if (!m) return '';
+    const q = App.cart[id];
+    return `<div style="display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:.86rem">
+      <span>${q}× ${esc(m.name)}</span><b>${rp(m.lo * q)} – ${rp(m.hi * q)}</b></div>`;
+  }).join('');
+  return `<div class="ordersent">
+    <div class="cimo-glow">${cimo('senang', 124)}</div>
+    <div class="saybubble" style="margin:4px auto 14px">${esc(t('os_done').replace('{plat}', info[0]))}</div>
+    <div class="card" style="text-align:left">
+      <div class="oshead">
+        <span class="oslogo" style="background:${info[1]}">${info[0].charAt(0)}</span>
+        <div style="flex:1;min-width:0"><small>${t('os_to')}</small><b>${info[0]}</b></div>
+        <span class="oscopy">${t('os_copied')}</span>
+      </div>
+      <div class="osrows">${rows}</div>
+      <div class="ostotal"><span>${t('os_total')}</span><b>${rp(lo)} – ${rp(hi)}</b></div>
+    </div>
+    <div class="osbtns">
+      <button class="btn block" id="osShare">${icon('share')} ${t('cart_share')}</button>
+      <button class="btn block ghost" data-go="cart">${t('os_back')}</button>
+    </div>
+  </div>`;
+}
+
 /* ---------- cart view ---------- */
 function viewCart() {
   return `<div class="pagetitle"><div><h1>${t('cart_t')}</h1><p>${t('cart_note')}</p></div></div>
@@ -3903,7 +3993,9 @@ function openPlatform(k) {
   };
   SFX.play('pop');
   if (App.user) DB.addOrder(App.user.id, { kind: 'platform', platform: k, items: Object.keys(App.cart) }).catch(() => {});
+  App.lastPlatform = k;
   window.open(urls[k], '_blank', 'noopener');
+  go('ordersent');
 }
 
 /* ---------- recap ---------- */
@@ -4672,7 +4764,7 @@ function obRender() {
         <div class="meetgrid">
           ${CM.map(m => `<div class="meetitem ${m === obMeetSel ? 'on' : ''}" data-meet="${m}" role="button" tabindex="0" aria-label="${esc(t('meet_'+m))}">${cimo(m, 52)}<b>${t('meet_'+m)}</b></div>`).join('')}
         </div>
-        <div class="meetdesc" id="meetDesc"><b>${esc(t('meet_'+obMeetSel))}</b> — ${esc(t('meet_desc_'+obMeetSel))}</div>
+        <div class="meetdesc" id="meetDesc"><b>${esc(t('meet_'+obMeetSel))}</b> ${esc(t('meet_desc_'+obMeetSel))}</div>
         <button class="btn block" id="obMeetStart" style="margin-top:14px">${t('meet_btn')}</button>
       </div>
     </div>`;
@@ -4682,7 +4774,7 @@ function obRender() {
         SFX.play('tap');
         $$('#onboard .meetitem').forEach(n => n.classList.toggle('on', n === el));
         const d = $('#meetDesc');
-        if (d) d.innerHTML = `<b>${esc(t('meet_'+obMeetSel))}</b> — ${esc(t('meet_desc_'+obMeetSel))}`;
+        if (d) d.innerHTML = `<b>${esc(t('meet_'+obMeetSel))}</b> ${esc(t('meet_desc_'+obMeetSel))}`;
         const hero = $('#meetHero');
         if (hero) hero.innerHTML = cimo(obMeetSel, 132);
       };
@@ -4975,7 +5067,7 @@ function registerSW() {
 }
 
 /* ---------- router ---------- */
-const RENDER = { home: viewHome, spin: viewSpin, chat: viewChat, cart: viewCart, recap: viewRecap, vip: viewVip, umkm: viewUmkm, profile: viewProfile };
+const RENDER = { home: viewHome, spin: viewSpin, chat: viewChat, cart: viewCart, ordersent: viewOrderSent, recap: viewRecap, vip: viewVip, umkm: viewUmkm, profile: viewProfile };
 
 function go(v) {
   if (!RENDER[v]) v = 'home';
@@ -5007,6 +5099,9 @@ function render() {
     const vt = $('#voiceToggle'); if (vt) vt.style.color = App.settings.speak ? 'var(--pk2)' : 'var(--mu)';
   }
   if (v === 'cart') { renderCart(); }
+  if (v === 'ordersent') {
+    const os = $('#osShare'); if (os) os.onclick = () => openShare();
+  }
   if (v === 'recap') { renderRecap(); }
   if (v === 'vip') { /* vip rendered statically */ }
   if (v === 'umkm') { bindUmkm(); }

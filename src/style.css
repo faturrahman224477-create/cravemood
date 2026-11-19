@@ -451,7 +451,7 @@ td .tag{font-size:.6rem}
 /* ===== responsive ===== */
 @media(max-width:1080px){
   .moods{grid-template-columns:repeat(3,1fr)}
-  .recs{grid-template-columns:repeat(2,1fr)}
+  .recs{grid-template-columns:1fr}
   .spinwrap{grid-template-columns:1fr;gap:16px}
   .wheel{width:min(300px,70vw)}
 }
@@ -768,6 +768,18 @@ td .tag{font-size:.6rem}
 .onboard.ob4{display:flex;align-items:center;justify-content:flex-start;overflow-y:auto}
 .onboard.ob4 .box{margin:auto}
 .onboard.ob4 .cimo{width:132px;margin-bottom:-6px}
+/* cahaya highlight lembut di belakang emosi Cimo (sama seperti prototipe) */
+.onboard.ob4 .cimo{position:relative;isolation:isolate}
+.onboard.ob4 .cimo:before{content:"";position:absolute;left:50%;top:48%;width:230px;height:230px;
+  transform:translate(-50%,-50%);border-radius:50%;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.96) 0%,rgba(255,255,255,.6) 46%,rgba(255,255,255,0) 72%)}
+.onboard.ob4 .meetitem{position:relative;isolation:isolate}
+.onboard.ob4 .meetitem:before{content:"";position:absolute;left:50%;top:34%;width:70px;height:70px;
+  transform:translate(-50%,-50%);border-radius:50%;z-index:0;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.9),rgba(255,255,255,0) 70%)}
+.onboard.ob4 .meetitem > *{position:relative;z-index:1}
+[data-theme=dark] .onboard.ob4 .cimo:before,
+[data-theme=dark] .onboard.ob4 .meetitem:before{background:radial-gradient(circle,rgba(255,255,255,.22),rgba(255,255,255,0) 70%)}
 /* 5 ekspresi: sebar rata, sisa satu di baris bawah tetap di tengah */
 .onboard.ob4 .meetgrid{display:flex;flex-wrap:wrap;justify-content:center}
 .onboard.ob4 .meetitem{flex:0 0 calc(20% - 8px);max-width:calc(20% - 8px)}
@@ -835,6 +847,38 @@ td .tag{font-size:.6rem}
 .shuffleres .pic svg{height:44px}
 .shuffleres b{font:700 .92rem Fredoka;display:block;line-height:1.2}
 .shuffleres small{font:700 .7rem Nunito;color:var(--mu);display:block}
+
+/* ---------- cahaya highlight di belakang emosi Cimo ---------- */
+.cimo-glow{position:relative;display:grid;place-items:center;margin:0 auto;width:max-content;isolation:isolate}
+.cimo-glow:before{content:"";position:absolute;left:50%;top:50%;width:250px;height:250px;
+  transform:translate(-50%,-50%);border-radius:50%;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.95) 0%,rgba(255,255,255,.5) 46%,transparent 72%)}
+[data-theme=dark] .cimo-glow:before{background:radial-gradient(circle,rgba(255,255,255,.2),transparent 70%)}
+
+/* ---------- pesanan diteruskan (order-sent) ---------- */
+.ordersent{max-width:520px;margin:0 auto;text-align:center}
+.ordersent .saybubble{margin:4px auto 14px}
+.oshead{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1.5px dashed var(--ln)}
+.oslogo{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;flex:none;
+  color:#fff;font:700 1.2rem Fredoka}
+.oshead small{display:block;color:var(--mu);font-weight:700;font-size:.72rem}
+.oshead b{font:700 1.12rem Fredoka;color:var(--ink)}
+.oscopy{background:#dff8ec;color:#0f5132;border-radius:99px;padding:4px 10px;font:700 .72rem Fredoka;white-space:nowrap}
+.osrows{margin:12px 0;font-size:.86rem}
+.osrows>div{display:flex;justify-content:space-between;gap:10px}
+.ostotal{display:flex;justify-content:space-between;padding-top:10px;border-top:1.5px dashed var(--ln);font-weight:700}
+.ostotal b{color:var(--pk2)}
+.osbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+
+/* ---------- hasil putar acak (modal) ---------- */
+.spinresult{background:#fff;border:1px solid var(--ln);border-radius:18px;padding:11px 13px;margin-top:12px;
+  display:flex;align-items:center;gap:11px;animation:say .4s cubic-bezier(.34,1.56,.64,1)}
+.spinresult .srpic{width:58px;height:58px;border-radius:14px;display:grid;place-items:center;flex:none;background:#fff5ea}
+.spinresult b{font:700 .92rem Fredoka;display:block;line-height:1.2;color:var(--ink)}
+.spinresult small{font:700 .7rem Nunito;color:var(--mu);display:block}
+.spinresult strong{font:700 .84rem Fredoka;color:var(--pk2);display:block;margin-top:2px}
+.srbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.btn.hide{display:none}
 
 /* ---------- share card modal ---------- */
 .sharehero{text-align:center;margin-bottom:6px}
@@ -1003,10 +1047,10 @@ body{
     left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));
     border-top:0;border-radius:26px;background:rgba(255,255,255,.97);
     box-shadow:0 10px 26px rgba(58,33,66,.16);
-    padding:8px 6px;
+    padding:8px;gap:6px;
   }
   [data-theme=dark] .tabbar{background:rgba(53,34,59,.97)}
-  .tabbar button{border-radius:18px;padding:9px 2px;font-size:.6rem;gap:3px}
+  .tabbar button{border-radius:18px;padding:9px 2px;font-size:.6rem;gap:3px;flex:1 1 0;min-width:0}
   .tabbar button.on{background:#ffe0ec;color:#b8346f}
   .tabbar button.on svg{fill:rgba(255,95,152,.22);stroke:#e04d86}
   [data-theme=dark] .tabbar button.on{background:#5a3550;color:#ffc6dd}

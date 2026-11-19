@@ -53,15 +53,15 @@ function cimo(mood, size, peek, costume) {
     x += '<g fill="none" stroke="#2fae8a" stroke-width="3" stroke-linecap="round"><path d="M36 38a8 8 0 1 1 8 8a4 4 0 1 1-4-4"/><path d="M160 36a8 8 0 1 1 8 8a4 4 0 1 1-4-4"/></g><text x="92" y="28" font-size="28" font-weight="700" fill="#2fae8a" font-family="Fredoka,sans-serif">?</text>';
     mo = st('M86 117q7-8 14 0t14 0');
   }
-  /* pita (bow) on the top-left of the head — signature detail from the mockup */
-  const pita = costume === 'crown' ? '' : `<g transform="translate(50 42) rotate(-20)">
+  /* pita (bow) on the top-RIGHT of the head — signature detail from the mockup */
+  const pita = `<g transform="translate(150 42) rotate(20)">
       <ellipse cx="-12" cy="0" rx="12.5" ry="7.6" fill="#ff7aa8"/>
       <ellipse cx="12" cy="0" rx="12.5" ry="7.6" fill="#ff7aa8"/>
       <ellipse cx="-11" cy="-1" rx="7.4" ry="4.2" fill="#ffa8c6" opacity=".8"/>
       <ellipse cx="11" cy="-1" rx="7.4" ry="4.2" fill="#ffa8c6" opacity=".8"/>
       <ellipse cx="-19" cy="1" rx="5" ry="3" fill="#f26394" opacity=".55"/>
       <ellipse cx="19" cy="1" rx="5" ry="3" fill="#f26394" opacity=".55"/>
-      <circle r="5.2" fill="#ff5c92"/><circle cx="-1.6" cy="-1.6" r="1.8" fill="#ffd0e0" opacity=".9"/>
+      <circle r="5.2" fill="#ff5c92"/><circle cx="1.6" cy="-1.6" r="1.8" fill="#ffd0e0" opacity=".9"/>
     </g>`;
   const core = `<ellipse cx="100" cy="96" rx="70" ry="62" fill="${b}"/><g clip-path="url(#${g})"><ellipse cx="93" cy="89" rx="68" ry="60" fill="${a}"/></g><ellipse cx="62" cy="56" rx="15" ry="8" transform="rotate(-28 62 56)" fill="#fff" opacity=".55"/><circle cx="82" cy="45" r="3.4" fill="#fff" opacity=".55"/><ellipse cx="52" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><ellipse cx="148" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><g fill="#fff" opacity=".6"><circle cx="146" cy="130" r="2"/><circle cx="156" cy="124" r="1.6"/><circle cx="52" cy="132" r="1.8"/><circle cx="62" cy="138" r="1.5"/></g>${pita}<g class="ceye">${e}</g>${x}${mo}`;
   const defs = `<defs><clipPath id="${g}"><ellipse cx="100" cy="96" rx="70" ry="62"/></clipPath><clipPath id="${g}c"><rect x="-10" y="0" width="220" height="138"/></clipPath></defs>`;

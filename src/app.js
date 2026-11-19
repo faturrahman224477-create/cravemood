@@ -331,7 +331,7 @@ function renderSpinPop() {
       </div>
     </div>
     <div id="popResult"></div>
-    <button class="btn block" id="popSpinBtn" style="margin-top:14px">${icon('wheel')} ${t('spin_pop_btn')}</button>`;
+    <button class="btn block" id="popSpinBtn" style="margin-top:14px">${t('spin_now')}</button>`;
   $('#popSpinBtn').onclick = spinPopGo;
 }
 
@@ -346,7 +346,7 @@ function spinPopGo() {
   popRot += turns * 360 + (360 - center) + jitter;
   popSpinning = true;
   const btn = $('#popSpinBtn');
-  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  if (btn) { btn.disabled = true; btn.classList.add('hide'); }
   const res = $('#popResult'); if (res) res.innerHTML = '';
   SFX.play('spin');
   SFX.spinTicks(3800);
@@ -358,16 +358,19 @@ function spinPopGo() {
     App.lastSpin = pick;
     SFX.play('success');
     const q = App.cart[pick.id] || 0;
-    if (res) res.innerHTML = `<div class="shuffleres" style="margin:12px 0 0">
-      <div class="pic">${art(pick.art, 44)}</div>
+    if (res) res.innerHTML = `<div class="spinresult">
+      <div class="srpic">${art(pick.art, 46)}</div>
       <div style="flex:1;min-width:0">
         <b>${esc(pick.name)}</b>
         <small>${esc(pick.stall)} · ${distOf(pick).toFixed(1).replace('.', ',')} km</small>
+        <strong>${rp(pick.lo)} – ${rp(pick.hi)}</strong>
       </div>
-      ${q ? `<span class="step"><button data-dec="${pick.id}">−</button><i>${q}</i><button data-inc="${pick.id}">+</button></span>`
-          : `<button class="btn sm" data-add="${pick.id}" style="padding:7px 13px">${icon('plus')} ${t('home_add')}</button>`}
+    </div>
+    <div class="srbtns">
+      <button class="btn block ghost" id="popAgainBtn">${t('spin_again2')}</button>
+      <button class="btn block" data-add="${pick.id}">${t('spin_add')}</button>
     </div>`;
-    if (btn) { btn.disabled = false; btn.innerHTML = `${icon('wheel')} ${t('spin_pop_again')}`; }
+    const again = $('#popAgainBtn'); if (again) again.onclick = spinPopGo;
     if (App.user) DB.logSpin(App.user.id, pick.id).catch(() => {});
   }, 3900);
 }
@@ -540,6 +543,37 @@ async function sendChat(text) {
   updatePetFace();
 }
 
+/* ---------- order forwarded (prototipe: "Daftar pesananmu sudah disalin") ---------- */
+function viewOrderSent() {
+  const k = App.lastPlatform || 'shopeefood';
+  const info = { shopeefood:['ShopeeFood','#f05a28'], grabfood:['GrabFood','#00a651'], gofood:['GoFood','#ee2737'] }[k] || ['ShopeeFood','#f05a28'];
+  const { lo, hi } = cartTotals();
+  const ids = Object.keys(App.cart);
+  const rows = ids.map(id => {
+    const m = MENU.find(x => x.id === id); if (!m) return '';
+    const q = App.cart[id];
+    return `<div style="display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:.86rem">
+      <span>${q}× ${esc(m.name)}</span><b>${rp(m.lo * q)} – ${rp(m.hi * q)}</b></div>`;
+  }).join('');
+  return `<div class="ordersent">
+    <div class="cimo-glow">${cimo('senang', 124)}</div>
+    <div class="saybubble" style="margin:4px auto 14px">${esc(t('os_done').replace('{plat}', info[0]))}</div>
+    <div class="card" style="text-align:left">
+      <div class="oshead">
+        <span class="oslogo" style="background:${info[1]}">${info[0].charAt(0)}</span>
+        <div style="flex:1;min-width:0"><small>${t('os_to')}</small><b>${info[0]}</b></div>
+        <span class="oscopy">${t('os_copied')}</span>
+      </div>
+      <div class="osrows">${rows}</div>
+      <div class="ostotal"><span>${t('os_total')}</span><b>${rp(lo)} – ${rp(hi)}</b></div>
+    </div>
+    <div class="osbtns">
+      <button class="btn block" id="osShare">${icon('share')} ${t('cart_share')}</button>
+      <button class="btn block ghost" data-go="cart">${t('os_back')}</button>
+    </div>
+  </div>`;
+}
+
 /* ---------- cart view ---------- */
 function viewCart() {
   return `<div class="pagetitle"><div><h1>${t('cart_t')}</h1><p>${t('cart_note')}</p></div></div>
@@ -594,7 +628,9 @@ function openPlatform(k) {
   };
   SFX.play('pop');
   if (App.user) DB.addOrder(App.user.id, { kind: 'platform', platform: k, items: Object.keys(App.cart) }).catch(() => {});
+  App.lastPlatform = k;
   window.open(urls[k], '_blank', 'noopener');
+  go('ordersent');
 }
 
 /* ---------- recap ---------- */
@@ -1363,7 +1399,7 @@ function obRender() {
         <div class="meetgrid">
           ${CM.map(m => `<div class="meetitem ${m === obMeetSel ? 'on' : ''}" data-meet="${m}" role="button" tabindex="0" aria-label="${esc(t('meet_'+m))}">${cimo(m, 52)}<b>${t('meet_'+m)}</b></div>`).join('')}
         </div>
-        <div class="meetdesc" id="meetDesc"><b>${esc(t('meet_'+obMeetSel))}</b> — ${esc(t('meet_desc_'+obMeetSel))}</div>
+        <div class="meetdesc" id="meetDesc"><b>${esc(t('meet_'+obMeetSel))}</b> ${esc(t('meet_desc_'+obMeetSel))}</div>
         <button class="btn block" id="obMeetStart" style="margin-top:14px">${t('meet_btn')}</button>
       </div>
     </div>`;
@@ -1373,7 +1409,7 @@ function obRender() {
         SFX.play('tap');
         $$('#onboard .meetitem').forEach(n => n.classList.toggle('on', n === el));
         const d = $('#meetDesc');
-        if (d) d.innerHTML = `<b>${esc(t('meet_'+obMeetSel))}</b> — ${esc(t('meet_desc_'+obMeetSel))}`;
+        if (d) d.innerHTML = `<b>${esc(t('meet_'+obMeetSel))}</b> ${esc(t('meet_desc_'+obMeetSel))}`;
         const hero = $('#meetHero');
         if (hero) hero.innerHTML = cimo(obMeetSel, 132);
       };
@@ -1666,7 +1702,7 @@ function registerSW() {
 }
 
 /* ---------- router ---------- */
-const RENDER = { home: viewHome, spin: viewSpin, chat: viewChat, cart: viewCart, recap: viewRecap, vip: viewVip, umkm: viewUmkm, profile: viewProfile };
+const RENDER = { home: viewHome, spin: viewSpin, chat: viewChat, cart: viewCart, ordersent: viewOrderSent, recap: viewRecap, vip: viewVip, umkm: viewUmkm, profile: viewProfile };
 
 function go(v) {
   if (!RENDER[v]) v = 'home';
@@ -1698,6 +1734,9 @@ function render() {
     const vt = $('#voiceToggle'); if (vt) vt.style.color = App.settings.speak ? 'var(--pk2)' : 'var(--mu)';
   }
   if (v === 'cart') { renderCart(); }
+  if (v === 'ordersent') {
+    const os = $('#osShare'); if (os) os.onclick = () => openShare();
+  }
   if (v === 'recap') { renderRecap(); }
   if (v === 'vip') { /* vip rendered statically */ }
   if (v === 'umkm') { bindUmkm(); }
