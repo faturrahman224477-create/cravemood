@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write   # one-time bootstrap commit of the site + voice pack
   pages: write
   id-token: write
 
@@ -19,17 +19,56 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Build single-file bundle
-        run: node build.mjs
+
+      # The voice pack (143 clips) is too large to push by hand, so it is
+      # imported once from the build host and committed back to the repo.
+      # After that the repo is self-contained and this step is a no-op.
+      - name: Bootstrap site files (first run only)
+        run: |
+          set -e
+          if [ -f audio/cimo/lines.json ]; then
+            echo "site files already present - skipping bootstrap"
+            exit 0
+          fi
+          BASE="https://cravemood.apps.workbuddy.host"
+          SC="?sharecode=NG6DCXKIRE"
+          mkdir -p audio/cimo
+          curl -fsSL "$BASE/index.html$SC"        -o index.html
+          curl -fsSL "$BASE/build.json$SC"        -o build.json || echo '{"v":"1"}' > build.json
+          curl -fsSL "$BASE/audio/cimo/lines.json$SC"    -o audio/cimo/lines.json
+          curl -fsSL "$BASE/audio/cimo/manifest.json$SC" -o audio/cimo/manifest.json
+          grep -ho '[A-Za-z0-9_]*\.mp3' audio/cimo/lines.json audio/cimo/manifest.json | sort -u > /tmp/list.txt
+          echo "voice clips: $(wc -l < /tmp/list.txt)"
+          while read -r f; do
+            [ -f "audio/cimo/$f" ] || curl -fsSL "$BASE/audio/cimo/$f$SC" -o "audio/cimo/$f"
+          done < /tmp/list.txt
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html build.json audio
+          git commit -m "chore: import published site + voice pack (self-contained from now on)" || true
+          git push || true
+
+      # only the public site is published - never db/, csv exports or dev.html
+      - name: Stage public files
+        run: |
+          set -e
+          rm -rf _site
+          mkdir -p _site
+          cp index.html build.json manifest.json _site/
+          [ -d audio ] && cp -r audio _site/
+          for f in favicon.png favicon-16.png favicon-64.png apple-touch-icon.png \
+                   icon-192.png icon-512.png icon-maskable-512.png gopay-logo.png qr-app.png; do
+            [ -f "$f" ] && cp "$f" _site/ || true
+          done
+          touch _site/.nojekyll
+          echo "published files: $(find _site -type f | wc -l)"
+
       - uses: actions/configure-pages@v5
         with:
           enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
   deploy:
     needs: build

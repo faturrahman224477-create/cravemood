@@ -753,6 +753,24 @@ td .tag{font-size:.6rem}
 .obterms input{width:17px;height:17px;flex:none;accent-color:var(--pk2);margin-top:1px}
 .obnote{text-align:center;font:700 .72rem Nunito;color:var(--mu);margin-top:10px}
 
+/* ---------- pengenalan Cimo (ob4) ---------- */
+.meetgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:14px 0 6px}
+.meetitem{display:flex;flex-direction:column;align-items:center;gap:6px;border-radius:20px;padding:12px 8px 10px;cursor:pointer;
+  border:2px solid rgba(255,255,255,.85);background:rgba(255,255,255,.55);transition:.24s cubic-bezier(.34,1.56,.64,1);text-align:center}
+.meetitem:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(122,42,85,.14)}
+.meetitem.on{border-color:var(--pk2);background:#fff;box-shadow:0 8px 20px rgba(255,95,152,.22);transform:scale(1.03)}
+.meetitem svg{width:52px;height:auto;filter:drop-shadow(0 4px 6px rgba(122,42,85,.1))}
+.meetitem b{font:700 .72rem Fredoka;color:var(--ink);line-height:1.1}
+.meetdesc{background:rgba(255,255,255,.6);border-radius:16px;padding:12px 14px;font:600 .82rem/1.5 Nunito;color:var(--ink);
+  text-align:center;margin-top:8px;min-height:44px;display:flex;align-items:center;justify-content:center}
+.meetdesc b{font-family:Fredoka}
+/* langkah pengenalan Cimo: tetap terpusat, tapi bisa di-scroll di layar kecil */
+.onboard.ob4{display:flex;align-items:center;justify-content:flex-start;overflow-y:auto}
+.onboard.ob4 .box{margin:auto}
+.onboard.ob4 .cimo{width:132px;margin-bottom:-6px}
+.onboard.ob4 .meetgrid{grid-template-columns:repeat(4,1fr)}
+@media(max-width:420px){.onboard.ob4 .meetgrid{grid-template-columns:repeat(2,1fr)}}
+
 /* ---------- beranda (mockup layout) ---------- */
 .hometop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
 .hometop .greet{font:700 .78rem Nunito;color:var(--mu);display:block;margin-bottom:1px}
@@ -1039,6 +1057,7 @@ body{
 .onboard.ob0{background:linear-gradient(180deg,#ffe0ec 0%,#ffe8ef 45%,#ffeadb 100%)}
 .onboard.ob1{background:linear-gradient(180deg,#fff7ec 0%,#ffeade 100%)}
 .onboard.ob2{background:linear-gradient(180deg,#ffe4ef 0%,#ffeade 100%)}
+.onboard.ob4{background:linear-gradient(180deg,#fff7ec 0%,#ffe8ef 50%,#ffeadb 100%)}
 .onboard.login{background:linear-gradient(180deg,#e4d9f7 0%,#f6e6f4 55%,#ffeade 100%)}
 .onboard.reg{background:linear-gradient(180deg,#dcf6e8 0%,#fff7ec 60%,#ffeadb 100%)}
 

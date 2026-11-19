@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
-<meta name="build" content="1794766103883">
+<meta name="build" content="1795095862901">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7FA" media="(prefers-color-scheme: light)">
@@ -782,6 +782,24 @@ td .tag{font-size:.6rem}
 .obterms input{width:17px;height:17px;flex:none;accent-color:var(--pk2);margin-top:1px}
 .obnote{text-align:center;font:700 .72rem Nunito;color:var(--mu);margin-top:10px}
 
+/* ---------- pengenalan Cimo (ob4) ---------- */
+.meetgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:14px 0 6px}
+.meetitem{display:flex;flex-direction:column;align-items:center;gap:6px;border-radius:20px;padding:12px 8px 10px;cursor:pointer;
+  border:2px solid rgba(255,255,255,.85);background:rgba(255,255,255,.55);transition:.24s cubic-bezier(.34,1.56,.64,1);text-align:center}
+.meetitem:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(122,42,85,.14)}
+.meetitem.on{border-color:var(--pk2);background:#fff;box-shadow:0 8px 20px rgba(255,95,152,.22);transform:scale(1.03)}
+.meetitem svg{width:52px;height:auto;filter:drop-shadow(0 4px 6px rgba(122,42,85,.1))}
+.meetitem b{font:700 .72rem Fredoka;color:var(--ink);line-height:1.1}
+.meetdesc{background:rgba(255,255,255,.6);border-radius:16px;padding:12px 14px;font:600 .82rem/1.5 Nunito;color:var(--ink);
+  text-align:center;margin-top:8px;min-height:44px;display:flex;align-items:center;justify-content:center}
+.meetdesc b{font-family:Fredoka}
+/* langkah pengenalan Cimo: tetap terpusat, tapi bisa di-scroll di layar kecil */
+.onboard.ob4{display:flex;align-items:center;justify-content:flex-start;overflow-y:auto}
+.onboard.ob4 .box{margin:auto}
+.onboard.ob4 .cimo{width:132px;margin-bottom:-6px}
+.onboard.ob4 .meetgrid{grid-template-columns:repeat(4,1fr)}
+@media(max-width:420px){.onboard.ob4 .meetgrid{grid-template-columns:repeat(2,1fr)}}
+
 /* ---------- beranda (mockup layout) ---------- */
 .hometop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
 .hometop .greet{font:700 .78rem Nunito;color:var(--mu);display:block;margin-bottom:1px}
@@ -1068,6 +1086,7 @@ body{
 .onboard.ob0{background:linear-gradient(180deg,#ffe0ec 0%,#ffe8ef 45%,#ffeadb 100%)}
 .onboard.ob1{background:linear-gradient(180deg,#fff7ec 0%,#ffeade 100%)}
 .onboard.ob2{background:linear-gradient(180deg,#ffe4ef 0%,#ffeade 100%)}
+.onboard.ob4{background:linear-gradient(180deg,#fff7ec 0%,#ffe8ef 50%,#ffeadb 100%)}
 .onboard.login{background:linear-gradient(180deg,#e4d9f7 0%,#f6e6f4 55%,#ffeade 100%)}
 .onboard.reg{background:linear-gradient(180deg,#dcf6e8 0%,#fff7ec 60%,#ffeadb 100%)}
 
@@ -1599,6 +1618,16 @@ const I18N = {
     login_terms:'Dengan masuk, kamu setuju dengan Syarat & Kebijakan Privasi.',
     reg_t:'Yuk, buat akun!', reg_name:'Nama panggilan', reg_terms:'Aku setuju dengan Syarat & Kebijakan Privasi',
     reg_btn:'Buat akun', reg_google:'atau daftar dengan Google',
+    meet_t:'Ini Cimo, teman makanmu!', meet_sub:'Cimo akan bantu pilih makanan sesuai perasaanmu. Kenalin ekspresinya:',
+    meet_def:'Biasa', meet_senang:'Senang', meet_sedih:'Sedih', meet_marah:'Marah', meet_capek:'Capek', meet_kecewa:'Kecewa', meet_bingung:'Bingung',
+    meet_desc_def:'Saat Cimo siap membantumu cari makan.',
+    meet_desc_senang:'Wah, lagi happy! Cimo cariin makanan yang bikin makin happy.',
+    meet_desc_sedih:'Lagi sedih? Cimo temenin, ada makanan yang bikin nyaman.',
+    meet_desc_marah:'Marah ya? Cimo cariin makanan yang menenangkan.',
+    meet_desc_capek:'Lagi capek? Cimo pilihin yang praktis dan mengenyangkan.',
+    meet_desc_kecewa:'Kecewa? Cimo kasih rekomendasi yang menyemangati.',
+    meet_desc_bingung:'Bingung makan apa? Cimo bantu putuskan!',
+    meet_btn:'Ayo mulai! →',
     /* beranda */
     pick_t:'Pilihan Cimo', shuffle_t:'Putar acak', shuffle_s:'Nggak cocok? Cimo pilihkan yang lain',
     home_ask:'Halo {name}! Lagi mood apa hari ini?',
@@ -1666,6 +1695,16 @@ const I18N = {
     login_terms:'By signing in, you agree to our Terms & Privacy Policy.',
     reg_t:'Let us create your account!', reg_name:'Nickname', reg_terms:'I agree to the Terms & Privacy Policy',
     reg_btn:'Create account', reg_google:'or sign up with Google',
+    meet_t:'Meet Cimo, your food buddy!', meet_sub:'Cimo helps pick food that matches your mood. Get to know the expressions:',
+    meet_def:'Default', meet_senang:'Happy', meet_sedih:'Sad', meet_marah:'Angry', meet_capek:'Tired', meet_kecewa:'Disappointed', meet_bingung:'Confused',
+    meet_desc_def:'When Cimo is ready to help you find food.',
+    meet_desc_senang:'Feeling happy! Cimo finds food that makes you happier.',
+    meet_desc_sedih:'Feeling sad? Cimo comforts you with soothing food.',
+    meet_desc_marah:'Angry? Cimo picks calming food for you.',
+    meet_desc_capek:'Tired? Cimo chooses practical and filling options.',
+    meet_desc_kecewa:'Disappointed? Cimo recommends something uplifting.',
+    meet_desc_bingung:'Confused what to eat? Cimo helps you decide!',
+    meet_btn:'Let us start! →',
     pick_t:'Cimo picks', shuffle_t:'Spin randomly', shuffle_s:'Not feeling it? Let Cimo pick another',
     home_ask:'Hi {name}! What is your mood today?',
     home_hint:'Pick a mood above first, Cimo will find your food right away.',
@@ -1731,6 +1770,16 @@ const I18N = {
     login_terms:'登录即表示你同意《条款与隐私政策》。',
     reg_t:'来创建账号吧！', reg_name:'昵称', reg_terms:'我同意《条款与隐私政策》',
     reg_btn:'创建账号', reg_google:'或用 Google 注册',
+    meet_t:'这是 Cimo，你的美食伙伴！', meet_sub:'Cimo 会根据你的心情帮你选美食。先认识它的表情吧：',
+    meet_def:'平常', meet_senang:'开心', meet_sedih:'难过', meet_marah:'生气', meet_capek:'疲惫', meet_kecewa:'失望', meet_bingung:'困惑',
+    meet_desc_def:'Cimo 准备好帮你找美食啦。',
+    meet_desc_senang:'开心！Cimo 找让更开心的美食。',
+    meet_desc_sedih:'难过？Cimo 陪你吃安慰的食物。',
+    meet_desc_marah:'生气？Cimo 选舒缓的美食。',
+    meet_desc_capek:'累了？Cimo 选方便又管饱的。',
+    meet_desc_kecewa:'失望？Cimo 推荐能振作的美食。',
+    meet_desc_bingung:'不知道吃什么？Cimo 帮你决定！',
+    meet_btn:'开始吧！→',
     pick_t:'Cimo 的选择', shuffle_t:'随机转一下', shuffle_s:'不合适？让 Cimo 再挑一个',
     home_ask:'嗨 {name}！今天心情怎么样？',
     home_hint:'先在上面选一个心情，Cimo 马上帮你找吃的。',
@@ -1796,6 +1845,16 @@ const I18N = {
     login_terms:'साइन इन करके आप शर्तें और गोपनीयता नीति स्वीकार करते हैं।',
     reg_t:'चलिए खाता बनाएं!', reg_name:'नाम', reg_terms:'मैं शर्तें और गोपनीयता नीति स्वीकार करता हूँ',
     reg_btn:'खाता बनाएं', reg_google:'या Google से साइन अप करें',
+    meet_t:'यह Cimo है, आपका खाना साथी!', meet_sub:'Cimo आपके मूड के हिसाब से खाना चुनता है। इसके भाव जानें:',
+    meet_def:'सामान्य', meet_senang:'खुश', meet_sedih:'उदास', meet_marah:'गुस्सा', meet_capek:'थका', meet_kecewa:'निराश', meet_bingung:'उलझन',
+    meet_desc_def:'Cimo आपके लिए खाना ढूँढने को तैयार है।',
+    meet_desc_senang:'खुश! Cimo और खुशी देने वाला खाना चुनेगा।',
+    meet_desc_sedih:'उदास? Cimo आपको आराम देने वाला खाना देगा।',
+    meet_desc_marah:'गुस्सा? Cimo शांत करने वाला खाना चुनेगा।',
+    meet_desc_capek:'थका? Cimo आसान और भरने वाला खाना चुनेगा।',
+    meet_desc_kecewa:'निराश? Cimo उत्साह देने वाला खाना देगा।',
+    meet_desc_bingung:'खाना नहीं समझ आ रहा? Cimo तय करेगा!',
+    meet_btn:'चलो शुरू करें! →',
     pick_t:'Cimo की पसंद', shuffle_t:'रैंडम घुमाएं', shuffle_s:'पसंद नहीं? Cimo कुछ और चुनेगा',
     home_ask:'नमस्ते {name}! आज मूड कैसा है?',
     home_hint:'पहले ऊपर एक मूड चुनें, Cimo तुरंत खाना ढूँढ देगा।',
@@ -3753,7 +3812,9 @@ function renderMessages() {
 
 function renderChips(list) {
   const q = $('#quick'); if (!q) return;
-  const chips = list || ChatEngine.chips().map(x => x[0]);
+  /* chips bisa datang sebagai string, atau pasangan [teks, kunci] */
+  const src = list || ChatEngine.chips();
+  const chips = src.map(x => Array.isArray(x) ? x[0] : x);
   q.innerHTML = chips.map(c => `<button data-chip="${esc(c)}">${esc(c)}</button>`).join('');
 }
 
@@ -4519,7 +4580,7 @@ function fallbackCopy(txt) {
 
 /* ---------- admin ---------- */
 /* ---------- onboarding ---------- */
-let obStep = 0, obLang = 'id', obMode = 'login';
+let obStep = 0, obLang = 'id', obMode = 'login', obMeetSel = 'def';
 function showOnboard() {
   const o = $('#onboard');
   o.classList.remove('hide');
@@ -4606,6 +4667,38 @@ function obRender() {
     return;
   }
 
+  /* ---- 4. pengenalan maskot Cimo ---- */
+  if (obStep === 4) {
+    const CM = ['def','senang','sedih','marah','capek','kecewa','bingung'];
+    o.innerHTML = `<div class="box">
+      <div class="cimo" id="meetHero">${cimo(obMeetSel, 132)}</div>
+      <div class="sheetbox">
+        <h2 style="font-size:1.3rem;line-height:1.25">${t('meet_t')}</h2>
+        <p class="sub">${t('meet_sub')}</p>
+        <div class="meetgrid">
+          ${CM.map(m => `<div class="meetitem ${m === obMeetSel ? 'on' : ''}" data-meet="${m}" role="button" tabindex="0" aria-label="${esc(t('meet_'+m))}">${cimo(m, 52)}<b>${t('meet_'+m)}</b></div>`).join('')}
+        </div>
+        <div class="meetdesc" id="meetDesc"><b>${esc(t('meet_'+obMeetSel))}</b> — ${esc(t('meet_desc_'+obMeetSel))}</div>
+        <button class="btn block" id="obMeetStart" style="margin-top:14px">${t('meet_btn')}</button>
+      </div>
+    </div>`;
+    $$('#onboard [data-meet]').forEach(el => {
+      const pick = () => {
+        obMeetSel = el.dataset.meet;
+        SFX.play('tap');
+        $$('#onboard .meetitem').forEach(n => n.classList.toggle('on', n === el));
+        const d = $('#meetDesc');
+        if (d) d.innerHTML = `<b>${esc(t('meet_'+obMeetSel))}</b> — ${esc(t('meet_desc_'+obMeetSel))}`;
+        const hero = $('#meetHero');
+        if (hero) hero.innerHTML = cimo(obMeetSel, 132);
+      };
+      el.onclick = pick;
+      el.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } };
+    });
+    $('#obMeetStart').onclick = () => { SFX.play('tap'); enterApp(); };
+    return;
+  }
+
   /* ---- 3. masuk / daftar ---- */
   const isLogin = obMode === 'login';
   o.innerHTML = `<div class="box">
@@ -4676,12 +4769,18 @@ async function doRegister(guest) {
   finishOnboard();
 }
 function finishOnboard() {
-  $('#onboard').classList.add('hide');
   App.lang = App.user.lang || obLang;
   Voice.set('lang', App.settings.voiceLang || App.lang);
   ChatEngine.setLang(App.lang);
   ChatEngine.setName(App.user.name);
   savePrefs(); saveSettings();
+  /* perkenalkan maskot sebelum masuk ke aplikasi */
+  obMeetSel = 'def';
+  obStep = 4;
+  obRender();
+}
+function enterApp() {
+  $('#onboard').classList.add('hide');
   boot2();
   if (App.settings.speak) setTimeout(() => Voice.speak(I18N[App.lang].on_sub, { lang: App.lang }), 600);
 }

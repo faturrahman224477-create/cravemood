@@ -497,7 +497,9 @@ function renderMessages() {
 
 function renderChips(list) {
   const q = $('#quick'); if (!q) return;
-  const chips = list || ChatEngine.chips().map(x => x[0]);
+  /* chips bisa datang sebagai string, atau pasangan [teks, kunci] */
+  const src = list || ChatEngine.chips();
+  const chips = src.map(x => Array.isArray(x) ? x[0] : x);
   q.innerHTML = chips.map(c => `<button data-chip="${esc(c)}">${esc(c)}</button>`).join('');
 }
 
@@ -1263,7 +1265,7 @@ function fallbackCopy(txt) {
 
 /* ---------- admin ---------- */
 /* ---------- onboarding ---------- */
-let obStep = 0, obLang = 'id', obMode = 'login';
+let obStep = 0, obLang = 'id', obMode = 'login', obMeetSel = 'def';
 function showOnboard() {
   const o = $('#onboard');
   o.classList.remove('hide');
@@ -1350,6 +1352,38 @@ function obRender() {
     return;
   }
 
+  /* ---- 4. pengenalan maskot Cimo ---- */
+  if (obStep === 4) {
+    const CM = ['def','senang','sedih','marah','capek','kecewa','bingung'];
+    o.innerHTML = `<div class="box">
+      <div class="cimo" id="meetHero">${cimo(obMeetSel, 132)}</div>
+      <div class="sheetbox">
+        <h2 style="font-size:1.3rem;line-height:1.25">${t('meet_t')}</h2>
+        <p class="sub">${t('meet_sub')}</p>
+        <div class="meetgrid">
+          ${CM.map(m => `<div class="meetitem ${m === obMeetSel ? 'on' : ''}" data-meet="${m}" role="button" tabindex="0" aria-label="${esc(t('meet_'+m))}">${cimo(m, 52)}<b>${t('meet_'+m)}</b></div>`).join('')}
+        </div>
+        <div class="meetdesc" id="meetDesc"><b>${esc(t('meet_'+obMeetSel))}</b> — ${esc(t('meet_desc_'+obMeetSel))}</div>
+        <button class="btn block" id="obMeetStart" style="margin-top:14px">${t('meet_btn')}</button>
+      </div>
+    </div>`;
+    $$('#onboard [data-meet]').forEach(el => {
+      const pick = () => {
+        obMeetSel = el.dataset.meet;
+        SFX.play('tap');
+        $$('#onboard .meetitem').forEach(n => n.classList.toggle('on', n === el));
+        const d = $('#meetDesc');
+        if (d) d.innerHTML = `<b>${esc(t('meet_'+obMeetSel))}</b> — ${esc(t('meet_desc_'+obMeetSel))}`;
+        const hero = $('#meetHero');
+        if (hero) hero.innerHTML = cimo(obMeetSel, 132);
+      };
+      el.onclick = pick;
+      el.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } };
+    });
+    $('#obMeetStart').onclick = () => { SFX.play('tap'); enterApp(); };
+    return;
+  }
+
   /* ---- 3. masuk / daftar ---- */
   const isLogin = obMode === 'login';
   o.innerHTML = `<div class="box">
@@ -1420,12 +1454,18 @@ async function doRegister(guest) {
   finishOnboard();
 }
 function finishOnboard() {
-  $('#onboard').classList.add('hide');
   App.lang = App.user.lang || obLang;
   Voice.set('lang', App.settings.voiceLang || App.lang);
   ChatEngine.setLang(App.lang);
   ChatEngine.setName(App.user.name);
   savePrefs(); saveSettings();
+  /* perkenalkan maskot sebelum masuk ke aplikasi */
+  obMeetSel = 'def';
+  obStep = 4;
+  obRender();
+}
+function enterApp() {
+  $('#onboard').classList.add('hide');
   boot2();
   if (App.settings.speak) setTimeout(() => Voice.speak(I18N[App.lang].on_sub, { lang: App.lang }), 600);
 }
