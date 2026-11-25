@@ -39,7 +39,7 @@ const INTENTS = [
   { id:'name_ask', k:['siapa kamu','kamu siapa','namamu','nama kamu','who are you','your name','你叫什么','तुम कौन'] },
   { id:'my_name', k:['namaku','nama aku','panggil aku','aku adalah','my name is','call me','i am','我叫','मेरा नाम'] },
   { id:'tired', k:['capek','lelah','letih','cape','ngantuk','exhausted','tired','burnout','lemas','energi habis','kecapekan','累','疲惫','थका','थकान'] },
-  { id:'sad', k:['sedih','nangis','menangis','patah hati','hancur','kecewa berat','murung','galau','sedih banget','sad','cry','crying','broken heart','upset','down','难过','伤心','哭','उदास','रोना','दुख'] },
+  { id:'sad', k:['sedih','nangis','menangis','patah hati','hancur','kecewa berat','murung','galau','sedih banget','tidak baik','ga baik','gak baik','nggak baik','kurang baik','belum baik','not okay','not ok','sad','cry','crying','broken heart','upset','down','难过','伤心','哭','उदास','रोना','दुख'] },
   { id:'angry', k:['marah','kesal','kesel','bete','emosi','murka','jengkel','sebal','benci','angry','mad','annoyed','furious','hate','生气','火大','गुस्सा','चिढ़'] },
   { id:'anxious', k:['cemas','takut','khawatir','overthinking','panik','deg-degan','was-was','anxious','worried','scared','panic','overthink','焦虑','紧张','चिंता','डर'] },
   { id:'lonely', k:['sepi','kesepian','sendiri','nggak ada yang','lonely','alone','nobody','孤独','寂寞','अकेला','अकेलापन'] },
@@ -59,7 +59,7 @@ const INTENTS = [
   { id:'cry', k:['nangis','menangis','crying','cry','air mata','哭','रो'] },
   { id:'celebrate', k:['akhirnya','berhasil','lulus','dapat kerja','menang','alhamdulillah','syukur','finally','i did it','passed','got the job','成功了','मिल गई'] },
   { id:'food_ask', k:['makan apa','mau makan','mau nasi','nasi goreng','pingin makan','pengen makan','lapar','laper','hungry','eat what','what to eat','bingung makan','recommend food','rekomendasi makanan','cari makan','makanan','吃啥','吃什么','क्या खाऊं','भूख'] },
-  { id:'food_spicy', k:['pedas','spicy','yang pedes','辣','तेज़'] },
+  { id:'food_spicy', k:['pedas','pedes','spicy','yang pedes','辣','तेज़'] },
   { id:'food_sweet', k:['manis','sweet','dessert','camilan manis','甜','मीठा'] },
   { id:'food_drink', k:['minum','minuman','es','dingin','drink','beverage','haus','thirsty','喝','पीना'] },
   { id:'food_cheap', k:['murah','hemat','budget','cheap',' Murah','便宜','सस्ता'] },
@@ -105,7 +105,7 @@ const BANK = {
     cry: ['Nangis aja dulu. Nggak usah buru-buru berhenti.', 'Air mata itu bukan tanda lemah. Itu cara badan bilang "udah cukup".'],
     celebrate: ['Yeay! Aku ikut seneng. Ceritain dong momen paling ngenanya.', 'Keren banget! Kamu pantas dapet ini, {name}.', 'Akhirnya! Ini yang bikin semua capek tadi kebayar.'],
     food_ask: ['Boleh. Lagi pengen yang anget, yang seger, atau yang pedes?', 'Mood kamu sekarang nentuin. Kalau lagi capek, aku saranin yang berkuah. Mau?', 'Aku punya beberapa. Yang penting: lagi pengen nyaman atau pengen seru?'],
-    food_spicy: ['Pedas itu pilihan bagus kalau lagi kesel. Ayam palekko atau konro bakar?', 'Oke, pedes. Aku carikan yang bikin keringetan tapi lega.'],
+    food_spicy: ['Pedas bisa bikin lega kalau kepala lagi penuh. Ayam palekko atau konro bakar?', 'Oke, pedes. Aku carikan yang bikin keringetan tapi lega.'],
     food_sweet: ['Manis itu pelukan yang bisa dimakan. Es pisang ijo atau pisang epe?', 'Yang manis dan hangat paling pas. Mau aku pilihin?'],
     food_drink: ['Haus atau cuma pengen ngunyah es? Kalau haus beneran, air dulu.', 'Es pisang ijo atau jus markisa? Dua-duanya seger.'],
     food_cheap: ['Uang tipis bukan alasan nggak enak. Ada yang di bawah 20 ribu.', 'Aku pilihin yang ramah dompet. Mau camilan atau makanan berat?'],
@@ -359,7 +359,11 @@ const ChatEngine = (() => {
 
   function scoreIntent(norm, raw) {
     let best = { id: 'fallback', s: 0 };
+    const wordCount = norm.split(' ').filter(Boolean).length;
+    const specificFood = ['food_spicy', 'food_sweet', 'food_drink', 'food_cheap'];
     for (const it of INTENTS) {
+      /* "tidak/nggak" inside a sentence is negation, not a yes/no answer */
+      if ((it.id === 'yes' || it.id === 'no') && wordCount > 3) continue;
       let s = 0, hits = 0;
       for (const kw of it.k) {
         if (hasKeyword(norm, raw, kw)) {
@@ -369,6 +373,8 @@ const ChatEngine = (() => {
         }
       }
       if (hits > 1) s += Math.min(0.8, (hits - 1) * 0.25);
+      /* a named food preference must beat the generic "want food" intent */
+      if (specificFood.indexOf(it.id) > -1 && s > 0) s += 1.4;
       if (it.id === 'yes' || it.id === 'no') s *= 0.8;
       if (s > best.s) best = { id: it.id, s };
     }

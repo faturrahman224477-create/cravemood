@@ -1,6 +1,6 @@
 {
-  "name": "CraveMood — Makan sesuai moodmu",
-  "short_name": "CraveMood",
+  "name": "CraveMood.id",
+  "short_name": "CraveMood.id",
   "description": "Cimo carikan kuliner Makassar sesuai moodmu. Spinner acak, live chat curhat, suara 5 pilihan.",
   "id": "/cravemood/",
   "start_url": "./",
