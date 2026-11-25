@@ -12,6 +12,9 @@ const MOODLBL = {def:'Cimo', senang:'Senang', sedih:'Sedih', marah:'Marah', cape
 /* supplied full artwork for the angry mood — inlined at build time so the
    share-card canvas can export it on any origin (same trick as the logos) */
 const MARAH_IMG = '/*__MARAH__*/';
+/* frown drawn in SVG because it was erased from the supplied PNG so the
+   talking mouth can replace it cleanly (same pattern as the other moods) */
+const MARAH_FROWN = '<path d="M86 108Q100 98 114 108" fill="none" stroke="#2f2a64" stroke-width="5" stroke-linecap="round"/>';
 let _cu = 0;
 
 function cimo(mood, size, peek, costume, staticMouth) {
@@ -20,13 +23,19 @@ function cimo(mood, size, peek, costume, staticMouth) {
   /* the marah mood uses the complete supplied illustration. A patch + moving
      ellipse sit on top of the printed frown so lip-sync works like the others. */
   if (mood === 'marah') {
+    /* supplied artwork: the side nubs and printed frown were removed from the
+       PNG so the SVG mouth can animate exactly like every other expression. */
     const art = `<image href="${MARAH_IMG}" x="0" y="-6" width="200" height="200" preserveAspectRatio="xMidYMid meet"/>`;
-    const mouths = staticMouth ? '' :
-      `<g class="cmmouth"></g><g class="cmtalkmouth"><ellipse cx="100" cy="104" rx="20" ry="8" fill="#ffac78"/><ellipse cx="100" cy="104" rx="17" ry="5.5" fill="#2f2a64"/><ellipse cx="100" cy="107" rx="8" ry="2.4" fill="#ff8fa8"/></g>`;
+    const mouths = staticMouth
+      ? `<g class="cmmouth">${MARAH_FROWN}</g>`
+      : `<g class="cmmouth">${MARAH_FROWN}</g><g class="cmtalkmouth"><ellipse cx="100" cy="104" rx="10" ry="5.6" fill="#7a2a55"/><ellipse cx="100" cy="107" rx="6" ry="2.4" fill="#ff8fa8"/></g>`;
     if (peek) {
       const cid = 'mp' + (_cu++);
       const hd = cx => `<circle cx="${cx}" cy="139" r="15" fill="#f2864c" stroke="#d96a36" stroke-width="1.6"/><circle cx="${cx - 5}" cy="133" r="3.2" fill="#fff" opacity=".5"/>`;
-      return `<svg viewBox="0 18 200 136" width="${size}" style="overflow:visible" role="img" aria-label="Cimo marah mengintip"><defs><clipPath id="${cid}"><rect x="-10" y="0" width="220" height="138"/></clipPath></defs><g clip-path="url(#${cid})">${art}${mouths}</g>${hd(38)}${hd(162)}</svg>`;
+      /* supplied art is a little larger than the vector moods: scale it down
+         so the peeking head matches the other onboarding expressions */
+      const peekArt = `<g transform="translate(10 24) scale(.9)">${art}${mouths}</g>`;
+      return `<svg viewBox="0 18 200 136" width="${size}" style="overflow:visible" role="img" aria-label="Cimo marah mengintip"><defs><clipPath id="${cid}"><rect x="-10" y="0" width="220" height="138"/></clipPath></defs><g clip-path="url(#${cid})">${peekArt}</g>${hd(38)}${hd(162)}</svg>`;
     }
     return `<svg viewBox="0 0 200 185" width="${size}" role="img" aria-label="Cimo marah">${art}${mouths}</svg>`;
   }
