@@ -71,7 +71,10 @@ function cimo(mood, size, peek, costume) {
     const hd = cx => `<circle cx="${cx}" cy="139" r="15" fill="${a}" stroke="${b}" stroke-width="1.6"/><circle cx="${cx - 5}" cy="133" r="3.2" fill="#fff" opacity=".5"/>`;
     body = `<svg viewBox="0 18 200 142" width="${size}" style="overflow:visible" role="img" aria-label="Cimo mengintip ${mood}">${defs}<g clip-path="url(#${g}c)">${core}</g>${hd(38)}${hd(162)}</svg>`;
   } else {
-    body = `<svg viewBox="0 0 200 185" width="${size}" role="img" aria-label="Cimo ${mood}">${defs}<ellipse cx="100" cy="173" rx="56" ry="7" fill="#3a2142" opacity=".1"/><ellipse cx="78" cy="159" rx="17" ry="9" fill="${b}"/><ellipse cx="122" cy="159" rx="17" ry="9" fill="${b}"/><ellipse cx="32" cy="106" rx="12" ry="14" transform="rotate(-20 32 106)" fill="${a}"/><ellipse cx="168" cy="100" rx="12" ry="14" transform="rotate(20 168 100)" fill="${a}"/>${core}</svg>`;
+    /* feet need a soft outline: on the share card their fill is almost the
+       same colour as the mood-tinted background, so they used to disappear */
+    const foot = cx => `<ellipse cx="${cx}" cy="159" rx="17" ry="9" fill="${b}" stroke="#3a2142" stroke-opacity=".22" stroke-width="2.6"/><ellipse cx="${cx - 4}" cy="156" rx="6" ry="2.6" fill="#fff" opacity=".35"/>`;
+    body = `<svg viewBox="0 0 200 185" width="${size}" role="img" aria-label="Cimo ${mood}">${defs}<ellipse cx="100" cy="173" rx="56" ry="7" fill="#3a2142" opacity=".14"/>${foot(78)}${foot(122)}<ellipse cx="32" cy="106" rx="12" ry="14" transform="rotate(-20 32 106)" fill="${a}"/><ellipse cx="168" cy="100" rx="12" ry="14" transform="rotate(20 168 100)" fill="${a}"/>${core}</svg>`;
   }
   if (!costume) return body;
   // costume overlay

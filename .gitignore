@@ -28,6 +28,8 @@ capacitor.config.json
 
 # --- heavy local build artefacts (videos, prototypes, sound pack sources) ---
 video/
+audio/cimo/_edge_tmp/
+audio/cimo/elevenlabs-backup/
 proto/
 sound/
 shots2/

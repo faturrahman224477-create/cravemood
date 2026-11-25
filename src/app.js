@@ -170,6 +170,9 @@ const NAV = [
   ['recap', 'recap', 'nav_recap'],
   ['cart', 'bag', 'nav_cart'],
 ];
+/* Desktop sidebar stays clean (3 items). Profil comes back as a fourth
+   bottom tab on HP, where there is no sidebar to reach it from. */
+const TABNAV = NAV.concat([['profile', 'user', 'nav_profile']]);
 
 function renderNav() {
   const sb = $('#navlist');
@@ -177,7 +180,7 @@ function renderNav() {
     `<button class="navbtn" data-go="${v}">${icon(ic)}<span>${t(k)}</span>${v === 'cart' ? `<span class="bdg" id="navbadge" style="display:none">0</span>` : ''}</button>`
   ).join('');
   const tb = $('#tabbar');
-  tb.innerHTML = NAV.map(([v, ic, k]) =>
+  tb.innerHTML = TABNAV.map(([v, ic, k]) =>
     `<button data-go="${v}">${icon(ic)}<span>${t(k)}</span>${v === 'cart' ? `<span class="bdg" id="tabbadge" style="display:none">0</span>` : ''}</button>`
   ).join('');
   const s = $('#sidefoot');

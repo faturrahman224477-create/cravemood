@@ -26,19 +26,21 @@ const BASE_RATE = 1.0;
 /* subtle mood colouring only — extreme pitch/rate shifts are what make a
    synthetic voice sound stiff. Gaps are now near-zero: sentences flow. */
 const MOODTONE = {
-  senang: { r: 1.05, p: 1.05, gap: 55 },
-  sedih:  { r: 0.96, p: 0.96, gap: 75 },
-  marah:  { r: 1.03, p: 0.97, gap: 50 },
-  bingung: { r: 1.00, p: 1.02, gap: 65 },
-  capek:  { r: 0.96, p: 0.96, gap: 75 },
-  kecewa: { r: 0.97, p: 0.96, gap: 70 },
-  def:    { r: 1.00, p: 1.00, gap: 55 },
+  senang: { r: 1.04, p: 1.10, gap: 45 },
+  sedih:  { r: 0.96, p: 1.00, gap: 65 },
+  marah:  { r: 1.02, p: 1.02, gap: 45 },
+  bingung: { r: 1.00, p: 1.07, gap: 55 },
+  capek:  { r: 0.96, p: 1.00, gap: 65 },
+  kecewa: { r: 0.97, p: 1.00, gap: 60 },
+  def:    { r: 0.99, p: 1.06, gap: 45 },
 };
 
 const Voice = (() => {
   const synth = window.speechSynthesis || null;
   const LOCALE = { id: 'id-ID', en: 'en-US', zh: 'zh-CN', hi: 'hi-IN' };
   let voices = [], enabled = true, volume = 1, speaking = false, token = 0, currentAudio = null;
+  let actx = null, currentSource = null, irBuffer = null;
+  const bufferCache = new Map();
   const S = { lang: 'id', name: '' };
 
   /* ---- reference voice profile -------------------------------------
@@ -222,7 +224,76 @@ const Voice = (() => {
   /* a touch brighter/faster than the raw render = cuter, more cheerful */
   const CIMO_RATE = 1;
 
-  function playFile(path, rate) {
+  /* ---- soft playback chain -----------------------------------------
+     The recordings are already natural; what made them feel stiff was the
+     raw, click-edged <audio> playback and instant clip-to-clip cuts. Every
+     clip now goes through a gentle 8 kHz low-pass, a small presence lift,
+     a 35 ms fade-in / 90 ms fade-out and a very short room reverb. */
+  function audioCtx() {
+    if (!actx) {
+      const C = window.AudioContext || window.webkitAudioContext;
+      if (!C) return null;
+      try { actx = new C(); } catch (e) { return null; }
+    }
+    if (actx.state === 'suspended') { try { actx.resume(); } catch (e) {} }
+    return actx;
+  }
+  function shortIR(c) {
+    if (irBuffer) return irBuffer;
+    const len = Math.floor(c.sampleRate * 0.22);
+    const b = c.createBuffer(2, len, c.sampleRate);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = b.getChannelData(ch);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.8);
+    }
+    irBuffer = b;
+    return b;
+  }
+  async function decoded(path) {
+    if (bufferCache.has(path)) return bufferCache.get(path);
+    const c = audioCtx(); if (!c) return null;
+    const res = await fetch(assetUrl(path), { cache: 'force-cache' });
+    if (!res.ok) return null;
+    const buf = await c.decodeAudioData(await res.arrayBuffer());
+    bufferCache.set(path, buf);
+    return buf;
+  }
+  function playSoft(path, rate) {
+    const myToken = token;
+    return new Promise(resolve => {
+      let done = false;
+      const fin = v => { if (!done) { done = true; resolve(v); } };
+      (async () => {
+        const c = audioCtx(); if (!c) return fin(false);
+        const buf = await decoded(path); if (!buf || myToken !== token) return fin(false);
+        const rt = rate || 1;
+        const src = c.createBufferSource();
+        src.buffer = buf; src.playbackRate.value = rt;
+        const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 8200;
+        const pk = c.createBiquadFilter(); pk.type = 'peaking'; pk.frequency.value = 2800; pk.Q.value = 0.9; pk.gain.value = 1.6;
+        const env = c.createGain();
+        const wet = c.createGain(); wet.gain.value = 0.085;
+        const conv = c.createConvolver(); conv.buffer = shortIR(c);
+        const t = c.currentTime + 0.02;
+        const total = buf.duration / rt;
+        const top = Math.max(0.0001, Math.min(1, volume) * 0.95);
+        env.gain.setValueAtTime(0.0001, t);
+        env.gain.linearRampToValueAtTime(top, t + 0.035);
+        env.gain.setValueAtTime(top, t + Math.max(0.07, total - 0.09));
+        env.gain.linearRampToValueAtTime(0.0001, t + total);
+        src.connect(lp); lp.connect(pk); pk.connect(env);
+        env.connect(c.destination);
+        env.connect(wet); wet.connect(conv); conv.connect(c.destination);
+        currentSource = src;
+        speaking = true;
+        src.onended = () => { if (currentSource === src) currentSource = null; fin(true); };
+        src.start(t); src.stop(t + total + 0.02);
+        setTimeout(() => fin(true), (total + 0.7) * 1000);
+      })().catch(() => fin(false));
+    });
+  }
+  /* plain <audio> — kept as a fallback for browsers without Web Audio */
+  function playHtml(path, rate) {
     return new Promise(resolve => {
       let done = false;
       const fin = v => { if (!done) { done = true; resolve(v); } };
@@ -238,7 +309,6 @@ const Voice = (() => {
         }
         a.onended = () => { if (currentAudio === a) currentAudio = null; fin(true); };
         a.onerror = () => fin(false);
-        /* never let a stuck player block the next segment */
         a.onloadedmetadata = () => {
           const d = isFinite(a.duration) ? a.duration : 3;
           setTimeout(() => fin(true), (d / rt) * 1000 + 700);
@@ -247,6 +317,9 @@ const Voice = (() => {
         setTimeout(() => fin(true), 20000);
       } catch (e) { fin(false); }
     });
+  }
+  function playFile(path, rate) {
+    return playSoft(path, rate).then(ok => ok ? true : playHtml(path, rate));
   }
   function playClip(file) { return playFile('audio/cimo/' + file, CIMO_RATE); }
 
@@ -277,6 +350,7 @@ const Voice = (() => {
   function stop() {
     token++;
     if (currentAudio) { try { currentAudio.pause(); } catch (e) {} currentAudio = null; }
+    if (currentSource) { try { currentSource.stop(); } catch (e) {} currentSource = null; }
     if (synth) { try { synth.cancel(); } catch (e) {} }
     speaking = false;
   }
@@ -289,7 +363,7 @@ const Voice = (() => {
 
     if (!pack) await loadPack();
     const clip = lookup(text);
-    if (clip) return playClip(clip);
+    if (clip) { stop(); return playClip(clip); }
 
     if (!synth) return Promise.resolve();
 
@@ -317,7 +391,7 @@ const Voice = (() => {
         const isQ = /[?？]$/.test(seg);
         /* let the engine do the prosody; only a gentle lift on questions */
         u.rate = Math.max(0.8, Math.min(1.12, baseRate));
-        u.pitch = Math.max(0.75, Math.min(1.35, basePitch + (isQ ? 0.06 : 0)));
+        u.pitch = Math.max(0.75, Math.min(1.45, basePitch + (isQ ? 0.06 : 0)));
         u.volume = Math.max(0, Math.min(1, volume));
 
         const pause = i >= list.length ? 0 : tone.gap;

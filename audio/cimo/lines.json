@@ -1,8 +1,8 @@
 {
   "lang": "id",
-  "voice": "cgSgspJ2msm6clMCkdW9",
-  "voiceName": "Jessica",
-  "model": "eleven_multilingual_v2",
+  "voice": "id-ID-GadisNeural",
+  "voiceName": "Cimo Gadis (lembut & ceria)",
+  "model": "edge-neural",
   "moods": {
     "senang": {
       "pre": "m_senang_pre.mp3",
@@ -59,5 +59,9 @@
     "saved": "f_saved.mp3",
     "home": "f_greet.mp3",
     "intro": "c_3963dcc00460.mp3"
+  },
+  "settings": {
+    "rate": "-2%",
+    "pitch": "+12Hz"
   }
 }
