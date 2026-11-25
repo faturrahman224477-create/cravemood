@@ -232,8 +232,9 @@ const Voice = (() => {
       .catch(() => {});
   }
 
-  /* a touch brighter/faster than the raw render = cuter, more cheerful */
-  const CIMO_RATE = 1;
+  /* pre-rendered Cimo clips sit ~250 Hz; the Kuon reference is 242 Hz.
+     playing them at 0.97 matches the register and feels calmer/steadier. */
+  const CIMO_RATE = 0.97;
 
   /* ---- soft playback chain -----------------------------------------
      The recordings are already natural; what made them feel stiff was the
@@ -382,12 +383,23 @@ const Voice = (() => {
     speaking = false;
   }
 
-  /* Global speak: every Cimo line in the app ends up here. */
-  function speak(text, opts) {
+  /* Global speak: every Cimo line in the app ends up here.
+     A natural pre-rendered clip wins when the line exists — browser TTS
+     cannot reproduce Cimo's actual voice. Browser speech is the silent
+     fallback for lines that were never recorded. */
+  async function speak(text, opts) {
     opts = opts || {};
-    if (!enabled || !synth) return Promise.resolve();
-    const list = chunks(text);
-    if (!list.length) return Promise.resolve();
+    if (!enabled) return;
+    const clean = cleanSpeech(text);
+    if (!clean) return;
+
+    if (!pack) await loadPack();
+    const clip = lookup(text) || lookup(clean);
+    if (clip) { stop(); return playClip(clip); }
+    if (!synth) return;
+
+    const list = chunks(clean);
+    if (!list.length) return;
 
     /* cancel the old queue before starting a new line — instant, smooth replies */
     stop();
@@ -435,12 +447,40 @@ const Voice = (() => {
   return {
     get supported() { return !!synth; },
     get hasPack() { return !!(lines && lines.moods); },
-    /* mood recommendation — same global voice profile as everywhere else */
-    speakMood(mood, dishId, fallbackText) {
+    /* mood recommendation — natural recording first, browser TTS fallback */
+    async speakMood(mood, dishId, fallbackText) {
+      if (!enabled) return;
+      if (lines && lines.moods && lines.moods[mood]) {
+        const mm = lines.moods[mood], segs = [];
+        if (mm.pre) segs.push(mm.pre);
+        if (dishId && lines.dishes && lines.dishes[dishId]) segs.push(lines.dishes[dishId]);
+        if (mm.post) segs.push(mm.post);
+        if (segs.length) {
+          stop();
+          const my = token;
+          speaking = true;
+          for (const s of segs) {
+            if (my !== token || !enabled) break;
+            await playClip(s);
+          }
+          if (my === token) speaking = false;
+          return;
+        }
+      }
       return speak(fallbackText || FIXED_TEXT.greet, { mood });
     },
-    /* greeting / preview / added / saved / intro — same global profile */
-    speakFixed(key, fallbackText, opts) {
+    /* greeting / preview / added / saved / intro — same natural voice pack */
+    async speakFixed(key, fallbackText, opts) {
+      if (!enabled) return;
+      const f = lines && lines.fixed && lines.fixed[key];
+      if (f) {
+        stop();
+        const my = token;
+        speaking = true;
+        await playClip(f);
+        if (my === token) speaking = false;
+        return;
+      }
       return speak(fallbackText || FIXED_TEXT[key] || FIXED_TEXT.greet, opts);
     },
     get ready() { return !!synth && voices.length > 0; },
