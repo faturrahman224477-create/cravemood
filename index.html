@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
-<meta name="build" content="1795632783852">
+<meta name="build" content="1795634009645">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7FA" media="(prefers-color-scheme: light)">
@@ -1509,7 +1509,15 @@ function cimo(mood, size, peek, costume, staticMouth) {
       const peekArt = `<g transform="translate(10 24) scale(.9)">${art}${mouths}</g>`;
       return `<svg viewBox="0 18 200 136" width="${size}" style="overflow:visible" role="img" aria-label="Cimo marah mengintip"><defs><clipPath id="${cid}"><rect x="-10" y="0" width="220" height="138"/></clipPath></defs><g clip-path="url(#${cid})">${peekArt}</g>${hd(38)}${hd(162)}</svg>`;
     }
-    return `<svg viewBox="0 0 200 185" width="${size}" role="img" aria-label="Cimo marah">${art}${mouths}</svg>`;
+    /* full-size moods: the supplied PNG renders ~10% larger than the vector
+       Cimos and has no ground shadow — scale it and add the same soft shadow
+       so every expression occupies the same footprint */
+    const fullArt = `<g transform="translate(10 24) scale(.9)">${art}</g>`;
+    const fullMouths = staticMouth
+      ? `<g class="cmmouth"><g transform="translate(0 19)">${MARAH_FROWN}</g></g>`
+      : `<g class="cmmouth"><g transform="translate(0 19)">${MARAH_FROWN}</g></g><g class="cmtalkmouth"><ellipse cx="100" cy="123" rx="10" ry="5.6" fill="#7a2a55"/><ellipse cx="100" cy="126" rx="6" ry="2.4" fill="#ff8fa8"/></g>`;
+    const shadow = `<ellipse cx="100" cy="176" rx="56" ry="7" fill="#3a2142" opacity=".14"/>`;
+    return `<svg viewBox="0 0 200 185" width="${size}" role="img" aria-label="Cimo marah">${shadow}${fullArt}${fullMouths}</svg>`;
   }
   const [a, b] = MOODC[mood], g = 'c' + (_cu++), k = '#2f2a6b';
   const eye = (x, ry, py) => {
