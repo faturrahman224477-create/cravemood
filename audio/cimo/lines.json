@@ -1,7 +1,7 @@
 {
   "lang": "id",
   "voice": "id-ID-GadisNeural",
-  "voiceName": "Cimo Gadis (lembut & ceria)",
+  "voiceName": "Cimo Gadis (ceria & hangat)",
   "model": "edge-neural",
   "moods": {
     "senang": {
@@ -61,7 +61,7 @@
     "intro": "c_3963dcc00460.mp3"
   },
   "settings": {
-    "rate": "-2%",
+    "rate": "+10%",
     "pitch": "+12Hz"
   }
 }

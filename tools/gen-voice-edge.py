@@ -21,12 +21,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "audio" / "cimo"
 BACKUP = OUT / "elevenlabs-backup"
-TMP = OUT / "_edge_tmp"
+TMP = OUT / "_edge_tmp_10_12"   # unique per setting pair — never reuse stale clips
 DRY = "--dry" in sys.argv
 
-VOICE = "id-ID-GADS"  # replaced below with the full short name
 VOICE = "id-ID-GadisNeural"   # young, friendly, positive Indonesian female
-RATE = "-2%"                  # unhurried, never rushed
+RATE = "+10%"                 # lively, cheerful, never sluggish
 PITCH = "+12Hz"               # a little brighter / cuter, still natural
 
 MOOD_LINES = {
@@ -87,6 +86,17 @@ def dish_names():
 
 
 def jobs():
+    # the explicit list is the source of truth: one filename per line
+    lst = OUT / "render-list.txt"
+    if lst.exists():
+        out = []
+        for line in lst.read_text(encoding="utf-8").splitlines():
+            if not line.strip() or line.lstrip().startswith("#") or "\t" not in line:
+                continue
+            name, text = line.split("\t", 1)
+            out.append((name.strip(), text.strip()))
+        if out:
+            return out
     manifest = json.loads((OUT / "manifest.json").read_text(encoding="utf-8"))
     lines = json.loads((OUT / "lines.json").read_text(encoding="utf-8"))
     chat = chat_lines()
@@ -186,7 +196,7 @@ def main():
 
     lines_path = OUT / "lines.json"
     lines = json.loads(lines_path.read_text(encoding="utf-8"))
-    lines["voiceName"] = "Cimo Gadis (lembut & ceria)"
+    lines["voiceName"] = "Cimo Gadis (ceria & hangat)"
     lines["voice"] = VOICE
     lines["model"] = "edge-neural"
     lines["settings"] = {"rate": RATE, "pitch": PITCH}

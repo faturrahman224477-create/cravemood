@@ -9,6 +9,8 @@
    tempo aligned, and can be replayed in settings. */
 
 const CIMO_CLIP = 'audio/cimo/cimo-voice.mp3';
+/* every Cimo line is pre-rendered — browser TTS is never used at runtime */
+const USE_BROWSER_TTS = false;
 
 /* the host gate also guards sub-resources, so carry the share code along */
 function assetUrl(path) {
@@ -232,9 +234,8 @@ const Voice = (() => {
       .catch(() => {});
   }
 
-  /* pre-rendered Cimo clips sit ~250 Hz; the Kuon reference is 242 Hz.
-     playing them at 0.97 matches the register and feels calmer/steadier. */
-  const CIMO_RATE = 0.97;
+  /* clips are already rendered at rate +10% / pitch +12Hz — play as-is */
+  const CIMO_RATE = 1;
 
   /* ---- soft playback chain -----------------------------------------
      The recordings are already natural; what made them feel stiff was the
@@ -396,7 +397,9 @@ const Voice = (() => {
     if (!pack) await loadPack();
     const clip = lookup(text) || lookup(clean);
     if (clip) { stop(); return playClip(clip); }
-    if (!synth) return;
+    /* no recording for this line: stay silent instead of dropping into the
+       stiff browser voice — the pack is meant to be the only spoken voice */
+    if (!synth || !USE_BROWSER_TTS) return;
 
     const list = chunks(clean);
     if (!list.length) return;

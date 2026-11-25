@@ -1,0 +1,146 @@
+# Render setiap baris dengan voice Kuon (Cheerful, Clear and Steady)
+# setting sesuai nama file sampel: stability 50, similarity 75, versi v4
+# (pakai voice Kuon - Cheerful, Clear and Steady, gaya ceria & santai)
+# Simpan MP3 dengan NAMA FILE persis di kolom pertama, lalu kirim ZIP-nya.
+
+c_036dfb29699c.mp3	Hai! Aku kangen. Gimana hari ini?
+c_4d475e081dbb.mp3	Halo kamu. Akhirnya muncul juga. Lagi apa?
+c_0f450d4f0ba1.mp3	Sini duduk. Cerita dong hari ini gimana.
+c_79b49296fa8a.mp3	Aku selalu oke kalau kamu mau cerita. Kamu sendiri gimana?
+c_019ff1ebb82f.mp3	Baik, apalagi kalau kamu mampir. Kamu gimana hari ini?
+c_e2e77c598193.mp3	Lagi seneng, soalnya kamu dateng. Kamu gimana?
+c_5728448c50e6.mp3	Aku Cimo. Temenmu yang suka nyari makanan sesuai mood. Kamu siapa?
+c_9b96556690cf.mp3	Cimo. Bukan chef, bukan dokter, cuma yang dengerin. Kamu siapa namanya?
+c_499898a3644f.mp3	Siap. Nama bagus. Sekarang cerita, hari ini gimana perasaanmu?
+c_22112b93aff4.mp3	Oke. Aku catat ya. Lagi mood apa sekarang?
+c_97a9a2a7d6b7.mp3	Capek yang kayak gimana? Yang badan pegel, atau yang kepala penuh?
+c_9c92992affb3.mp3	Kamu udah jalan sejauh ini. Nggak apa-apa berhenti bentar. Capeknya lebih ke fisik atau pikiran?
+c_6acd9734ebeb.mp3	Kalau capek, jangan dipaksa jalan terus. Tidur, atau makan yang anget dulu?
+c_edaf7e4fc577.mp3	Berat ya. Nggak semua hal harus kamu rapihin hari ini, kok.
+c_6cd8dcea0983.mp3	Aku dengerin. Nggak buru-buru, ceritain pelan-pelan aja.
+c_e4cdd4a30de6.mp3	Kesedihannya lebih ke orangnya, atau ke perasaannya sendiri?
+c_61776893c623.mp3	Kesal itu wajar. Kamu nggak harus langsung baik-baik aja.
+c_4ba033d8745e.mp3	Oke, marahnya sah. Yang bikin kesal paling nusuk bagian mana?
+c_20d05ea631d9.mp3	Tarik napas dulu. Aku di sini, bukan buat nyuruh kamu sabar.
+c_987109bb392e.mp3	Kepala kamu lagi muter ke mana aja? Coba tulis yang paling kamu takutin.
+c_e1395f867102.mp3	Cemas itu tanda kamu peduli. Tapi kamu nggak harus nyelesaiin semuanya malam ini.
+c_b49acb6baec1.mp3	Yang bikin deg-degan itu skenarionya, atau kemungkinan gagalnya?
+c_e6a91a5ba5b7.mp3	Sepi itu nggak selalu berarti sendirian, ya. Aku di sini, walau cuma lewat layar.
+c_c978e7e3700c.mp3	Kalau lagi sepi, biasanya yang paling kamu kangen apa?
+c_9083637e8e96.mp3	Aku nggak bisa dateng, tapi aku bisa dengerin sampai kamu lega.
+c_ad13b68a3758.mp3	Hampa itu capek, karena nggak ada yang bisa ditunjuk. Kamu nggak aneh.
+c_3a4dd3259d6b.mp3	Kalau kosong, kita nggak perlu isi pake hal besar. Cukup satu hal kecil hari ini.
+c_c4ee4a2d00d5.mp3	Bosan itu sinyal butuh sesuatu yang baru. Mau aku puterin roda makanan?
+c_2db0e292c6d5.mp3	Gabut ya. Coba cerita satu hal random yang kamu pikirin tadi.
+c_6f634d869aa3.mp3	Kamu lagi pikul banyak sekaligus. Nggak semua harus selesai hari ini.
+c_b24e6824f649.mp3	Coba sebut satu hal yang paling bikin penuh kepalamu sekarang.
+c_6e59c3b67305.mp3	Berat banget kedengerannya. Kamu udah istirahat belum hari ini?
+c_396a14d21fc4.mp3	Gagal bukan berarti selesai. Kamu masih di sini, itu bukti.
+c_5fc5c4ee0ade.mp3	Yang gagal itu usahanya, bukan kamu. Bedanya besar.
+c_01604e2593c0.mp3	Kalau boleh tahu, bagian mana yang paling bikin nyesek?
+c_6203dfa32f9d.mp3	Urusan hati memang nggak pernah rapi. Ceritain dari awal, aku dengerin.
+c_f471689709e9.mp3	Kamu yang lebih sayang, atau kamu yang lebih takut kehilangan?
+c_07f43439d71f.mp3	Kalau dia nggak bisa jadi tempat pulang, kamu tetap pantas pulang ke diri sendiri.
+c_63328dc80e57.mp3	Kerjaan bisa ngabisin energi lebih dari yang kelihatan. Kamu lagi capek di bagian mana?
+c_d267eda19c1c.mp3	Kalau kerjaan yang bikin berat, biasanya bukan tugasnya, tapi orangnya. Bener nggak?
+c_1b3101188d76.mp3	Kamu kerja buat hidup, bukan hidup buat kerja. Tapi hari ini berat, ya?
+c_636b2668ac32.mp3	Tugas numpuk itu bikin otak penuh. Satu-satu aja, mulai yang paling kecil.
+c_00e0b0049f9f.mp3	Kamu takut gagal, atau takut dianggap gagal?
+c_7ca7a661749e.mp3	Belajar boleh, tapi jangan sampai kamu lupa makan.
+c_95fcce033d80.mp3	Soal uang itu bikin kepala panas, karena nyangkut ke rasa aman.
+c_96502c33a553.mp3	Kamu lagi butuh solusi cepat, atau cuma butuh cerita dulu?
+c_c3ef051b8c91.mp3	Nggak apa-apa lagi susah. Banyak orang juga pernah di titik ini.
+c_37357dced739.mp3	Keluarga itu rumit, karena nggak bisa dipilih tapi tetap sayang.
+c_8c6862f55088.mp3	Yang paling bikin berat: omongannya, atau ekspektasinya?
+c_2be873a21344.mp3	Kamu boleh sayang mereka dan tetap punya batas. Dua-duanya sah.
+c_d5d12e407021.mp3	Pertemanan yang bikin capek itu juga perlu dijaga jaraknya.
+c_9ad480d27e0d.mp3	Kamu ngerasa dijauhin, atau cuma beda ritme aja?
+c_7fccabc45a5f.mp3	Kamu nggak harus ngejar orang yang nggak balik ngejar kamu.
+c_ab12bd0fbec8.mp3	Kalau badan yang ngomong, biasanya harus didengerin. Udah minum air belum?
+c_1ae97432c56a.mp3	Sakit itu bukan kelemahan. Kamu udah istirahat belum?
+c_99933b545526.mp3	Yang paling ganggu apa, nyerinya atau capeknya?
+c_f0d61d1ed569.mp3	Kamu nggak harus jadi versi sempurna buat dihargai.
+c_02bf9e8ce345.mp3	Yang bilang kamu kurang itu siapa? Sering-seringnya suara sendiri, kan?
+c_e47d4e0725f5.mp3	Kamu udah lewatin hal-hal yang dulu kamu kira nggak bisa. Itu nyata.
+c_98a8f27bd8de.mp3	Datang sini. *peluk lama* Kamu nggak harus ngomong apa-apa.
+c_0a3d66b9f361.mp3	Aku peluk dari sini. Anggap aja lengannya beneran ada.
+c_264ae72ae199.mp3	Nangis aja dulu. Nggak usah buru-buru berhenti.
+c_099ac456cf3b.mp3	Air mata itu bukan tanda lemah. Itu cara badan bilang "udah cukup".
+c_7ce1235de63e.mp3	Yeay! Aku ikut seneng. Ceritain dong momen paling ngenanya.
+c_3d26cd585f9b.mp3	Keren banget! Kamu pantas dapet ini.
+c_a66b1ed685f5.mp3	Akhirnya! Ini yang bikin semua capek tadi kebayar.
+c_70f25898de75.mp3	Boleh. Lagi pengen yang anget, yang seger, atau yang pedes?
+c_c22c23a7387b.mp3	Mood kamu sekarang nentuin. Kalau lagi capek, aku saranin yang berkuah. Mau?
+c_1f7bb6077539.mp3	Aku punya beberapa. Yang penting: lagi pengen nyaman atau pengen seru?
+c_8bab9e441965.mp3	Pedas itu pilihan bagus kalau lagi kesel. Ayam palekko atau konro bakar?
+c_cf11d4711de8.mp3	Oke, pedes. Aku carikan yang bikin keringetan tapi lega.
+c_dc05785c31ad.mp3	Manis itu pelukan yang bisa dimakan. Es pisang ijo atau pisang epe?
+c_7e4b351c7ddd.mp3	Yang manis dan hangat paling pas. Mau aku pilihin?
+c_3442f1a11dba.mp3	Haus atau cuma pengen ngunyah es? Kalau haus beneran, air dulu.
+c_751ce206f5e0.mp3	Es pisang ijo atau jus markisa? Dua-duanya seger.
+c_bb2921cbe3e4.mp3	Uang tipis bukan alasan nggak enak. Ada yang di bawah 20 ribu.
+c_daa083a17ffc.mp3	Aku pilihin yang ramah dompet. Mau camilan atau makanan berat?
+c_2244d5960bcb.mp3	Sama-sama. Kapan pun kamu butuh, aku ada.
+c_5d4da3a8d9a4.mp3	Nggak usah makasih. Itu udah tugas aku.
+c_588e41368725.mp3	Nggak perlu minta maaf ke aku. Kamu lagi belajar, itu normal.
+c_3b4a5e70987e.mp3	Dadah. Jangan lupa makan ya.
+c_453fec39addb.mp3	Oke, aku di sini kalau kamu balik. Hati-hati.
+c_ed9a93f614b0.mp3	Aku tanya ke nasi goreng: "kamu kenapa selalu ada di saat genting?" Dia jawab: "karena aku digoreng, bukan dipilih."
+c_56179d44591c.mp3	Kenapa coto nggak pernah bohong? Karena kuahnya selalu bening.
+c_ac581e2cfbbf.mp3	Kalau aku jadi kamu: pilih yang bikin kamu tenang besok pagi, bukan yang bikin lega 5 menit.
+c_b3165bfccde2.mp3	Coba kecilin pertanyaannya. Bukan "harus gimana", tapi "satu langkah kecil hari ini apa".
+c_4ba32a5b5589.mp3	Kadang nggak ada alasan yang rapi. Dan itu nggak bikin perasaanmu kurang nyata.
+c_8f8faba8131b.mp3	Terus? Aku masih dengerin.
+c_0f3a02941fa5.mp3	Lanjut. Bagian itu yang paling penting, kayaknya.
+c_9669b16c18cd.mp3	Oke. Terus gimana rasanya setelah itu?
+c_f9f434b024b8.mp3	Hmm, aku ngerti. Lalu kamu maunya gimana?
+c_6ab4c1c1d74c.mp3	Nggak apa-apa. Kita nggak harus sepakat. Yang penting kamu aman.
+c_10aaa3e90712.mp3	Kamu yang bikin aku kelihatan baik. Serius.
+c_fe6a7e056328.mp3	Aku nggak marah. Tapi kayaknya kamu lagi kesal sama sesuatu yang lain, ya?
+c_282e7fc88ba6.mp3	Bisa. Mau bahasa apa? Indonesia, English, 中文, atau हिन्दी?
+c_a3dd2493270d.mp3	Aku belum yakin nangkep maksudnya. Coba cerita satu kalimat lagi?
+c_33f85455b072.mp3	Hmm, aku pengen ngerti beneran. Bagian mana yang paling pengen kamu omongin?
+c_bfe4b16019b9.mp3	Oke, aku dengerin. Lanjut aja, nggak usah rapi.
+c_3963dcc00460.mp3	Aku cimo aku bantu pilihin makanan sesuai perasaanmu hari ini
+m_senang_pre.mp3	Wah, kamu lagi senang ya! Coba yang manis dan segar,
+m_senang_post.mp3	bisa jadi pilihan.
+m_sedih_pre.mp3	Kamu lagi sedih ya? Peluk dulu. Coba yang hangat dan berkuah,
+m_sedih_post.mp3	misalnya.
+m_marah_pre.mp3	Kamu lagi kesal ya? Tarik napas dulu. Coba yang pedas biar lega,
+m_marah_post.mp3	salah satunya.
+m_bingung_pre.mp3	Bingung mau makan apa? Aku pilihin yang aman, mulai dari
+f_greet.mp3	Hai, aku Cimo. Lagi mood apa hari ini?
+f_preview.mp3	Hai, aku Cimo. Kalau kamu lagi capek, cerita aja. Aku dengerin sampai selesai.
+f_added.mp3	Sudah masuk keranjang.
+f_saved.mp3	Tersimpan.
+d_coto.mp3	Coto Makassar
+d_konro.mp3	Sup Konro
+d_saudara.mp3	Sop Saudara
+d_pallubasa.mp3	Pallubasa
+d_bakso.mp3	Bakso Urat Spesial
+d_palekko.mp3	Ayam Palekko
+d_dabu.mp3	Ikan Bakar Dabu-dabu
+d_konrobakar.mp3	Konro Bakar Pedas
+d_geprek.mp3	Ayam Geprek Level 3
+d_taichan.mp3	Sate Taichan
+d_nasi.mp3	Nasi Goreng Kampung
+d_naskun.mp3	Nasi Kuning Makassar
+d_campur.mp3	Nasi Campur
+d_mititi.mp3	Mie Titi
+d_mikering.mp3	Mie Kering Spesial
+d_jalang.mp3	Jalangkote
+d_pisangepe.mp3	Pisang Epe
+d_pisanggoreng.mp3	Pisang Goreng Keju
+d_barongko.mp3	Barongko
+d_lapis.mp3	Kue Lapis Makassar
+d_terbul.mp3	Terang Bulan Cokelat
+d_roti.mp3	Roti Bakar Srikaya
+d_espijo.mp3	Es Pisang Ijo
+d_espallu.mp3	Es Pallu Butung
+d_markisa.mp3	Jus Markisa Segar
+d_kelapa.mp3	Es Kelapa Muda
+d_kopi.mp3	Kopi Susu Gula Aren
+d_teh.mp3	Teh Tarik Hangat
+d_airjeruk.mp3	Air Jeruk Hangat
+d_bubur.mp3	Bubur Ayam Spesial
+cimo-voice.mp3	Hai, aku Cimo. Temanmu yang suka nyari makanan sesuai mood kamu.

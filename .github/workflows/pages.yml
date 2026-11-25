@@ -57,7 +57,7 @@ jobs:
           cp index.html build.json manifest.json sw.js _site/
           [ -d audio ] && cp -r audio _site/
           # local generator artefacts - never publish the old/new raw packs
-          rm -rf _site/audio/cimo/_edge_tmp _site/audio/cimo/elevenlabs-backup
+          rm -rf _site/audio/cimo/_edge_tmp _site/audio/cimo/_edge_tmp_10_12 _site/audio/cimo/elevenlabs-backup
           for f in cravemood-logo.png favicon.png favicon-16.png favicon-64.png apple-touch-icon.png \
                    cravemood-share-logo.png cravemood-ob-logo.png \
                    icon-192.png icon-512.png icon-maskable-512.png gopay-logo.png qr-app.png; do
