@@ -1316,3 +1316,17 @@ body.voice-talking .avatar-lg .cmtalkmouth{opacity:1;animation:cmLip .19s ease-i
 @media(prefers-reduced-motion:reduce){
   body.voice-talking .cmtalkmouth{animation:none;opacity:1}
 }
+
+/* ===== penyesuaian tampilan HP terakhir ===== */
+@media(max-width:980px){
+  /* cartbar turun sedikit, masih ada jarak dengan tabbar */
+  .cartbar{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+  body:has(.cartbar.on) main{padding-bottom:230px}
+  /* balon teks lebih ringkas, tidak memenuhi layar */
+  .saybubble{max-width:92%;padding:11px 14px;font-size:.84rem;line-height:1.4}
+  /* tombol mood & Cimo utama sedikit lebih besar */
+  .mpill .mf{width:56px;height:56px}
+  .mpill .mf svg{width:54px}
+  .mpill b{font-size:.76rem}
+  .bigcimo{width:min(230px,64vw)}
+}

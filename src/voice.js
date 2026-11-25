@@ -234,8 +234,8 @@ const Voice = (() => {
       .catch(() => {});
   }
 
-  /* clips are already rendered at rate +10% / pitch +12Hz — play as-is */
-  const CIMO_RATE = 1;
+  /* light extra lift on top of the +10% render: brisk, clear, never dragged */
+  const CIMO_RATE = 1.08;
 
   /* ---- soft playback chain -----------------------------------------
      The recordings are already natural; what made them feel stiff was the
@@ -280,19 +280,29 @@ const Voice = (() => {
         const c = audioCtx(); if (!c) return fin(false);
         const buf = await decoded(path); if (!buf || myToken !== token) return fin(false);
         const rt = rate || 1;
+        /* cut the silent head/tail that made every reply feel slow */
+        const raw = buf.getChannelData(0);
+        const step = Math.max(1, Math.floor(raw.length / 8000));
+        let first = 0, last = raw.length - 1;
+        while (first < raw.length && Math.abs(raw[first]) < 0.012) first += step;
+        while (last > first && Math.abs(raw[last]) < 0.012) last -= step;
+        const offset = Math.max(0, first / buf.sampleRate - 0.015);
+        const end = Math.min(buf.duration, last / buf.sampleRate + 0.015);
+        const span = Math.max(0.25, end - offset);
+
         const src = c.createBufferSource();
         src.buffer = buf; src.playbackRate.value = rt;
-        const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 8200;
-        const pk = c.createBiquadFilter(); pk.type = 'peaking'; pk.frequency.value = 2800; pk.Q.value = 0.9; pk.gain.value = 1.6;
+        const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 12000;
+        const pk = c.createBiquadFilter(); pk.type = 'peaking'; pk.frequency.value = 2800; pk.Q.value = 0.9; pk.gain.value = 1;
         const env = c.createGain();
-        const wet = c.createGain(); wet.gain.value = 0.085;
+        const wet = c.createGain(); wet.gain.value = 0.035;
         const conv = c.createConvolver(); conv.buffer = shortIR(c);
-        const t = c.currentTime + 0.02;
-        const total = buf.duration / rt;
+        const t = c.currentTime + 0.015;
+        const total = span / rt;
         const top = Math.max(0.0001, Math.min(1, volume) * 0.95);
         env.gain.setValueAtTime(0.0001, t);
-        env.gain.linearRampToValueAtTime(top, t + 0.035);
-        env.gain.setValueAtTime(top, t + Math.max(0.07, total - 0.09));
+        env.gain.linearRampToValueAtTime(top, t + 0.018);
+        env.gain.setValueAtTime(top, t + Math.max(0.05, total - 0.045));
         env.gain.linearRampToValueAtTime(0.0001, t + total);
         src.connect(lp); lp.connect(pk); pk.connect(env);
         env.connect(c.destination);
@@ -300,7 +310,7 @@ const Voice = (() => {
         currentSource = src;
         speaking = true;
         src.onended = () => { if (currentSource === src) currentSource = null; fin(true); };
-        src.start(t); src.stop(t + total + 0.02);
+        src.start(t, offset, span); src.stop(t + total + 0.02);
         setTimeout(() => fin(true), (total + 0.7) * 1000);
       })().catch(() => fin(false));
     });
