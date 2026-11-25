@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
-<meta name="build" content="1795620348872">
+<meta name="build" content="1795621016096">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7FA" media="(prefers-color-scheme: light)">
@@ -2975,22 +2975,24 @@ const SFX = (() => {
     if (ctx.state === 'suspended') ctx.resume();
     return ctx;
   }
-  function tone(freq, dur, type, gain, slideTo) {
+  function tone(freq, dur, type, gain, slideTo, delay) {
     const c = ac(); if (!c) return;
+    const t0 = c.currentTime + (delay || 0);
     const o = c.createOscillator(), g = c.createGain();
     o.type = type || 'sine';
-    o.frequency.setValueAtTime(freq, c.currentTime);
-    if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, c.currentTime + dur);
-    g.gain.setValueAtTime(0.0001, c.currentTime);
-    g.gain.exponentialRampToValueAtTime(gain || 0.16, c.currentTime + 0.012);
-    g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + dur);
+    o.frequency.setValueAtTime(freq, t0);
+    if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(gain || 0.16, t0 + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
     o.connect(g); g.connect(c.destination);
-    o.start(); o.stop(c.currentTime + dur + 0.02);
+    o.start(t0); o.stop(t0 + dur + 0.02);
   }
   const lib = {
     add() { tone(660, .09, 'triangle', .16, 1180); setTimeout(() => tone(1320, .07, 'sine', .09), 55); },
     remove() { tone(420, .1, 'triangle', .13, 260); },
-    tap() { tone(880, .045, 'sine', .07); },
+    /* happy little two-note pluck: G5 → C6 + a soft E6 sparkle */
+    tap() { tone(784, .055, 'triangle', .075, 1046); tone(1318, .05, 'sine', .032, null, .028); },
     pop() { tone(520, .07, 'sine', .12, 900); },
     success() { [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => tone(f, .16, 'sine', .11), i * 80)); },
     tick() { tone(1400, .03, 'square', .05); },
@@ -5050,7 +5052,7 @@ function obRender() {
   /* ---- 2. kenalan (name) ---- */
   if (obStep === 2) {
     o.innerHTML = `<div class="box">
-      <div class="cimo">${cimo('def', 168)}</div>
+      <div class="cimo">${cimo('def', 168, true)}</div>
       <div class="sheetbox">
         <h2 style="font-size:1.3rem;line-height:1.25">${t('kenalan_t')}</h2>
         <div class="field" style="margin-top:14px"><label>${t('reg_name')}</label>
@@ -5082,7 +5084,7 @@ function obRender() {
   if (obStep === 4) {
     const CM = ['def','senang','sedih','marah','bingung'];
     o.innerHTML = `<div class="box">
-      <div class="cimo" id="meetHero">${cimo(obMeetSel, 132)}</div>
+      <div class="cimo" id="meetHero">${cimo(obMeetSel, 132, true)}</div>
       <div class="sheetbox">
         <h2 style="font-size:1.3rem;line-height:1.25">${t('meet_t')}</h2>
         <p class="sub">${t('meet_sub')}</p>
@@ -5101,7 +5103,7 @@ function obRender() {
         const d = $('#meetDesc');
         if (d) d.innerHTML = `<b>${esc(t('meet_'+obMeetSel))}</b> ${esc(t('meet_desc_'+obMeetSel))}`;
         const hero = $('#meetHero');
-        if (hero) hero.innerHTML = cimo(obMeetSel, 132);
+        if (hero) hero.innerHTML = cimo(obMeetSel, 132, true);
       };
       el.onclick = pick;
       el.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } };
@@ -5113,7 +5115,7 @@ function obRender() {
   /* ---- 3. masuk / daftar ---- */
   const isLogin = obMode === 'login';
   o.innerHTML = `<div class="box">
-    <div class="cimo">${cimo('def', 138)}</div>
+    <div class="cimo">${cimo('def', 138, true)}</div>
     <div class="sheetbox">
       <div class="obtabs">
         <button data-obmode="login" class="${isLogin ? 'on' : ''}">${t('tab_masuk')}</button>

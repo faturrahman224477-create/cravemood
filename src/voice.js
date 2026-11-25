@@ -526,22 +526,24 @@ const SFX = (() => {
     if (ctx.state === 'suspended') ctx.resume();
     return ctx;
   }
-  function tone(freq, dur, type, gain, slideTo) {
+  function tone(freq, dur, type, gain, slideTo, delay) {
     const c = ac(); if (!c) return;
+    const t0 = c.currentTime + (delay || 0);
     const o = c.createOscillator(), g = c.createGain();
     o.type = type || 'sine';
-    o.frequency.setValueAtTime(freq, c.currentTime);
-    if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, c.currentTime + dur);
-    g.gain.setValueAtTime(0.0001, c.currentTime);
-    g.gain.exponentialRampToValueAtTime(gain || 0.16, c.currentTime + 0.012);
-    g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + dur);
+    o.frequency.setValueAtTime(freq, t0);
+    if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(gain || 0.16, t0 + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
     o.connect(g); g.connect(c.destination);
-    o.start(); o.stop(c.currentTime + dur + 0.02);
+    o.start(t0); o.stop(t0 + dur + 0.02);
   }
   const lib = {
     add() { tone(660, .09, 'triangle', .16, 1180); setTimeout(() => tone(1320, .07, 'sine', .09), 55); },
     remove() { tone(420, .1, 'triangle', .13, 260); },
-    tap() { tone(880, .045, 'sine', .07); },
+    /* happy little two-note pluck: G5 → C6 + a soft E6 sparkle */
+    tap() { tone(784, .055, 'triangle', .075, 1046); tone(1318, .05, 'sine', .032, null, .028); },
     pop() { tone(520, .07, 'sine', .12, 900); },
     success() { [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => tone(f, .16, 'sine', .11), i * 80)); },
     tick() { tone(1400, .03, 'square', .05); },

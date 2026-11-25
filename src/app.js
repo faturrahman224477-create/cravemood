@@ -1390,7 +1390,7 @@ function obRender() {
   /* ---- 2. kenalan (name) ---- */
   if (obStep === 2) {
     o.innerHTML = `<div class="box">
-      <div class="cimo">${cimo('def', 168)}</div>
+      <div class="cimo">${cimo('def', 168, true)}</div>
       <div class="sheetbox">
         <h2 style="font-size:1.3rem;line-height:1.25">${t('kenalan_t')}</h2>
         <div class="field" style="margin-top:14px"><label>${t('reg_name')}</label>
@@ -1422,7 +1422,7 @@ function obRender() {
   if (obStep === 4) {
     const CM = ['def','senang','sedih','marah','bingung'];
     o.innerHTML = `<div class="box">
-      <div class="cimo" id="meetHero">${cimo(obMeetSel, 132)}</div>
+      <div class="cimo" id="meetHero">${cimo(obMeetSel, 132, true)}</div>
       <div class="sheetbox">
         <h2 style="font-size:1.3rem;line-height:1.25">${t('meet_t')}</h2>
         <p class="sub">${t('meet_sub')}</p>
@@ -1441,7 +1441,7 @@ function obRender() {
         const d = $('#meetDesc');
         if (d) d.innerHTML = `<b>${esc(t('meet_'+obMeetSel))}</b> ${esc(t('meet_desc_'+obMeetSel))}`;
         const hero = $('#meetHero');
-        if (hero) hero.innerHTML = cimo(obMeetSel, 132);
+        if (hero) hero.innerHTML = cimo(obMeetSel, 132, true);
       };
       el.onclick = pick;
       el.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } };
@@ -1453,7 +1453,7 @@ function obRender() {
   /* ---- 3. masuk / daftar ---- */
   const isLogin = obMode === 'login';
   o.innerHTML = `<div class="box">
-    <div class="cimo">${cimo('def', 138)}</div>
+    <div class="cimo">${cimo('def', 138, true)}</div>
     <div class="sheetbox">
       <div class="obtabs">
         <button data-obmode="login" class="${isLogin ? 'on' : ''}">${t('tab_masuk')}</button>
