@@ -966,8 +966,9 @@ async function buildShareCard() {
   /* brand (real logo) + mood */
   x.textAlign = 'center';
   try {
-    const logo = await loadImgSafe('cravemood-logo.png');
-    const lw = 220, lh = Math.round(lw * logo.height / logo.width);
+    /* kartu bagikan memakai logo versi baru (tanpa tagline), lebih pas di atas mood */
+    const logo = await loadImgSafe('cravemood-share-logo.png');
+    const lw = 250, lh = Math.round(lw * logo.height / logo.width);
     x.drawImage(logo, W / 2 - lw / 2, CY + 24, lw, lh);
   } catch (e) {
     x.fillStyle = '#3a2142';
@@ -1056,9 +1057,12 @@ function loadImg(src) {
 }
 /* Canvas-safe image: a blob URL never taints the canvas, even on file:// */
 const INLINE_LOGO = '/*__LOGO__*/';
+const INLINE_SHARE_LOGO = '/*__SHARE_LOGO__*/';
 async function loadImgSafe(src) {
-  if (src === 'cravemood-logo.png' && INLINE_LOGO.indexOf('data:image') === 0) {
-    try { return await loadImg(INLINE_LOGO); } catch (e) {}
+  const inline = src === 'cravemood-logo.png' ? INLINE_LOGO
+               : src === 'cravemood-share-logo.png' ? INLINE_SHARE_LOGO : '';
+  if (inline.indexOf('data:image') === 0) {
+    try { return await loadImg(inline); } catch (e) {}
   }
   if (/^https?:$/.test(location.protocol)) {
     try {

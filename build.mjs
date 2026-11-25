@@ -19,6 +19,8 @@ function bundle(template, files, out) {
   try {
     const b64 = r('logo-inline.txt').trim();
     html = html.replace('/*__LOGO__*/', () => 'data:image/png;base64,' + b64);
+    const sb64 = r('share-logo-inline.txt').trim();
+    html = html.replace('/*__SHARE_LOGO__*/', () => 'data:image/png;base64,' + sb64);
   } catch (e) {}
   html = html.replace('<head>', `<head>\n<meta name="build" content="${BUILD}">`);
   writeFileSync(join(root, out), html, 'utf8');
