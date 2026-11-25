@@ -21,6 +21,8 @@ function bundle(template, files, out) {
     html = html.replace('/*__LOGO__*/', () => 'data:image/png;base64,' + b64);
     const sb64 = r('share-logo-inline.txt').trim();
     html = html.replace('/*__SHARE_LOGO__*/', () => 'data:image/png;base64,' + sb64);
+    const mb64 = r('marah-inline.txt').trim();
+    html = html.replace('/*__MARAH__*/', () => 'data:image/png;base64,' + mb64);
   } catch (e) {}
   html = html.replace('<head>', `<head>\n<meta name="build" content="${BUILD}">`);
   writeFileSync(join(root, out), html, 'utf8');

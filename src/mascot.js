@@ -9,11 +9,22 @@ const MOODC = {
   bingung:['#9fead0', '#68cdaa'],
 };
 const MOODLBL = {def:'Cimo', senang:'Senang', sedih:'Sedih', marah:'Marah', capek:'Capek', kecewa:'Kecewa', bingung:'Bingung'};
+/* supplied full artwork for the angry mood — inlined at build time so the
+   share-card canvas can export it on any origin (same trick as the logos) */
+const MARAH_IMG = '/*__MARAH__*/';
 let _cu = 0;
 
 function cimo(mood, size, peek, costume, staticMouth) {
   mood = MOODC[mood] ? mood : 'def';
   size = size || 120;
+  /* the marah mood uses the complete supplied illustration instead of the
+     vector mascot. Empty mouth groups keep the lip-sync CSS selectors valid. */
+  if (mood === 'marah') {
+    const art = `<image href="${MARAH_IMG}" x="0" y="-6" width="200" height="200" preserveAspectRatio="xMidYMid meet"/>`;
+    const mouths = staticMouth ? '' : '<g class="cmmouth"></g><g class="cmtalkmouth"></g>';
+    if (peek) return `<svg viewBox="0 18 200 136" width="${size}" style="overflow:visible" role="img" aria-label="Cimo marah mengintip">${art}${mouths}</svg>`;
+    return `<svg viewBox="0 0 200 185" width="${size}" role="img" aria-label="Cimo marah">${art}${mouths}</svg>`;
+  }
   const [a, b] = MOODC[mood], g = 'c' + (_cu++), k = '#2f2a6b';
   const eye = (x, ry, py) => {
     ry = ry === undefined ? 14 : ry; py = py || 0;
@@ -32,11 +43,6 @@ function cimo(mood, size, peek, costume, staticMouth) {
     e = eye(76, 15, 4) + eye(124, 15, 4);
     x += '<path d="M64 108q-6 10 0 13q6-3 0-13z" fill="#fff" opacity=".9"/>';
     mo = st('M88 122Q100 110 112 122');
-  }
-  if (mood === 'marah') {
-    e = eye(76, 11, 2) + eye(124, 11, 2);
-    x += '<path d="M150 34l12 12M162 34l-12 12" stroke="#ff4d4d" stroke-width="4.5" stroke-linecap="round"/>';
-    mo = st('M88 121Q100 112 112 121');
   }
   if (mood === 'capek') {
     e += `<rect x="62" y="68" width="28" height="20" fill="${a}"/><rect x="110" y="68" width="28" height="20" fill="${a}"/>` + st('M62 88h28M110 88h28');
