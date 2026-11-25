@@ -107,7 +107,7 @@ const Voice = (() => {
     if (refLoading) return refLoading;
     refLoading = (async () => {
       try {
-        const res = await fetch(assetUrl(CIMO_CLIP), { cache: 'force-cache' });
+        const res = await fetch(assetUrl(CIMO_CLIP), { cache: 'no-cache' });
         if (!res.ok) return;
         const ab = await res.arrayBuffer();
         const C = window.AudioContext || window.webkitAudioContext;
@@ -258,10 +258,12 @@ const Voice = (() => {
     irBuffer = b;
     return b;
   }
+  /* clips keep their filenames across regenerations — always revalidate,
+     otherwise the browser keeps playing the old voice from disk cache */
   async function decoded(path) {
     if (bufferCache.has(path)) return bufferCache.get(path);
     const c = audioCtx(); if (!c) return null;
-    const res = await fetch(assetUrl(path), { cache: 'force-cache' });
+    const res = await fetch(assetUrl(path), { cache: 'no-cache' });
     if (!res.ok) return null;
     const buf = await c.decodeAudioData(await res.arrayBuffer());
     bufferCache.set(path, buf);
