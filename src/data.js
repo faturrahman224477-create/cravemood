@@ -70,18 +70,6 @@ const MENU = [
   {id:'teh',     name:'Teh Tarik Hangat',        stall:'Teh Tarik Sudirman',   st:4, r:4.4, lo:10000, hi:16000, cat:'Beverage',   art:'drink', moods:['sedih','capek'], d:'Hangat dan manis. Dipeluk dari dalam.'},
   {id:'airjeruk',name:'Air Jeruk Hangat',        stall:'Warung Sehat Bu Ida',  st:2, r:4.5, lo:8000,  hi:12000, cat:'Beverage',   art:'drink', moods:['sedih','marah'], d:'Hangat, segar, bikin tenggorokan lega.'},
   {id:'bubur',   name:'Bubur Ayam Spesial',      stall:'Bubur Pak Slamet',     st:5, r:4.6, lo:14000, hi:20000, cat:'Heavy Meal', art:'soup',  moods:['capek','sedih','kecewa'], d:'Lembut, hangat, gampang dicerna.'},
-  /* promo ShopeeFood — link langsung dari user. Harga diambil dari salePrice
-     (1600000000 / 100000 = Rp16.000); nama/menu ke-2 & ke-3 sementara
-     sampai user mengirim nama dan foto aslinya. */
-  {id:'piskembunghn', name:'Pisang Kembung HN', stall:'Pisang Kembung HN', st:0, r:4.8, lo:16000, hi:16000, cat:'Snack', art:'sweet',
-   moods:['senang','kecewa','bingung'], viral:1, d:'Pisang kembung renyah, manis, langsung diantar lewat ShopeeFood.',
-   link:'https://shopee.co.id/universal-link/now-food/shop/21979806?deep_and_deferred=1&shareChannel=whatsapp'},
-  {id:'shopeedish', name:'Menu Pilihan ShopeeFood', stall:'ShopeeFood Pilihan', st:1, r:4.7, lo:16000, hi:16000, cat:'Heavy Meal', art:'plate',
-   moods:['marah','senang','bingung'], d:'Menu pilihan dari ShopeeFood. Pesan langsung lewat aplikasi.',
-   link:'https://shopee.co.id/universal-link/now-food/dish/20033011/725133830430210?deep_and_deferred=1&shareChannel=whatsapp'},
-  {id:'shopeehemat', name:'Paket Hemat ShopeeFood', stall:'Paket Hemat ShopeeFood', st:2, r:4.7, lo:16000, hi:16000, cat:'Heavy Meal', art:'rice',
-   moods:['bingung','capek','senang'], d:'Paket hemat Rp16.000 dari ShopeeFood, langsung diantar.',
-   link:'https://shopee.co.id/universal-link/now-food/cheap-meal/detail?storeId=21316972&restaurantId=null&brandId=1154559&merchantId=11184452&itemId=2668602296745984&salePrice=1600000000&fromSource=1&deep_and_deferred=1&shareChannel=whatsapp'},
 ];
 
 const CART_KEY = 'cravemood.cart.v1';
@@ -476,7 +464,6 @@ const I18N_EXTRA = {
     retry:'Coba lagi', share_ig_toast:'Gambar tersimpan & caption disalin. Buka Instagram → Story → unggah.',
     google_soon:'Google login segera hadir, pakai nomor WhatsApp dulu ya', reg_exists:'Kontak sudah terdaftar. Coba masuk.',
     reg_fail:'Gagal mendaftar', pet_reset:'Posisi Cimo direset',
-    shopee_promo_t:'Promo ShopeeFood', shopee_promo_s:'Pesan langsung, diantar ke alamatmu', shopee_order:'Pesan Sekarang',
   },
   en: {
     cart_view:'View Order', chat_reset_tip:'Reset', chat_voice_tip:'Voice', chat_listening:'Listening…',
@@ -506,7 +493,6 @@ const I18N_EXTRA = {
     retry:'Try again', share_ig_toast:'Image saved and caption copied. Open Instagram → Story → upload.',
     google_soon:'Google sign-in is coming soon. Use your WhatsApp number for now.', reg_exists:'This contact is already registered. Please sign in.',
     reg_fail:'Registration failed', pet_reset:'Cimo position reset',
-    shopee_promo_t:'ShopeeFood promos', shopee_promo_s:'Order now, delivered to your address', shopee_order:'Order Now',
   },
   zh: {
     cart_view:'查看订单', chat_reset_tip:'重置', chat_voice_tip:'语音', chat_listening:'正在聆听…',
@@ -536,7 +522,6 @@ const I18N_EXTRA = {
     retry:'重试', share_ig_toast:'图片已保存，文案已复制。打开 Instagram → 动态 → 上传。',
     google_soon:'Google 登录即将推出，请暂时使用 WhatsApp 号码。', reg_exists:'该联系方式已注册，请直接登录。',
     reg_fail:'注册失败', pet_reset:'Cimo 位置已重置',
-    shopee_promo_t:'ShopeeFood 优惠', shopee_promo_s:'立即下单，送到你的地址', shopee_order:'立即下单',
   },
   hi: {
     cart_view:'ऑर्डर देखें', chat_reset_tip:'रीसेट', chat_voice_tip:'आवाज़', chat_listening:'सुन रहा हूँ…',
@@ -566,7 +551,6 @@ const I18N_EXTRA = {
     retry:'फिर से कोशिश करें', share_ig_toast:'इमेज सेव हो गई और कैप्शन कॉपी हो गया। Instagram → स्टोरी → अपलोड करें।',
     google_soon:'Google लॉगिन जल्द आएगा। अभी WhatsApp नंबर इस्तेमाल करें।', reg_exists:'यह संपर्क पहले से पंजीकृत है। लॉग इन करें।',
     reg_fail:'पंजीकरण विफल', pet_reset:'Cimo की स्थिति रीसेट हो गई',
-    shopee_promo_t:'ShopeeFood ऑफ़र', shopee_promo_s:'अभी ऑर्डर करें, पते पर डिलीवरी', shopee_order:'अभी ऑर्डर करें',
   },
 };
 Object.keys(I18N_EXTRA).forEach(lang => Object.assign(I18N[lang], I18N_EXTRA[lang]));

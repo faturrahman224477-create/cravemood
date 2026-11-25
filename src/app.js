@@ -242,11 +242,6 @@ function viewHome() {
       <span class="mf">${cimo(m.face, 38)}</span><b>${mL(m)}</b></button>`).join('')}
   </div>
 
-  <div class="shopee-promo">
-    <div class="sphead"><b>${t('shopee_promo_t')}</b><small>${t('shopee_promo_s')}</small></div>
-    <div class="spgrid" id="shopeePromos"></div>
-  </div>
-
   ${picked ? `
   <div class="locbar">
     ${icon('pin')}
@@ -294,27 +289,21 @@ function renderRecs() {
     const lbl = i === 0 ? t('pick_t') : (m.viral ? '✦ ' + t('viral') : cL(m.cat));
     const pal = PAL[i % PAL.length];
     const hi = String(m.hi).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    const price = m.lo === m.hi ? rp(m.lo) : `${rp(m.lo)} – ${hi}`;
-    /* ShopeeFood promos get their real menu illustration + a direct deep link */
-    const photo = m.link ? art(m.art, 64)
-      : `<svg viewBox="0 0 24 24" class="fc-ico"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.5" cy="10" r="1.6"/><path d="M4 17l5-4 4 3 3-2 4 3"/></svg><b>${t('card_photo')}</b>`;
-    const shopee = m.link
-      ? `<button class="platlink" data-shop="${esc(m.link)}"><i style="background:#ee4d2d"></i>ShopeeFood ↗</button>`
-      : `<span><i style="background:#ee4d2d"></i>ShopeeFood</span>`;
     return `<article class="pickcard fcard" style="--cb:${pal.bg};--ci:${pal.ink}">
       <div class="fc-top"><span class="fc-badge">${lbl}</span></div>
       <div class="fc-slot">
-        ${photo}
+        <svg viewBox="0 0 24 24" class="fc-ico"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.5" cy="10" r="1.6"/><path d="M4 17l5-4 4 3 3-2 4 3"/></svg>
+        <b>${t('card_photo')}</b>
         <div class="fc-plat">
           <span><i style="background:#ee2737"></i>GoFood</span>
           <span><i style="background:#00b14f"></i>GrabFood</span>
-          ${shopee}
+          <span><i style="background:#ee4d2d"></i>ShopeeFood</span>
         </div>
       </div>
       <b class="fc-name">${esc(m.name)}</b>
       <small class="fc-meta">${esc(m.stall)} · ${esc(curStreet().area)} · ±${m.eta || 15} mnt</small>
       <div class="fc-foot">
-        <div><small>${t('est')}</small><b class="fc-price">${price}</b></div>
+        <div><small>${t('est')}</small><b class="fc-price">${rp(m.lo)} – ${hi}</b></div>
         ${q ? `<span class="step"><button data-dec="${m.id}">−</button><i>${q}</i><button data-inc="${m.id}">+</button></span>`
             : `<button class="fadd" data-add="${m.id}">+ ${t('home_add')}</button>`}
       </div>
@@ -322,23 +311,6 @@ function renderRecs() {
   }).join('');
 }
 
-
-/* three ShopeeFood promos supplied by the user — photo, address and price */
-function renderShopeePromos() {
-  const box = $('#shopeePromos'); if (!box) return;
-  box.innerHTML = MENU.filter(m => m.link).map(m => {
-    const st = STREETS[m.st] || STREETS[0];
-    return `<article class="spcard">
-      <div class="sppic">${art(m.art, 58)}</div>
-      <div class="spinfo">
-        <b>${esc(m.name)}</b>
-        <small>${esc(m.stall)} · ${esc(st.name)}</small>
-        <span class="spprice">${rp(m.lo)}</span>
-      </div>
-      <button class="sporder" data-shop="${esc(m.link)}">${t('shopee_order')} ↗</button>
-    </article>`;
-  }).join('');
-}
 
 /* "Putar acak" — a real spinning-wheel popup */
 let popItems = [], popRot = 0, popSpinning = false;
@@ -664,12 +636,12 @@ function renderCart() {
 
 function openPlatform(k) {
   const first = Object.keys(App.cart)[0];
-  const m = MENU.find(x => x.id === first) || recList()[0];
+  const m = MENU.find(x => x.id === first);
   const q = encodeURIComponent(m ? m.name + ' Makassar' : 'makanan Makassar');
   const urls = {
     gofood: 'https://gofood.co.id/id/search?q=' + q,
     grabfood: 'https://food.grab.com/id/id/search?query=' + q,
-    shopeefood: (k === 'shopeefood' && m && m.link) ? m.link : 'https://shopeefood.co.id/search?keyword=' + q,
+    shopeefood: 'https://shopeefood.co.id/search?keyword=' + q,
   };
   SFX.play('pop');
   if (App.user) DB.addOrder(App.user.id, { kind: 'platform', platform: k, items: Object.keys(App.cart) }).catch(() => {});
@@ -1776,7 +1748,7 @@ function render() {
   applyMoodBg();
   $('#view').innerHTML = RENDER[v]();
   $$('#navlist .navbtn, #tabbar button').forEach(b => b.classList.toggle('on', b.dataset.go === v));
-  if (v === 'home') { renderRecs(); renderShopeePromos(); }
+  if (v === 'home') { renderRecs(); }
   if (v === 'spin') {
     if (App.lastSpin) renderSpinResult(App.lastSpin);
     else {

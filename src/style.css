@@ -1170,10 +1170,7 @@ body{
   stroke-linecap:round;stroke-linejoin:round;margin-bottom:2px}
 .fc-slot b{font:600 .78rem Fredoka;color:#3a2142}
 .fc-plat{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:3px}
-.fc-plat span,.fc-plat .platlink{display:inline-flex;align-items:center;gap:3px;font:600 .58rem Nunito;color:rgba(58,33,66,.72)}
-.fc-plat .platlink{border:0;background:rgba(255,77,45,.12);border-radius:99px;padding:1px 6px;cursor:pointer;color:#c93b17}
-.fc-plat .platlink:hover{background:rgba(255,77,45,.22)}
-[data-theme=dark] .fc-plat .platlink{color:#ffb59c;background:rgba(255,77,45,.18)}
+.fc-plat span{display:inline-flex;align-items:center;gap:3px;font:600 .58rem Nunito;color:rgba(58,33,66,.72)}
 .fc-plat i{width:6px;height:6px;border-radius:50%;display:block}
 .fc-name{font:700 1.06rem Fredoka;color:var(--ci,#8a5a2a);letter-spacing:-.2px;margin-top:2px}
 .fc-meta{font:700 .7rem Nunito;color:rgba(58,33,66,.62);line-height:1.4}
@@ -1186,24 +1183,6 @@ body{
 .fcard .step{background:#fff;border-radius:99px;padding:4px;display:inline-flex;align-items:center;gap:6px}
 .fcard .step button{width:26px;height:26px;border-radius:50%;border:0;background:#3a2142;color:#fff;font:700 1rem Fredoka}
 .fcard .step i{font:700 .82rem Fredoka;min-width:14px;text-align:center;font-style:normal}
-
-/* promo ShopeeFood: foto menu + alamat + harga + link langsung */
-.shopee-promo{margin:14px 0 16px}
-.sphead{display:flex;align-items:baseline;gap:8px;margin:0 4px 8px}
-.sphead b{font:700 .92rem Fredoka;color:var(--ink)}
-.sphead small{font:600 .68rem Nunito;color:var(--mu)}
-.spgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
-.spcard{display:flex;align-items:center;gap:10px;min-width:0;max-width:100%;background:rgba(255,255,255,.9);border:1px solid var(--ln);
-  border-radius:18px;padding:10px 12px;box-shadow:var(--sh2)}
-.sppic{width:58px;height:58px;flex:none;border-radius:14px;background:#fff5ea;display:grid;place-items:center}
-.spinfo{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
-.spinfo b{font:700 .86rem Fredoka;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.spinfo small{font:600 .62rem Nunito;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.spprice{font:700 .8rem Fredoka;color:var(--pk2)}
-.sporder{border:0;border-radius:99px;background:#ee4d2d;color:#fff;font:700 .68rem Fredoka;padding:8px 10px;cursor:pointer;white-space:nowrap}
-.sporder:hover{background:#d63f17}
-[data-theme=dark] .spcard{background:rgba(53,34,59,.92);border-color:rgba(255,255,255,.12)}
-[data-theme=dark] .sppic{background:rgba(255,255,255,.08)}
 
 /* banner putar acak ala mockup */
 .shuffle{background:#4a2a5e;border-radius:18px;box-shadow:0 8px 18px rgba(74,42,94,.28);padding:14px 16px}
