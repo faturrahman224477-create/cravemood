@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
-<meta name="build" content="1795628890630">
+<meta name="build" content="1795629571035">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7FA" media="(prefers-color-scheme: light)">
@@ -1489,12 +1489,17 @@ let _cu = 0;
 function cimo(mood, size, peek, costume, staticMouth) {
   mood = MOODC[mood] ? mood : 'def';
   size = size || 120;
-  /* the marah mood uses the complete supplied illustration instead of the
-     vector mascot. Empty mouth groups keep the lip-sync CSS selectors valid. */
+  /* the marah mood uses the complete supplied illustration. A patch + moving
+     ellipse sit on top of the printed frown so lip-sync works like the others. */
   if (mood === 'marah') {
     const art = `<image href="${MARAH_IMG}" x="0" y="-6" width="200" height="200" preserveAspectRatio="xMidYMid meet"/>`;
-    const mouths = staticMouth ? '' : '<g class="cmmouth"></g><g class="cmtalkmouth"></g>';
-    if (peek) return `<svg viewBox="0 18 200 136" width="${size}" style="overflow:visible" role="img" aria-label="Cimo marah mengintip">${art}${mouths}</svg>`;
+    const mouths = staticMouth ? '' :
+      `<g class="cmmouth"></g><g class="cmtalkmouth"><ellipse cx="100" cy="104" rx="20" ry="8" fill="#ffac78"/><ellipse cx="100" cy="104" rx="17" ry="5.5" fill="#2f2a64"/><ellipse cx="100" cy="107" rx="8" ry="2.4" fill="#ff8fa8"/></g>`;
+    if (peek) {
+      const cid = 'mp' + (_cu++);
+      const hd = cx => `<circle cx="${cx}" cy="139" r="15" fill="#f2864c" stroke="#d96a36" stroke-width="1.6"/><circle cx="${cx - 5}" cy="133" r="3.2" fill="#fff" opacity=".5"/>`;
+      return `<svg viewBox="0 18 200 136" width="${size}" style="overflow:visible" role="img" aria-label="Cimo marah mengintip"><defs><clipPath id="${cid}"><rect x="-10" y="0" width="220" height="138"/></clipPath></defs><g clip-path="url(#${cid})">${art}${mouths}</g>${hd(38)}${hd(162)}</svg>`;
+    }
     return `<svg viewBox="0 0 200 185" width="${size}" role="img" aria-label="Cimo marah">${art}${mouths}</svg>`;
   }
   const [a, b] = MOODC[mood], g = 'c' + (_cu++), k = '#2f2a6b';
