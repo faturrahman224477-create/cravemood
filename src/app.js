@@ -169,7 +169,6 @@ const NAV = [
   ['home', 'home', 'nav_home'],
   ['recap', 'recap', 'nav_recap'],
   ['cart', 'bag', 'nav_cart'],
-  ['profile', 'user', 'nav_profile'],
 ];
 
 function renderNav() {
@@ -186,9 +185,7 @@ function renderNav() {
     <div class="minicard">
       <div style="width:38px;height:38px;flex:none">${cimo(App.mood, 36, false, App.costum)}</div>
       <div style="min-width:0"><b>${esc(App.user ? App.user.name : t('guest'))}</b><small>${esc(curStreet().name.replace('Jalan ', 'Jl. '))}</small></div>
-    </div>
-    <button class="navbtn" data-go="chat" style="font-size:.82rem">${icon('chat')}<span>${t('nav_chat')}</span></button>
-    <button class="navbtn" data-go="profile" style="font-size:.82rem">${icon('gear')}<span>${t('nav_profile')}</span></button>`;
+    </div>`;
   updateCartBar();
 }
 
@@ -208,8 +205,7 @@ function viewHome() {
   return `
   <div class="hometop">
     <div>
-      <span class="greet">${greeting()}${App.user && !App.user.guest ? ', ' + esc(name) : ''}</span>
-      <div class="brandrow"><span>Crave</span><mark>Mood</mark></div>
+      <div class="brandrow"><img class="cm-logo" src="cravemood-logo.png" alt="CraveMood"></div>
     </div>
     <div style="display:flex;align-items:center;gap:7px">
       <button class="iconbtn" data-go="chat" aria-label="chat" title="${t('nav_chat')}">${icon('chat')}</button>
@@ -964,11 +960,17 @@ async function buildShareCard() {
   roundRect(x, CX, CY, CW, CH, R); x.fillStyle = g; x.fill();
   x.strokeStyle = 'rgba(255,255,255,.55)'; x.lineWidth = 5; x.stroke();
 
-  /* brand + mood */
+  /* brand (real logo) + mood */
   x.textAlign = 'center';
-  x.fillStyle = '#3a2142';
-  x.font = '700 48px Fredoka, Nunito, sans-serif';
-  x.fillText('CraveMood', W / 2, CY + 122);
+  try {
+    const logo = await loadImgSafe('cravemood-logo.png');
+    const lw = 220, lh = Math.round(lw * logo.height / logo.width);
+    x.drawImage(logo, W / 2 - lw / 2, CY + 24, lw, lh);
+  } catch (e) {
+    x.fillStyle = '#3a2142';
+    x.font = '700 48px Fredoka, Nunito, sans-serif';
+    x.fillText('CraveMood', W / 2, CY + 122);
+  }
 
   x.fillStyle = 'rgba(58,33,66,.55)';
   x.font = '700 30px Nunito, sans-serif';
@@ -1048,6 +1050,20 @@ function loadImg(src) {
     i.onerror = () => { clearTimeout(to); rej(new Error('img error')); };
     i.src = src;
   });
+}
+/* Canvas-safe image: a blob URL never taints the canvas, even on file:// */
+const INLINE_LOGO = '/*__LOGO__*/';
+async function loadImgSafe(src) {
+  if (src === 'cravemood-logo.png' && INLINE_LOGO.indexOf('data:image') === 0) {
+    try { return await loadImg(INLINE_LOGO); } catch (e) {}
+  }
+  if (/^https?:$/.test(location.protocol)) {
+    try {
+      const r = await fetch(src, { cache: 'force-cache' });
+      if (r.ok) return await loadImg(URL.createObjectURL(await r.blob()));
+    } catch (e) {}
+  }
+  return loadImg(src);
 }
 
 let vipPkg = null, vipStep = 'pkg';
@@ -1327,7 +1343,7 @@ function obRender() {
       <div class="doodle d3">${cimo('kecewa', 44)}</div>
       <div class="doodle d4">${cimo('sedih', 52)}</div>
       <div class="hero-cimo">${cimo('def', 238)}</div>
-      <div class="wordmark"><span>Crave</span><mark>Mood</mark></div>
+      <img class="cm-logo splash" src="cravemood-logo.png" alt="CraveMood">
       <div class="tagline">${t('splash_tag')}</div>
       <button class="startbtn" id="obStart">${t('on_go')} →</button>
       <div class="dots"><i class="on"></i><i></i><i></i><i></i></div>
@@ -1508,7 +1524,8 @@ function finishOnboard() {
 function enterApp() {
   $('#onboard').classList.add('hide');
   boot2();
-  if (App.settings.speak) setTimeout(() => Voice.speak(I18N[App.lang].on_sub, { lang: App.lang }), 600);
+  if (App.settings.speak) setTimeout(() =>
+    Voice.speakFixed('intro', I18N[App.lang].on_sub, { lang: App.lang }), 600);
 }
 
 /* ---------- pet ---------- */
@@ -1998,8 +2015,9 @@ function initClickSound() {
   if (window.__clickInit) return;
   window.__clickInit = true;
   const SEL = 'button, [role="button"], .chip, .mpill, .langopt, .cosopt, .plat, .fadd, .iconbtn, .tabbar button, .step button, .card, .pickcard, select';
-  /* any tap anywhere silences Cimo first; the tap handler below may start a new line */
-  document.addEventListener('click', () => Voice.stop(), { capture: true, passive: true });
+  /* Do NOT silence Cimo on every tap — that choppy stop-start was the main
+     reason the voice felt robotic. Only navigation explicitly stops it (go()),
+     and a new spoken line replaces the old one inside Voice.speak(). */
   document.addEventListener('pointerdown', e => {
     const el = e.target.closest(SEL);
     if (!el || el.disabled) return;

@@ -15,6 +15,11 @@ function bundle(template, files, out) {
   const tpl = r(template);
   const js = files.map(r).join('\n\n');
   let html = tpl.replace('/*__CSS__*/', () => css).replace('/*__JS__*/', () => js);
+  /* inline logo keeps the share-card canvas exportable on every origin */
+  try {
+    const b64 = r('logo-inline.txt').trim();
+    html = html.replace('/*__LOGO__*/', () => 'data:image/png;base64,' + b64);
+  } catch (e) {}
   html = html.replace('<head>', `<head>\n<meta name="build" content="${BUILD}">`);
   writeFileSync(join(root, out), html, 'utf8');
   console.log(out.padEnd(12) + (html.length / 1024).toFixed(1) + ' KB');

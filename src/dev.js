@@ -34,7 +34,7 @@ const NAV = [
 function renderSide() {
   $('#devside').innerHTML = `
     <div class="brand">
-      <div class="lg"><span>Crave</span><mark>Mood</mark></div>
+      <img class="cm-logo" src="cravemood-logo.png" alt="CraveMood" style="width:150px">
       <div class="tagline">Developer</div>
     </div>
     ${NAV.map(([k, n, ic]) => `<button class="dnav" data-tab="${k}">

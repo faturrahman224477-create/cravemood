@@ -22,15 +22,17 @@ function assetUrl(path) {
 
 /* calm base pace: noticeably slower than the browser default so nothing
    gets swallowed, then nudged per mood */
-const BASE_RATE = 0.90;
+const BASE_RATE = 1.0;
+/* subtle mood colouring only — extreme pitch/rate shifts are what make a
+   synthetic voice sound stiff. Gaps are now near-zero: sentences flow. */
 const MOODTONE = {
-  senang: { r: 1.06, p: 1.10, gap: 150 },
-  sedih:  { r: 0.94, p: 0.94, gap: 260 },
-  marah:  { r: 1.00, p: 0.92, gap: 180 },
-  bingung: { r: 0.97, p: 1.04, gap: 210 },
-  capek:  { r: 0.92, p: 0.92, gap: 280 },
-  kecewa: { r: 0.94, p: 0.90, gap: 270 },
-  def:    { r: 1.00, p: 1.00, gap: 190 },
+  senang: { r: 1.05, p: 1.05, gap: 55 },
+  sedih:  { r: 0.96, p: 0.96, gap: 75 },
+  marah:  { r: 1.03, p: 0.97, gap: 50 },
+  bingung: { r: 1.00, p: 1.02, gap: 65 },
+  capek:  { r: 0.96, p: 0.96, gap: 75 },
+  kecewa: { r: 0.97, p: 0.96, gap: 70 },
+  def:    { r: 1.00, p: 1.00, gap: 55 },
 };
 
 const Voice = (() => {
@@ -175,9 +177,29 @@ const Voice = (() => {
     }
     return s.replace(/\s+([!?.,])/g, '$1').replace(/\s+/g, ' ').trim();
   }
+  /* token overlap so small wording differences still reach the real recording
+     (never below 0.86 — we must not speak a different sentence) */
+  function nearKey(text) {
+    if (!pack) return null;
+    const raw = packKey(text);
+    const toks = raw.split(' ').filter(w => w.length > 2);
+    if (toks.length < 3) return null;
+    const set = new Set(toks);
+    let best = null, bestScore = 0;
+    for (const k in pack) {
+      const kt = k.split(' ').filter(w => w.length > 2);
+      if (Math.abs(kt.length - toks.length) > 2) continue;
+      const ks = new Set(kt);
+      let hit = 0;
+      for (const w of set) if (ks.has(w)) hit++;
+      const score = (2 * hit) / (set.size + ks.size);
+      if (score > bestScore) { bestScore = score; best = k; }
+    }
+    return bestScore >= 0.86 && best ? pack[best] : null;
+  }
   function lookup(text) {
     if (!pack) return null;
-    return pack[packKey(text)] || (S.name ? pack[packKey(stripName(text))] : null) || null;
+    return pack[packKey(text)] || (S.name ? pack[packKey(stripName(text))] : null) || nearKey(text) || null;
   }
   let packDone = null;
   function loadPack() {
@@ -228,17 +250,25 @@ const Voice = (() => {
   }
   function playClip(file) { return playFile('audio/cimo/' + file, CIMO_RATE); }
 
-  /* split into short, speakable phrases — short phrases are easier to follow */
+  /* Natural speech: speak whole sentences, not choppy word-groups.
+     The old version cut on commas AND added 150–280ms gaps, which made Cimo
+     sound like a robot reading a list. Now we only break at real sentence
+     ends, keep the punctuation so the engine applies its own prosody, and
+     merge anything shorter than ~150 chars into one continuous utterance. */
   function chunks(text) {
-    return String(text)
+    const clean = String(text)
       .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '')
       .replace(/\s+/g, ' ')
-      .split(/(?<=[.!?。！？…])\s+|(?<=[,;，、])\s+/)
+      .trim();
+    if (!clean) return [];
+    if (clean.length < 150) return [clean];
+    return clean
+      .split(/(?<=[.!?。！？…])\s+(?=[A-Za-z0-9])/)
       .map(s => s.trim())
       .filter(Boolean)
       .reduce((acc, s) => {
         const last = acc[acc.length - 1];
-        if (last && last.length + s.length < 72) acc[acc.length - 1] = last + ' ' + s;
+        if (last && last.length + s.length < 150) acc[acc.length - 1] = last + ' ' + s;
         else acc.push(s);
         return acc;
       }, []);
@@ -285,13 +315,12 @@ const Voice = (() => {
         if (v) { u.voice = v; u.lang = v.lang; } else u.lang = LOCALE[opts.lang || S.lang] || 'id-ID';
 
         const isQ = /[?？]$/.test(seg);
-        const isComma = /[,;，、]$/.test(seg);
-        /* tiny variation keeps it from sounding flat, without speeding it up */
-        u.rate = Math.max(0.55, Math.min(1.15, baseRate + (Math.random() * 0.04 - 0.02)));
-        u.pitch = Math.max(0, Math.min(2, basePitch + (isQ ? 0.06 : 0) + (Math.random() * 0.04 - 0.02)));
+        /* let the engine do the prosody; only a gentle lift on questions */
+        u.rate = Math.max(0.8, Math.min(1.12, baseRate));
+        u.pitch = Math.max(0.75, Math.min(1.35, basePitch + (isQ ? 0.06 : 0)));
         u.volume = Math.max(0, Math.min(1, volume));
 
-        const pause = i >= list.length ? 0 : (isComma ? Math.round(tone.gap * 0.6) : tone.gap);
+        const pause = i >= list.length ? 0 : tone.gap;
         u.onend = () => setTimeout(next, pause);
         u.onerror = () => done();
         try { synth.speak(u); } catch (e) { done(); }
