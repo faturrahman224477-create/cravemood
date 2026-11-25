@@ -68,8 +68,10 @@ button:focus:not(:focus-visible),select:focus:not(:focus-visible){outline:none}
   border-radius:99px;display:grid;place-items:center;padding:0 6px}
 .navbtn.on .bdg{background:var(--pk);color:#3a2142}
 .sidefoot{margin-top:auto;border-top:1px solid var(--ln);padding-top:14px;display:flex;flex-direction:column;gap:8px}
-.minicard{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#ffe7f0,#fff3e8);border-radius:18px;padding:10px 12px}
+.minicard{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#ffe7f0,#fff3e8);border-radius:18px;padding:10px 12px;cursor:pointer;transition:background .18s ease,box-shadow .18s ease,transform .18s ease}
+.minicard:hover,.minicard:focus-visible{background:linear-gradient(135deg,#ffd8e8,#fff0dc);box-shadow:0 6px 14px rgba(58,33,66,.10);transform:translateY(-1px);outline:none}
 [data-theme=dark] .minicard{background:linear-gradient(135deg,#4a2a5e,#3a2142)}
+[data-theme=dark] .minicard:hover,[data-theme=dark] .minicard:focus-visible{background:linear-gradient(135deg,#5a356e,#4a2a3e)}
 .minicard b{font-size:.86rem;display:block;line-height:1.2}
 .minicard small{font-size:.7rem;color:var(--mu);font-weight:700}
 
@@ -1006,7 +1008,7 @@ body{
 
 /* logo resmi baru */
 .cm-logo{display:block;height:auto;max-width:100%;object-fit:contain}
-.hometop .cm-logo{width:clamp(150px,20vw,230px)}
+.hometop .cm-logo{width:clamp(104px,14vw,128px)}
 .topbar .cm-logo{width:clamp(150px,20vw,210px)}
 .brand .cm-logo.side{width:170px;margin:0 auto}
 .brand{justify-content:center}
@@ -1276,7 +1278,7 @@ body[data-view="spin"]{background-image:linear-gradient(180deg,#ffe4ee 0%,#fff0f
 /* ===== revisi terakhir =====
    logo HP lebih kecil, Profil kembali di tabbar, dan keranjang lebih renggang */
 @media(max-width:980px){
-  .hometop .cm-logo{width:clamp(104px,27vw,150px)}
+  .hometop .cm-logo{width:clamp(92px,24vw,118px)}
   .tabbar button{padding:7px 1px;font-size:.57rem}
   .tabbar button svg{width:19px;height:19px}
   .cartrow{margin-bottom:12px}
@@ -1288,7 +1290,7 @@ body[data-view="spin"]{background-image:linear-gradient(180deg,#ffe4ee 0%,#fff0f
   .splash .cm-logo.splash{width:min(320px,78vw)}
 }
 @media(max-width:400px){
-  .hometop .cm-logo{width:clamp(96px,26vw,128px)}
+  .hometop .cm-logo{width:clamp(88px,23vw,106px)}
   .tabbar button{font-size:.54rem}
 }
 

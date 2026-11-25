@@ -185,7 +185,7 @@ function renderNav() {
   ).join('');
   const s = $('#sidefoot');
   if (s) s.innerHTML = `
-    <div class="minicard">
+    <div class="minicard" data-go="profile" role="button" tabindex="0" title="${esc(t('nav_profile'))}" aria-label="${esc(t('nav_profile'))}">
       <div style="width:38px;height:38px;flex:none">${cimo(App.mood, 36, false, App.costum)}</div>
       <div style="min-width:0"><b>${esc(App.user ? App.user.name : t('guest'))}</b><small>${esc(curStreet().name.replace('Jalan ', 'Jl. '))}</small></div>
     </div>`;
@@ -208,7 +208,7 @@ function viewHome() {
   return `
   <div class="hometop">
     <div>
-      <div class="brandrow"><img class="cm-logo" src="cravemood-logo.png" alt="CraveMood"></div>
+      <div class="brandrow"><img class="cm-logo home" src="cravemood-ob-logo.png" alt="CraveMood"></div>
     </div>
     <div style="display:flex;align-items:center;gap:7px">
       <button class="iconbtn" data-go="chat" aria-label="chat" title="${t('nav_chat')}">${icon('chat')}</button>
@@ -935,8 +935,10 @@ function shareCaption(items) {
   return L[App.lang] || L.id;
 }
 
-function svgDataUrl(mood, size, costume) {
-  let s = cimo(mood, size, false, costume || '');
+function svgDataUrl(mood, size) {
+  /* kartu bagikan dipetakan dari SVG statis: pakai wajah default emosi,
+     bukan mulut bicara yang hanya dikendalikan CSS di dalam aplikasi */
+  let s = cimo(mood, size, false, '', true);
   const m = s.match(/<svg[^>]*>/);
   if (m && m[0].indexOf('xmlns') === -1) s = s.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
   s = s.replace(`width="${size}"`, `width="${size}" height="${Math.round(size * 185 / 200)}"`);
@@ -986,7 +988,7 @@ async function buildShareCard() {
 
   /* mascot */
   try {
-    const img = await loadImg(svgDataUrl(moodObj.face, 440, App.costum));
+    const img = await loadImg(svgDataUrl(moodObj.face, 440));
     x.drawImage(img, W / 2 - 220, CY + 282, 440, 407);
   } catch (e) {}
 
@@ -1880,6 +1882,10 @@ function bindGlobal() {
     if (e.target.id === 'chatInput' && e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       const v = e.target.value.trim(); if (v) sendChat(v);
+    }
+    const goEl = e.target.closest ? e.target.closest('[data-go][role="button"]') : null;
+    if (goEl && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault(); SFX.play('tap'); go(goEl.dataset.go); return;
     }
     if (e.key === 'Escape') { $$('.modal.on').forEach(m => m.classList.remove('on')); }
   });
