@@ -21,11 +21,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "audio" / "cimo"
 BACKUP = OUT / "elevenlabs-backup"
-TMP = OUT / "_edge_tmp_natural"   # unique per setting pair — never reuse stale clips
+TMP = OUT / "_edge_tmp_natural2"   # unique per setting pair — never reuse stale clips
 DRY = "--dry" in sys.argv
 
 VOICE = "id-ID-GadisNeural"   # warm Indonesian female, closest to the Kuon reference
-RATE = "-3%"                  # unhurried conversation — no tape-speed feel
+RATE = "+2%"                  # natural tempo between a drag and the old robot rush
 PITCH = "+0Hz"                # keep the natural register (no chipmunk lift)
 
 MOOD_LINES = {

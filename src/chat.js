@@ -35,7 +35,7 @@ const TOPICS = {
 
 const INTENTS = [
   { id:'greet', k:['halo','hai','hi','hello','hey','pagi','siang','sore','malam','assalamualaikum','yo','holla','你好','嗨','नमस्ते','नमस्कार'] },
-  { id:'ask_how', k:['apa kabar','gimana kabar','kabar','how are you','how do you do','kamu gimana','你好吗','कैसे हो'] },
+  { id:'ask_how', k:['apa kabar','kabarnya','gimana kabar','kabar gimana','kabar','how are you','how do you do','how are you doing','kamu gimana','你好吗','कैसे हो'] },
   { id:'name_ask', k:['siapa kamu','kamu siapa','namamu','nama kamu','who are you','your name','你叫什么','तुम कौन'] },
   { id:'my_name', k:['namaku','nama aku','panggil aku','aku adalah','my name is','call me','i am','我叫','मेरा नाम'] },
   { id:'tired', k:['capek','lelah','letih','cape','ngantuk','exhausted','tired','burnout','lemas','energi habis','kecapekan','累','疲惫','थका','थकान'] },
@@ -58,7 +58,7 @@ const INTENTS = [
   { id:'hug', k:['peluk','peluk dong','hug','butuh pelukan','send me a hug','抱抱','गले'] },
   { id:'cry', k:['nangis','menangis','crying','cry','air mata','哭','रो'] },
   { id:'celebrate', k:['akhirnya','berhasil','lulus','dapat kerja','menang','alhamdulillah','syukur','finally','i did it','passed','got the job','成功了','मिल गई'] },
-  { id:'food_ask', k:['makan apa','mau makan','lapar','laper','hungry','eat what','what to eat','bingung makan','recommend food','rekomendasi makanan','cari makan','makanan','吃啥','吃什么','क्या खाऊं','भूख'] },
+  { id:'food_ask', k:['makan apa','mau makan','mau nasi','nasi goreng','pingin makan','pengen makan','lapar','laper','hungry','eat what','what to eat','bingung makan','recommend food','rekomendasi makanan','cari makan','makanan','吃啥','吃什么','क्या खाऊं','भूख'] },
   { id:'food_spicy', k:['pedas','spicy','yang pedes','辣','तेज़'] },
   { id:'food_sweet', k:['manis','sweet','dessert','camilan manis','甜','मीठा'] },
   { id:'food_drink', k:['minum','minuman','es','dingin','drink','beverage','haus','thirsty','喝','पीना'] },
@@ -279,6 +279,7 @@ const ChatEngine = (() => {
   const S = {
     name: '', lang: 'id', mood: 'def', turn: 0,
     topics: [], lastTopic: null, lastIntent: null, pending: null,
+    lastUserText: '', lastUserWords: [], pendingQuestion: null,
     sentiment: 0, trend: [], foods: [], askedName: false, used: {},
   };
   const HISTORY = [];
@@ -290,6 +291,27 @@ const ChatEngine = (() => {
     const words = s.split(' ');
     const mapped = words.map(w => SLANG[w] || w);
     return { raw: s, norm: mapped.join(' '), words: mapped };
+  }
+
+  /* whole-word matching stops short keywords ("no", "ya", "i") from firing
+     inside unrelated words — the main cause of off-topic replies */
+  function hasKeyword(norm, raw, kw) {
+    const k = String(kw || '').toLowerCase().trim();
+    if (!k) return false;
+    const esc = k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp('(^|[^\\p{L}\\p{N}])' + esc + '([^\\p{L}\\p{N}]|$)', 'u');
+    return re.test(norm) || re.test(String(raw || '').toLowerCase());
+  }
+
+  function snippetOf(text) {
+    const words = String(text || '')
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+      .split(/\s+/)
+      .filter(w => w.length > 3 && !SLANG[w]);
+    if (!words.length) return '';
+    const out = words.slice(0, 4).join(' ');
+    return out.length > 42 ? out.slice(0, 39).trimEnd() + '…' : out;
   }
 
   function detectLang(text) {
@@ -338,13 +360,16 @@ const ChatEngine = (() => {
   function scoreIntent(norm, raw) {
     let best = { id: 'fallback', s: 0 };
     for (const it of INTENTS) {
-      let s = 0;
+      let s = 0, hits = 0;
       for (const kw of it.k) {
-        if (norm.indexOf(kw) > -1 || raw.indexOf(kw) > -1) {
-          s += kw.length > 5 ? 2.2 : (kw.length > 3 ? 1.7 : 1.2);
-          if (kw.indexOf(' ') > -1) s += 0.8;
+        if (hasKeyword(norm, raw, kw)) {
+          const len = [...kw].length;
+          s += kw.indexOf(' ') > -1 ? 2.6 : (len > 5 ? 2.2 : (len > 3 ? 1.7 : 1.25));
+          hits++;
         }
       }
+      if (hits > 1) s += Math.min(0.8, (hits - 1) * 0.25);
+      if (it.id === 'yes' || it.id === 'no') s *= 0.8;
       if (s > best.s) best = { id: it.id, s };
     }
     return best;
@@ -432,7 +457,12 @@ If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, e
     const { raw, norm, words } = normalize(text);
     const lang = detectLang(String(text || ''));
     if (lang !== S.lang) { S.lang = lang; }
+    const prevTopic = S.lastTopic;
     S.turn++;
+    S.lastUserText = String(text || '').trim();
+    S.lastUserWords = words.filter(w => w.length > 2);
+    const isQuestion = /[?？]/.test(String(text || '')) ||
+      /^(apa|kenapa|mengapa|gimana|bagaimana|where|what|why|how)\b/i.test(String(text || '').trim());
 
     const sc = sentiment(norm, words);
     S.sentiment = sc;
@@ -448,13 +478,21 @@ If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, e
 
     let { id: intent, s: score } = scoreIntent(norm, raw);
 
-    // short answers continue the previous thread instead of resetting it
+    // short answers stay on the previous thread instead of jumping to "more"
     const short = words.length <= 4;
     if (score < 1.6 && short && S.pending) {
-      if (/^(iya|ya|yes|yup|betul|bener|hmm|oke|ok|he eh|heeh)$/.test(norm)) intent = 'more';
-      else if (/^(tidak|nggak|gak|no|belum|bukan|engga)$/.test(norm)) intent = 'more';
+      if (/^(iya|ya|yes|yup|betul|bener|hmm|oke|ok|he eh|heeh)$/.test(norm)) {
+        intent = S.lastIntent && S.lastIntent !== 'more' && S.lastIntent !== 'greet' ? S.lastIntent : 'more';
+      } else if (/^(tidak|nggak|gak|no|belum|bukan|engga)$/.test(norm)) {
+        intent = 'more';
+      }
     }
-    if (score < 1.6 && /[?？]/.test(String(text)) && S.lastIntent) intent = 'why';
+    // a question without a clear keyword should follow the topic or the thread,
+    // not always collapse into the generic "why" bank
+    if (score < 1.6 && isQuestion) {
+      if (tp.length) intent = topicIntent(tp[0]);
+      else if (S.lastIntent && ['advice', 'why', 'more'].indexOf(S.lastIntent) > -1) intent = 'why';
+    }
     if (score < 1.6 && tp.length && sc < -0.4) intent = topicIntent(tp[0]);
 
     // never greet twice in a row
@@ -474,25 +512,47 @@ If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, e
     // local path
     let core = fill(pick(bank(S.lang, intent)) || pick(BANK.id.fallback));
     if (intent === 'fallback' && tp.length) core = fill(pick(bank(S.lang, topicIntent(tp[0]))));
-    if (intent === 'who_am_i' && !S.lastTopic) core = fill(pick(bank(S.lang, 'who_am_i'))).replace(/\{topic\}/g, topicWord('kerja'));
+    if (intent === 'who_am_i' && !S.lastTopic) {
+      core = S.lang === 'en'
+        ? `Of course I remember. You are ${S.name || 'you'}, and we were just talking. I keep notes.`
+        : `Ingat dong. Kamu ${S.name || 'kamu'}, yang tadi cerita sama aku. Aku nyatet, kok.`;
+    }
+    /* the spoken line stays recording-friendly; only the displayed text is dynamic */
+    const speakCore = core;
 
-    // reflection prefix, only when the user shares something emotional
+    // reflection prefix — also for unclear questions, so the reply feels like it listened
     let pre = '';
-    if (sc <= -0.8 && intent !== 'thanks' && intent !== 'bye' && intent !== 'greet' && Math.random() < 0.62) {
+    if ((sc <= -0.8 && intent !== 'thanks' && intent !== 'bye' && intent !== 'greet' && Math.random() < 0.62) ||
+        (isQuestion && score < 1.6 && Math.random() < 0.55)) {
       pre = pick(REFLECT[S.lang] || REFLECT.id) + ' ';
     }
-    // thread callback
+    /* avoid stacked reflections such as "Berat ya. Berat ya." */
+    if (pre && /^(berat ya|kedengeran|wajar|oke,|hmm|that sounds|i hear you|听起来|सुनने)/i.test(core)) pre = '';
+    // thread callback — use the PREVIOUS topic, not the one just mentioned
     let call = '';
-    if (S.turn > 3 && S.topics.length && sc < -0.3 && Math.random() < 0.3) {
+    if (S.turn > 3 && prevTopic && prevTopic !== S.lastTopic && sc < -0.3 && Math.random() < 0.38) {
       call = {
-        id: `Tadi kamu juga cerita soal ${topicWord(S.topics[S.topics.length - 1])}. `,
-        en: `You mentioned ${topicWord(S.topics[S.topics.length - 1])} earlier too. `,
-        zh: `你刚才也提到${topicWord(S.topics[S.topics.length - 1])}。`,
-        hi: `तुमने पहले भी ${topicWord(S.topics[S.topics.length - 1])} के बारे में बताया था। `,
+        id: `Tadi kamu juga cerita soal ${topicWord(prevTopic)}. `,
+        en: `You mentioned ${topicWord(prevTopic)} earlier too. `,
+        zh: `你刚才也提到${topicWord(prevTopic)}。`,
+        hi: `तुमने पहले भी ${topicWord(prevTopic)} के बारे में बताया था। `,
       }[S.lang] || '';
     }
 
     let out = pre + call + core;
+    // when intent is genuinely unclear, mirror the user's own words instead of
+    // reciting a generic line — still honest that we are not certain
+    if (intent === 'fallback' && !tp.length) {
+      const snip = snippetOf(S.lastUserText);
+      if (snip) {
+        out = {
+          id: `Aku nangkep kata "${snip}". Bagian itu yang paling pengen kamu omongin? Cerita dikit lagi, aku dengerin.`,
+          en: `I caught "${snip}". Is that the part you want to talk about? Tell me a bit more, I am listening.`,
+          zh: `我听到“${snip}”。你想聊的是这部分吗？再多说一点，我在听。`,
+          hi: `मुझे "${snip}" समझ आया। क्या यही बात कह रहे हो? थोड़ा और बताओ, मैं सुन रहा हूँ।`,
+        }[S.lang] || (pre + core);
+      }
+    }
 
     // after a few emotional turns, offer food as a bridge into the app
     if (S.turn >= 3 && sc < -0.5 && !S.foods.length && Math.random() < 0.42) {
@@ -511,9 +571,10 @@ If they mention food, you may suggest Makassar dishes (coto, konro, pallubasa, e
     if (HISTORY.length > 40) HISTORY.splice(0, HISTORY.length - 40);
 
     S.lastIntent = intent;
-    S.pending = ['tired','sad','angry','anxious','lonely','love','work','school','money','family','friend','health','stressed','fail','empty','selfdoubt','more','why','advice'].indexOf(intent) > -1;
+    S.pending = ['tired','sad','angry','anxious','lonely','love','work','school','money','family','friend','health','stressed','fail','empty','selfdoubt','food_ask','food_spicy','food_sweet','food_drink','food_cheap','more','why','advice'].indexOf(intent) > -1;
+    S.pendingQuestion = isQuestion && S.pending ? out.slice(-160) : null;
 
-    return { text: out, speak: core, mood: emo, chips: chipsFor(intent), source: 'local', intent: intent };
+    return { text: out, speak: speakCore, mood: emo, chips: chipsFor(intent), source: 'local', intent: intent };
   }
 
   function topicIntent(t) {
