@@ -59,7 +59,8 @@ jobs:
           # local generator artefacts - never publish the old/new raw packs
           rm -rf _site/audio/cimo/_edge_tmp _site/audio/cimo/elevenlabs-backup
           for f in cravemood-logo.png favicon.png favicon-16.png favicon-64.png apple-touch-icon.png \
-                   cravemood-share-logo.png icon-192.png icon-512.png icon-maskable-512.png gopay-logo.png qr-app.png; do
+                   cravemood-share-logo.png cravemood-ob-logo.png \
+                   icon-192.png icon-512.png icon-maskable-512.png gopay-logo.png qr-app.png; do
             [ -f "$f" ] && cp "$f" _site/ || true
           done
           touch _site/.nojekyll

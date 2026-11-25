@@ -63,7 +63,9 @@ function cimo(mood, size, peek, costume) {
       <ellipse cx="19" cy="1" rx="5" ry="3" fill="#f26394" opacity=".55"/>
       <circle r="5.2" fill="#ff5c92"/><circle cx="1.6" cy="-1.6" r="1.8" fill="#ffd0e0" opacity=".9"/>
     </g>`;
-  const core = `<ellipse cx="100" cy="96" rx="70" ry="62" fill="${b}"/><g clip-path="url(#${g})"><ellipse cx="93" cy="89" rx="68" ry="60" fill="${a}"/></g><ellipse cx="62" cy="56" rx="15" ry="8" transform="rotate(-28 62 56)" fill="#fff" opacity=".55"/><circle cx="82" cy="45" r="3.4" fill="#fff" opacity=".55"/><ellipse cx="52" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><ellipse cx="148" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><g fill="#fff" opacity=".6"><circle cx="146" cy="130" r="2"/><circle cx="156" cy="124" r="1.6"/><circle cx="52" cy="132" r="1.8"/><circle cx="62" cy="138" r="1.5"/></g>${pita}<g class="ceye">${e}</g>${x}${mo}`;
+  /* mouth + a hidden "talking" mouth, revealed by CSS while Cimo speaks */
+  const mouth = `<g class="cmmouth">${mo}</g><g class="cmtalkmouth"><ellipse cx="100" cy="116" rx="10" ry="5.6" fill="#7a2a55"/><ellipse cx="100" cy="119" rx="6" ry="2.4" fill="#ff8fa8"/></g>`;
+  const core = `<ellipse cx="100" cy="96" rx="70" ry="62" fill="${b}"/><g clip-path="url(#${g})"><ellipse cx="93" cy="89" rx="68" ry="60" fill="${a}"/></g><ellipse cx="62" cy="56" rx="15" ry="8" transform="rotate(-28 62 56)" fill="#fff" opacity=".55"/><circle cx="82" cy="45" r="3.4" fill="#fff" opacity=".55"/><ellipse cx="52" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><ellipse cx="148" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><g fill="#fff" opacity=".6"><circle cx="146" cy="130" r="2"/><circle cx="156" cy="124" r="1.6"/><circle cx="52" cy="132" r="1.8"/><circle cx="62" cy="138" r="1.5"/></g>${pita}<g class="ceye">${e}</g>${x}${mouth}`;
   const defs = `<defs><clipPath id="${g}"><ellipse cx="100" cy="96" rx="70" ry="62"/></clipPath><clipPath id="${g}c"><rect x="-10" y="0" width="220" height="138"/></clipPath></defs>`;
 
   let body;

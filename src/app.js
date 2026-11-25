@@ -1350,7 +1350,7 @@ function obRender() {
       <div class="doodle d3">${cimo('kecewa', 44)}</div>
       <div class="doodle d4">${cimo('sedih', 52)}</div>
       <div class="hero-cimo">${cimo('def', 238)}</div>
-      <img class="cm-logo splash" src="cravemood-logo.png" alt="CraveMood">
+      <img class="cm-logo splash" src="cravemood-ob-logo.png" alt="CraveMood">
       <div class="tagline">${t('splash_tag')}</div>
       <button class="startbtn" id="obStart">${t('on_go')} →</button>
       <div class="dots"><i class="on"></i><i></i><i></i><i></i></div>
@@ -2099,6 +2099,12 @@ function boot2() {
   initEyeTracking();
   initClickSound();
   Voice.set('name', (App.user && App.user.name) || '');
+  /* sinkronisasi bibir maskot dengan audio Cimo */
+  if (!window.__cmLipWatch) {
+    window.__cmLipWatch = setInterval(() => {
+      document.body.classList.toggle('voice-talking', !!Voice.speaking);
+    }, 100);
+  }
   /* costumes are a VIP perk — plain users always see the plain Cimo */
   if (!isVip() && App.costum) { App.costum = ''; savePrefs(); }
   /* system voices arrive asynchronously, refresh the picker once they do */

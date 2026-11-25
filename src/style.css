@@ -1288,10 +1288,31 @@ body[data-view="spin"]{background-image:linear-gradient(180deg,#ffe4ee 0%,#fff0f
   .tabbar button svg{width:19px;height:19px}
   .cartrow{margin-bottom:12px}
   .totline{margin-top:20px;padding-top:14px;border-top:1px dashed rgba(58,33,66,.16)}
-  body[data-view="cart"] main{padding-bottom:196px}
-  body:has(.cartbar.on) main{padding-bottom:216px}
+  body[data-view="cart"] main{padding-bottom:216px}
+  body:has(.cartbar.on) main{padding-bottom:240px}
+  /* angkat cartbar lebih tinggi supaya tidak menutupi label tabbar */
+  .cartbar{bottom:calc(98px + env(safe-area-inset-bottom,0px))}
+  .splash .cm-logo.splash{width:min(320px,78vw)}
 }
 @media(max-width:400px){
   .hometop .cm-logo{width:clamp(96px,26vw,128px)}
   .tabbar button{font-size:.54rem}
+}
+
+/* ===== Cimo "sedang bicara" =====
+   bibir diganti mulut kecil yang membuka-menutup mengikuti audio */
+.cmtalkmouth{opacity:0;transform-box:fill-box;transform-origin:center;transition:opacity .12s}
+body.voice-talking .bigcimo .cmmouth,
+body.voice-talking .pet .cmmouth,
+body.voice-talking .hero-cimo .cmmouth,
+body.voice-talking #meetHero .cmmouth,
+body.voice-talking .avatar-lg .cmmouth{opacity:0}
+body.voice-talking .bigcimo .cmtalkmouth,
+body.voice-talking .pet .cmtalkmouth,
+body.voice-talking .hero-cimo .cmtalkmouth,
+body.voice-talking #meetHero .cmtalkmouth,
+body.voice-talking .avatar-lg .cmtalkmouth{opacity:1;animation:cmLip .19s ease-in-out infinite alternate}
+@keyframes cmLip{from{transform:scaleY(.42)}to{transform:scaleY(1.18)}}
+@media(prefers-reduced-motion:reduce){
+  body.voice-talking .cmtalkmouth{animation:none;opacity:1}
 }

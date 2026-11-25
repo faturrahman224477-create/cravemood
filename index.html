@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
-<meta name="build" content="1795597765083">
+<meta name="build" content="1795599232755">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7FA" media="(prefers-color-scheme: light)">
@@ -1317,12 +1317,33 @@ body[data-view="spin"]{background-image:linear-gradient(180deg,#ffe4ee 0%,#fff0f
   .tabbar button svg{width:19px;height:19px}
   .cartrow{margin-bottom:12px}
   .totline{margin-top:20px;padding-top:14px;border-top:1px dashed rgba(58,33,66,.16)}
-  body[data-view="cart"] main{padding-bottom:196px}
-  body:has(.cartbar.on) main{padding-bottom:216px}
+  body[data-view="cart"] main{padding-bottom:216px}
+  body:has(.cartbar.on) main{padding-bottom:240px}
+  /* angkat cartbar lebih tinggi supaya tidak menutupi label tabbar */
+  .cartbar{bottom:calc(98px + env(safe-area-inset-bottom,0px))}
+  .splash .cm-logo.splash{width:min(320px,78vw)}
 }
 @media(max-width:400px){
   .hometop .cm-logo{width:clamp(96px,26vw,128px)}
   .tabbar button{font-size:.54rem}
+}
+
+/* ===== Cimo "sedang bicara" =====
+   bibir diganti mulut kecil yang membuka-menutup mengikuti audio */
+.cmtalkmouth{opacity:0;transform-box:fill-box;transform-origin:center;transition:opacity .12s}
+body.voice-talking .bigcimo .cmmouth,
+body.voice-talking .pet .cmmouth,
+body.voice-talking .hero-cimo .cmmouth,
+body.voice-talking #meetHero .cmmouth,
+body.voice-talking .avatar-lg .cmmouth{opacity:0}
+body.voice-talking .bigcimo .cmtalkmouth,
+body.voice-talking .pet .cmtalkmouth,
+body.voice-talking .hero-cimo .cmtalkmouth,
+body.voice-talking #meetHero .cmtalkmouth,
+body.voice-talking .avatar-lg .cmtalkmouth{opacity:1;animation:cmLip .19s ease-in-out infinite alternate}
+@keyframes cmLip{from{transform:scaleY(.42)}to{transform:scaleY(1.18)}}
+@media(prefers-reduced-motion:reduce){
+  body.voice-talking .cmtalkmouth{animation:none;opacity:1}
 }
 
 </style>
@@ -1469,7 +1490,9 @@ function cimo(mood, size, peek, costume) {
       <ellipse cx="19" cy="1" rx="5" ry="3" fill="#f26394" opacity=".55"/>
       <circle r="5.2" fill="#ff5c92"/><circle cx="1.6" cy="-1.6" r="1.8" fill="#ffd0e0" opacity=".9"/>
     </g>`;
-  const core = `<ellipse cx="100" cy="96" rx="70" ry="62" fill="${b}"/><g clip-path="url(#${g})"><ellipse cx="93" cy="89" rx="68" ry="60" fill="${a}"/></g><ellipse cx="62" cy="56" rx="15" ry="8" transform="rotate(-28 62 56)" fill="#fff" opacity=".55"/><circle cx="82" cy="45" r="3.4" fill="#fff" opacity=".55"/><ellipse cx="52" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><ellipse cx="148" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><g fill="#fff" opacity=".6"><circle cx="146" cy="130" r="2"/><circle cx="156" cy="124" r="1.6"/><circle cx="52" cy="132" r="1.8"/><circle cx="62" cy="138" r="1.5"/></g>${pita}<g class="ceye">${e}</g>${x}${mo}`;
+  /* mouth + a hidden "talking" mouth, revealed by CSS while Cimo speaks */
+  const mouth = `<g class="cmmouth">${mo}</g><g class="cmtalkmouth"><ellipse cx="100" cy="116" rx="10" ry="5.6" fill="#7a2a55"/><ellipse cx="100" cy="119" rx="6" ry="2.4" fill="#ff8fa8"/></g>`;
+  const core = `<ellipse cx="100" cy="96" rx="70" ry="62" fill="${b}"/><g clip-path="url(#${g})"><ellipse cx="93" cy="89" rx="68" ry="60" fill="${a}"/></g><ellipse cx="62" cy="56" rx="15" ry="8" transform="rotate(-28 62 56)" fill="#fff" opacity=".55"/><circle cx="82" cy="45" r="3.4" fill="#fff" opacity=".55"/><ellipse cx="52" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><ellipse cx="148" cy="108" rx="11" ry="7" fill="#ff6f9c" opacity=".42"/><g fill="#fff" opacity=".6"><circle cx="146" cy="130" r="2"/><circle cx="156" cy="124" r="1.6"/><circle cx="52" cy="132" r="1.8"/><circle cx="62" cy="138" r="1.5"/></g>${pita}<g class="ceye">${e}</g>${x}${mouth}`;
   const defs = `<defs><clipPath id="${g}"><ellipse cx="100" cy="96" rx="70" ry="62"/></clipPath><clipPath id="${g}c"><rect x="-10" y="0" width="220" height="138"/></clipPath></defs>`;
 
   let body;
@@ -4863,7 +4886,7 @@ function obRender() {
       <div class="doodle d3">${cimo('kecewa', 44)}</div>
       <div class="doodle d4">${cimo('sedih', 52)}</div>
       <div class="hero-cimo">${cimo('def', 238)}</div>
-      <img class="cm-logo splash" src="cravemood-logo.png" alt="CraveMood">
+      <img class="cm-logo splash" src="cravemood-ob-logo.png" alt="CraveMood">
       <div class="tagline">${t('splash_tag')}</div>
       <button class="startbtn" id="obStart">${t('on_go')} →</button>
       <div class="dots"><i class="on"></i><i></i><i></i><i></i></div>
@@ -5612,6 +5635,12 @@ function boot2() {
   initEyeTracking();
   initClickSound();
   Voice.set('name', (App.user && App.user.name) || '');
+  /* sinkronisasi bibir maskot dengan audio Cimo */
+  if (!window.__cmLipWatch) {
+    window.__cmLipWatch = setInterval(() => {
+      document.body.classList.toggle('voice-talking', !!Voice.speaking);
+    }, 100);
+  }
   /* costumes are a VIP perk — plain users always see the plain Cimo */
   if (!isVip() && App.costum) { App.costum = ''; savePrefs(); }
   /* system voices arrive asynchronously, refresh the picker once they do */
