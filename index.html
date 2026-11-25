@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
-<meta name="build" content="1795599232755">
+<meta name="build" content="1795600525103">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7FA" media="(prefers-color-scheme: light)">
@@ -2438,16 +2438,15 @@ const DB = (() => {
 })();
 
 
-/* ===== Cimo voice engine =====
-   Cimo speaks with ONE voice, and every word must be understandable.
+/* ===== Cimo voice engine — global browser speech profile =====
+   Every line Cimo says (greeting, chat, mood recommendation, spinner,
+   notifications) goes through the Web Speech API with ONE warm, cheerful
+   setting. No API key, no backend, no per-line recorded clips: the device's
+   best id-ID voice is picked automatically.
 
-   Order of preference:
-     1. a real recording for this exact line  (audio/cimo/manifest.json)
-     2. the most natural system voice available, at a calm human pace
-
-   The recorded sample (audio/cimo/cimo-voice.mp3) is kept as Cimo's voice
-   identity and can be mapped to lines through the manifest; a 3 second clip
-   cannot pronounce new sentences on its own. */
+   The local clip audio/cimo/cimo-voice.mp3 (Kuon — Cheerful, Clear and Steady)
+   is Cimo's voice reference; it is analysed locally to keep the register and
+   tempo aligned, and can be replayed in settings. */
 
 const CIMO_CLIP = 'audio/cimo/cimo-voice.mp3';
 
@@ -2460,19 +2459,30 @@ function assetUrl(path) {
   } catch (e) { return path; }
 }
 
-/* calm base pace: noticeably slower than the browser default so nothing
-   gets swallowed, then nudged per mood */
-const BASE_RATE = 1.0;
-/* subtle mood colouring only — extreme pitch/rate shifts are what make a
-   synthetic voice sound stiff. Gaps are now near-zero: sentences flow. */
+/* lively but unhurried — inside the 1.05–1.15 / 1.12–1.25 window */
+const BASE_RATE = 1.09;
+const BASE_PITCH = 1.18;
+const RATE_MIN = 1.05, RATE_MAX = 1.15;
+const PITCH_MIN = 1.12, PITCH_MAX = 1.25;
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+/* small mood colouring; every value still lands inside the global window */
 const MOODTONE = {
-  senang: { r: 1.04, p: 1.10, gap: 45 },
-  sedih:  { r: 0.96, p: 1.00, gap: 65 },
-  marah:  { r: 1.02, p: 1.02, gap: 45 },
-  bingung: { r: 1.00, p: 1.07, gap: 55 },
-  capek:  { r: 0.96, p: 1.00, gap: 65 },
-  kecewa: { r: 0.97, p: 1.00, gap: 60 },
-  def:    { r: 0.99, p: 1.06, gap: 45 },
+  senang:  { r: 1.03, p: 1.04, gap: 65 },
+  sedih:   { r: 0.97, p: 0.98, gap: 95 },
+  marah:   { r: 1.02, p: 1.00, gap: 60 },
+  bingung: { r: 1.00, p: 1.02, gap: 80 },
+  capek:   { r: 0.97, p: 0.98, gap: 95 },
+  kecewa:  { r: 0.98, p: 0.98, gap: 90 },
+  def:     { r: 1.00, p: 1.00, gap: 70 },
+};
+/* fallback lines for canned keys when a caller does not provide text */
+const FIXED_TEXT = {
+  greet: 'Hai, aku Cimo! Lagi mood apa hari ini?',
+  preview: 'Hai, aku Cimo! Kalau kamu lagi capek, cerita aja. Aku dengerin sampai selesai, ya.',
+  added: 'Sudah masuk keranjang, nih!',
+  saved: 'Sudah tersimpan, ya.',
+  home: 'Hai, aku Cimo! Yuk, cek rekomendasi makanan buat kamu.',
+  intro: 'Hai, aku Cimo! Temanmu yang suka nyari makanan sesuai mood kamu.',
 };
 
 const Voice = (() => {
@@ -2489,7 +2499,7 @@ const Voice = (() => {
   const REF = { pitch: 1, rate: 1, f0: 0, syl: 0, ready: false };
   let refLoading = null;
   /* the analysis is cheap but not instant — remember it after the first run */
-  const REF_KEY = 'cm_voice_ref_v1';
+  const REF_KEY = 'cm_voice_ref_v2';
   try {
     const c = JSON.parse(localStorage.getItem(REF_KEY) || 'null');
     if (c && c.f0) { REF.pitch = c.pitch; REF.rate = c.rate; REF.f0 = c.f0; REF.syl = c.syl; REF.ready = true; }
@@ -2545,8 +2555,9 @@ const Voice = (() => {
         const c = new C();
         const buf = await c.decodeAudioData(ab);
         const r = analyse(buf);
-        if (r.f0) REF.pitch = Math.max(0.95, Math.min(1.28, r.f0 / 205));
-        if (r.syl) REF.rate = Math.max(0.92, Math.min(1.08, r.syl / 4.2));
+        /* reference only — the spoken voice stays inside the global window */
+        if (r.f0) REF.pitch = clamp(r.f0 / 205, PITCH_MIN, PITCH_MAX);
+        if (r.syl) REF.rate = clamp(r.syl / 4.2, RATE_MIN, RATE_MAX);
         REF.f0 = Math.round(r.f0); REF.syl = +r.syl.toFixed(2); REF.ready = true;
         try { localStorage.setItem(REF_KEY, JSON.stringify({ pitch: REF.pitch, rate: REF.rate, f0: REF.f0, syl: REF.syl })); } catch (e) {}
         try { c.close(); } catch (e) {}
@@ -2763,28 +2774,44 @@ const Voice = (() => {
   }
   function playClip(file) { return playFile('audio/cimo/' + file, CIMO_RATE); }
 
-  /* Natural speech: speak whole sentences, not choppy word-groups.
-     The old version cut on commas AND added 150–280ms gaps, which made Cimo
-     sound like a robot reading a list. Now we only break at real sentence
-     ends, keep the punctuation so the engine applies its own prosody, and
-     merge anything shorter than ~150 chars into one continuous utterance. */
+  /* ---- automatic text cleanup -------------------------------------
+     emoji, markdown and odd symbols are removed before the text ever
+     reaches speechSynthesis, so nothing is read out as "star" or "backtick". */
+  function cleanSpeech(text) {
+    let s = String(text == null ? '' : text);
+    s = s.replace(/https?:\/\/\S+/g, ' ')
+         .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{2190}-\u{21FF}\u{2B00}-\u{2BFF}]/gu, ' ')
+         .replace(/[*_`~#>\\[\]{}|]/g, ' ')
+         .replace(/\s*\n+\s*/g, ' ')
+         .replace(/[ \t]{2,}/g, ' ')
+         .replace(/\s+([,!?.;:])/g, '$1')
+         .replace(/[,]{2,}/g, ',')
+         .replace(/\s{2,}/g, ' ')
+         .trim();
+    /* a tiny pause after the friendly greeting keeps it lively */
+    if (/^hai(?=\s+[A-Za-z])/i.test(s)) s = s.replace(/^hai/i, 'Hai,');
+    return s;
+  }
+  /* Natural rhythm: short phrases at commas / full stops / exclamations.
+     Very short fragments are merged back so it never sounds clipped. */
   function chunks(text) {
-    const clean = String(text)
-      .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '')
-      .replace(/\s+/g, ' ')
-      .trim();
+    const clean = cleanSpeech(text);
     if (!clean) return [];
-    if (clean.length < 150) return [clean];
-    return clean
-      .split(/(?<=[.!?。！？…])\s+(?=[A-Za-z0-9])/)
-      .map(s => s.trim())
-      .filter(Boolean)
-      .reduce((acc, s) => {
-        const last = acc[acc.length - 1];
-        if (last && last.length + s.length < 150) acc[acc.length - 1] = last + ' ' + s;
-        else acc.push(s);
-        return acc;
-      }, []);
+    const parts = clean.split(/(?<=[,!?.;:])\s+/).map(s => s.trim()).filter(Boolean);
+    const out = [];
+    for (const part of parts) {
+      if (part.length > 110) {
+        let cur = '';
+        for (const w of part.split(/\s+/)) {
+          if ((cur + ' ' + w).trim().length > 90) { if (cur) out.push(cur); cur = w; }
+          else cur = (cur ? cur + ' ' : '') + w;
+        }
+        if (cur) out.push(cur);
+      } else if (out.length && part.length < 10) {
+        out[out.length - 1] += ' ' + part;
+      } else out.push(part);
+    }
+    return out;
   }
 
   function stop() {
@@ -2795,98 +2822,66 @@ const Voice = (() => {
     speaking = false;
   }
 
-  async function speak(text, opts) {
+  /* Global speak: every Cimo line in the app ends up here. */
+  function speak(text, opts) {
     opts = opts || {};
-    if (!enabled) return Promise.resolve();
-    text = String(text || '').trim();
-    if (!text) return Promise.resolve();
-
-    if (!pack) await loadPack();
-    const clip = lookup(text);
-    if (clip) { stop(); return playClip(clip); }
-
-    if (!synth) return Promise.resolve();
-
-    stop();
-    const my = token;
+    if (!enabled || !synth) return Promise.resolve();
     const list = chunks(text);
     if (!list.length) return Promise.resolve();
 
+    /* cancel the old queue before starting a new line — instant, smooth replies */
+    stop();
+    const my = token;
     const v = pickVoice(opts.lang || S.lang);
     const tone = MOODTONE[opts.mood] || MOODTONE.def;
-    const baseRate = BASE_RATE * tone.r * REF.rate * (opts.rate || 1);
-    const basePitch = tone.p * REF.pitch * (opts.pitch || 1);
+    const rate = clamp(BASE_RATE * tone.r * (opts.rate || 1), RATE_MIN, RATE_MAX);
+    const pitch = clamp(BASE_PITCH * tone.p * (opts.pitch || 1), PITCH_MIN, PITCH_MAX);
     speaking = true;
 
     return new Promise(resolve => {
-      let i = 0;
-      const done = () => { if (my === token) speaking = false; resolve(); };
+      let i = 0, finished = false;
+      const done = () => {
+        if (finished) return;
+        finished = true;
+        if (my === token) speaking = false;
+        resolve();
+      };
       const next = () => {
-        if (my !== token) return done();
+        if (finished || my !== token) return done();
         if (i >= list.length) return done();
         const seg = list[i++];
-        const u = new SpeechSynthesisUtterance(seg);
-        if (v) { u.voice = v; u.lang = v.lang; } else u.lang = LOCALE[opts.lang || S.lang] || 'id-ID';
-
-        const isQ = /[?？]$/.test(seg);
-        /* let the engine do the prosody; only a gentle lift on questions */
-        u.rate = Math.max(0.8, Math.min(1.12, baseRate));
-        u.pitch = Math.max(0.75, Math.min(1.45, basePitch + (isQ ? 0.06 : 0)));
-        u.volume = Math.max(0, Math.min(1, volume));
-
-        const pause = i >= list.length ? 0 : tone.gap;
-        u.onend = () => setTimeout(next, pause);
-        u.onerror = () => done();
-        try { synth.speak(u); } catch (e) { done(); }
+        try {
+          const u = new SpeechSynthesisUtterance(seg);
+          if (v) { u.voice = v; u.lang = v.lang; }
+          else u.lang = LOCALE[opts.lang || S.lang] || 'id-ID';
+          const isQ = /[?？]$/.test(seg);
+          u.rate = clamp(rate, RATE_MIN, RATE_MAX);
+          u.pitch = clamp(pitch + (isQ ? 0.02 : 0), PITCH_MIN, PITCH_MAX);
+          u.volume = clamp(volume, 0, 1);
+          u.onend = () => setTimeout(next, i >= list.length ? 0 : tone.gap);
+          u.onerror = () => done();          /* audio permission / engine errors stay silent */
+          synth.speak(u);
+        } catch (e) { done(); }
       };
       next();
       /* safety net: some engines never fire onend */
       const guard = setInterval(() => {
-        if (my !== token) { clearInterval(guard); return; }
-        if (!synth.speaking && !synth.pending) { clearInterval(guard); done(); }
-      }, 900);
+        if (finished || my !== token) { clearInterval(guard); return; }
+        if (i >= list.length && !synth.speaking && !synth.pending) { clearInterval(guard); done(); }
+      }, 800);
     });
   }
 
   return {
     get supported() { return !!synth; },
     get hasPack() { return !!(lines && lines.moods); },
-    /* the mood greeting, spoken with the real recorded voice when the pack exists */
-    async speakMood(mood, dishId, fallbackText) {
-      if (!enabled) return;
-      if (lines && lines.moods && lines.moods[mood]) {
-        const mm = lines.moods[mood];
-        const segs = [];
-        if (mm.pre) segs.push(mm.pre);
-        if (dishId && lines.dishes && lines.dishes[dishId]) segs.push(lines.dishes[dishId]);
-        if (mm.post) segs.push(mm.post);
-        if (segs.length) {
-          stop();
-          const my = token;
-          speaking = true;
-          for (const s of segs) {
-            if (my !== token || !enabled) break;
-            await playClip(s);
-          }
-          if (my === token) speaking = false;
-          return;
-        }
-      }
-      return speak(fallbackText || '', { mood });
+    /* mood recommendation — same global voice profile as everywhere else */
+    speakMood(mood, dishId, fallbackText) {
+      return speak(fallbackText || FIXED_TEXT.greet, { mood });
     },
-    /* a canned line (greet / preview / added / saved) with the recorded voice */
-    async speakFixed(key, fallbackText, opts) {
-      if (!enabled) return;
-      const f = lines && lines.fixed && lines.fixed[key];
-      if (f) {
-        stop();
-        const my = token;
-        speaking = true;
-        await playClip(f);
-        if (my === token) speaking = false;
-        return;
-      }
-      return speak(fallbackText || '', opts);
+    /* greeting / preview / added / saved / intro — same global profile */
+    speakFixed(key, fallbackText, opts) {
+      return speak(fallbackText || FIXED_TEXT[key] || FIXED_TEXT.greet, opts);
     },
     get ready() { return !!synth && voices.length > 0; },
     get speaking() { return speaking; },
