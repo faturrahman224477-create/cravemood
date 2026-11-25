@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
-<meta name="build" content="1795604325078">
+<meta name="build" content="1795610047780">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7FA" media="(prefers-color-scheme: light)">
@@ -590,11 +590,6 @@ td .tag{font-size:.6rem}
 .dlqr img{border-radius:12px;background:#fff;padding:6px;flex:none}
 .dlqr b{font:700 .88rem Fredoka;display:block}
 .dlqr small{font:700 .72rem Nunito;color:var(--mu);display:block;margin-top:2px}
-.dllink{margin-top:14px;background:var(--bg);border:1px solid var(--ln);border-radius:20px;padding:13px 14px}
-.dllink code{display:block;margin:9px 0 7px;padding:9px 11px;background:#fff;border:1px dashed var(--ln);border-radius:12px;
-  font:600 .67rem/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ink);
-  word-break:break-all;max-height:76px;overflow:auto}
-.dllink .hint{margin-bottom:10px}
 .dlcard{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .dlbtn{display:flex;align-items:center;gap:11px;border:1.8px solid var(--ln);background:var(--bg);color:var(--ink);
   border-radius:20px;padding:12px 14px;cursor:pointer;text-align:left;transition:.22s cubic-bezier(.34,1.56,.64,1);position:relative}
@@ -628,7 +623,6 @@ td .tag{font-size:.6rem}
 .istep span{flex:1}
 .inote{background:var(--cr);border:1px solid var(--ln);border-radius:16px;padding:10px 13px;font-size:.74rem;color:var(--mu);line-height:1.5;margin-top:10px}
 .inote b{color:var(--ink)}
-.iacts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .installbanner{position:fixed;left:14px;right:14px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:56;
   background:var(--sf);border:1px solid var(--ln);border-radius:22px;padding:12px 14px;display:flex;align-items:center;gap:11px;
   box-shadow:0 14px 34px rgba(122,42,85,.24);transform:translateY(160%);transition:transform .4s cubic-bezier(.34,1.4,.5,1);
@@ -643,7 +637,6 @@ td .tag{font-size:.6rem}
 @media(max-width:560px){
   .dlcard{grid-template-columns:1fr}
   .dlbtn{padding:11px 13px}
-  .iacts{grid-template-columns:1fr}
 }
 @media(min-width:981px){ .installbanner{left:auto;right:24px;bottom:100px;width:360px} }
 
@@ -2086,8 +2079,7 @@ const INSTALL_I18N = {
     copy:'Salin link', copied:'Link disalin',
     free:'Gratis', light:'Ringan, tanpa iklan', version:'Versi',
     qr_t:'Scan pakai kamera HP', qr_s:'Buka di HP, lalu pasang dari sana.',
-    link_t:'Link lengkap aplikasi', link_s:'Selalu ikutkan bagian ?sharecode= supaya link tidak error.',
-    copy_full:'Salin link lengkap', open_now:'Buka di HP ini', installed:'Sudah terpasang',
+    installed:'Sudah terpasang',
     dl_android:'Android', dl_ios:'iPhone / iPad', dl_desktop:'Komputer',
     howto:'Cara pasang', share:'Bagikan',
     note:'Aplikasi ini ringan, selalu versi terbaru, dan tidak perlu update manual.',
@@ -2105,8 +2097,7 @@ const INSTALL_I18N = {
     copy:'Copy link', copied:'Link copied',
     free:'Free', light:'Light, no ads', version:'Version',
     qr_t:'Scan with your phone camera', qr_s:'Open it on your phone, then install from there.',
-    link_t:'Full app link', link_s:'Always keep the ?sharecode= part so the link does not break.',
-    copy_full:'Copy full link', open_now:'Open on this phone', installed:'Already installed',
+    installed:'Already installed',
     dl_android:'Android', dl_ios:'iPhone / iPad', dl_desktop:'Desktop',
     howto:'How to install', share:'Share',
     note:'This app is lightweight, always up to date, and needs no manual updates.',
@@ -2124,8 +2115,7 @@ const INSTALL_I18N = {
     copy:'复制链接', copied:'链接已复制',
     free:'免费', light:'轻量，无广告', version:'版本',
     qr_t:'用手机相机扫码', qr_s:'在手机上打开后安装。',
-    link_t:'完整应用链接', link_s:'请保留 ?sharecode= 部分，否则链接会报错。',
-    copy_full:'复制完整链接', open_now:'在此手机上打开', installed:'已安装',
+    installed:'已安装',
     dl_android:'安卓', dl_ios:'iPhone / iPad', dl_desktop:'电脑',
     howto:'安装方法', share:'分享',
     note:'本应用轻量、永远最新、无需手动更新。',
@@ -2143,8 +2133,7 @@ const INSTALL_I18N = {
     copy:'लिंक कॉपी करें', copied:'लिंक कॉपी हुआ',
     free:'मुफ़्त', light:'हल्का, विज्ञापन नहीं', version:'संस्करण',
     qr_t:'फ़ोन कैमरे से स्कैन करें', qr_s:'फ़ोन पर खोलें, फिर वहाँ से इंस्टॉल करें।',
-    link_t:'पूरा ऐप लिंक', link_s:'?sharecode= वाला हिस्सा ज़रूर रखें, वरना लिंक काम नहीं करेगा।',
-    copy_full:'पूरा लिंक कॉपी करें', open_now:'इस फ़ोन पर खोलें', installed:'पहले से इंस्टॉल',
+    installed:'पहले से इंस्टॉल',
     dl_android:'Android', dl_ios:'iPhone / iPad', dl_desktop:'कंप्यूटर',
     howto:'कैसे इंस्टॉल करें', share:'शेयर करें',
     note:'यह ऐप हल्का है, हमेशा नया, और मैन्युअल अपडेट नहीं चाहिए।',
@@ -2452,15 +2441,13 @@ const DB = (() => {
 })();
 
 
-/* ===== Cimo voice engine — global browser speech profile =====
-   Every line Cimo says (greeting, chat, mood recommendation, spinner,
-   notifications) goes through the Web Speech API with ONE warm, cheerful
-   setting. No API key, no backend, no per-line recorded clips: the device's
-   best id-ID voice is picked automatically.
+/* ===== Cimo voice engine — warm pre-rendered voice pack =====
+   Every spoken line uses the offline clips generated by tools/gen-voice-edge.py.
+   Browser TTS stays disabled: it made Cimo sound stiff and robotic. The clips
+   are rendered at a calm conversation tempo and played without pitch shifting.
 
-   The local clip audio/cimo/cimo-voice.mp3 (Kuon — Cheerful, Clear and Steady)
-   is Cimo's voice reference; it is analysed locally to keep the register and
-   tempo aligned, and can be replayed in settings. */
+   audio/cimo/cimo-voice.mp3 is the original Kuon-style reference clip and can
+   still be replayed from settings. */
 
 const CIMO_CLIP = 'audio/cimo/cimo-voice.mp3';
 /* every Cimo line is pre-rendered — browser TTS is never used at runtime */
@@ -2688,14 +2675,12 @@ const Voice = (() => {
       .catch(() => {});
   }
 
-  /* light extra lift on top of the +10% render: brisk, clear, never dragged */
-  const CIMO_RATE = 1.08;
+  /* play at the authored tempo — the old extra speed-up also raised the pitch */
+  const CIMO_RATE = 1;
 
   /* ---- soft playback chain -----------------------------------------
-     The recordings are already natural; what made them feel stiff was the
-     raw, click-edged <audio> playback and instant clip-to-clip cuts. Every
-     clip now goes through a gentle 8 kHz low-pass, a small presence lift,
-     a 35 ms fade-in / 90 ms fade-out and a very short room reverb. */
+     Light smoothing only: a gentle 12 kHz low-pass, a very small presence
+     lift, longer edge fades and a short room reverb. No tempo or pitch shift. */
   function audioCtx() {
     if (!actx) {
       const C = window.AudioContext || window.webkitAudioContext;
@@ -2734,29 +2719,29 @@ const Voice = (() => {
         const c = audioCtx(); if (!c) return fin(false);
         const buf = await decoded(path); if (!buf || myToken !== token) return fin(false);
         const rt = rate || 1;
-        /* cut the silent head/tail that made every reply feel slow */
+        /* trim only real silence, with a little breathing room at both ends */
         const raw = buf.getChannelData(0);
         const step = Math.max(1, Math.floor(raw.length / 8000));
         let first = 0, last = raw.length - 1;
-        while (first < raw.length && Math.abs(raw[first]) < 0.012) first += step;
-        while (last > first && Math.abs(raw[last]) < 0.012) last -= step;
-        const offset = Math.max(0, first / buf.sampleRate - 0.015);
-        const end = Math.min(buf.duration, last / buf.sampleRate + 0.015);
+        while (first < raw.length && Math.abs(raw[first]) < 0.008) first += step;
+        while (last > first && Math.abs(raw[last]) < 0.008) last -= step;
+        const offset = Math.max(0, first / buf.sampleRate - 0.03);
+        const end = Math.min(buf.duration, last / buf.sampleRate + 0.04);
         const span = Math.max(0.25, end - offset);
 
         const src = c.createBufferSource();
         src.buffer = buf; src.playbackRate.value = rt;
         const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 12000;
-        const pk = c.createBiquadFilter(); pk.type = 'peaking'; pk.frequency.value = 2800; pk.Q.value = 0.9; pk.gain.value = 1;
+        const pk = c.createBiquadFilter(); pk.type = 'peaking'; pk.frequency.value = 2800; pk.Q.value = 0.9; pk.gain.value = 0.6;
         const env = c.createGain();
-        const wet = c.createGain(); wet.gain.value = 0.035;
+        const wet = c.createGain(); wet.gain.value = 0.02;
         const conv = c.createConvolver(); conv.buffer = shortIR(c);
         const t = c.currentTime + 0.015;
         const total = span / rt;
         const top = Math.max(0.0001, Math.min(1, volume) * 0.95);
         env.gain.setValueAtTime(0.0001, t);
-        env.gain.linearRampToValueAtTime(top, t + 0.018);
-        env.gain.setValueAtTime(top, t + Math.max(0.05, total - 0.045));
+        env.gain.linearRampToValueAtTime(top, t + 0.035);
+        env.gain.setValueAtTime(top, t + Math.max(0.08, total - 0.075));
         env.gain.linearRampToValueAtTime(0.0001, t + total);
         src.connect(lp); lp.connect(pk); pk.connect(env);
         env.connect(c.destination);
@@ -2926,9 +2911,11 @@ const Voice = (() => {
           stop();
           const my = token;
           speaking = true;
-          for (const s of segs) {
+          for (let i = 0; i < segs.length; i++) {
             if (my !== token || !enabled) break;
-            await playClip(s);
+            await playClip(segs[i]);
+            /* a soft breath between recommendation parts, like a real reply */
+            if (my === token && i < segs.length - 1) await new Promise(r => setTimeout(r, 130));
           }
           if (my === token) speaking = false;
           return;
@@ -5234,7 +5221,7 @@ function openInstall() {
   renderInstall();
 }
 
-/* the canonical, always-complete app link (keeps ?sharecode=… so the host gate passes) */
+/* install steps only — the full-link card was removed; sharing still uses the canonical URL */
 function renderInstall() {
   const L = IL();
   const platform = PLAT.ios ? 'ios' : PLAT.android ? 'android' : 'desktop';
@@ -5278,28 +5265,12 @@ function renderInstall() {
       <div><b>${L.qr_t}</b><small>${L.qr_s}</small></div>
     </div>` : ''}
 
-    <div class="dllink">
-      <div class="between"><b>${L.link_t}</b><span class="tag mint">?sharecode</span></div>
-      <code id="fullLink">${esc(link)}</code>
-      <p class="hint">${L.link_s}</p>
-      <div class="iacts">
-        <button class="btn sm" id="copyLink">${icon('share')} ${L.copy_full}</button>
-        <button class="btn sm ghost" id="shareLink">${icon('arrow')} ${L.share}</button>
-      </div>
-    </div>`;
+  `;
 
   const go = $('#pwaGo');
   if (go) go.onclick = doPwaInstall;
   const st = $('#shareTop');
   if (st) st.onclick = async () => {
-    try {
-      if (navigator.share) await navigator.share({ title: 'CraveMood', text: 'Coba CraveMood, makanan sesuai moodmu', url: link });
-      else { copyText(link); toast(L.copied); }
-    } catch (e) { copyText(link); toast(L.copied); }
-  };
-  $('#copyLink').onclick = () => { copyText(link); toast(L.copied); SFX.play('pop'); };
-  const sh = $('#shareLink');
-  if (sh) sh.onclick = async () => {
     try {
       if (navigator.share) await navigator.share({ title: 'CraveMood', text: 'Coba CraveMood, makanan sesuai moodmu', url: link });
       else { copyText(link); toast(L.copied); }

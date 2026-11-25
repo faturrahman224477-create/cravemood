@@ -10,6 +10,7 @@ server/data/
 *.genie
 .DS_Store
 Thumbs.db
+__pycache__/
 final.cjs
 probe.cjs
 .workbuddy-ai/
@@ -28,8 +29,7 @@ capacitor.config.json
 
 # --- heavy local build artefacts (videos, prototypes, sound pack sources) ---
 video/
-audio/cimo/_edge_tmp/
-audio/cimo/_edge_tmp_10_12/
+audio/cimo/_edge_tmp*/
 audio/cimo/elevenlabs-backup/
 proto/
 sound/

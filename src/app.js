@@ -1636,7 +1636,7 @@ function openInstall() {
   renderInstall();
 }
 
-/* the canonical, always-complete app link (keeps ?sharecode=… so the host gate passes) */
+/* install steps only — the full-link card was removed; sharing still uses the canonical URL */
 function renderInstall() {
   const L = IL();
   const platform = PLAT.ios ? 'ios' : PLAT.android ? 'android' : 'desktop';
@@ -1680,28 +1680,12 @@ function renderInstall() {
       <div><b>${L.qr_t}</b><small>${L.qr_s}</small></div>
     </div>` : ''}
 
-    <div class="dllink">
-      <div class="between"><b>${L.link_t}</b><span class="tag mint">?sharecode</span></div>
-      <code id="fullLink">${esc(link)}</code>
-      <p class="hint">${L.link_s}</p>
-      <div class="iacts">
-        <button class="btn sm" id="copyLink">${icon('share')} ${L.copy_full}</button>
-        <button class="btn sm ghost" id="shareLink">${icon('arrow')} ${L.share}</button>
-      </div>
-    </div>`;
+  `;
 
   const go = $('#pwaGo');
   if (go) go.onclick = doPwaInstall;
   const st = $('#shareTop');
   if (st) st.onclick = async () => {
-    try {
-      if (navigator.share) await navigator.share({ title: 'CraveMood', text: 'Coba CraveMood, makanan sesuai moodmu', url: link });
-      else { copyText(link); toast(L.copied); }
-    } catch (e) { copyText(link); toast(L.copied); }
-  };
-  $('#copyLink').onclick = () => { copyText(link); toast(L.copied); SFX.play('pop'); };
-  const sh = $('#shareLink');
-  if (sh) sh.onclick = async () => {
     try {
       if (navigator.share) await navigator.share({ title: 'CraveMood', text: 'Coba CraveMood, makanan sesuai moodmu', url: link });
       else { copyText(link); toast(L.copied); }

@@ -21,12 +21,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "audio" / "cimo"
 BACKUP = OUT / "elevenlabs-backup"
-TMP = OUT / "_edge_tmp_10_12"   # unique per setting pair — never reuse stale clips
+TMP = OUT / "_edge_tmp_natural"   # unique per setting pair — never reuse stale clips
 DRY = "--dry" in sys.argv
 
-VOICE = "id-ID-GadisNeural"   # young, friendly, positive Indonesian female
-RATE = "+10%"                 # lively, cheerful, never sluggish
-PITCH = "+12Hz"               # a little brighter / cuter, still natural
+VOICE = "id-ID-GadisNeural"   # warm Indonesian female, closest to the Kuon reference
+RATE = "-3%"                  # unhurried conversation — no tape-speed feel
+PITCH = "+0Hz"                # keep the natural register (no chipmunk lift)
 
 MOOD_LINES = {
     "senang": {"pre": "Wah, kamu lagi senang ya! Coba yang manis dan segar,", "post": "bisa jadi pilihan."},
@@ -196,7 +196,7 @@ def main():
 
     lines_path = OUT / "lines.json"
     lines = json.loads(lines_path.read_text(encoding="utf-8"))
-    lines["voiceName"] = "Cimo Gadis (ceria & hangat)"
+    lines["voiceName"] = "Cimo Gadis (natural & hangat)"
     lines["voice"] = VOICE
     lines["model"] = "edge-neural"
     lines["settings"] = {"rate": RATE, "pitch": PITCH}

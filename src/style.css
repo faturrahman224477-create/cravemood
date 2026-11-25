@@ -561,11 +561,6 @@ td .tag{font-size:.6rem}
 .dlqr img{border-radius:12px;background:#fff;padding:6px;flex:none}
 .dlqr b{font:700 .88rem Fredoka;display:block}
 .dlqr small{font:700 .72rem Nunito;color:var(--mu);display:block;margin-top:2px}
-.dllink{margin-top:14px;background:var(--bg);border:1px solid var(--ln);border-radius:20px;padding:13px 14px}
-.dllink code{display:block;margin:9px 0 7px;padding:9px 11px;background:#fff;border:1px dashed var(--ln);border-radius:12px;
-  font:600 .67rem/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ink);
-  word-break:break-all;max-height:76px;overflow:auto}
-.dllink .hint{margin-bottom:10px}
 .dlcard{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .dlbtn{display:flex;align-items:center;gap:11px;border:1.8px solid var(--ln);background:var(--bg);color:var(--ink);
   border-radius:20px;padding:12px 14px;cursor:pointer;text-align:left;transition:.22s cubic-bezier(.34,1.56,.64,1);position:relative}
@@ -599,7 +594,6 @@ td .tag{font-size:.6rem}
 .istep span{flex:1}
 .inote{background:var(--cr);border:1px solid var(--ln);border-radius:16px;padding:10px 13px;font-size:.74rem;color:var(--mu);line-height:1.5;margin-top:10px}
 .inote b{color:var(--ink)}
-.iacts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .installbanner{position:fixed;left:14px;right:14px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:56;
   background:var(--sf);border:1px solid var(--ln);border-radius:22px;padding:12px 14px;display:flex;align-items:center;gap:11px;
   box-shadow:0 14px 34px rgba(122,42,85,.24);transform:translateY(160%);transition:transform .4s cubic-bezier(.34,1.4,.5,1);
@@ -614,7 +608,6 @@ td .tag{font-size:.6rem}
 @media(max-width:560px){
   .dlcard{grid-template-columns:1fr}
   .dlbtn{padding:11px 13px}
-  .iacts{grid-template-columns:1fr}
 }
 @media(min-width:981px){ .installbanner{left:auto;right:24px;bottom:100px;width:360px} }
 
