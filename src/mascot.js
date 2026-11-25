@@ -74,7 +74,7 @@ function cimo(mood, size, peek, costume, staticMouth) {
   let body;
   if (peek) {
     const hd = cx => `<circle cx="${cx}" cy="139" r="15" fill="${a}" stroke="${b}" stroke-width="1.6"/><circle cx="${cx - 5}" cy="133" r="3.2" fill="#fff" opacity=".5"/>`;
-    body = `<svg viewBox="0 18 200 142" width="${size}" style="overflow:visible" role="img" aria-label="Cimo mengintip ${mood}">${defs}<g clip-path="url(#${g}c)">${core}</g>${hd(38)}${hd(162)}</svg>`;
+    body = `<svg viewBox="0 18 200 136" width="${size}" style="overflow:visible" role="img" aria-label="Cimo mengintip ${mood}">${defs}<g clip-path="url(#${g}c)">${core}</g>${hd(38)}${hd(162)}</svg>`;
   } else {
     /* feet need a soft outline: on the share card their fill is almost the
        same colour as the mood-tinted background, so they used to disappear */
@@ -117,7 +117,7 @@ const ICON = {
   recap:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>',
   user:'<circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/>',
   pin:'<path d="M12 21s6-5.5 6-11a6 6 0 0 0-12 0c0 5.5 6 11 6 11z"/><circle cx="12" cy="10" r="2.2"/>',
-  send:'<path d="M4 12l16-8-6 8 6 8z"/>',
+  send:'<path d="M20 12L4 4l6 8-6 8z"/>',
   mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
   close:'<path d="M6 6l12 12M18 6L6 18"/>',
   arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',

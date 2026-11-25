@@ -129,7 +129,7 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 [data-theme=dark] .onboard{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='460' viewBox='0 0 320 460'%3E%3Cg fill='%23ff9ec5' opacity='.2'%3E%3Cpath d='M46 34l3.2 9.6 9.6 3.2-9.6 3.2-3.2 9.6-3.2-9.6-9.6-3.2 9.6-3.2z'/%3E%3Cpath d='M258 118l2.4 7 7 2.4-7 2.4-2.4 7-2.4-7-7-2.4 7-2.4z'/%3E%3Cpath d='M96 246l2 6 6 2-6 2-2 6-2-6-6-2 6-2z'/%3E%3Cpath d='M232 344l3 9 9 3-9 3-3 9-3-9-9-3 9-3z'/%3E%3C/g%3E%3C/svg%3E"),
     linear-gradient(180deg,#2e1a33 0%,#281630 55%,#241529 100%);background-repeat:repeat,no-repeat;background-size:320px 460px,100% 100%}
 .onboard .box{width:min(430px,100%);text-align:center}
-.onboard .cimo{width:180px;margin:0 auto -20px;cursor:pointer;position:relative;z-index:2;filter:drop-shadow(0 10px 16px rgba(122,42,85,.16))}
+.onboard .cimo{width:180px;margin:0 auto -32px;cursor:pointer;position:relative;z-index:2;filter:drop-shadow(0 10px 16px rgba(122,42,85,.16))}
 .onboard .cimo svg{width:100%;height:auto}
 .onboard h2{font-size:1.7rem;letter-spacing:-.4px}
 .onboard p.sub{color:var(--mu);font-size:.88rem;margin:6px 0 18px}
@@ -781,7 +781,7 @@ td .tag{font-size:.6rem}
 /* langkah pengenalan Cimo: tetap terpusat, tapi bisa di-scroll di layar kecil */
 .onboard.ob4{display:flex;align-items:center;justify-content:flex-start;overflow-y:auto}
 .onboard.ob4 .box{margin:auto}
-.onboard.ob4 .cimo{width:132px;margin-bottom:-6px}
+.onboard.ob4 .cimo{width:132px;margin-bottom:-16px}
 /* cahaya highlight lembut di belakang emosi Cimo (sama seperti prototipe) */
 .onboard.ob4 .cimo{position:relative;isolation:isolate}
 .onboard.ob4 .cimo:before{content:"";position:absolute;left:50%;top:48%;width:230px;height:230px;
@@ -1008,11 +1008,15 @@ body{
 
 /* logo resmi baru */
 .cm-logo{display:block;height:auto;max-width:100%;object-fit:contain}
+.cm-logo.darklogo{display:none}
+[data-theme=dark] .cm-logo:not(.darklogo){display:none}
+[data-theme=dark] .cm-logo.darklogo{display:block}
 .hometop .cm-logo{width:clamp(104px,14vw,128px)}
 .topbar .cm-logo{width:clamp(150px,20vw,210px)}
 .brand .cm-logo.side{width:170px;margin:0 auto}
 .brand{justify-content:center}
-.splash .cm-logo.splash{width:min(300px,72vw);margin:0 auto 6px}
+.splash .cm-logo.splash{width:min(350px,84vw);margin:0 auto 6px;position:relative;z-index:2}
+.splash .cm-logo.splash:not(.darklogo){filter:drop-shadow(0 2px 10px rgba(255,255,255,.92))}
 [data-theme=dark] .cm-logo{filter:drop-shadow(0 2px 6px rgba(0,0,0,.25))}
 
 /* sidebar */
@@ -1246,7 +1250,9 @@ body[data-view="spin"]{background-image:linear-gradient(180deg,#ffe4ee 0%,#fff0f
 [data-theme=dark] .fc-meta,[data-theme=dark] .fc-plat span,[data-theme=dark] .fc-foot small{color:rgba(255,240,247,.7)}
 [data-theme=dark] .fc-price{color:#ffd9e6}
 [data-theme=dark] .card,[data-theme=dark] .pickcard{background:var(--sf);border-color:rgba(255,255,255,.12)}
-[data-theme=dark] .card *{color:inherit}
+/* only the chips that sit on light pastel surfaces need dark ink;
+   a blanket `.card *{color:inherit}` used to erase the explicit colours below */
+[data-theme=dark] .card .tag.mint,[data-theme=dark] .card .tag.gold{color:#3a2142}
 [data-theme=dark] .chip{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:var(--ink)}
 [data-theme=dark] .chip.on{background:#ffd9e6;color:#2a1730;border-color:#ffd9e6}
 [data-theme=dark] .shuffle{background:#3a2350}
@@ -1275,6 +1281,33 @@ body[data-view="spin"]{background-image:linear-gradient(180deg,#ffe4ee 0%,#fff0f
 [data-theme=dark] .vipplan b,[data-theme=dark] .vipplan small{color:var(--ink)}
 [data-theme=dark] .tag{background:rgba(255,255,255,.12);color:var(--ink)}
 
+/* dark mode: permukaan terang tetap memakai teks gelap agar terbaca */
+[data-theme=dark] .plat.big b,[data-theme=dark] .card .plat.big b{color:#3a2142}
+[data-theme=dark] .plat.big small,[data-theme=dark] .card .plat.big small{color:#157a55}
+[data-theme=dark] .plat.big .arrow,[data-theme=dark] .card .plat.big .arrow{color:#f05a28}
+[data-theme=dark] .howstep b,[data-theme=dark] .howstep small{color:#3a2142}
+[data-theme=dark] .howstep .num{background:#3a2142;color:#fff}
+[data-theme=dark] .obbtn:not(.primary):not(.ghostline){background:#fff;color:#3a2142;border-color:rgba(255,255,255,.3)}
+[data-theme=dark] .obbtn.ghostline{color:#ffe6f0}
+[data-theme=dark] .obtabs{background:rgba(255,255,255,.12)}
+[data-theme=dark] .obtabs button{color:#ffe6f0}
+[data-theme=dark] .obtabs button.on{background:#ffd9e6;color:#3a2142}
+[data-theme=dark] .meetitem,[data-theme=dark] .meetdesc{background:rgba(255,255,255,.92);color:#3a2142}
+[data-theme=dark] .meetitem b{color:#3a2142}
+[data-theme=dark] .shuffleres,[data-theme=dark] .spinresult{background:#fff;color:#3a2142}
+[data-theme=dark] .shuffleres b,[data-theme=dark] .spinresult b{color:#3a2142}
+[data-theme=dark] .shuffleres small,[data-theme=dark] .spinresult small{color:#5c4b62}
+[data-theme=dark] .oscopy,[data-theme=dark] .card .oscopy{background:#dff8ec;color:#0f5132}
+[data-theme=dark] .wheel .seg{color:#3a2142}
+[data-theme=dark] .sayspeech{background:var(--sf);color:var(--ink)}
+[data-theme=dark] .pickbody{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14)}
+[data-theme=dark] .pickbody h4{color:#ffe6f0}
+[data-theme=dark] .dlhero{background:#3b2450;color:var(--ink)}
+[data-theme=dark] .pay-summary{background:#3b2450;color:var(--ink)}
+
+/* ringkasan pembayaran VIP: permukaan terang di light, gelap di dark */
+.pay-summary{padding:14px;margin-bottom:12px;background:linear-gradient(135deg,#f4e4f7,#fbe8dc)}
+
 /* ===== revisi terakhir =====
    logo HP lebih kecil, Profil kembali di tabbar, dan keranjang lebih renggang */
 @media(max-width:980px){
@@ -1287,7 +1320,7 @@ body[data-view="spin"]{background-image:linear-gradient(180deg,#ffe4ee 0%,#fff0f
   body:has(.cartbar.on) main{padding-bottom:240px}
   /* angkat cartbar lebih tinggi supaya tidak menutupi label tabbar */
   .cartbar{bottom:calc(98px + env(safe-area-inset-bottom,0px))}
-  .splash .cm-logo.splash{width:min(320px,78vw)}
+  .splash .cm-logo.splash{width:min(360px,88vw)}
 }
 @media(max-width:400px){
   .hometop .cm-logo{width:clamp(88px,23vw,106px)}

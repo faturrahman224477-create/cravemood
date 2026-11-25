@@ -60,7 +60,7 @@ jobs:
           rm -rf _site/audio/cimo/_edge_tmp* _site/audio/cimo/elevenlabs-backup
           for f in cravemood-logo.png favicon.ico favicon.png favicon-16.png favicon-64.png apple-touch-icon.png \
                    favicon-cimo.png favicon-cimo-16.png favicon-cimo-64.png apple-touch-icon-cimo.png \
-                   cravemood-share-logo.png cravemood-ob-logo.png \
+                   cravemood-share-logo.png cravemood-ob-logo.png cravemood-ob-logo-dark.png \
                    icon-192.png icon-512.png icon-maskable-512.png \
                    icon-cimo-192.png icon-cimo-512.png icon-cimo-maskable-512.png gopay-logo.png qr-app.png; do
             [ -f "$f" ] && cp "$f" _site/ || true

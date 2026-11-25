@@ -37,6 +37,18 @@ function mL(m) { const x = MOODI18N[m.k]; return (x && x[App.lang] && x[App.lang
 function mS(m) { const x = MOODI18N[m.k]; return (x && x[App.lang] && x[App.lang][1]) || m.sub; }
 function mD(m) { const x = MOODI18N[m.k]; return (x && x[App.lang] && x[App.lang][2]) || m.dish; }
 function cL(c) { const x = CATI18N[c]; return (x && x[App.lang]) || c; }
+/* localized mood label for any mood key (recap calendar tooltips) */
+function mLabel(k) { const m = MOODS.find(x => x.k === k); return m ? mL(m) : (MOODLBL[k] || k); }
+/* static shell copy — meta, cartbar and modal titles follow the chosen language */
+function applyStaticI18n() {
+  document.documentElement.lang = App.lang;
+  const md = document.querySelector('meta[name="description"]');
+  if (md) md.setAttribute('content', t('meta_desc'));
+  const cv = $('#cartViewBtn'); if (cv) cv.textContent = t('cart_view');
+  const cb = $('#cbt'); if (cb && !$('#cartbar').classList.contains('on')) cb.textContent = `🛒 0 ${t('item')}`;
+  $$('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  $$('[data-aria]').forEach(el => { el.setAttribute('aria-label', t(el.dataset.aria)); });
+}
 /* full sentence Cimo says for a mood, with the top pick baked in */
 function mSay(m, dish) {
   const bank = MOODSAY[m.k] || MOODSAY.bingung;
@@ -158,6 +170,7 @@ function updateCartBar() {
   const hide = currentView === 'cart' || currentView === 'chat';
   bar.classList.toggle('on', c > 0 && !hide);
   $('#cbt').textContent = `🛒 ${c} ${t('item')} · ±${rp(lo)} – ${rp(hi)}`;
+  const cv = $('#cartViewBtn'); if (cv) cv.textContent = t('cart_view');
   const b = $('#navbadge'); if (b) { b.textContent = c; b.style.display = c ? 'grid' : 'none'; }
   const tb = $('#tabbadge'); if (tb) { tb.textContent = c; tb.style.display = c ? 'grid' : 'none'; }
   const mb = $('#topbadge'); if (mb) { mb.textContent = c; mb.style.display = c ? 'grid' : 'none'; }
@@ -208,11 +221,11 @@ function viewHome() {
   return `
   <div class="hometop">
     <div>
-      <div class="brandrow"><img class="cm-logo home" src="cravemood-ob-logo.png" alt="CraveMood"></div>
+      <div class="brandrow"><img class="cm-logo home" src="cravemood-ob-logo.png" alt="CraveMood"><img class="cm-logo home darklogo" src="cravemood-ob-logo-dark.png" alt="CraveMood"></div>
     </div>
     <div style="display:flex;align-items:center;gap:7px">
-      <button class="iconbtn" data-go="chat" aria-label="chat" title="${t('nav_chat')}">${icon('chat')}</button>
-      <button class="iconbtn vipbtn" data-go="vip" aria-label="VIP" title="CraveMood VIP">👑</button>
+      <button class="iconbtn" data-go="chat" aria-label="${esc(t('nav_chat'))}" title="${t('nav_chat')}">${icon('chat')}</button>
+      <button class="iconbtn vipbtn" data-go="vip" aria-label="${esc(t('vip_tip'))}" title="${t('vip_tip')}">👑</button>
       <button class="avatarbtn" data-go="profile" aria-label="profile" id="heroCimo">${cimo('def', 40)}</button>
     </div>
   </div>
@@ -280,7 +293,7 @@ function renderRecs() {
       <div class="fc-top"><span class="fc-badge">${lbl}</span></div>
       <div class="fc-slot">
         <svg viewBox="0 0 24 24" class="fc-ico"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.5" cy="10" r="1.6"/><path d="M4 17l5-4 4 3 3-2 4 3"/></svg>
-        <b>Foto menu</b>
+        <b>${t('card_photo')}</b>
         <div class="fc-plat">
           <span><i style="background:#ee2737"></i>GoFood</span>
           <span><i style="background:#00b14f"></i>GrabFood</span>
@@ -290,7 +303,7 @@ function renderRecs() {
       <b class="fc-name">${esc(m.name)}</b>
       <small class="fc-meta">${esc(m.stall)} · ${esc(curStreet().area)} · ±${m.eta || 15} mnt</small>
       <div class="fc-foot">
-        <div><small>Perkiraan</small><b class="fc-price">${rp(m.lo)} – ${hi}</b></div>
+        <div><small>${t('est')}</small><b class="fc-price">${rp(m.lo)} – ${hi}</b></div>
         ${q ? `<span class="step"><button data-dec="${m.id}">−</button><i>${q}</i><button data-inc="${m.id}">+</button></span>`
             : `<button class="fadd" data-add="${m.id}">+ ${t('home_add')}</button>`}
       </div>
@@ -475,13 +488,13 @@ function viewChat() {
         <small id="chatStatus">${t('chat_on')}</small>
       </div>
       <button class="iconbtn" id="voiceToggle" title="${t('prof_voice')}">${icon('volume')}</button>
-      <button class="iconbtn" id="chatReset" title="Reset">${icon('reset')}</button>
+      <button class="iconbtn" id="chatReset" title="${t('chat_reset_tip')}">${icon('reset')}</button>
     </div>
     <div class="chatbody" id="chatBody"></div>
     <div class="quick" id="quick"></div>
     <div class="composer">
       <div class="inp"><textarea id="chatInput" rows="1" placeholder="${t('chat_ph')}"></textarea></div>
-      <button class="mic" id="micBtn" title="Voice">${icon('mic')}</button>
+      <button class="mic" id="micBtn" title="${t('chat_voice_tip')}">${icon('mic')}</button>
       <button class="send" id="sendBtn" disabled>${icon('send')}</button>
     </div>
   </div>`;
@@ -673,12 +686,13 @@ function renderRecap() {
   const cnt = {}; Object.values(map).forEach(k => cnt[k] = (cnt[k] || 0) + 1);
   const top = Object.entries(cnt).sort((a, b) => b[1] - a[1])[0];
   $('#s3').innerHTML = top ? cimo(top[0], 40) : '';
-  const BLN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+  const BLN = MONTHS_I18N[App.lang] || MONTHS_I18N.id;
+  const WD = WD_I18N[App.lang] || WD_I18N.id;
   $('#calTitle').textContent = `${BLN[mo]} ${y}`;
-  let h = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(d => `<div class="wd">${d}</div>`).join('') + '<div></div>'.repeat(off);
+  let h = WD.map(d => `<div class="wd">${d}</div>`).join('') + '<div></div>'.repeat(off);
   for (let d = 1; d <= dim; d++) {
     const k = map[iso(y, mo, d)], today = d === now.getDate();
-    h += `<div class="cd ${today ? 'today' : ''}" title="${k ? MOODLBL[k] : '—'}"><span>${d}</span>${k ? `<div class="mini">${cimo(k, 30)}</div>` : ''}</div>`;
+    h += `<div class="cd ${today ? 'today' : ''}" title="${k ? esc(mLabel(k)) : '—'}"><span>${d}</span>${k ? `<div class="mini">${cimo(k, 30)}</div>` : ''}</div>`;
   }
   $('#cal').innerHTML = h;
   const mx = Math.max(1, ...Object.values(cnt));
@@ -703,28 +717,28 @@ function viewProfile() {
   <div class="profhero">
     <div class="avatar-lg">${cimo('def', 82, false, App.costum)}</div>
     <h3>${esc(App.user ? App.user.name : t('guest'))}</h3>
-    <small class="muted">${App.user && !App.user.guest ? esc(App.user.contact) : t('guest')} · Pemburu Rasa · Level ${Math.max(1, Math.min(9, 1 + Math.floor(moodDays / 4)))}</small>
+    <small class="muted">${App.user && !App.user.guest ? esc(App.user.contact) : t('guest')} · ${t('prof_hunter')} · ${t('prof_level')} ${Math.max(1, Math.min(9, 1 + Math.floor(moodDays / 4)))}</small>
     <div class="row" style="justify-content:center;margin-top:10px">
-      ${isV ? `<span class="tag gold">✦ ${t('vip_badge')}</span>` : `<span class="tag pink">Paket Gratis</span>`}
+      ${isV ? `<span class="tag gold">✦ ${t('vip_badge')}</span>` : `<span class="tag pink">${t('plan_free')}</span>`}
       ${App.user && App.user.umkm ? `<span class="tag mint">UMKM</span>` : ''}
-      <span class="tag">${MOODLBL[App.mood] || ''}</span>
+      <span class="tag">${mL(MOODS.find(m => m.k === App.mood) || MOODS[0])}</span>
     </div>
   </div>
 
   <div class="vipplan ${isV ? 'on' : ''}">
     <div class="between">
       <div>
-        <b>${isV ? t('vip_active') : 'Paket Gratis'}</b>
-        <small>${isV ? t('vip_sub') : 'Buka kostum dan warna Cimo'}</small>
+        <b>${isV ? t('vip_active') : t('plan_free')}</b>
+        <small>${isV ? t('vip_sub') : t('plan_free_sub')}</small>
       </div>
       <button class="btn sm ${isV ? 'ghost' : 'plum'}" data-go="vip">${isV ? t('vip_t') : t('vip_start')}</button>
     </div>
   </div>
 
   <div class="profstats">
-    <div><b>${moodDays}</b><span>Mood</span></div>
-    <div><b>${menuCount}</b><span>Menu</span></div>
-    <div><b>${streak}</b><span>Beruntun</span></div>
+    <div><b>${moodDays}</b><span>${t('stat_mood')}</span></div>
+    <div><b>${menuCount}</b><span>${t('stat_menu')}</span></div>
+    <div><b>${streak}</b><span>${t('stat_streak')}</span></div>
   </div>
 
   <div class="card" style="margin-top:12px">
@@ -758,14 +772,14 @@ function viewProfile() {
   <div class="card" style="margin-top:12px">
     <div class="setrow"><div class="lbl"><b>${t('prof_sound')}</b><small>${t('prof_sound_sub')}</small></div>
       <label class="switch"><input type="checkbox" id="soundSw" ${s.sound ? 'checked' : ''}><span></span></label></div>
-    <div class="setrow"><div class="lbl"><b>${t('chat_t')} auto voice</b><small>${t('prof_voice')}</small></div>
+    <div class="setrow"><div class="lbl"><b>${t('settings_auto_voice')}</b><small>${t('prof_voice')}</small></div>
       <label class="switch"><input type="checkbox" id="speakSw" ${s.speak ? 'checked' : ''}><span></span></label></div>
-    <div class="setrow"><div class="lbl"><b>Dark mode</b><small>${t('prof_t')}</small></div>
+    <div class="setrow"><div class="lbl"><b>${t('settings_dark')}</b><small>${t('prof_t')}</small></div>
       <label class="switch"><input type="checkbox" id="darkSw" ${s.theme === 'dark' ? 'checked' : ''}><span></span></label></div>
   </div>
 
   <div class="card" style="margin-top:12px">
-    <div class="between"><b style="font-size:.95rem">Akun</b>
+    <div class="between"><b style="font-size:.95rem">${t('settings_account')}</b>
       <span class="tag">${App.user && !App.user.guest ? esc(App.user.contact) : t('guest')}</span></div>
     <div class="row" style="margin-top:10px">
       <button class="btn sm ghost" id="logoutBtn">${icon('back')} ${t('prof_logout')}</button>
@@ -805,7 +819,7 @@ function viewVip() {
   <div class="card coscard" style="margin-top:14px">
     <div class="between">
       <div><b style="font:700 .98rem Fredoka">${t('prof_design')}</b>
-        <div class="hint" style="margin-top:2px">${isV ? 'Pilih gaya Cimo favoritmu.' : 'Khusus VIP. Buka semua kostum Cimo.'}</div></div>
+        <div class="hint" style="margin-top:2px">${isV ? t('costume_hint_vip') : t('costume_hint_lock')}</div></div>
       <span class="tag ${isV ? 'mint' : 'gold'}">${isV ? '✓' : 'VIP'}</span>
     </div>
     <div class="cosgrid">
@@ -814,7 +828,7 @@ function viewVip() {
         const on = App.costum === c.id;
         return `<button class="cosopt ${on ? 'on' : ''} ${locked ? 'lock' : ''}" data-costum="${c.id}">
           <span class="cosface">${cimo(App.mood, 56, false, c.id)}</span>
-          <b>${c.name}</b>
+          <b>${(c.nameI18n && c.nameI18n[App.lang]) || c.name}</b>
           ${locked ? `<span class="coslock">🔒</span>` : (on ? `<span class="coson">✓</span>` : '')}
         </button>`;
       }).join('')}
@@ -856,7 +870,7 @@ function viewUmkm() {
       <b>${t('umkm_menu')}</b>
       <div style="margin-top:10px">
         ${(umkm.menus || []).length ? (umkm.menus || []).map(m => `<div class="cartitem"><div class="inf"><b>${esc(m.name)}</b><small>${esc(m.cat || '')}</small></div></div>`).join('')
-          : `<p class="hint">Belum ada menu terdaftar.</p>`}
+          : `<p class="hint">${t('umkm_menu_empty')}</p>`}
       </div>
       <button class="btn sm ghost block" style="margin-top:10px">${t('umkm_add_menu')}</button>
     </div>`;
@@ -868,7 +882,7 @@ function viewUmkm() {
     <div class="card" style="text-align:center">
       <div style="width:90px;height:90px;margin:0 auto">${cimo('bingung', 86)}</div>
       <h3>${t('umkm_pending')}</h3>
-      <p class="hint">Pendaftaran sedang ditinjau oleh tim CraveMood.</p>
+      <p class="hint">${t('umkm_pending_note')}</p>
     </div>`;
   }
 
@@ -877,15 +891,15 @@ function viewUmkm() {
   <div class="card">
     <div style="text-align:center;margin-bottom:16px">
       <div style="width:100px;height:100px;margin:0 auto">${cimo('senang', 96, false, 'koki')}</div>
-      <div class="bub" style="display:inline-block;margin-top:8px">Yuk gabung, jadi pilihan Cimo!</div>
+      <div class="bub" style="display:inline-block;margin-top:8px">${t('umkm_bubble')}</div>
     </div>
-    <div class="field"><label>${t('umkm_name')}</label><input id="umkmName" placeholder="Contoh: Warung Daeng Sirua"></div>
-    <div class="field"><label>${t('umkm_owner')}</label><input id="umkmOwner" placeholder="Nama pemilik usaha"></div>
-    <div class="field"><label>${t('umkm_wa')}</label><input id="umkmWa" placeholder="08xx"></div>
-    <div class="field"><label>${t('umkm_addr')}</label><input id="umkmAddr" placeholder="Alamat lengkap di Makassar"></div>
+    <div class="field"><label>${t('umkm_name')}</label><input id="umkmName" placeholder="${t('umkm_name_ph')}"></div>
+    <div class="field"><label>${t('umkm_owner')}</label><input id="umkmOwner" placeholder="${t('umkm_owner_ph')}"></div>
+    <div class="field"><label>${t('umkm_wa')}</label><input id="umkmWa" placeholder="${t('umkm_wa_ph')}"></div>
+    <div class="field"><label>${t('umkm_addr')}</label><input id="umkmAddr" placeholder="${t('umkm_addr_ph')}"></div>
     <div class="field"><label>${t('umkm_type')}</label>
       <div class="chips" id="umkmCats">
-        ${UMKM_CATS.map(c => `<button class="chip" data-umkm-cat="${c}">${c}</button>`).join('')}
+        ${UMKM_CATS.map(c => `<button class="chip" data-umkm-cat="${c}">${cL(c)}</button>`).join('')}
       </div>
     </div>
     <div class="field"><label>${t('umkm_mood')}</label>
@@ -906,18 +920,18 @@ async function submitUmkm() {
   const cats = $$('#umkmCats .chip.on').map(b => b.dataset.umkmCat);
   const moods = $$('#umkmMoods .chip.on').map(b => b.dataset.umkmMood);
   if (!name || !owner || !wa || !addr || !cats.length || !moods.length) {
-    $('#umkmErr').textContent = 'Lengkapi semua field dan pilih minimal satu kategori.';
+    $('#umkmErr').textContent = t('umkm_err_fields');
     SFX.play('error'); return;
   }
   $('#umkmSubmit').disabled = true;
   try {
     const r = await DB.registerUmkm(App.user.id, { name, owner, wa, addr, cats, moods });
     if (r.ok) {
-      SFX.play('success'); toast('Pendaftaran dikirim!');
+      SFX.play('success'); toast(t('umkm_sent'));
       App.user.umkm = r.umkm.id;
       go('umkm');
-    } else { $('#umkmErr').textContent = r.error || 'Gagal'; }
-  } catch (e) { $('#umkmErr').textContent = 'Gagal mengirim.'; }
+    } else { $('#umkmErr').textContent = r.error || t('umkm_generic_fail'); }
+  } catch (e) { $('#umkmErr').textContent = t('umkm_send_fail'); }
   $('#umkmSubmit').disabled = false;
 }
 
@@ -1130,7 +1144,7 @@ function renderVipModal() {
         <div style="width:70px;height:70px;margin:0 auto">${cimo(App.mood, 66, false, 'crown')}</div>
         <h3 style="margin-top:6px;font-size:1.05rem">${t('pay_t')}</h3>
       </div>
-      <div class="card" style="padding:14px;margin-bottom:12px;background:linear-gradient(135deg,#f4e4f7,#fbe8dc)">
+      <div class="card pay-summary">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
           <span class="muted" style="font-size:.8rem">${t('pay_pkg')}</span>
           <b style="font-size:.9rem">${esc((pkg.labelI18n && pkg.labelI18n[App.lang]) || pkg.label)}</b>
@@ -1148,7 +1162,7 @@ function renderVipModal() {
         </button>
         <button class="paybtn" data-pay="wa">
           <span class="payico">💬</span>
-          <div><b>${t('pay_wa')}</b><small>Kirim bukti transfer</small></div>
+          <div><b>${t('pay_wa')}</b><small>${t('pay_wa_sub')}</small></div>
         </button>
       </div>
       <div id="payDetail" style="margin-top:12px">
@@ -1157,14 +1171,14 @@ function renderVipModal() {
             <img src="${acc.logo}" alt="GoPay" style="width:64px;height:64px;margin:0 auto 8px;border-radius:14px">
             <div style="font:700 1.3rem Fredoka;color:#00AA13">${acc.bankFull}</div>
             <div style="font:700 1.4rem Fredoka;letter-spacing:2px;margin:6px 0;color:var(--pk2)">${acc.number}</div>
-            <div style="font:700 .85rem Nunito">a.n. ${acc.name}</div>
+            <div style="font:700 .85rem Nunito">${t('pay_on_behalf')} ${acc.name}</div>
           </div>
-          <div class="hint" style="text-align:center;font-size:.75rem;margin-bottom:10px">Kirim nominal sesuai paket ke nomor GoPay di atas, lalu kirim bukti screenshot ke WhatsApp kami.</div>
-          <button class="btn sm block" id="copyRek">📋 Salin nomor GoPay</button>
+          <div class="hint" style="text-align:center;font-size:.75rem;margin-bottom:10px">${t('pay_manual_note')}</div>
+          <button class="btn sm block" id="copyRek">${t('pay_copy')}</button>
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-top:14px">
-        <button class="btn ghost" style="flex:1" id="vipBack">‹ Kembali</button>
+        <button class="btn ghost" style="flex:1" id="vipBack">‹ ${t('pay_back')}</button>
         <button class="btn" style="flex:2" id="vipConfirmPay">${t('pay_confirm')}</button>
       </div>
     `;
@@ -1178,17 +1192,17 @@ function renderVipModal() {
             <img src="${acc.logo}" alt="GoPay" style="width:64px;height:64px;margin:0 auto 8px;border-radius:14px">
             <div style="font:700 1.3rem Fredoka;color:#00AA13">${acc.bankFull}</div>
             <div style="font:700 1.4rem Fredoka;letter-spacing:2px;margin:6px 0;color:var(--pk2)">${acc.number}</div>
-            <div style="font:700 .85rem Nunito">a.n. ${acc.name}</div>
+            <div style="font:700 .85rem Nunito">${t('pay_on_behalf')} ${acc.name}</div>
           </div>
-          <div class="hint" style="text-align:center;font-size:.75rem;margin-bottom:10px">Kirim nominal sesuai paket ke nomor GoPay di atas, lalu kirim bukti screenshot ke WhatsApp kami.</div>
-          <button class="btn sm block" id="copyRek">📋 Salin nomor GoPay</button>
+          <div class="hint" style="text-align:center;font-size:.75rem;margin-bottom:10px">${t('pay_manual_note')}</div>
+          <button class="btn sm block" id="copyRek">${t('pay_copy')}</button>
         </div>`;
-        $('#copyRek').onclick = () => { copyText(acc.number); toast('Nomor GoPay disalin'); SFX.play('pop'); };
+        $('#copyRek').onclick = () => { copyText(acc.number); toast(t('pay_copied')); SFX.play('pop'); };
       } else {
         det.innerHTML = `<div class="card" style="padding:14px;background:var(--bg);border-style:dashed;text-align:center">
-          <div style="font:700 .9rem Fredoka;margin-bottom:8px">Pesan via WhatsApp</div>
-          <div class="hint" style="font-size:.75rem;margin-bottom:10px">Klik tombol di bawah untuk membuka WhatsApp dan kirim bukti transfer.</div>
-          <a href="${acc.whatsapp}" target="_blank" rel="noopener" class="btn block" style="text-decoration:none">💬 Buka WhatsApp</a>
+          <div style="font:700 .9rem Fredoka;margin-bottom:8px">${t('pay_wa')}</div>
+          <div class="hint" style="font-size:.75rem;margin-bottom:10px">${t('pay_wa_sub')}</div>
+          <a href="${acc.whatsapp}" target="_blank" rel="noopener" class="btn block" style="text-decoration:none">${t('pay_wa_open')}</a>
         </div>`;
       }
       SFX.play('tap');
@@ -1203,8 +1217,8 @@ function renderVipModal() {
       <div style="text-align:center;padding:20px 0">
         <div style="width:90px;height:90px;margin:0 auto">${cimo('bingung', 86)}</div>
         <h3 style="margin-top:10px">${t('pay_pending')}</h3>
-        <p class="hint" style="margin:8px 0 16px">Transfer ke rekening BNI sedang diproses. VIP akan aktif setelah pembayaran dikonfirmasi.</p>
-        <button class="btn" id="vipClosePending">Oke, mengerti</button>
+        <p class="hint" style="margin:8px 0 16px">${t('vip_pending_note')}</p>
+        <button class="btn" id="vipClosePending">${t('vip_ok')}</button>
       </div>
     `;
     $('#vipClosePending').onclick = () => { $('#vipModal').classList.remove('on'); render(); };
@@ -1212,9 +1226,9 @@ function renderVipModal() {
 }
 
 async function submitVipPayment(pkg) {
-  if (!App.user) { toast('Masuk dulu ya!'); return; }
+  if (!App.user) { toast(t('vip_login_first')); return; }
   const btn = $('#vipConfirmPay');
-  if (btn) { btn.disabled = true; btn.textContent = 'Memproses…'; }
+  if (btn) { btn.disabled = true; btn.textContent = t('vip_processing'); }
   try {
     const orderId = 'VIP-' + App.user.id.slice(-6) + '-' + Date.now().toString(36).toUpperCase();
     const r = await DB.createTransaction(App.user.id, {
@@ -1224,8 +1238,8 @@ async function submitVipPayment(pkg) {
     if (r.ok) {
       SFX.play('success');
       vipStep = 'pending'; renderVipModal();
-    } else { toast('Gagal membuat transaksi'); }
-  } catch (e) { toast('Gagal memproses pembayaran'); }
+    } else { toast(t('vip_tx_fail')); }
+  } catch (e) { toast(t('vip_pay_fail')); }
   if (btn) { btn.disabled = false; btn.textContent = t('pay_confirm'); }
 }
 
@@ -1234,7 +1248,7 @@ async function openShare() {
   if (!items.length) items = MENU.filter(m => m.moods.indexOf(App.mood) > -1).slice(0, 3).map(m => m.name);
   const modal = $('#shareModal');
   modal.classList.add('on');
-  $('#shareBody').innerHTML = `<div class="empty"><p>Menyiapkan kartu…</p></div>`;
+  $('#shareBody').innerHTML = `<div class="empty"><p>${t('share_preparing')}</p></div>`;
   // fonts can hang when the network is slow — never block the card on them
   await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1200))]).catch(() => {});
   let card;
@@ -1246,16 +1260,16 @@ async function openShare() {
   } catch (e) {
     console.error('share card failed:', e && e.message);
     $('#shareBody').innerHTML = `<div class="empty"><div class="big">${cimo('bingung', 90)}</div>
-      <p>Kartu gagal dibuat. Coba lagi ya.</p>
-      <button class="btn sm" id="retryShare" style="margin-top:10px">Coba lagi</button></div>`;
+      <p>${t('share_failed')}</p>
+      <button class="btn sm" id="retryShare" style="margin-top:10px">${t('retry')}</button></div>`;
     const rb = $('#retryShare'); if (rb) rb.onclick = openShare;
     return;
   }
   const blob = card && card.blob;
   App.shareBlob = blob;
   if (!blob) {
-    $('#shareBody').innerHTML = `<div class="empty"><p>Kartu kosong. Coba lagi ya.</p>
-      <button class="btn sm" id="retryShare" style="margin-top:10px">Coba lagi</button></div>`;
+    $('#shareBody').innerHTML = `<div class="empty"><p>${t('share_empty')}</p>
+      <button class="btn sm" id="retryShare" style="margin-top:10px">${t('retry')}</button></div>`;
     const rb = $('#retryShare'); if (rb) rb.onclick = openShare;
     return;
   }
@@ -1299,7 +1313,7 @@ async function shareTo(k, blob, caption, url) {
       catch (e) { /* user cancelled */ }
     }
     downloadBlob(blob); copyText(caption);
-    toast('Gambar tersimpan & caption disalin. Buka Instagram → Story → unggah.');
+    toast(t('share_ig_toast'));
     return;
   }
   const links = {
@@ -1353,6 +1367,7 @@ function obRender() {
       <div class="doodle d4">${cimo('sedih', 52)}</div>
       <div class="hero-cimo">${cimo('def', 238)}</div>
       <img class="cm-logo splash" src="cravemood-ob-logo.png" alt="CraveMood">
+      <img class="cm-logo splash darklogo" src="cravemood-ob-logo-dark.png" alt="CraveMood">
       <div class="tagline">${t('splash_tag')}</div>
       <button class="startbtn" id="obStart">${t('on_go')} →</button>
       <div class="dots"><i class="on"></i><i></i><i></i><i></i></div>
@@ -1488,7 +1503,7 @@ function obRender() {
     obMode = b.dataset.obmode; SFX.play('tap'); obRender();
   });
   const g = $('#obGoogle');
-  if (g) g.onclick = () => { toast('Google login segera hadir, pakai nomor WhatsApp dulu ya'); SFX.play('tap'); };
+  if (g) g.onclick = () => { toast(t('google_soon')); SFX.play('tap'); };
   $('#obSkip').onclick = () => doRegister(true);
   $('#obSubmit').onclick = async () => {
     const nameEl = $('#obName2');
@@ -1507,7 +1522,7 @@ function obRender() {
     } else {
       App.tmpName = nm;
       r = await DB.register({ name: nm, contact: c, password: p, lang: obLang });
-      if (!r.ok) { $('#obErr').textContent = r.error === 'exists' ? 'Kontak sudah terdaftar. Coba masuk.' : 'Gagal mendaftar'; SFX.play('error'); $('#obSubmit').disabled = false; return; }
+      if (!r.ok) { $('#obErr').textContent = r.error === 'exists' ? t('reg_exists') : t('reg_fail'); SFX.play('error'); $('#obSubmit').disabled = false; return; }
       SFX.play('success'); toast(t('reg_ok'));
     }
     App.user = r.user; DB.setSetting('session', r.user.id);
@@ -1521,6 +1536,7 @@ async function doRegister(guest) {
 }
 function finishOnboard() {
   App.lang = App.user.lang || obLang;
+  applyStaticI18n();
   Voice.set('lang', App.settings.voiceLang || App.lang);
   ChatEngine.setLang(App.lang);
   ChatEngine.setName(App.user.name);
@@ -1570,7 +1586,7 @@ function mountPet() {
   });
   p.addEventListener('dblclick', () => {
     App.pet = null; p.style.left = ''; p.style.top = ''; p.style.right = ''; p.style.bottom = '';
-    savePrefs(); toast('Posisi Cimo direset');
+    savePrefs(); toast(t('pet_reset'));
   });
   updatePetFace();
 }
@@ -1610,7 +1626,7 @@ window.addEventListener('beforeinstallprompt', e => {
 window.addEventListener('appinstalled', () => {
   installEvt = null;
   SFX.play('success');
-  toast('CraveMood terpasang! 🎉');
+  toast(t('install_done'));
   if (App.user) DB.logChat(App.user.id, 'system', 'app_installed').catch(() => {});
   if (currentView === 'profile') render();
 });
@@ -1689,7 +1705,7 @@ function renderInstall() {
   const st = $('#shareTop');
   if (st) st.onclick = async () => {
     try {
-      if (navigator.share) await navigator.share({ title: 'CraveMood', text: 'Coba CraveMood, makanan sesuai moodmu', url: link });
+      if (navigator.share) await navigator.share({ title: 'CraveMood', text: t('share_text'), url: link });
       else { copyText(link); toast(L.copied); }
     } catch (e) { copyText(link); toast(L.copied); }
   };
@@ -1704,7 +1720,7 @@ async function doPwaInstall() {
     installEvt.prompt();
     const res = await installEvt.userChoice;
     installEvt = null;
-    if (res && res.outcome === 'accepted') { SFX.play('success'); toast('CraveMood terpasang! 🎉'); }
+    if (res && res.outcome === 'accepted') { SFX.play('success'); toast(t('install_done')); }
     else { SFX.play('tap'); toast(L.notnow); }
   } catch (e) { /* prompt already used */ }
   renderInstall();
@@ -1736,7 +1752,7 @@ function render() {
   if (v === 'spin') {
     if (App.lastSpin) renderSpinResult(App.lastSpin);
     else {
-      $('#spinResult').innerHTML = `<p class="hint" style="margin-top:14px">Tekan <b>Putar roda</b> dan biar Cimo yang mutusin. Kamu tinggal bilang cocok atau nggak.</p>`;
+      $('#spinResult').innerHTML = `<p class="hint" style="margin-top:14px">${t('spin_hint1')} <b>${t('spin_go')}</b> ${t('spin_hint2')}</p>`;
       renderSpinHist();
     }
   }
@@ -1861,7 +1877,7 @@ function bindGlobal() {
       App.street = e.target.value; savePrefs(); SFX.play('tap');
       renderRecs();
       const sf = $('#sidefoot'); if (sf) renderNav();
-      toast('Lokasi: ' + curStreet().name);
+      toast(t('loc_prefix') + ' ' + curStreet().name);
     }
     if (id === 'soundSw') { App.settings.sound = e.target.checked; SFX.enabled = e.target.checked; saveSettings(); if (e.target.checked) SFX.play('add'); }
     if (id === 'speakSw') { App.settings.speak = e.target.checked; Voice.set('enabled', e.target.checked); saveSettings(); if (e.target.checked) Voice.preview(); }
@@ -1904,11 +1920,11 @@ function bindGlobal() {
       App.messages = []; ChatEngine.reset();
       const g = ChatEngine.greet(App.user ? App.user.name : '');
       App.messages.push({ role: 'cimo', text: g, mood: App.mood });
-      renderMessages(); renderChips(); toast('Chat direset'); return;
+      renderMessages(); renderChips(); toast(t('chat_reset_done')); return;
     }
     if (hit('#voiceToggle')) {
       App.settings.speak = !App.settings.speak; saveSettings();
-      toast(App.settings.speak ? 'Suara Cimo: ON' : 'Suara Cimo: OFF');
+      toast(t(App.settings.speak ? 'voice_on' : 'voice_off'));
       hit('#voiceToggle').style.color = App.settings.speak ? 'var(--pk2)' : 'var(--mu)';
       if (App.settings.speak) Voice.preview();
       return;
@@ -1958,25 +1974,26 @@ let recog = null, micOn = false;
 function startMic() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   const btn = $('#micBtn');
-  if (!SR) { toast('Browser ini belum mendukung input suara. Coba Chrome.'); return; }
+  if (!SR) { toast(t('mic_unsupported')); return; }
   if (micOn && recog) { recog.stop(); return; }
   recog = new SR();
   recog.lang = { id: 'id-ID', en: 'en-US', zh: 'zh-CN', hi: 'hi-IN' }[App.settings.voiceLang || App.lang] || 'id-ID';
   recog.interimResults = false; recog.maxAlternatives = 1;
-  recog.onstart = () => { micOn = true; btn.classList.add('on'); $('#chatStatus').textContent = 'Mendengarkan…'; };
+  recog.onstart = () => { micOn = true; btn.classList.add('on'); $('#chatStatus').textContent = t('chat_listening'); };
   recog.onend = () => { micOn = false; btn.classList.remove('on'); $('#chatStatus').textContent = t('chat_on'); };
-  recog.onerror = () => { micOn = false; btn.classList.remove('on'); toast('Suara tidak tertangkap. Coba lagi.'); };
+  recog.onerror = () => { micOn = false; btn.classList.remove('on'); toast(t('mic_nothing')); };
   recog.onresult = ev => {
     const txt = ev.results[0][0].transcript;
     if (txt) sendChat(txt);
   };
-  try { recog.start(); } catch (e) { toast('Mikrofon tidak bisa dimulai.'); }
+  try { recog.start(); } catch (e) { toast(t('mic_start_fail')); }
 }
 
 /* ---------- language ---------- */
 function setLang(l) {
   if (!I18N[l]) return;
   App.lang = l; App.settings.voiceLang = l;
+  applyStaticI18n();
   Voice.set('lang', l); ChatEngine.setLang(l);
   savePrefs(); saveSettings();
   renderNav(); render();
@@ -1997,6 +2014,7 @@ async function boot() {
   }
   if (App.user) {
     App.lang = App.user.lang || App.lang;
+    applyStaticI18n();
     ChatEngine.setLang(App.lang); ChatEngine.setName(App.user.name);
     Voice.set('lang', App.settings.voiceLang || App.lang);
     $('#onboard').classList.add('hide');
@@ -2082,6 +2100,7 @@ function checkBuild() {
 
 function boot2() {
   checkBuild();
+  applyStaticI18n();
   $('#app').classList.remove('hide');
   renderNav();
   mountPet();
