@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Regenerate Cimo's voice pack in the cheerful Kuon-style persona.
+"""Regenerate Cimo's whole voice pack with a soft, cheerful neural voice.
 
-No voice cloning is available, so this picks the closest built-in preset:
-id-ID-GadisNeural, lifted to the reference register with a brighter pitch and
-a little extra energy. Punctuation is lightly expressive on invitations.
-The original ElevenLabs files stay in audio/cimo/elevenlabs-backup/.
+Uses Microsoft Edge neural TTS (id-ID-GadisNeural) — no API key needed.
+The original ElevenLabs files are kept in audio/cimo/elevenlabs-backup/ so
+the change is reversible.
 
     python tools/gen-voice-edge.py
     python tools/gen-voice-edge.py --dry
@@ -22,13 +21,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "audio" / "cimo"
 BACKUP = OUT / "elevenlabs-backup"
-TMP = OUT / "_edge_tmp_kuon_style"   # unique per setting pair — never reuse stale clips
+TMP = OUT / "_edge_tmp_natural2"   # unique per setting pair — never reuse stale clips
 DRY = "--dry" in sys.argv
 
-VOICE = "id-ID-GadisNeural"   # closest built-in preset to the Kuon sample
-RATE = "+0%"                  # unhurried, expressive — no tape-speed feel
-PITCH = "+12Hz"               # measured to land at the reference's ~250 Hz
-VOLUME = "+8%"                # bright, energetic mascot presence
+VOICE = "id-ID-GadisNeural"   # warm Indonesian female, closest to the Kuon reference
+RATE = "+2%"                  # natural tempo between a drag and the old robot rush
+PITCH = "+0Hz"                # keep the natural register (no chipmunk lift)
 
 MOOD_LINES = {
     "senang": {"pre": "Wah, kamu lagi senang ya! Coba yang manis dan segar,", "post": "bisa jadi pilihan."},
@@ -42,19 +40,6 @@ FIXED = {
     "added": "Sudah masuk keranjang.",
     "saved": "Tersimpan.",
 }
-
-
-def expressive(text):
-    """Light punctuation cues — Edge has no per-word SSML, so punctuation is
-    the safest way to make greetings smile and recommendations sound eager."""
-    t = " ".join(str(text).split())
-    t = re.sub(r"^(hai|halo|hi|hello)\b(?!,)", r"\1,", t, flags=re.I)
-    if re.match(r"^(hai|halo|hi|hello)\b", t, re.I):
-        t = re.sub(r"^(.{1,45}?)\.", r"\1!", t, count=1)
-    invite = r"\b(yuk|ayo|coba|boleh|rekomendasi|sarankan|pilihin|carikan)\b"
-    if "!" not in t and not t.endswith("?") and re.search(invite, t, re.I):
-        t = t.rstrip(". ") + "!"
-    return t
 
 
 def pack_key(text):
@@ -161,7 +146,7 @@ async def render(item, sem, done):
     async with sem:
         for attempt in range(3):
             try:
-                c = edge_tts.Communicate(expressive(text), VOICE, rate=RATE, pitch=PITCH, volume=VOLUME)
+                c = edge_tts.Communicate(text, VOICE, rate=RATE, pitch=PITCH)
                 await c.save(str(dest))
                 if dest.stat().st_size > 1500:
                     break
@@ -183,7 +168,7 @@ async def main_async(items):
 
 def main():
     items = jobs()
-    print(f"voice pack: {len(items)} clips — {VOICE}, rate {RATE}, pitch {PITCH}, volume {VOLUME}")
+    print(f"voice pack: {len(items)} clips — {VOICE}, rate {RATE}, pitch {PITCH}")
     if DRY:
         for f, t in items[:10]:
             print(f"  {f:<24} {t[:70]}")
@@ -211,10 +196,10 @@ def main():
 
     lines_path = OUT / "lines.json"
     lines = json.loads(lines_path.read_text(encoding="utf-8"))
-    lines["voiceName"] = "Cimo Gadis (ceria & hangat)"
+    lines["voiceName"] = "Cimo Gadis (natural & hangat)"
     lines["voice"] = VOICE
     lines["model"] = "edge-neural"
-    lines["settings"] = {"rate": RATE, "pitch": PITCH, "volume": VOLUME}
+    lines["settings"] = {"rate": RATE, "pitch": PITCH}
     lines_path.write_text(json.dumps(lines, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"selesai: {moved}/{len(items)} klip diganti. Backup asli di {BACKUP}")
 
