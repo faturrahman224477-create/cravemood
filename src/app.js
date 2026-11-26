@@ -7,6 +7,36 @@ const rp = n => 'Rp ' + String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '
 /* canonical public link — used whenever the current address is not the real hosted URL
    (e.g. inside the Android app the page runs on https://localhost) */
 const PUBLIC_URL = 'https://cravemood.apps.workbuddy.host/?sharecode=NG6DCXKIRE';
+
+/* Google Sheets bridge — Apps Script Web App URL.
+   Set this to the /exec URL once the script is deployed in the owner's Google account.
+   Registration and login events are posted here; the script adds the WITA timestamp. */
+const SHEET_WEBHOOK_URL = '';
+function reportToSheet(action, user) {
+  if (!SHEET_WEBHOOK_URL || !user) return;
+  try {
+    const payload = {
+      action: action,
+      nama_lengkap: user.name || '',
+      nomor_wa: user.contact || '',
+      email_gmail: user.email || '',
+      user_id: user.id || '',
+      session_id: 'SES-' + Date.now().toString(36).toUpperCase(),
+      sumber_trafik: document.referrer ? 'Referral' : 'Direct',
+      perangkat: /Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
+      bahasa_pilihan: App.lang || 'id',
+      mode_interaksi: 'chat',
+      kategori_mood: App.mood || 'def',
+      klik_order: 'Tidak'
+    };
+    fetch(SHEET_WEBHOOK_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).catch(() => {});
+  } catch (e) {}
+}
+
 function appLink() {
   const here = location.href.split('#')[0];
   if (/^https?:\/\//i.test(here) && /sharecode=/.test(here)) return here;
@@ -1519,11 +1549,13 @@ function obRender() {
       r = await DB.login({ contact: c, password: p });
       if (!r.ok) { $('#obErr').textContent = t('login_bad'); SFX.play('error'); $('#obSubmit').disabled = false; return; }
       SFX.play('success'); toast(t('login_ok'));
+      reportToSheet('masuk', r.user);
     } else {
       App.tmpName = nm;
       r = await DB.register({ name: nm, contact: c, password: p, lang: obLang });
       if (!r.ok) { $('#obErr').textContent = r.error === 'exists' ? t('reg_exists') : t('reg_fail'); SFX.play('error'); $('#obSubmit').disabled = false; return; }
       SFX.play('success'); toast(t('reg_ok'));
+      reportToSheet('daftar', r.user);
     }
     App.user = r.user; DB.setSetting('session', r.user.id);
     finishOnboard();
@@ -1532,6 +1564,7 @@ function obRender() {
 async function doRegister(guest) {
   const r = await DB.register({ name: App.tmpName || t('guest'), contact: '', password: '', lang: obLang, guest: true });
   App.user = r.user; DB.setSetting('session', App.user.id);
+  reportToSheet('kunjungan', App.user);
   finishOnboard();
 }
 function finishOnboard() {
