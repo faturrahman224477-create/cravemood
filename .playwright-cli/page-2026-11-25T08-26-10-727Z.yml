@@ -1,0 +1,5 @@
+- generic [ref=e3]:
+  - img "Cimo def" [ref=e5]
+  - img "CraveMood" [ref=e44]
+  - generic [ref=e45]: rekomendasi makanan sesuai moodmu
+  - button "Mulai sekarang →" [ref=e46] [cursor=pointer]

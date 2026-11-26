@@ -11,11 +11,32 @@ const PUBLIC_URL = 'https://cravemood.apps.workbuddy.host/?sharecode=NG6DCXKIRE'
 /* Google Sheets bridge — Apps Script Web App URL.
    Set this to the /exec URL once the script is deployed in the owner's Google account.
    Registration and login events are posted here; the script adds the WITA timestamp. */
-const SHEET_WEBHOOK_URL = '';
-function reportToSheet(action, user) {
+const SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbycOUvKyboDebg6QE200FirBM1ZZYjuNLeGGzyaaiFnKgiPum83eSQI22_Iv7VKn8q7/exec';
+
+/* Apps Script tidak mengirim header CORS, jadi fetch() biasa tidak bisa membaca
+   balasannya. Kita pakai JSONP (<script>) — tulisannya tetap terjadi di server,
+   dan kita benar-benar bisa memastikan barisnya tersimpan. */
+let _cmSheetSeq = 0;
+function sheetCall(params, cb) {
+  if (!SHEET_WEBHOOK_URL) return;
+  const name = 'cmSheet' + (++_cmSheetSeq) + '_' + Date.now().toString(36);
+  const qs = new URLSearchParams(Object.assign({}, params, { callback: name, _t: Date.now() }));
+  const s = document.createElement('script');
+  let done = false;
+  const cleanup = () => { delete window[name]; if (s.parentNode) s.parentNode.removeChild(s); };
+  window[name] = data => { done = true; cleanup(); try { cb && cb(data); } catch (e) {} };
+  s.onerror = () => { if (!done) { done = true; cleanup(); cb && cb(null); } };
+  s.src = SHEET_WEBHOOK_URL + '?' + qs.toString();
+  document.head.appendChild(s);
+  setTimeout(() => { if (!done) { done = true; cleanup(); cb && cb(null); } }, 20000);
+}
+
+function reportToSheet(action, user, attempt) {
   if (!SHEET_WEBHOOK_URL || !user) return;
+  const tries = attempt || 0;
+  let payload;
   try {
-    const payload = {
+    payload = {
       action: action,
       nama_lengkap: user.name || '',
       nomor_wa: user.contact || '',
@@ -23,18 +44,18 @@ function reportToSheet(action, user) {
       user_id: user.id || '',
       session_id: 'SES-' + Date.now().toString(36).toUpperCase(),
       sumber_trafik: document.referrer ? 'Referral' : 'Direct',
-      perangkat: /Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
+      perangkat: /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
       bahasa_pilihan: App.lang || 'id',
       mode_interaksi: 'chat',
       kategori_mood: App.mood || 'def',
       klik_order: 'Tidak'
     };
-    fetch(SHEET_WEBHOOK_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    }).catch(() => {});
-  } catch (e) {}
+  } catch (e) { return; }
+  sheetCall(payload, res => {
+    if (res && res.status === 'success') return;
+    if (tries < 2) { setTimeout(() => reportToSheet(action, user, tries + 1), 1800); return; }
+    console.warn('[CraveMood] gagal catat ke Sheets:', res && res.message);
+  });
 }
 
 function appLink() {
