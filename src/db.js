@@ -84,20 +84,22 @@ const DB = (() => {
     },
 
     /* account */
-    async register({ name, contact, password, lang, guest }) {
+    async register({ name, contact, password, lang, guest, email, google }) {
       if (remote) {
-        const j = await api('/api/register', { name, contact, password, lang, guest });
+        const j = await api('/api/register', { name, contact, password, lang, guest, email, google });
         return j;
       }
       const s = load();
       const c = String(contact || '').trim().toLowerCase();
-      if (!guest && s.users.some(u => (u.contact || '').toLowerCase() === c)) {
-        return { ok: false, error: 'exists' };
+      const e = String(email || '').trim().toLowerCase();
+      if (!guest) {
+        if (c && s.users.some(u => (u.contact || '').toLowerCase() === c)) return { ok: false, error: 'exists' };
+        if (e && s.users.some(u => (u.email || '').toLowerCase() === e)) return { ok: false, error: 'exists' };
       }
       const salt = Math.random().toString(36).slice(2, 10);
       const u = {
         id: uid(), name: String(name || '').trim().slice(0, 40),
-        contact: c, lang: lang || 'id', salt,
+        contact: c, email: e, google: !!google, lang: lang || 'id', salt,
         pw: guest ? '' : await hash(password || '', salt),
         guest: !!guest,
         created: new Date().toISOString(),
@@ -117,6 +119,16 @@ const DB = (() => {
       if (!u) return { ok: false, error: 'bad' };
       const h = await hash(password || '', u.salt);
       if (h !== u.pw) return { ok: false, error: 'bad' };
+      u.last_seen = new Date().toISOString(); persist();
+      return { ok: true, user: pub(u) };
+    },
+
+    async loginGoogle(email) {
+      const e = String(email || '').trim().toLowerCase();
+      if (!e) return { ok: false, error: 'bad' };
+      const s = load();
+      const u = s.users.find(x => (x.email || '').toLowerCase() === e && !x.guest);
+      if (!u) return { ok: false, error: 'notfound' };
       u.last_seen = new Date().toISOString(); persist();
       return { ok: true, user: pub(u) };
     },
@@ -179,6 +191,18 @@ const DB = (() => {
 
     moodsOf(userId) {
       return load().moods.filter(m => m.user_id === userId).map(m => ({ d: m.date, m: m.mood }));
+    },
+
+    /* Level: jumlah HARI unik dengan minimal satu pesanan terkirim.
+       Maksimal 1 transaksi dihitung per hari, jadi tidak bisa dinaikkan dengan spam klik. */
+    orderDays(userId) {
+      if (!userId) return 0;
+      const days = new Set(
+        load().orders
+          .filter(o => o.user_id === userId && o.kind === 'platform' && o.at)
+          .map(o => String(o.at).slice(0, 10))
+      );
+      return days.size;
     },
 
     /* VIP */
@@ -281,7 +305,7 @@ const DB = (() => {
 
   function pub(u) {
     return {
-      id: u.id, name: u.name, contact: u.contact, lang: u.lang, guest: !!u.guest,
+      id: u.id, name: u.name, contact: u.contact, email: u.email || '', lang: u.lang, guest: !!u.guest,
       created: u.created, last_seen: u.last_seen,
       moods: u.moods || 0, orders: u.orders || 0, chats: u.chats || 0, spins: u.spins || 0,
       vip: !!u.vip, vip_expiry: u.vip_expiry || null, umkm: u.umkm || null,

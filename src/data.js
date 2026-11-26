@@ -555,6 +555,40 @@ const I18N_EXTRA = {
 };
 Object.keys(I18N_EXTRA).forEach(lang => Object.assign(I18N[lang], I18N_EXTRA[lang]));
 
+/* level system + Google sign-in copy */
+const I18N_LEVEL = {
+  id: {
+    lvl_t:'Level', lvl_orders:'{n} hari bertransaksi', lvl_next:'{n} transaksi lagi menuju Level {lv}',
+    lvl_max:'Maksimal', lvl_max_sub:'Kamu sudah di level tertinggi. Terima kasih sudah setia!',
+    lvl_rule:'Naik level hanya lewat transaksi: kirim pesanan ke ShopeeFood, GrabFood, atau GoFood. Maksimal 1 transaksi dihitung per hari.',
+    lvl_up:'Naik ke Level {lv}! 🎉',
+    google_fail:'Gagal masuk dengan Google. Coba lagi atau pakai nomor WhatsApp.',
+  },
+  en: {
+    lvl_t:'Level', lvl_orders:'{n} ordering days', lvl_next:'{n} more orders to Level {lv}',
+    lvl_max:'Max', lvl_max_sub:'You are at the highest level. Thanks for staying with us!',
+    lvl_rule:'Levels only go up through real orders: send an order to ShopeeFood, GrabFood, or GoFood. Max 1 order counted per day.',
+    lvl_up:'Level {lv} unlocked! 🎉',
+    google_fail:'Google sign-in failed. Try again or use your WhatsApp number.',
+  },
+  zh: {
+    lvl_t:'等级', lvl_orders:'{n} 个下单日', lvl_next:'还差 {n} 次下单升到 {lv} 级',
+    lvl_max:'已满级', lvl_max_sub:'你已达到最高等级，感谢一路支持！',
+    lvl_rule:'等级只能通过真实下单提升：把订单发送到 ShopeeFood、GrabFood 或 GoFood。每天最多计 1 次。',
+    lvl_up:'升到 {lv} 级！🎉',
+    google_fail:'Google 登录失败，请重试或使用 WhatsApp 号码。',
+  },
+  hi: {
+    lvl_t:'स्तर', lvl_orders:'{n} ऑर्डर दिन', lvl_next:'स्तर {lv} तक {n} और ऑर्डर',
+    lvl_max:'अधिकतम', lvl_max_sub:'आप सबसे ऊँचे स्तर पर हैं। साथ रहने के लिए धन्यवाद!',
+    lvl_rule:'स्तर केवल असली ऑर्डर से बढ़ता है: ShopeeFood, GrabFood या GoFood पर ऑर्डर भेजें। प्रतिदिन अधिकतम 1 ऑर्डर गिना जाएगा।',
+    lvl_up:'स्तर {lv} अनलॉक! 🎉',
+    google_fail:'Google लॉगिन विफल। फिर कोशिश करें या WhatsApp नंबर इस्तेमाल करें।',
+  },
+};
+Object.keys(I18N_LEVEL).forEach(lang => Object.assign(I18N[lang], I18N_LEVEL[lang]));
+
+
 /* recap calendar: month + weekday names follow the selected language */
 const MONTHS_I18N = {
   id:['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'],

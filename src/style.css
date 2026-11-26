@@ -12,6 +12,10 @@
   --bg:#241529; --ink:#fff0f7; --mu:#d3b9cd; --sf:#35223b; --ln:rgba(255,255,255,.14);
   --cr:#2f1e35; --sh:0 10px 30px rgba(0,0,0,.35); --sh2:0 4px 0 rgba(0,0,0,.25);
 }
+/* iOS Safari auto-zooms the page when a focused field has font-size < 16px.
+   Keeping every text field at 16px is the accessible fix (no maximum-scale hack). */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+input:not([type=range]):not([type=checkbox]):not([type=radio]),select,textarea{font-size:16px}
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -138,7 +142,7 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 .field label{display:block;font:700 .76rem Fredoka;color:var(--mu);margin:0 0 5px 4px;letter-spacing:.02em}
 .field input,.field select,.field textarea{
   width:100%;border:1.8px solid var(--ln);background:var(--bg);color:var(--ink);border-radius:14px;
-  padding:11px 14px;font:600 .9rem Nunito;outline:none;transition:.18s
+  padding:11px 14px;font:600 16px Nunito;outline:none;transition:.18s
 }
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pk2);background:var(--sf);box-shadow:0 0 0 4px color-mix(in srgb,var(--pk) 32%,transparent)}
 .field textarea{resize:vertical;min-height:70px}
@@ -288,7 +292,7 @@ main{margin-left:var(--nav);min-height:100vh;padding:26px 32px 60px}
 .composer{display:flex;gap:8px;padding:10px 14px 14px;border-top:1px solid var(--ln);align-items:flex-end;background:var(--sf)}
 .composer .inp{flex:1;display:flex;align-items:flex-end;background:var(--bg);border:1.8px solid var(--ln);border-radius:22px;padding:5px 6px 5px 14px;transition:.18s}
 .composer .inp:focus-within{border-color:var(--pk2);box-shadow:0 0 0 4px color-mix(in srgb,var(--pk) 26%,transparent)}
-.composer textarea{flex:1;border:0;background:none;color:var(--ink);font:600 .9rem Nunito;resize:none;outline:none;
+.composer textarea{flex:1;border:0;background:none;color:var(--ink);font:600 16px Nunito;resize:none;outline:none;
   padding:7px 0;max-height:110px;line-height:1.45}
 .composer .send{width:38px;height:38px;border-radius:50%;border:0;background:var(--pk2);color:#fff;display:grid;place-items:center;cursor:pointer;flex:none;transition:.2s}
 .composer .send:hover{transform:scale(1.06)}
@@ -992,6 +996,10 @@ td .tag{font-size:.6rem}
 .profstats>div{background:#fff;border:1px solid var(--ln);border-radius:20px;padding:12px 6px;text-align:center;box-shadow:var(--sh2)}
 .profstats b{display:block;font:700 1.35rem Fredoka;color:var(--ink);line-height:1.15}
 .profstats span{font:700 .68rem Nunito;color:var(--mu)}
+/* level progress */
+.lvlcard{margin-top:12px}
+.lvlbar{height:10px;border-radius:99px;background:var(--ln);overflow:hidden;margin-top:10px}
+.lvlbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--pk),var(--pk2));transition:width .45s ease}
 
 /* ==========================================================================
    MOCKUP THEME — tampilan disamakan dengan prototype/cravemood-prototype.html

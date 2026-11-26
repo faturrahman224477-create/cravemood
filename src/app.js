@@ -41,7 +41,7 @@ function reportToSheet(action, user, attempt) {
       action: action,
       nama_lengkap: user.name || '',
       nomor_wa: user.contact || '',
-      email_gmail: user.email || '',
+      email_gmail: /@gmail\.com$/i.test(user.email || '') ? user.email : '',
       user_id: user.id || '',
       session_id: 'SES-' + Date.now().toString(36).toUpperCase(),
       sumber_trafik: document.referrer ? 'Referral' : 'Direct',
@@ -62,6 +62,46 @@ function reportToSheet(action, user, attempt) {
     if (!res) console.warn('[CraveMood] catatan Sheets tidak terkirim (' + why + ')');
     else console.warn('[CraveMood] Sheets menolak:', res.message);
   });
+}
+
+/* ===== Google Sign-In =====
+   Butuh OAuth Client ID dari Google Cloud Console (lihat PANDUAN_Google_Login.md).
+   Selama kosong, tombol Google disembunyikan supaya tidak jadi jalan buntu. */
+const GOOGLE_CLIENT_ID = '';
+
+/* ===== Sistem Level =====
+   Aturan:
+   1. Semua pengguna baru mulai di LEVEL 1 — tidak ada level awal dari mood/streak.
+   2. Naik level HANYA lewat transaksi nyata: kirim pesanan ke ShopeeFood / GrabFood /
+      GoFood (menekan tombol platform di halaman Keranjang = 1 transaksi tercatat).
+   3. Maksimal 1 transaksi dihitung per hari. Jadi level mengukur konsistensi
+      berbelanja, bukan jumlah klik — tidak bisa dinaikkan dengan spam.
+   4. Ambang level memakai bilangan segitiga (1, 3, 6, 10, 15, …) supaya makin
+      tinggi level makin terasa usahanya.
+        L1 = 0 hari   L2 = 1    L3 = 3    L4 = 6    L5 = 10
+        L6 = 15       L7 = 21   L8 = 28   L9 = 36
+   5. Level tidak pernah turun. */
+const LEVEL_MIN = [0, 1, 3, 6, 10, 15, 21, 28, 36];
+const LEVEL_MAX = LEVEL_MIN.length;
+
+function levelOf(days) {
+  let lv = 1;
+  for (let i = 0; i < LEVEL_MIN.length; i++) if (days >= LEVEL_MIN[i]) lv = i + 1;
+  return lv;
+}
+function levelInfo(days) {
+  const n = Math.max(0, days || 0);
+  const lv = levelOf(n);
+  const cur = LEVEL_MIN[lv - 1];
+  const next = lv < LEVEL_MAX ? LEVEL_MIN[lv] : null;
+  return {
+    lv, days: n, cur, next,
+    need: next === null ? 0 : next - n,
+    pct: next === null ? 100 : Math.round(((n - cur) / (next - cur)) * 100)
+  };
+}
+function myLevel() {
+  return levelInfo(App.user ? DB.orderDays(App.user.id) : 0);
 }
 
 function appLink() {
@@ -701,7 +741,15 @@ function openPlatform(k) {
     shopeefood: 'https://shopeefood.co.id/search?keyword=' + q,
   };
   SFX.play('pop');
-  if (App.user) DB.addOrder(App.user.id, { kind: 'platform', platform: k, items: Object.keys(App.cart) }).catch(() => {});
+  if (App.user) {
+    const before = myLevel();
+    Promise.resolve(DB.addOrder(App.user.id, { kind: 'platform', platform: k, items: Object.keys(App.cart) }))
+      .catch(() => {})
+      .then(() => {
+        const after = myLevel();
+        if (after.lv > before.lv) { SFX.play('success'); toast(t('lvl_up').replace('{lv}', after.lv)); }
+      });
+  }
   App.lastPlatform = k;
   window.open(urls[k], '_blank', 'noopener');
   go('ordersent');
@@ -769,12 +817,13 @@ function viewProfile() {
   let streak = 0, cur = new Date();
   while (map[iso(cur.getFullYear(), cur.getMonth(), cur.getDate())]) { streak++; cur.setDate(cur.getDate() - 1); }
   const menuCount = Object.keys(App.cart).length;
+  const lvl = myLevel();
   return `<div class="pagetitle"><div><h1>${t('prof_t')}</h1><p>${t('tagline')}</p></div></div>
 
   <div class="profhero">
     <div class="avatar-lg">${cimo('def', 82, false, App.costum)}</div>
     <h3>${esc(App.user ? App.user.name : t('guest'))}</h3>
-    <small class="muted">${App.user && !App.user.guest ? esc(App.user.contact) : t('guest')} · ${t('prof_hunter')} · ${t('prof_level')} ${Math.max(1, Math.min(9, 1 + Math.floor(moodDays / 4)))}</small>
+    <small class="muted">${t('prof_hunter')} · ${t('prof_level')} ${lvl.lv}</small>
     <div class="row" style="justify-content:center;margin-top:10px">
       ${isV ? `<span class="tag gold">✦ ${t('vip_badge')}</span>` : `<span class="tag pink">${t('plan_free')}</span>`}
       ${App.user && App.user.umkm ? `<span class="tag mint">UMKM</span>` : ''}
@@ -796,6 +845,19 @@ function viewProfile() {
     <div><b>${moodDays}</b><span>${t('stat_mood')}</span></div>
     <div><b>${menuCount}</b><span>${t('stat_menu')}</span></div>
     <div><b>${streak}</b><span>${t('stat_streak')}</span></div>
+  </div>
+
+  <div class="card lvlcard">
+    <div class="between">
+      <div><b style="font:700 .98rem Fredoka">${t('lvl_t')} ${lvl.lv}</b>
+        <div class="hint" style="margin-top:2px">${t('lvl_orders').replace('{n}', lvl.days)}</div></div>
+      <span class="tag ${lvl.lv > 1 ? 'mint' : 'pink'}">${lvl.next === null ? t('lvl_max') : lvl.days + '/' + lvl.next}</span>
+    </div>
+    <div class="lvlbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${lvl.pct}"><i style="width:${lvl.pct}%"></i></div>
+    <p class="hint" style="margin:7px 0 0">${lvl.next === null
+      ? t('lvl_max_sub')
+      : t('lvl_next').replace('{n}', lvl.need).replace('{lv}', lvl.lv + 1)}</p>
+    <p class="hint" style="margin:4px 0 0;opacity:.85">${t('lvl_rule')}</p>
   </div>
 
   <div class="card" style="margin-top:12px">
@@ -837,7 +899,7 @@ function viewProfile() {
 
   <div class="card" style="margin-top:12px">
     <div class="between"><b style="font-size:.95rem">${t('settings_account')}</b>
-      <span class="tag">${App.user && !App.user.guest ? esc(App.user.contact) : t('guest')}</span></div>
+      <span class="tag">${esc(App.user ? App.user.name : t('guest'))}</span></div>
     <div class="row" style="margin-top:10px">
       <button class="btn sm ghost" id="logoutBtn">${icon('back')} ${t('prof_logout')}</button>
     </div>
@@ -1534,7 +1596,8 @@ function obRender() {
       <div class="obwelcome">${isLogin ? t('login_welcome') : t('reg_t')}</div>
 
       ${isLogin ? `
-        <button class="obbtn" id="obGoogle"><span class="gicon">G</span>${t('login_google')}</button>
+        ${GOOGLE_CLIENT_ID ? `<button class="obbtn" id="obGoogle"><span class="gicon">G</span>${t('login_google')}</button>
+        <div class="obor">${t('login_or')}</div>` : ''}
         <div class="field"><label>${t('login_wa')}</label><input id="obContact" type="text" placeholder="+62 812 3456 7890"></div>
         <div class="field"><label>${t('on_pass')}</label><input id="obPass" type="password" placeholder="••••••••"></div>
         <div class="err" id="obErr"></div>
@@ -1549,8 +1612,8 @@ function obRender() {
         <label class="obterms"><input type="checkbox" id="obTerms"> <span>${t('reg_terms')}</span></label>
         <div class="err" id="obErr"></div>
         <button class="obbtn primary" id="obSubmit">${t('reg_btn')}</button>
-        <div class="obor">${t('login_or')}</div>
-        <button class="obbtn" id="obGoogle"><span class="gicon">G</span>${t('reg_google')}</button>
+        ${GOOGLE_CLIENT_ID ? `<div class="obor">${t('login_or')}</div>
+        <button class="obbtn" id="obGoogle"><span class="gicon">G</span>${t('reg_google')}</button>` : ''}
         <button class="obbtn ghostline" id="obSkip" style="margin-top:9px">${t('on_guest')}</button>
       `}
     </div>
@@ -1560,7 +1623,7 @@ function obRender() {
     obMode = b.dataset.obmode; SFX.play('tap'); obRender();
   });
   const g = $('#obGoogle');
-  if (g) g.onclick = () => { toast(t('google_soon')); SFX.play('tap'); };
+  if (g) g.onclick = googleSignIn;
   $('#obSkip').onclick = () => doRegister(true);
   $('#obSubmit').onclick = async () => {
     const nameEl = $('#obName2');
@@ -1594,6 +1657,63 @@ async function doRegister(guest) {
   reportToSheet('kunjungan', App.user);
   finishOnboard();
 }
+/* ---------- Google Sign-In (Google Identity Services) ---------- */
+function gisLoad() {
+  return new Promise((res, rej) => {
+    if (window.google && google.accounts && google.accounts.oauth2) return res();
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.async = true; s.defer = true;
+    s.onload = () => res();
+    s.onerror = () => rej(new Error('gis'));
+    document.head.appendChild(s);
+  });
+}
+
+function googleSignIn() {
+  SFX.play('tap');
+  if (!GOOGLE_CLIENT_ID) { toast(t('google_soon')); return; }
+  const err = $('#obErr');
+  gisLoad().then(() => {
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'openid email profile',
+      prompt: 'select_account',
+      callback: resp => {
+        if (!resp || resp.error || !resp.access_token) {
+          if (err) err.textContent = t('google_fail');
+          return;
+        }
+        fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: 'Bearer ' + resp.access_token }
+        }).then(r => r.json()).then(g => {
+          if (!g || !g.email) throw new Error('no-email');
+          return finishGoogle(g);
+        }).catch(() => { if (err) err.textContent = t('google_fail'); });
+      }
+    });
+    client.requestAccessToken();
+  }).catch(() => { if (err) err.textContent = t('google_fail'); });
+}
+
+async function finishGoogle(g) {
+  const err = $('#obErr');
+  let r = await DB.loginGoogle(g.email);
+  if (!r.ok) {
+    r = await DB.register({
+      name: g.name || String(g.email).split('@')[0],
+      contact: '', password: '', lang: obLang, email: g.email, google: true
+    });
+    if (!r.ok) { if (err) err.textContent = r.error === 'exists' ? t('reg_exists') : t('reg_fail'); return; }
+    reportToSheet('daftar', r.user);
+  } else {
+    reportToSheet('masuk', r.user);
+  }
+  App.user = r.user; DB.setSetting('session', r.user.id);
+  SFX.play('success');
+  finishOnboard();
+}
+
 function finishOnboard() {
   App.lang = App.user.lang || obLang;
   applyStaticI18n();
