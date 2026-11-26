@@ -1,43 +1,58 @@
-# Hubungkan Sheet "DATABASE PENGGUNA CRAVEMOOD" ke website CraveMood
+# Sheet "DATABASE PENGGUNA CRAVEMOOD" — STATUS: SUDAH TERHUBUNG
 
-Sheet kamu (sudah saya cek, masih kosong):
-https://docs.google.com/spreadsheets/d/1_np192gRgODOvtFTkgYZiZS6t8pe1H_ms7DyZRjBcwY/edit
+Sheet: https://docs.google.com/spreadsheets/d/1_np192gRgODOvtFTkgYZiZS6t8pe1H_ms7DyZRjBcwY/edit
 
-## Kenapa butuh 4 langkah manual
-Konektor Google Drive di sesi ini **hanya bisa membaca** (read + search), tidak bisa
-menulis sel atau men-deploy Apps Script ke akun Google kamu. Jadi konfigurasi Sheet dan
-URL Web App harus dibuat dari akunmu sendiri. Semua kode sudah saya siapkan, dan jembatan
-di website sudah terpasang (commit `6531cbd`) — tinggal isi URL-nya.
+Website: https://faturrahman224477-create.github.io/cravemood/
 
-## 4 langkah (±3 menit)
+## Yang sudah jalan (terverifikasi 26 Nov 2026)
 
-1. Buka Sheet di atas → menu **Extensions → Apps Script**.
-2. Hapus semua isi `Code.gs`, lalu tempel **seluruh isi** file `AppsScript_CraveMood.gs`
-   (ada di folder proyek ini). Klik **Save**.
-3. Masih di editor Apps Script:
-   - Pilih fungsi **`setupSpreadsheet`** di dropdown → klik **Run** → **Authorize**.
-     Ini otomatis membuat:
-     - tab **`Data_Pengunjung`** dengan 29 kolom header
-     - tab **`Dashboard_Ringkasan`** dengan 8 metrik (COUNTUNIQUE, COUNTIF, SUM)
-   - Klik **Deploy → New deployment → Web app**:
-     - Execute as: **Me**
-     - Who has access: **Anyone**
-   - Klik **Deploy** → **salin URL yang berakhiran `/exec`**.
-4. Kirim URL `/exec` itu ke saya. Saya pasang ke `SHEET_WEBHOOK_URL` di `src/app.js`,
-   rebuild, dan push. Selesai.
+Webhook Apps Script sudah dipasang di `src/app.js`:
 
-## Setelah URL terpasang, ini yang otomatis terjadi
-- Setiap **daftar** berhasil → baris baru di `Data_Pengunjung`.
-- Setiap **masuk** berhasil → baris baru.
-- Setiap **guest** masuk → baris baru bertanda `kunjungan`.
-- Kolom `tanggal` (YYYY-MM-DD) dan `waktu_akses` (HH:MM WITA) diisi **server**, bukan browser.
-- Nomor WA dinormalisasi ke `628…`; email opsional tapi kalau diisi wajib `@gmail.com`.
-- Pendaftaran baru dengan WA/email yang sudah ada akan ditolak (anti akun ganda).
-- `Dashboard_Ringkasan` menghitung ulang otomatis.
+```
+SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyc.../exec'
+```
 
-## Catatan teknis
+Sudah diuji end-to-end (bukan simulasi):
+- pendaftaran dari browser sungguhan → baris masuk ke `Data_Pengunjung`
+- `waktu_akses` diisi **server** dalam WITA (contoh: `11:53 WITA`), bukan dari jam HP pengunjung
+- nomor WA `08…` dinormalisasi otomatis jadi `628…`
+- daftar ulang dengan WA yang sama → ditolak ("sudah terdaftar")
+
+## Kapan baris ditulis
+
+| Aksi di website | Nilai kolom `status_langganan` | Catatan |
+|---|---|---|
+| Daftar akun baru | `Aktif` | + anti-duplikat WA |
+| Masuk (login) | `Nonaktif` | sesi baru |
+| Lanjut sebagai tamu | `Nonaktif` | nama `Tamu` |
+
+## Sisa 1 langkah opsional (±10 detik): tab Dashboard
+
+Tab `Data_Pengunjung` dibuat otomatis oleh webhook. Tab `Dashboard_Ringkasan`
+(8 metrik) hanya dibuat oleh fungsi `setupSpreadsheet`.
+
+Kalau tab `Dashboard_Ringkasan` **belum ada** di sheet kamu:
+
+1. Buka sheet → **Extensions → Apps Script**
+2. Di dropdown fungsi, pilih **`setupSpreadsheet`** → klik **Run**
+   (sudah pernah authorize, jadi langsung jalan tanpa dialog izin)
+3. Selesai. Tab `Dashboard_Ringkasan` muncul dengan 8 metrik live.
+
+Fungsi ini idempoten — header `Data_Pengunjung` ditulis ulang dengan isi yang sama,
+data pengunjung tidak tersentuh.
+
+## Catatan penting
+
+- Sheet kamu punya tab kosong pertama (mis. `Sheet1`). Data masuk ke tab
+  **`Data_Pengunjung`**, bukan tab pertama itu. Hapus tab kosongnya kalau mengganggu.
+- Baris 2–4 berisi data uji saya (`Tes Webhook Cimo`, `Tes Browser Cimo`, `Tes Live Cimo`).
+  Silakan hapus ketiganya — itu bukti bahwa penulisan benar-benar berhasil.
 - Onboarding CraveMood mengumpulkan **nama + nomor WA + password**, bukan email.
-  Karena itu validasi email di Apps Script dibuat kondisional (kosong = boleh).
-- Apps Script tidak mengirim header CORS, jadi website memakai `fetch(..., mode:'no-cors')`
-  untuk mengirim data. Pengiriman tetap sampai; response tidak dibaca di browser.
-- Data contoh fiktif di file `.xlsx` hanya untuk pratinjau struktur; Sheet asli kamu mulai kosong.
+  Karena itu `email_gmail` boleh kosong; kalau diisi tetap wajib `@gmail.com`.
+
+## Kenapa pakai JSONP, bukan fetch biasa
+
+Apps Script tidak mengirim header CORS, sehingga `fetch()` tidak bisa membaca balasannya.
+Website memakai `<script>` (JSONP) ke `doGet` yang sudah mendukung `callback`.
+Keuntungannya: penulisan tetap terjadi **dan** browser bisa memastikan balasan
+`{"status":"success"}` — jadi kegagalan tidak lewat diam-diam (ada 2× retry otomatis).

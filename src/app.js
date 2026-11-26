@@ -24,11 +24,12 @@ function sheetCall(params, cb) {
   const s = document.createElement('script');
   let done = false;
   const cleanup = () => { delete window[name]; if (s.parentNode) s.parentNode.removeChild(s); };
-  window[name] = data => { done = true; cleanup(); try { cb && cb(data); } catch (e) {} };
-  s.onerror = () => { if (!done) { done = true; cleanup(); cb && cb(null); } };
+  window[name] = data => { done = true; cleanup(); try { cb && cb(data, 'ok'); } catch (e) {} };
+  s.onerror = () => { if (!done) { done = true; cleanup(); cb && cb(null, 'error'); } };
   s.src = SHEET_WEBHOOK_URL + '?' + qs.toString();
   document.head.appendChild(s);
-  setTimeout(() => { if (!done) { done = true; cleanup(); cb && cb(null); } }, 20000);
+  /* timeout = mungkin server sudah menyimpan; JANGAN diulang supaya tidak dobel */
+  setTimeout(() => { if (!done) { done = true; cleanup(); cb && cb(null, 'timeout'); } }, 15000);
 }
 
 function reportToSheet(action, user, attempt) {
@@ -51,10 +52,15 @@ function reportToSheet(action, user, attempt) {
       klik_order: 'Tidak'
     };
   } catch (e) { return; }
-  sheetCall(payload, res => {
+  sheetCall(payload, (res, why) => {
     if (res && res.status === 'success') return;
-    if (tries < 2) { setTimeout(() => reportToSheet(action, user, tries + 1), 1800); return; }
-    console.warn('[CraveMood] gagal catat ke Sheets:', res && res.message);
+    /* ulangi HANYA kalau request tidak sampai ke server (bukan ditolak server) */
+    if (!res && why === 'error' && tries < 2) {
+      setTimeout(() => reportToSheet(action, user, tries + 1), 1800);
+      return;
+    }
+    if (!res) console.warn('[CraveMood] catatan Sheets tidak terkirim (' + why + ')');
+    else console.warn('[CraveMood] Sheets menolak:', res.message);
   });
 }
 
