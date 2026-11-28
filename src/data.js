@@ -86,7 +86,7 @@ const I18N = {
   id: {
     tagline:'Makan sesuai moodmu', best_match:'Paling cocok', viral:'Viral', item:'item',
     nav_home:'Beranda', nav_spin:'Cimo Spinner', nav_chat:'Cimo Live Chat', nav_cart:'Pesanan', nav_recap:'Recap Mood', nav_profile:'Profil',
-    on_title:'Kenalan dulu, yuk!', on_sub:'Aku Cimo. Aku bantu pilihin makanan sesuai perasaanmu hari ini.',
+    on_title:'Kenalan dulu, yuk!', on_sub:'Aku Cimo. Aku bisa rekomendasiin makanan sesuai mood kamu, lho.',
     on_name:'Nama panggilan', on_name_ph:'Contoh: Aisyah', on_lang:'Bahasa', on_go:'Mulai sekarang',
     on_guest:'Coba dulu sebagai tamu', on_acc:'Buat akun (opsional)', on_acc_sub:'Buat nyimpen recap & pesananmu. Boleh dilewati.',
     on_email:'Email atau nomor WhatsApp', on_pass:'Kata sandi', on_reg:'Buat akun', on_skip:'Lewati', on_have:'Sudah punya akun? Masuk',

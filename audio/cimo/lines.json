@@ -54,11 +54,11 @@
   },
   "fixed": {
     "greet": "f_greet.mp3",
-    "preview": "f_preview.mp3",
+    "preview": "preview-kuon.mp3",
     "added": "f_added.mp3",
     "saved": "f_saved.mp3",
     "home": "f_greet.mp3",
-    "intro": "c_3963dcc00460.mp3"
+    "intro": "intro-kuon.mp3"
   },
   "settings": {
     "rate": "+2%",
