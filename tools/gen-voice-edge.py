@@ -22,12 +22,20 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "audio" / "cimo"
 BACKUP = OUT / "elevenlabs-backup"
 DRY = "--dry" in sys.argv
+FORCE = "--force" in sys.argv or os.environ.get("CIMO_FORCE") == "1"
 
 # Overridable so a voice can be auditioned without editing this file:
 #   CIMO_VOICE=ms-MY-YasminNeural CIMO_RATE=+12% CIMO_PITCH=+36Hz python tools/gen-voice-edge.py
-VOICE = os.environ.get("CIMO_VOICE", "id-ID-GadisNeural")  # warm Indonesian female, closest to the Kuon reference
-RATE = os.environ.get("CIMO_RATE", "+2%")                  # natural tempo between a drag and the old robot rush
-PITCH = os.environ.get("CIMO_PITCH", "+0Hz")               # keep the natural register (no chipmunk lift)
+# With nothing set, the settings already stored in lines.json are reused — a bare
+# run must never silently switch the voice back to a default.
+try:
+    _cur = json.loads((OUT / "lines.json").read_text(encoding="utf-8"))
+except Exception:
+    _cur = {}
+_cfg = _cur.get("settings") or {}
+VOICE = os.environ.get("CIMO_VOICE") or _cur.get("voice") or "id-ID-GadisNeural"
+RATE = os.environ.get("CIMO_RATE") or _cfg.get("rate") or "+2%"
+PITCH = os.environ.get("CIMO_PITCH") or _cfg.get("pitch") or "+0Hz"
 TMP = OUT / ("_edge_tmp_" + re.sub(r"[^A-Za-z0-9]", "_", VOICE + RATE + PITCH))  # unique per setting — never reuse stale clips
 
 MOOD_LINES = {
@@ -141,7 +149,7 @@ def jobs():
 async def render(item, sem, done):
     filename, text = item
     dest = TMP / filename
-    if dest.exists() and dest.stat().st_size > 1500:
+    if dest.exists() and dest.stat().st_size > 1500 and not FORCE:
         done.append((filename, dest.stat().st_size, "cached"))
         return
     import edge_tts

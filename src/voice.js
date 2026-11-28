@@ -479,6 +479,19 @@ const Voice = (() => {
     /* mood recommendation — natural recording first, browser TTS fallback */
     async speakMood(mood, dishId, fallbackText) {
       if (!enabled) return;
+      /* one continuous recording per mood x dish: the dish name is pronounced
+         in Indonesian because the whole sentence is Indonesian, and there are
+         no seams between clips. Falls back to the three-clip join below. */
+      const combo = lines && lines.moodDish && lines.moodDish[mood] && dishId
+        ? lines.moodDish[mood][dishId] : null;
+      if (combo) {
+        stop();
+        const my = token;
+        speaking = true;
+        await playClip(combo);
+        if (my === token) speaking = false;
+        return;
+      }
       if (lines && lines.moods && lines.moods[mood]) {
         const mm = lines.moods[mood], segs = [];
         if (mm.pre) segs.push(mm.pre);
