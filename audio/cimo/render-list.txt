@@ -113,34 +113,34 @@ f_greet.mp3	Hai, aku Cimo. Lagi mood apa hari ini?
 f_preview.mp3	Hai, aku Cimo. Kalau kamu lagi capek, cerita aja. Aku dengerin sampai selesai.
 f_added.mp3	Sudah masuk keranjang.
 f_saved.mp3	Tersimpan.
-d_coto.mp3	Chotoh Mahkassar
-d_konro.mp3	Sohp Kohnroh
-d_saudara.mp3	Sohp Sowdahrah
-d_pallubasa.mp3	Palloobahsah
-d_bakso.mp3	Bahksoh Oorat Spehseeahl
-d_palekko.mp3	Ahyahm Pahlekkoh
-d_dabu.mp3	Eekahn Bahkahr Dahboo Dahboo
-d_konrobakar.mp3	Kohnroh Bahkahr Pehdahs
-d_geprek.mp3	Ahyahm Gehprek Level Teegah
-d_taichan.mp3	Sahteh Taichahn
-d_nasi.mp3	Nahsee Goreng Kahmpung
-d_naskun.mp3	Nahsee Koening Mahkassar
-d_campur.mp3	Nahsee Chahmpoor
-d_mititi.mp3	Mee Teetee
-d_mikering.mp3	Mee Kehring Spehseeahl
-d_jalang.mp3	Jahlahngkohteh
-d_pisangepe.mp3	Peesahng Ehpeh
-d_pisanggoreng.mp3	Peesahng Goreng Kehjoo
-d_barongko.mp3	Bahrongkoh
-d_lapis.mp3	Kooeh Lahpees Mahkassar
-d_terbul.mp3	Tehrahng Boolahn Chokehlaht
-d_roti.mp3	Rotee Bahkahr Sreekahyah
-d_espijo.mp3	Es Peesahng Eejoh
-d_espallu.mp3	Es Pahlloo Bootoong
-d_markisa.mp3	Joos Markeesah Sehgahr
-d_kelapa.mp3	Es Kehlahpah Moodah
-d_kopi.mp3	Kopee Soosoo Goolah Ahren
-d_teh.mp3	Teh Tahreek Hahngaht
-d_airjeruk.mp3	Aheer Jehrook Hahngaht
-d_bubur.mp3	Booboor Ahyahm Spehseeahl
+d_coto.mp3	Coto Makassar
+d_konro.mp3	Sup Konro
+d_saudara.mp3	Sop Saudara
+d_pallubasa.mp3	Pallubasa
+d_bakso.mp3	Bakso Urat Spesial
+d_palekko.mp3	Ayam Palekko
+d_dabu.mp3	Ikan Bakar Dabu-dabu
+d_konrobakar.mp3	Konro Bakar Pedas
+d_geprek.mp3	Ayam Geprek Level 3
+d_taichan.mp3	Sate Taichan
+d_nasi.mp3	Nasi Goreng Kampung
+d_naskun.mp3	Nasi Kuning Makassar
+d_campur.mp3	Nasi Campur
+d_mititi.mp3	Mie Titi
+d_mikering.mp3	Mie Kering Spesial
+d_jalang.mp3	Jalangkote
+d_pisangepe.mp3	Pisang Epe
+d_pisanggoreng.mp3	Pisang Goreng Keju
+d_barongko.mp3	Barongko
+d_lapis.mp3	Kue Lapis Makassar
+d_terbul.mp3	Terang Bulan Cokelat
+d_roti.mp3	Roti Bakar Srikaya
+d_espijo.mp3	Es Pisang Ijo
+d_espallu.mp3	Es Pallu Butung
+d_markisa.mp3	Jus Markisa Segar
+d_kelapa.mp3	Es Kelapa Muda
+d_kopi.mp3	Kopi Susu Gula Aren
+d_teh.mp3	Teh Tarik Hangat
+d_airjeruk.mp3	Air Jeruk Hangat
+d_bubur.mp3	Bubur Ayam Spesial
 cimo-voice.mp3	Hai, aku Cimo. Temanmu yang suka nyari makanan sesuai mood kamu.

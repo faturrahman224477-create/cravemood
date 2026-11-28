@@ -41,3 +41,7 @@ shots3/
 gh-live.png
 social/
 shots4/
+
+# scratch analysis scripts / audition clips
+_asr*.py
+_pick/

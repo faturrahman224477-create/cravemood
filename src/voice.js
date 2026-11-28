@@ -479,19 +479,9 @@ const Voice = (() => {
     /* mood recommendation — natural recording first, browser TTS fallback */
     async speakMood(mood, dishId, fallbackText) {
       if (!enabled) return;
-      /* one continuous recording per mood x dish: the dish name is pronounced
-         in Indonesian because the whole sentence is Indonesian, and there are
-         no seams between clips. Falls back to the three-clip join below. */
-      const combo = lines && lines.moodDish && lines.moodDish[mood] && dishId
-        ? lines.moodDish[mood][dishId] : null;
-      if (combo) {
-        stop();
-        const my = token;
-        speaking = true;
-        await playClip(combo);
-        if (my === token) speaking = false;
-        return;
-      }
+      /* three-clip join: mood lead-in + dish name + mood tail. The dish clip is
+         rendered with a native Indonesian voice (see lines.dishVoice) so names
+         like "Sop Konro" keep their Indonesian phonemes inside Emma's sentence. */
       if (lines && lines.moods && lines.moods[mood]) {
         const mm = lines.moods[mood], segs = [];
         if (mm.pre) segs.push(mm.pre);
@@ -504,8 +494,9 @@ const Voice = (() => {
           for (let i = 0; i < segs.length; i++) {
             if (my !== token || !enabled) break;
             await playClip(segs[i]);
-            /* a soft breath between recommendation parts, like a real reply */
-            if (my === token && i < segs.length - 1) await new Promise(r => setTimeout(r, 130));
+            /* a short comma-length breath, not a full stop: the three clips
+               must read as one sentence, not as three separate lines */
+            if (my === token && i < segs.length - 1) await new Promise(r => setTimeout(r, 85));
           }
           if (my === token) speaking = false;
           return;
