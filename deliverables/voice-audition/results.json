@@ -1,0 +1,82 @@
+{
+ "ref": {
+  "dur": 4.1,
+  "f0": 239,
+  "f0lo": 211,
+  "f0hi": 381
+ },
+ "candidates": [
+  {
+   "id": "id-ID-GadisNeural",
+   "label": "Gadis (Indonesia) \u2014 yang dipakai sekarang",
+   "file": "voice-audition/id-ID-GadisNeural.mp3",
+   "rate": 12,
+   "pitch": 13,
+   "f0": 246,
+   "f0lo": 197,
+   "f0hi": 320,
+   "dur": 5.5,
+   "sim": 0.386
+  },
+  {
+   "id": "ms-MY-YasminNeural",
+   "label": "Yasmin (Melayu)",
+   "file": "voice-audition/ms-MY-YasminNeural.mp3",
+   "rate": 12,
+   "pitch": 36,
+   "f0": 252,
+   "f0lo": 170,
+   "f0hi": 320,
+   "dur": 5.78,
+   "sim": 0.416
+  },
+  {
+   "id": "en-US-AvaMultilingualNeural",
+   "label": "Ava (multibahasa)",
+   "file": "voice-audition/en-US-AvaMultilingualNeural.mp3",
+   "rate": 12,
+   "pitch": 4,
+   "f0": 250,
+   "f0lo": 198,
+   "f0hi": 286,
+   "dur": 4.18,
+   "sim": 0.376
+  },
+  {
+   "id": "en-US-EmmaMultilingualNeural",
+   "label": "Emma (multibahasa)",
+   "file": "voice-audition/en-US-EmmaMultilingualNeural.mp3",
+   "rate": 12,
+   "pitch": 60,
+   "f0": 235,
+   "f0lo": 192,
+   "f0hi": 340,
+   "dur": 4.9,
+   "sim": 0.389
+  },
+  {
+   "id": "fr-FR-VivienneMultilingualNeural",
+   "label": "Vivienne (multibahasa)",
+   "file": "voice-audition/fr-FR-VivienneMultilingualNeural.mp3",
+   "rate": 12,
+   "pitch": 60,
+   "f0": 235,
+   "f0lo": 209,
+   "f0hi": 281,
+   "dur": 4.02,
+   "sim": 0.317
+  },
+  {
+   "id": "pt-BR-ThalitaMultilingualNeural",
+   "label": "Thalita (multibahasa)",
+   "file": "voice-audition/pt-BR-ThalitaMultilingualNeural.mp3",
+   "rate": 12,
+   "pitch": 48,
+   "f0": 250,
+   "f0lo": 209,
+   "f0hi": 333,
+   "dur": 4.4,
+   "sim": 0.574
+  }
+ ]
+}
