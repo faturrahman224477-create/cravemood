@@ -21,7 +21,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "audio" / "cimo"
 BACKUP = OUT / "elevenlabs-backup"
-TMP = OUT / "_edge_tmp_natural2"   # unique per setting pair — never reuse stale clips
 DRY = "--dry" in sys.argv
 
 # Overridable so a voice can be auditioned without editing this file:
@@ -29,7 +28,7 @@ DRY = "--dry" in sys.argv
 VOICE = os.environ.get("CIMO_VOICE", "id-ID-GadisNeural")  # warm Indonesian female, closest to the Kuon reference
 RATE = os.environ.get("CIMO_RATE", "+2%")                  # natural tempo between a drag and the old robot rush
 PITCH = os.environ.get("CIMO_PITCH", "+0Hz")               # keep the natural register (no chipmunk lift)
-TMP = OUT / ("_edge_tmp_" + re.sub(r"[^A-Za-z0-9]", "_", VOICE + RATE + PITCH))
+TMP = OUT / ("_edge_tmp_" + re.sub(r"[^A-Za-z0-9]", "_", VOICE + RATE + PITCH))  # unique per setting — never reuse stale clips
 
 MOOD_LINES = {
     "senang": {"pre": "Wah, kamu lagi senang ya! Coba yang manis dan segar,", "post": "bisa jadi pilihan."},
@@ -199,7 +198,7 @@ def main():
 
     lines_path = OUT / "lines.json"
     lines = json.loads(lines_path.read_text(encoding="utf-8"))
-    lines["voiceName"] = "Cimo Gadis (natural & hangat)"
+    lines["voiceName"] = os.environ.get("CIMO_VOICE_LABEL", VOICE)
     lines["voice"] = VOICE
     lines["model"] = "edge-neural"
     lines["settings"] = {"rate": RATE, "pitch": PITCH}

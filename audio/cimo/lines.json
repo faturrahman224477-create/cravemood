@@ -1,7 +1,7 @@
 {
   "lang": "id",
-  "voice": "id-ID-GadisNeural",
-  "voiceName": "Cimo Gadis (natural & hangat)",
+  "voice": "en-US-EmmaMultilingualNeural",
+  "voiceName": "Cimo Emma (hangat, dekat Kuon)",
   "model": "edge-neural",
   "moods": {
     "senang": {
@@ -54,14 +54,14 @@
   },
   "fixed": {
     "greet": "f_greet.mp3",
-    "preview": "preview-kuon.mp3",
+    "preview": "f_preview.mp3",
     "added": "f_added.mp3",
     "saved": "f_saved.mp3",
     "home": "f_greet.mp3",
-    "intro": "intro-kuon.mp3"
+    "intro": "f_greet.mp3"
   },
   "settings": {
-    "rate": "+2%",
-    "pitch": "+0Hz"
+    "rate": "+12%",
+    "pitch": "+60Hz"
   }
 }

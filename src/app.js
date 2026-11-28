@@ -1729,8 +1729,10 @@ function finishOnboard() {
 function enterApp() {
   $('#onboard').classList.add('hide');
   boot2();
-  if (App.settings.speak) setTimeout(() =>
-    Voice.speakFixed('intro', I18N[App.lang].on_sub, { lang: App.lang }), 600);
+  if (App.settings.speak) setTimeout(() => {
+    /* never talk over a line that already started (mood greeting / chat reply) */
+    if (!Voice.speaking) Voice.speakFixed('intro', I18N[App.lang].on_sub, { lang: App.lang });
+  }, 600);
 }
 
 /* ---------- pet ---------- */

@@ -40,11 +40,11 @@ const MOODTONE = {
 /* fallback lines for canned keys when a caller does not provide text */
 const FIXED_TEXT = {
   greet: 'Hai, aku Cimo! Lagi mood apa hari ini?',
-  preview: 'Hai, aku Cimo! Aku bisa rekomendasiin makanan sesuai mood kamu, lho. Atau kamu bisa gunakan fitur acak makanan ini. Yuk, download CraveMood untuk tahu lebih jauh.',
+  preview: 'Hai, aku Cimo! Kalau kamu lagi capek, cerita aja. Aku dengerin sampai selesai, ya.',
   added: 'Sudah masuk keranjang, nih!',
   saved: 'Sudah tersimpan, ya.',
   home: 'Hai, aku Cimo! Yuk, cek rekomendasi makanan buat kamu.',
-  intro: 'Hai, aku Cimo! Aku bisa rekomendasiin makanan sesuai mood kamu, lho.',
+  intro: 'Hai, aku Cimo! Lagi mood apa hari ini?',
 };
 
 const Voice = (() => {
@@ -271,14 +271,22 @@ const Voice = (() => {
     bufferCache.set(path, buf);
     return buf;
   }
+  /* Resolves 'ok' | 'cancel' | 'fail'. 'cancel' means a newer line took over —
+     it must NEVER trigger the <audio> fallback, otherwise two clips overlap. */
   function playSoft(path, rate) {
     const myToken = token;
     return new Promise(resolve => {
       let done = false;
       const fin = v => { if (!done) { done = true; resolve(v); } };
       (async () => {
-        const c = audioCtx(); if (!c) return fin(false);
-        const buf = await decoded(path); if (!buf || myToken !== token) return fin(false);
+        const c = audioCtx(); if (!c) return fin('fail');
+        /* hard gate: whatever was still sounding is cut before this one starts */
+        if (currentSource) { try { currentSource.stop(); } catch (e) {} currentSource = null; }
+        if (currentAudio) { try { currentAudio.pause(); } catch (e) {} currentAudio = null; }
+        let buf = null;
+        try { buf = await decoded(path); } catch (e) { return fin('fail'); }
+        if (!buf) return fin('fail');
+        if (myToken !== token) return fin('cancel');
         const rt = rate || 1;
         /* trim only real silence, with a little breathing room at both ends */
         const raw = buf.getChannelData(0);
@@ -309,18 +317,19 @@ const Voice = (() => {
         env.connect(wet); wet.connect(conv); conv.connect(c.destination);
         currentSource = src;
         speaking = true;
-        src.onended = () => { if (currentSource === src) currentSource = null; fin(true); };
+        src.onended = () => { if (currentSource === src) currentSource = null; fin('ok'); };
         src.start(t, offset, span); src.stop(t + total + 0.02);
-        setTimeout(() => fin(true), (total + 0.7) * 1000);
-      })().catch(() => fin(false));
+        setTimeout(() => fin('ok'), (total + 0.7) * 1000);
+      })().catch(() => fin('fail'));
     });
   }
   /* plain <audio> — kept as a fallback for browsers without Web Audio */
-  function playHtml(path, rate) {
+  function playHtml(path, rate, myToken) {
     return new Promise(resolve => {
       let done = false;
       const fin = v => { if (!done) { done = true; resolve(v); } };
       try {
+        if (myToken !== undefined && myToken !== token) return fin(false);
         const a = new Audio(assetUrl(path));
         currentAudio = a;
         a.volume = Math.max(0, Math.min(1, volume));
@@ -342,7 +351,14 @@ const Voice = (() => {
     });
   }
   function playFile(path, rate) {
-    return playSoft(path, rate).then(ok => ok ? true : playHtml(path, rate));
+    const my = token;
+    return playSoft(path, rate).then(r => {
+      if (r === 'ok') return true;
+      /* cancelled = a newer line owns the voice now; falling back here would
+         start a second clip on top of it (the old "suara tabrakan" bug) */
+      if (r === 'cancel') return false;
+      return playHtml(path, rate, my);
+    });
   }
   function playClip(file) { return playFile('audio/cimo/' + file, CIMO_RATE); }
 
@@ -511,7 +527,7 @@ const Voice = (() => {
     _lookup(t) { return lookup(t); },
     playOriginal() { return playFile(CIMO_CLIP); },
     preview() {
-      return this.speakFixed('preview', 'Hai, aku Cimo! Aku bisa rekomendasiin makanan sesuai mood kamu, lho. Atau kamu bisa gunakan fitur acak makanan ini. Yuk, download CraveMood untuk tahu lebih jauh.', { mood: 'def' });
+      return this.speakFixed('preview', 'Hai, aku Cimo! Kalau kamu lagi capek, cerita aja. Aku dengerin sampai selesai, ya.', { mood: 'def' });
     },
   };
 })();
