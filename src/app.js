@@ -1257,76 +1257,106 @@ function renderVipModal() {
 
   if (vipStep === 'pay') {
     const pkg = VIP_PACKAGES.find(p => p.id === vipPkg);
-    const acc = PAYMENT_ACCOUNT;
+    const q = PAYMENT_ACCOUNT.qris;
+    const rp = n => 'Rp ' + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const pkgLabel = esc((pkg.labelI18n && pkg.labelI18n[App.lang]) || pkg.label);
+    const amount = rp(pkg.price);
+
+    /* QRIS is a static code (no amount embedded) — the buyer types the exact
+       nominal, so the amount is the loudest thing in the panel. */
+    const qrisPanel = `
+      <div class="qris-card">
+        <div class="qris-head">
+          <img src="${q.logo}" alt="QRIS" width="176" height="28">
+          <span class="qris-amtchip">${pkgLabel}</span>
+        </div>
+        <div class="qris-frame">
+          <span class="qf tl"></span><span class="qf tr"></span><span class="qf bl"></span><span class="qf br"></span>
+          <img src="${q.image}" alt="QRIS ${q.merchant}" width="440" height="440">
+        </div>
+        <div class="qris-scan">
+          <b>${q.merchant}</b>
+          <small>${t('pay_qris_all')}</small>
+        </div>
+        <div class="qris-meta">
+          <button class="qris-nmid" id="copyNmid" title="${t('pay_qris_nmid')}">
+            ${t('pay_qris_nmid')} ${q.nmid}
+          </button>
+        </div>
+        <div class="qris-amount">
+          <div class="qalabel">${t('pay_qris_typo')}</div>
+          <div class="qarow">
+            <span class="qaval">${amount}</span>
+            <button class="btn sm" id="copyAmt" style="padding:6px 12px;font-size:.72rem">${t('pay_copy')}</button>
+          </div>
+          <p>${t('pay_qris_note')}</p>
+        </div>
+        <ol class="qris-steps">
+          <li><span class="qn">1</span><b>${t('pay_qris_s1')}</b><small>${t('pay_qris_s1s')}</small></li>
+          <li><span class="qn">2</span><b>${t('pay_qris_s2')}</b><small>${t('pay_qris_s2s')}</small></li>
+          <li><span class="qn">3</span><b>${t('pay_qris_s3')}</b><small>${t('pay_qris_s3s')}</small></li>
+        </ol>
+        <button class="qris-save" id="saveQr">${t('pay_qris_save')}</button>
+        <p class="qris-tip">${t('pay_qris_tip')}</p>
+      </div>`;
+
+    const waPanel = `<div class="card" style="padding:14px;background:var(--bg);border-style:dashed;text-align:center">
+        <div style="font:700 .9rem Fredoka;margin-bottom:8px">${t('pay_wa')}</div>
+        <div class="hint" style="font-size:.75rem;margin-bottom:10px">${t('pay_wa_sub')}</div>
+        <a href="${PAYMENT_ACCOUNT.whatsapp}" target="_blank" rel="noopener" class="btn block" style="text-decoration:none">${t('pay_wa_open')}</a>
+      </div>`;
+
     body.innerHTML = `
-      <div style="text-align:center;margin-bottom:12px">
-        <div style="width:70px;height:70px;margin:0 auto">${cimo(App.mood, 66, false, 'crown')}</div>
-        <h3 style="margin-top:6px;font-size:1.05rem">${t('pay_t')}</h3>
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
+        <div style="width:52px;height:52px;flex:none">${cimo(App.mood, 50, false, 'crown')}</div>
+        <h3 style="font-size:1.02rem">${t('pay_t')}</h3>
       </div>
-      <div class="card pay-summary">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <span class="muted" style="font-size:.8rem">${t('pay_pkg')}</span>
-          <b style="font-size:.9rem">${esc((pkg.labelI18n && pkg.labelI18n[App.lang]) || pkg.label)}</b>
+      <div class="card pay-summary" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px">
+        <div style="min-width:0">
+          <div class="muted" style="font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em">${t('pay_pkg')}</div>
+          <b style="font-size:.92rem">${pkgLabel}</b>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span class="muted" style="font-size:.8rem">${t('pay_total')}</span>
-          <b style="font-size:1.1rem;color:var(--pk2)">Rp ${String(pkg.price).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</b>
+        <div style="text-align:right">
+          <div class="muted" style="font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em">${t('pay_total')}</div>
+          <b style="font-size:1.12rem;color:var(--pk2)">${amount}</b>
         </div>
       </div>
-      <div style="font:700 .8rem Fredoka;margin-bottom:8px">${t('pay_method')}</div>
+      <div style="font:700 .78rem Fredoka;margin-bottom:7px">${t('pay_method')}</div>
       <div class="paymethods">
-        <button class="paybtn on" data-pay="manual">
-          <img src="${acc.logo}" alt="GoPay" style="width:36px;height:36px;border-radius:8px;flex:none">
-          <div><b>${acc.label}</b><small>${acc.name}</small></div>
+        <button class="paybtn on" data-pay="qris">
+          <span class="payico" style="font:800 .62rem Fredoka;letter-spacing:.02em;background:var(--pk2);color:#fff;border-radius:9px;padding:7px 5px;width:36px;line-height:1">QRIS</span>
+          <div><b>${t('pay_qris')}</b><small>${t('pay_qris_sub')}</small></div>
         </button>
         <button class="paybtn" data-pay="wa">
           <span class="payico">💬</span>
           <div><b>${t('pay_wa')}</b><small>${t('pay_wa_sub')}</small></div>
         </button>
       </div>
-      <div id="payDetail" style="margin-top:12px">
-        <div class="card" style="padding:14px;background:var(--bg);border-style:dashed">
-          <div style="text-align:center;margin-bottom:10px">
-            <img src="${acc.logo}" alt="GoPay" style="width:64px;height:64px;margin:0 auto 8px;border-radius:14px">
-            <div style="font:700 1.3rem Fredoka;color:#00AA13">${acc.bankFull}</div>
-            <div style="font:700 1.4rem Fredoka;letter-spacing:2px;margin:6px 0;color:var(--pk2)">${acc.number}</div>
-            <div style="font:700 .85rem Nunito">${t('pay_on_behalf')} ${acc.name}</div>
-          </div>
-          <div class="hint" style="text-align:center;font-size:.75rem;margin-bottom:10px">${t('pay_manual_note')}</div>
-          <button class="btn sm block" id="copyRek">${t('pay_copy')}</button>
-        </div>
-      </div>
+      <div id="payDetail" style="margin-top:12px">${qrisPanel}</div>
       <div style="display:flex;gap:8px;margin-top:14px">
         <button class="btn ghost" style="flex:1" id="vipBack">‹ ${t('pay_back')}</button>
-        <button class="btn" style="flex:2" id="vipConfirmPay">${t('pay_confirm')}</button>
+        <button class="btn" style="flex:2" id="vipConfirmPay">${t('pay_qris_done')}</button>
       </div>
     `;
+
+    const bindQris = () => {
+      const cn = $('#copyNmid');
+      if (cn) cn.onclick = () => { copyText(q.nmid); toast(t('pay_qris_nmid_ok')); SFX.play('pop'); };
+      const ca = $('#copyAmt');
+      if (ca) ca.onclick = () => { copyText(String(pkg.price)); toast(t('pay_copied')); SFX.play('pop'); };
+      const sq = $('#saveQr');
+      if (sq) sq.onclick = saveQrisImage;
+    };
+    bindQris();
+
     $$('#vipBody .paybtn').forEach(b => b.onclick = () => {
       $$('#vipBody .paybtn').forEach(x => x.classList.toggle('on', x === b));
-      const method = b.dataset.pay;
-      const det = $('#payDetail');
-      if (method === 'manual') {
-        det.innerHTML = `<div class="card" style="padding:14px;background:var(--bg);border-style:dashed">
-          <div style="text-align:center;margin-bottom:10px">
-            <img src="${acc.logo}" alt="GoPay" style="width:64px;height:64px;margin:0 auto 8px;border-radius:14px">
-            <div style="font:700 1.3rem Fredoka;color:#00AA13">${acc.bankFull}</div>
-            <div style="font:700 1.4rem Fredoka;letter-spacing:2px;margin:6px 0;color:var(--pk2)">${acc.number}</div>
-            <div style="font:700 .85rem Nunito">${t('pay_on_behalf')} ${acc.name}</div>
-          </div>
-          <div class="hint" style="text-align:center;font-size:.75rem;margin-bottom:10px">${t('pay_manual_note')}</div>
-          <button class="btn sm block" id="copyRek">${t('pay_copy')}</button>
-        </div>`;
-        $('#copyRek').onclick = () => { copyText(acc.number); toast(t('pay_copied')); SFX.play('pop'); };
-      } else {
-        det.innerHTML = `<div class="card" style="padding:14px;background:var(--bg);border-style:dashed;text-align:center">
-          <div style="font:700 .9rem Fredoka;margin-bottom:8px">${t('pay_wa')}</div>
-          <div class="hint" style="font-size:.75rem;margin-bottom:10px">${t('pay_wa_sub')}</div>
-          <a href="${acc.whatsapp}" target="_blank" rel="noopener" class="btn block" style="text-decoration:none">${t('pay_wa_open')}</a>
-        </div>`;
-      }
+      const isQris = b.dataset.pay === 'qris';
+      $('#payDetail').innerHTML = isQris ? qrisPanel : waPanel;
+      $('#vipConfirmPay').textContent = isQris ? t('pay_qris_done') : t('pay_confirm');
+      bindQris();
       SFX.play('tap');
     });
-    $('#copyRek').onclick = () => { copyText(acc.number); toast('Nomor GoPay disalin'); SFX.play('pop'); };
     $('#vipBack').onclick = () => { vipStep = 'pkg'; renderVipModal(); };
     $('#vipConfirmPay').onclick = () => submitVipPayment(pkg);
   }
@@ -1352,7 +1382,7 @@ async function submitVipPayment(pkg) {
     const orderId = 'VIP-' + App.user.id.slice(-6) + '-' + Date.now().toString(36).toUpperCase();
     const r = await DB.createTransaction(App.user.id, {
       type: 'vip', pkg: pkg.id, months: pkg.months, amount: pkg.price,
-      order_id: orderId, gateway: 'manual',
+      order_id: orderId, gateway: 'qris',
     });
     if (r.ok) {
       SFX.play('success');
@@ -1360,6 +1390,26 @@ async function submitVipPayment(pkg) {
     } else { toast(t('vip_tx_fail')); }
   } catch (e) { toast(t('vip_pay_fail')); }
   if (btn) { btn.disabled = false; btn.textContent = t('pay_confirm'); }
+}
+
+/* the QR is the only thing a second device has to see, so let people save it */
+async function saveQrisImage() {
+  const src = PAYMENT_ACCOUNT.qris.image;
+  try {
+    const res = await fetch(src, { cache: 'force-cache' });
+    if (!res.ok) throw new Error('http ' + res.status);
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'QRIS-CraveMood.png';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    toast(t('pay_qris_saved')); SFX.play('pop');
+  } catch (e) {
+    /* in-app browsers often block downloads — open the image instead */
+    window.open(src, '_blank', 'noopener');
+    toast(t('pay_qris_saved'));
+  }
 }
 
 async function openShare() {

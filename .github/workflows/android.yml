@@ -31,6 +31,7 @@ jobs:
           cp index.html manifest.json sw.js www/
           cp icon-192.png icon-512.png icon-maskable-512.png apple-touch-icon.png www/
           cp favicon.png favicon-16.png favicon-64.png gopay-logo.png www/ 2>/dev/null || true
+          cp qris-cimo.png qris-logo.png www/ 2>/dev/null || true
           cp -r audio www/ 2>/dev/null || true
 
       - name: Pasang Capacitor

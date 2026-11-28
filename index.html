@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
-<meta name="build" content="1795842002031">
+<meta name="build" content="1795863962060">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7FA" media="(prefers-color-scheme: light)">
@@ -579,6 +579,75 @@ td .tag{font-size:.6rem}
 .paybtn div{flex:1}
 .paybtn b{font-size:.88rem;display:block}
 .paybtn small{font-size:.68rem;color:var(--mu);font-weight:700}
+
+/* ===== QRIS ===== */
+.qris-card{position:relative;border-radius:24px;padding:15px 15px 13px;overflow:hidden;
+  background:linear-gradient(158deg,#ffe4f0 0%,#fff2e8 52%,#ffeaf4 100%);
+  border:1px solid color-mix(in srgb,var(--pk2) 26%,transparent);
+  box-shadow:0 12px 26px rgba(122,42,85,.13),inset 0 1px 0 rgba(255,255,255,.9)}
+.qris-card::before,.qris-card::after{content:"";position:absolute;border-radius:50%;
+  filter:blur(30px);pointer-events:none;opacity:.6}
+.qris-card::before{width:180px;height:180px;background:#ffb6d0;top:-80px;right:-60px}
+.qris-card::after{width:160px;height:160px;background:#ffd6a5;bottom:-80px;left:-55px}
+.qris-head{position:relative;display:flex;align-items:center;justify-content:space-between;
+  gap:10px;margin-bottom:12px}
+.qris-head img{height:26px;width:auto;display:block;flex:none}
+.qris-amtchip{display:inline-flex;align-items:baseline;gap:5px;background:var(--ink);color:#ffeaf3;
+  border-radius:999px;padding:5px 11px;font:700 .82rem Fredoka;white-space:nowrap;flex:none}
+.qris-amtchip small{font:800 .58rem Nunito;letter-spacing:.06em;text-transform:uppercase;opacity:.72}
+.qris-frame{position:relative;margin:0 auto;width:min(238px,72%);padding:9px;border-radius:20px;
+  background:#fff;box-shadow:0 8px 20px rgba(122,42,85,.16),0 0 0 1px rgba(122,42,85,.07)}
+.qris-frame img{display:block;width:100%;height:auto;border-radius:12px}
+.qris-frame .qf{position:absolute;width:17px;height:17px;border:3px solid var(--pk2);border-radius:4px}
+.qris-frame .qf.tl{top:-5px;left:-5px;border-right:0;border-bottom:0;border-top-left-radius:8px}
+.qris-frame .qf.tr{top:-5px;right:-5px;border-left:0;border-bottom:0;border-top-right-radius:8px}
+.qris-frame .qf.bl{bottom:-5px;left:-5px;border-right:0;border-top:0;border-bottom-left-radius:8px}
+.qris-frame .qf.br{bottom:-5px;right:-5px;border-left:0;border-top:0;border-bottom-right-radius:8px}
+.qris-scan{position:relative;margin-top:11px;text-align:center}
+.qris-scan b{display:block;font:700 .84rem Fredoka}
+.qris-scan small{display:block;font:700 .66rem Nunito;color:var(--mu);margin-top:2px}
+.qris-meta{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:9px}
+.qris-nmid{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.75);
+  border:1px dashed color-mix(in srgb,var(--pk2) 45%,transparent);border-radius:999px;
+  padding:3px 9px;font:700 .63rem Nunito;color:var(--mu);cursor:pointer;font-family:inherit}
+.qris-nmid:hover{border-color:var(--pk2);color:var(--pk2)}
+.qris-amount{position:relative;margin-top:12px;border-radius:16px;padding:10px 12px;
+  background:rgba(255,255,255,.72);border:1px dashed color-mix(in srgb,var(--pk2) 40%,transparent)}
+.qris-amount .qalabel{font:800 .6rem Nunito;letter-spacing:.07em;text-transform:uppercase;color:var(--mu)}
+.qris-amount .qarow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:3px;flex-wrap:nowrap}
+.qris-amount .qaval{font:700 clamp(1.1rem,5.2vw,1.42rem) Fredoka;color:var(--pk2);letter-spacing:.5px;
+  line-height:1.1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.qris-amount .qarow .btn{flex:none;white-space:nowrap}
+.qris-amount p{margin:6px 0 0;font:700 .66rem Nunito;color:var(--mu);line-height:1.45}
+.qris-steps{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:11px;
+  list-style:none;padding:0}
+.qris-steps li{background:rgba(255,255,255,.66);border-radius:13px;padding:8px 7px;text-align:center}
+.qris-steps .qn{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;
+  border-radius:50%;background:var(--pk2);color:#fff;font:800 .66rem Nunito;margin-bottom:4px}
+.qris-steps b{display:block;font:700 .68rem Fredoka;line-height:1.2}
+.qris-steps small{display:block;font:700 .58rem Nunito;color:var(--mu);margin-top:2px;line-height:1.3}
+.qris-save{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:11px;
+  border:2px solid color-mix(in srgb,var(--pk2) 55%,transparent);background:rgba(255,255,255,.8);
+  color:var(--pk2);border-radius:14px;padding:9px;font:800 .78rem Nunito;cursor:pointer;font-family:inherit;
+  transition:.18s}
+.qris-save:hover{background:#fff;border-color:var(--pk2);transform:translateY(-1px)}
+.qris-save:active{transform:translateY(1px)}
+.qris-tip{margin:9px 0 0;text-align:center;font:700 .62rem Nunito;color:var(--mu);line-height:1.4}
+
+[data-theme=dark] .qris-head img{filter:brightness(0) invert(1);opacity:.95}
+[data-theme=dark] .qris-card{background:linear-gradient(158deg,#43264f 0%,#3a2142 52%,#4a2a55 100%);
+  border-color:rgba(255,143,184,.32);box-shadow:0 12px 26px rgba(0,0,0,.4)}
+[data-theme=dark] .qris-card::before{background:#8c3d68;opacity:.5}
+[data-theme=dark] .qris-card::after{background:#7a4a2a;opacity:.45}
+[data-theme=dark] .qris-amtchip{background:#ffd9e6;color:#3a2142}
+[data-theme=dark] .qris-scan b{color:#fff0f7}
+[data-theme=dark] .qris-nmid{background:rgba(255,255,255,.1);color:#e8cfe0}
+[data-theme=dark] .qris-amount{background:rgba(255,255,255,.08)}
+[data-theme=dark] .qris-amount p{color:#d3b9cd}
+[data-theme=dark] .qris-steps li{background:rgba(255,255,255,.08)}
+[data-theme=dark] .qris-steps small{color:#d3b9cd}
+[data-theme=dark] .qris-save{background:rgba(255,255,255,.08);color:#ffd9e6}
+[data-theme=dark] .qris-tip{color:#d3b9cd}
 
 /* ===== download / install (PWA) ===== */
 .dlhero{display:flex;align-items:center;gap:13px;background:linear-gradient(135deg,#ffeaf2,#fff4ea);
@@ -1797,6 +1866,13 @@ const I18N = {
     pay_wa:'Pesan via WhatsApp', pay_total:'Total pembayaran', pay_confirm:'Bayar sekarang', pay_pending:'Menunggu pembayaran',
     pay_success:'Pembayaran berhasil!', pay_check:'Cek status', pay_manual:'Transfer manual', pay_manual_inst:'Transfer ke rekening berikut, lalu kirim bukti ke WhatsApp kami.',
     pay_month:'bulan', pay_popular:'Paling populer', pay_best:'Hemat', pay_detail:'Rincian pembayaran',
+    pay_qris_sub:'Semua e-wallet & m-banking', pay_qris_nmid:'NMID', pay_qris_nmid_ok:'NMID disalin',
+    pay_qris_typo:'Nominal yang harus diketik', pay_qris_note:'QRIS ini tanpa nominal. Saat membayar, ketik persis angka di atas — jangan dibulatkan.',
+    pay_qris_s1:'Buka aplikasi', pay_qris_s1s:'GoPay, OVO, DANA, ShopeePay', pay_qris_all:'Satu QR untuk semua e-wallet & m-banking',
+    pay_qris_s2:'Scan QR', pay_qris_s2s:'Arahkan kamera ke QR di atas',
+    pay_qris_s3:'Bayar', pay_qris_s3s:'Ketik nominal, lalu konfirmasi',
+    pay_qris_save:'Simpan QR ke galeri', pay_qris_saved:'QR tersimpan',
+    pay_qris_tip:'Sudah bayar? Tekan "Saya sudah bayar" — kami cek maksimal 5 menit.', pay_qris_done:'Saya sudah bayar',
     umkm_t:'Daftar UMKM', umkm_sub:'Punya usaha kuliner?', umkm_desc:'Tampil di rekomendasi mood dan pantau klik pesan dari dashboard.',
     umkm_form_title:'Daftar UMKM', umkm_name:'Nama usaha', umkm_owner:'Nama pemilik', umkm_wa:'Nomor WhatsApp', umkm_addr:'Alamat di Makassar',
     umkm_type:'Jenis makanan', umkm_mood:'Cocok untuk mood', umkm_photo:'Unggah foto menu', umkm_send:'Kirim pendaftaran',
@@ -1876,6 +1952,13 @@ const I18N = {
     pay_wa:'Order via WhatsApp', pay_total:'Total payment', pay_confirm:'Pay now', pay_pending:'Awaiting payment',
     pay_success:'Payment successful!', pay_check:'Check status', pay_manual:'Manual transfer', pay_manual_inst:'Transfer to the account below, then send proof to our WhatsApp.',
     pay_month:'months', pay_popular:'Most popular', pay_best:'Best value', pay_detail:'Payment details',
+    pay_qris_sub:'All e-wallets & mobile banking', pay_qris_nmid:'NMID', pay_qris_nmid_ok:'NMID copied',
+    pay_qris_typo:'Amount you must type', pay_qris_note:'This QRIS carries no amount. When paying, type exactly the number above — do not round it.',
+    pay_qris_s1:'Open the app', pay_qris_s1s:'GoPay, OVO, DANA, ShopeePay', pay_qris_all:'One QR for every e-wallet & mobile bank',
+    pay_qris_s2:'Scan the QR', pay_qris_s2s:'Point your camera at the code above',
+    pay_qris_s3:'Pay', pay_qris_s3s:'Type the amount, then confirm',
+    pay_qris_save:'Save QR to gallery', pay_qris_saved:'QR saved',
+    pay_qris_tip:'Already paid? Tap "I have paid" — we check within 5 minutes.', pay_qris_done:'I have paid',
     umkm_t:'Register UMKM', umkm_sub:'Own a food business?', umkm_desc:'Appear in mood recommendations and track orders from dashboard.',
     umkm_form_title:'UMKM Registration', umkm_name:'Business name', umkm_owner:'Owner name', umkm_wa:'WhatsApp number', umkm_addr:'Address in Makassar',
     umkm_type:'Food type', umkm_mood:'Fits mood', umkm_photo:'Upload menu photo', umkm_send:'Submit registration',
@@ -1952,6 +2035,13 @@ const I18N = {
     pay_wa:'WhatsApp 下单', pay_total:'支付总额', pay_confirm:'立即支付', pay_pending:'等待付款',
     pay_success:'支付成功！', pay_check:'查看状态', pay_manual:'手动转账', pay_manual_inst:'转账至以下账户，然后将凭证发送至我们的 WhatsApp。',
     pay_month:'个月', pay_popular:'最受欢迎', pay_best:'最划算', pay_detail:'付款详情',
+    pay_qris_sub:'所有电子钱包与手机银行', pay_qris_nmid:'NMID', pay_qris_nmid_ok:'NMID 已复制',
+    pay_qris_typo:'需要输入的金额', pay_qris_note:'此 QRIS 不含固定金额。付款时请准确输入上方数字，不要取整。',
+    pay_qris_s1:'打开应用', pay_qris_s1s:'GoPay、OVO、DANA、ShopeePay', pay_qris_all:'一个二维码，所有电子钱包通用',
+    pay_qris_s2:'扫描二维码', pay_qris_s2s:'将摄像头对准上方二维码',
+    pay_qris_s3:'付款', pay_qris_s3s:'输入金额并确认',
+    pay_qris_save:'保存二维码到相册', pay_qris_saved:'二维码已保存',
+    pay_qris_tip:'已经付款？点“我已付款”，我们会在 5 分钟内核对。', pay_qris_done:'我已付款',
     umkm_t:'注册 UMKM', umkm_sub:'有餐饮生意？', umkm_desc:'出现在心情推荐中，从仪表盘追踪订单点击。',
     umkm_form_title:'UMKM 注册', umkm_name:'店铺名称', umkm_owner:'店主姓名', umkm_wa:'WhatsApp 号码', umkm_addr:'马卡萨地址',
     umkm_type:'食物类型', umkm_mood:'适合心情', umkm_photo:'上传菜单照片', umkm_send:'提交申请',
@@ -2028,6 +2118,13 @@ const I18N = {
     pay_wa:'WhatsApp से ऑर्डर', pay_total:'कुल भुगतान', pay_confirm:'अभी भुगतान करें', pay_pending:'भुगतान का इंतजार',
     pay_success:'भुगतान सफल!', pay_check:'स्थिति जांचें', pay_manual:'मैन्युअल ट्रांसफर', pay_manual_inst:'नीचे दिए गए खाते में ट्रांसफर करें, फिर प्रूफ हमारे WhatsApp पर भेजें।',
     pay_month:'महीने', pay_popular:'सबसे लोकप्रिय', pay_best:'सबसे अच्छा', pay_detail:'भुगतान विवरण',
+    pay_qris_sub:'सभी ई-वॉलेट और मोबाइल बैंकिंग', pay_qris_nmid:'NMID', pay_qris_nmid_ok:'NMID कॉपी हुआ',
+    pay_qris_typo:'यह राशि टाइप करें', pay_qris_note:'इस QRIS में राशि तय नहीं है। भुगतान करते समय ऊपर दिया नंबर ठीक वैसा ही डालें, गोल न करें।',
+    pay_qris_s1:'ऐप खोलें', pay_qris_s1s:'GoPay, OVO, DANA, ShopeePay', pay_qris_all:'एक QR, सभी ई-वॉलेट के लिए',
+    pay_qris_s2:'QR स्कैन करें', pay_qris_s2s:'कैमरा ऊपर के QR पर रखें',
+    pay_qris_s3:'भुगतान करें', pay_qris_s3s:'राशि डालें और फिर पुष्टि करें',
+    pay_qris_save:'QR गैलरी में सेव करें', pay_qris_saved:'QR सेव हो गया',
+    pay_qris_tip:'भुगतान हो गया? "मैंने भुगतान किया" दबाएँ — हम 5 मिनट में जाँचते हैं।', pay_qris_done:'मैंने भुगतान किया',
     umkm_t:'UMKM पंजीकरण', umkm_sub:'खाना का व्यवसाय है?', umkm_desc:'मूड सिफारिशों में दिखें और डैशबोर्ड से ऑर्डर ट्रैक करें।',
     umkm_form_title:'UMKM पंजीकरण', umkm_name:'व्यवसाय का नाम', umkm_owner:'मालिक का नाम', umkm_wa:'WhatsApp नंबर', umkm_addr:'मकस्सर में पता',
     umkm_type:'भोजन का प्रकार', umkm_mood:'मूड के लिए उपयुक्त', umkm_photo:'मेनू फोटो अपलोड', umkm_send:'पंजीकरण भेजें',
@@ -2134,7 +2231,7 @@ const I18N_EXTRA = {
     modal_share:'Bagikan pilihanku', modal_install:'Unduh aplikasi', modal_vip:'CraveMood VIP', modal_spin:'Putar acak',
     close_tip:'Tutup', cart_tip:'Keranjang', profile_tip:'Profil', vip_tip:'CraveMood VIP',
     pay_wa_sub:'Kirim bukti transfer', pay_manual_note:'Kirim nominal sesuai paket ke nomor GoPay di atas, lalu kirim bukti screenshot ke WhatsApp kami.',
-    pay_copy:'📋 Salin nomor GoPay', pay_back:'Kembali', pay_wa_open:'💬 Buka WhatsApp', pay_copied:'Nomor GoPay disalin', pay_on_behalf:'a.n.',
+    pay_copy:'Salin nominal', pay_back:'Kembali', pay_wa_open:'💬 Buka WhatsApp', pay_copied:'Nominal disalin', pay_on_behalf:'a.n.',
     share_preparing:'Menyiapkan kartu…', share_failed:'Kartu gagal dibuat. Coba lagi ya.', share_empty:'Kartu kosong. Coba lagi ya.',
     retry:'Coba lagi', share_ig_toast:'Gambar tersimpan & caption disalin. Buka Instagram → Story → unggah.',
     google_soon:'Google login segera hadir, pakai nomor WhatsApp dulu ya', reg_exists:'Kontak sudah terdaftar. Coba masuk.',
@@ -2163,7 +2260,7 @@ const I18N_EXTRA = {
     modal_share:'Share my picks', modal_install:'Download app', modal_vip:'CraveMood VIP', modal_spin:'Spin the wheel',
     close_tip:'Close', cart_tip:'Cart', profile_tip:'Profile', vip_tip:'CraveMood VIP',
     pay_wa_sub:'Send transfer proof', pay_manual_note:'Transfer the package amount to the GoPay number above, then send us a screenshot as proof via WhatsApp.',
-    pay_copy:'📋 Copy GoPay number', pay_back:'Back', pay_wa_open:'💬 Open WhatsApp', pay_copied:'GoPay number copied', pay_on_behalf:'on behalf of',
+    pay_copy:'Copy amount', pay_back:'Back', pay_wa_open:'💬 Open WhatsApp', pay_copied:'Amount copied', pay_on_behalf:'on behalf of',
     share_preparing:'Preparing your card…', share_failed:'Could not create the card. Please try again.', share_empty:'Empty card. Please try again.',
     retry:'Try again', share_ig_toast:'Image saved and caption copied. Open Instagram → Story → upload.',
     google_soon:'Google sign-in is coming soon. Use your WhatsApp number for now.', reg_exists:'This contact is already registered. Please sign in.',
@@ -2192,7 +2289,7 @@ const I18N_EXTRA = {
     modal_share:'分享我的选择', modal_install:'下载应用', modal_vip:'CraveMood VIP', modal_spin:'随机转盘',
     close_tip:'关闭', cart_tip:'购物车', profile_tip:'个人资料', vip_tip:'CraveMood VIP',
     pay_wa_sub:'发送转账凭证', pay_manual_note:'请将套餐金额转入上方 GoPay 号码，然后通过 WhatsApp 发送截图作为凭证。',
-    pay_copy:'📋 复制 GoPay 号码', pay_back:'返回', pay_wa_open:'💬 打开 WhatsApp', pay_copied:'GoPay 号码已复制', pay_on_behalf:'户名',
+    pay_copy:'复制金额', pay_back:'返回', pay_wa_open:'💬 打开 WhatsApp', pay_copied:'金额已复制', pay_on_behalf:'户名',
     share_preparing:'正在生成卡片…', share_failed:'卡片生成失败，请重试。', share_empty:'卡片为空，请重试。',
     retry:'重试', share_ig_toast:'图片已保存，文案已复制。打开 Instagram → 动态 → 上传。',
     google_soon:'Google 登录即将推出，请暂时使用 WhatsApp 号码。', reg_exists:'该联系方式已注册，请直接登录。',
@@ -2221,7 +2318,7 @@ const I18N_EXTRA = {
     modal_share:'मेरी पसंद शेयर करें', modal_install:'ऐप डाउनलोड करें', modal_vip:'CraveMood VIP', modal_spin:'रैंडम घुमाएँ',
     close_tip:'बंद करें', cart_tip:'कार्ट', profile_tip:'प्रोफ़ाइल', vip_tip:'CraveMood VIP',
     pay_wa_sub:'ट्रांसफ़र प्रूफ भेजें', pay_manual_note:'पैकेज की राशि ऊपर दिए GoPay नंबर पर ट्रांसफ़र करें, फिर WhatsApp पर स्क्रीनशॉट भेजें।',
-    pay_copy:'📋 GoPay नंबर कॉपी करें', pay_back:'वापस', pay_wa_open:'💬 WhatsApp खोलें', pay_copied:'GoPay नंबर कॉपी हुआ', pay_on_behalf:'की ओर से',
+    pay_copy:'राशि कॉपी करें', pay_back:'वापस', pay_wa_open:'💬 WhatsApp खोलें', pay_copied:'राशि कॉपी हुई', pay_on_behalf:'की ओर से',
     share_preparing:'कार्ड तैयार हो रहा है…', share_failed:'कार्ड नहीं बन सका। फिर से कोशिश करें।', share_empty:'कार्ड खाली है। फिर से कोशिश करें।',
     retry:'फिर से कोशिश करें', share_ig_toast:'इमेज सेव हो गई और कैप्शन कॉपी हो गया। Instagram → स्टोरी → अपलोड करें।',
     google_soon:'Google लॉगिन जल्द आएगा। अभी WhatsApp नंबर इस्तेमाल करें।', reg_exists:'यह संपर्क पहले से पंजीकृत है। लॉग इन करें।',
@@ -2307,7 +2404,18 @@ const PAYMENT_ACCOUNT = {
   type: 'gopay', label: 'GoPay', bankFull: 'GoPay',
   number: '085824461910', name: 'FATUR RAHMAN',
   logo: 'gopay-logo.png',
-  whatsapp: 'https://wa.me/6282349410090?text=Halo%20CraveMood,%20saya%20sudah%20transfer%20VIP%20via%20GoPay%20dan%20ini%20bukti%20transfernya.',
+  whatsapp: 'https://wa.me/6282349410090?text=Halo%20CraveMood,%20saya%20sudah%20bayar%20VIP%20via%20QRIS%20dan%20ini%20bukti%20pembayarannya.',
+  /* QRIS statis (tanpa nominal) — pembeli mengetik nominal sendiri.
+     NMID & merchant diambil dari payload QR yang ter-decode:
+     ID.CO.QRIS.WWW / ID1026650038171 / CRAVEMOOD, Service / Makassar. */
+  qris: {
+    image: 'qris-cimo.png',
+    logo: 'qris-logo.png',
+    nmid: 'ID1026650038171',
+    merchant: 'CRAVEMOOD, Service',
+    city: 'Makassar',
+    acquirer: 'DANA',
+  },
 };
 
 const UMKM_CATS = ['Snack','Heavy Meal','Beverage'];
@@ -5205,76 +5313,106 @@ function renderVipModal() {
 
   if (vipStep === 'pay') {
     const pkg = VIP_PACKAGES.find(p => p.id === vipPkg);
-    const acc = PAYMENT_ACCOUNT;
+    const q = PAYMENT_ACCOUNT.qris;
+    const rp = n => 'Rp ' + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const pkgLabel = esc((pkg.labelI18n && pkg.labelI18n[App.lang]) || pkg.label);
+    const amount = rp(pkg.price);
+
+    /* QRIS is a static code (no amount embedded) — the buyer types the exact
+       nominal, so the amount is the loudest thing in the panel. */
+    const qrisPanel = `
+      <div class="qris-card">
+        <div class="qris-head">
+          <img src="${q.logo}" alt="QRIS" width="176" height="28">
+          <span class="qris-amtchip">${pkgLabel}</span>
+        </div>
+        <div class="qris-frame">
+          <span class="qf tl"></span><span class="qf tr"></span><span class="qf bl"></span><span class="qf br"></span>
+          <img src="${q.image}" alt="QRIS ${q.merchant}" width="440" height="440">
+        </div>
+        <div class="qris-scan">
+          <b>${q.merchant}</b>
+          <small>${t('pay_qris_all')}</small>
+        </div>
+        <div class="qris-meta">
+          <button class="qris-nmid" id="copyNmid" title="${t('pay_qris_nmid')}">
+            ${t('pay_qris_nmid')} ${q.nmid}
+          </button>
+        </div>
+        <div class="qris-amount">
+          <div class="qalabel">${t('pay_qris_typo')}</div>
+          <div class="qarow">
+            <span class="qaval">${amount}</span>
+            <button class="btn sm" id="copyAmt" style="padding:6px 12px;font-size:.72rem">${t('pay_copy')}</button>
+          </div>
+          <p>${t('pay_qris_note')}</p>
+        </div>
+        <ol class="qris-steps">
+          <li><span class="qn">1</span><b>${t('pay_qris_s1')}</b><small>${t('pay_qris_s1s')}</small></li>
+          <li><span class="qn">2</span><b>${t('pay_qris_s2')}</b><small>${t('pay_qris_s2s')}</small></li>
+          <li><span class="qn">3</span><b>${t('pay_qris_s3')}</b><small>${t('pay_qris_s3s')}</small></li>
+        </ol>
+        <button class="qris-save" id="saveQr">${t('pay_qris_save')}</button>
+        <p class="qris-tip">${t('pay_qris_tip')}</p>
+      </div>`;
+
+    const waPanel = `<div class="card" style="padding:14px;background:var(--bg);border-style:dashed;text-align:center">
+        <div style="font:700 .9rem Fredoka;margin-bottom:8px">${t('pay_wa')}</div>
+        <div class="hint" style="font-size:.75rem;margin-bottom:10px">${t('pay_wa_sub')}</div>
+        <a href="${PAYMENT_ACCOUNT.whatsapp}" target="_blank" rel="noopener" class="btn block" style="text-decoration:none">${t('pay_wa_open')}</a>
+      </div>`;
+
     body.innerHTML = `
-      <div style="text-align:center;margin-bottom:12px">
-        <div style="width:70px;height:70px;margin:0 auto">${cimo(App.mood, 66, false, 'crown')}</div>
-        <h3 style="margin-top:6px;font-size:1.05rem">${t('pay_t')}</h3>
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
+        <div style="width:52px;height:52px;flex:none">${cimo(App.mood, 50, false, 'crown')}</div>
+        <h3 style="font-size:1.02rem">${t('pay_t')}</h3>
       </div>
-      <div class="card pay-summary">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <span class="muted" style="font-size:.8rem">${t('pay_pkg')}</span>
-          <b style="font-size:.9rem">${esc((pkg.labelI18n && pkg.labelI18n[App.lang]) || pkg.label)}</b>
+      <div class="card pay-summary" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px">
+        <div style="min-width:0">
+          <div class="muted" style="font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em">${t('pay_pkg')}</div>
+          <b style="font-size:.92rem">${pkgLabel}</b>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span class="muted" style="font-size:.8rem">${t('pay_total')}</span>
-          <b style="font-size:1.1rem;color:var(--pk2)">Rp ${String(pkg.price).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</b>
+        <div style="text-align:right">
+          <div class="muted" style="font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em">${t('pay_total')}</div>
+          <b style="font-size:1.12rem;color:var(--pk2)">${amount}</b>
         </div>
       </div>
-      <div style="font:700 .8rem Fredoka;margin-bottom:8px">${t('pay_method')}</div>
+      <div style="font:700 .78rem Fredoka;margin-bottom:7px">${t('pay_method')}</div>
       <div class="paymethods">
-        <button class="paybtn on" data-pay="manual">
-          <img src="${acc.logo}" alt="GoPay" style="width:36px;height:36px;border-radius:8px;flex:none">
-          <div><b>${acc.label}</b><small>${acc.name}</small></div>
+        <button class="paybtn on" data-pay="qris">
+          <span class="payico" style="font:800 .62rem Fredoka;letter-spacing:.02em;background:var(--pk2);color:#fff;border-radius:9px;padding:7px 5px;width:36px;line-height:1">QRIS</span>
+          <div><b>${t('pay_qris')}</b><small>${t('pay_qris_sub')}</small></div>
         </button>
         <button class="paybtn" data-pay="wa">
           <span class="payico">💬</span>
           <div><b>${t('pay_wa')}</b><small>${t('pay_wa_sub')}</small></div>
         </button>
       </div>
-      <div id="payDetail" style="margin-top:12px">
-        <div class="card" style="padding:14px;background:var(--bg);border-style:dashed">
-          <div style="text-align:center;margin-bottom:10px">
-            <img src="${acc.logo}" alt="GoPay" style="width:64px;height:64px;margin:0 auto 8px;border-radius:14px">
-            <div style="font:700 1.3rem Fredoka;color:#00AA13">${acc.bankFull}</div>
-            <div style="font:700 1.4rem Fredoka;letter-spacing:2px;margin:6px 0;color:var(--pk2)">${acc.number}</div>
-            <div style="font:700 .85rem Nunito">${t('pay_on_behalf')} ${acc.name}</div>
-          </div>
-          <div class="hint" style="text-align:center;font-size:.75rem;margin-bottom:10px">${t('pay_manual_note')}</div>
-          <button class="btn sm block" id="copyRek">${t('pay_copy')}</button>
-        </div>
-      </div>
+      <div id="payDetail" style="margin-top:12px">${qrisPanel}</div>
       <div style="display:flex;gap:8px;margin-top:14px">
         <button class="btn ghost" style="flex:1" id="vipBack">‹ ${t('pay_back')}</button>
-        <button class="btn" style="flex:2" id="vipConfirmPay">${t('pay_confirm')}</button>
+        <button class="btn" style="flex:2" id="vipConfirmPay">${t('pay_qris_done')}</button>
       </div>
     `;
+
+    const bindQris = () => {
+      const cn = $('#copyNmid');
+      if (cn) cn.onclick = () => { copyText(q.nmid); toast(t('pay_qris_nmid_ok')); SFX.play('pop'); };
+      const ca = $('#copyAmt');
+      if (ca) ca.onclick = () => { copyText(String(pkg.price)); toast(t('pay_copied')); SFX.play('pop'); };
+      const sq = $('#saveQr');
+      if (sq) sq.onclick = saveQrisImage;
+    };
+    bindQris();
+
     $$('#vipBody .paybtn').forEach(b => b.onclick = () => {
       $$('#vipBody .paybtn').forEach(x => x.classList.toggle('on', x === b));
-      const method = b.dataset.pay;
-      const det = $('#payDetail');
-      if (method === 'manual') {
-        det.innerHTML = `<div class="card" style="padding:14px;background:var(--bg);border-style:dashed">
-          <div style="text-align:center;margin-bottom:10px">
-            <img src="${acc.logo}" alt="GoPay" style="width:64px;height:64px;margin:0 auto 8px;border-radius:14px">
-            <div style="font:700 1.3rem Fredoka;color:#00AA13">${acc.bankFull}</div>
-            <div style="font:700 1.4rem Fredoka;letter-spacing:2px;margin:6px 0;color:var(--pk2)">${acc.number}</div>
-            <div style="font:700 .85rem Nunito">${t('pay_on_behalf')} ${acc.name}</div>
-          </div>
-          <div class="hint" style="text-align:center;font-size:.75rem;margin-bottom:10px">${t('pay_manual_note')}</div>
-          <button class="btn sm block" id="copyRek">${t('pay_copy')}</button>
-        </div>`;
-        $('#copyRek').onclick = () => { copyText(acc.number); toast(t('pay_copied')); SFX.play('pop'); };
-      } else {
-        det.innerHTML = `<div class="card" style="padding:14px;background:var(--bg);border-style:dashed;text-align:center">
-          <div style="font:700 .9rem Fredoka;margin-bottom:8px">${t('pay_wa')}</div>
-          <div class="hint" style="font-size:.75rem;margin-bottom:10px">${t('pay_wa_sub')}</div>
-          <a href="${acc.whatsapp}" target="_blank" rel="noopener" class="btn block" style="text-decoration:none">${t('pay_wa_open')}</a>
-        </div>`;
-      }
+      const isQris = b.dataset.pay === 'qris';
+      $('#payDetail').innerHTML = isQris ? qrisPanel : waPanel;
+      $('#vipConfirmPay').textContent = isQris ? t('pay_qris_done') : t('pay_confirm');
+      bindQris();
       SFX.play('tap');
     });
-    $('#copyRek').onclick = () => { copyText(acc.number); toast('Nomor GoPay disalin'); SFX.play('pop'); };
     $('#vipBack').onclick = () => { vipStep = 'pkg'; renderVipModal(); };
     $('#vipConfirmPay').onclick = () => submitVipPayment(pkg);
   }
@@ -5300,7 +5438,7 @@ async function submitVipPayment(pkg) {
     const orderId = 'VIP-' + App.user.id.slice(-6) + '-' + Date.now().toString(36).toUpperCase();
     const r = await DB.createTransaction(App.user.id, {
       type: 'vip', pkg: pkg.id, months: pkg.months, amount: pkg.price,
-      order_id: orderId, gateway: 'manual',
+      order_id: orderId, gateway: 'qris',
     });
     if (r.ok) {
       SFX.play('success');
@@ -5308,6 +5446,26 @@ async function submitVipPayment(pkg) {
     } else { toast(t('vip_tx_fail')); }
   } catch (e) { toast(t('vip_pay_fail')); }
   if (btn) { btn.disabled = false; btn.textContent = t('pay_confirm'); }
+}
+
+/* the QR is the only thing a second device has to see, so let people save it */
+async function saveQrisImage() {
+  const src = PAYMENT_ACCOUNT.qris.image;
+  try {
+    const res = await fetch(src, { cache: 'force-cache' });
+    if (!res.ok) throw new Error('http ' + res.status);
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'QRIS-CraveMood.png';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    toast(t('pay_qris_saved')); SFX.play('pop');
+  } catch (e) {
+    /* in-app browsers often block downloads — open the image instead */
+    window.open(src, '_blank', 'noopener');
+    toast(t('pay_qris_saved'));
+  }
 }
 
 async function openShare() {
