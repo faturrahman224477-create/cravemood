@@ -1,0 +1,108 @@
+{
+ "ref": {
+  "f0": 258,
+  "f0sd": 65,
+  "dur": 4.1,
+  "cen": 2029
+ },
+ "candidates": [
+  {
+   "key": "emma_now",
+   "voice": "en-US-EmmaMultilingualNeural",
+   "label": "Emma \u2014 setelan sekarang",
+   "rate": 12,
+   "pitch": 60,
+   "file": "deliverables/voice-audition-ceria/emma_now.mp3",
+   "f0": 235,
+   "f0sd": 59,
+   "dur": 4.9,
+   "syl": 5.1,
+   "cen": 1184,
+   "cheer": 29
+  },
+  {
+   "key": "emma_mid",
+   "voice": "en-US-EmmaMultilingualNeural",
+   "label": "Emma \u2014 nada & tempo dinaikkan",
+   "rate": 18,
+   "pitch": 78,
+   "file": "deliverables/voice-audition-ceria/emma_mid.mp3",
+   "f0": 246,
+   "f0sd": 61,
+   "dur": 4.64,
+   "syl": 5.4,
+   "cen": 1264,
+   "cheer": 49
+  },
+  {
+   "key": "emma_max",
+   "voice": "en-US-EmmaMultilingualNeural",
+   "label": "Emma \u2014 dorongan maksimum",
+   "rate": 25,
+   "pitch": 92,
+   "file": "deliverables/voice-audition-ceria/emma_max.mp3",
+   "f0": 250,
+   "f0sd": 60,
+   "dur": 4.4,
+   "syl": 5.7,
+   "cen": 1294,
+   "cheer": 57
+  },
+  {
+   "key": "ava",
+   "voice": "en-US-AvaMultilingualNeural",
+   "label": "Ava \u2014 nada dasar sudah tinggi",
+   "rate": 20,
+   "pitch": 18,
+   "file": "deliverables/voice-audition-ceria/ava.mp3",
+   "f0": 271,
+   "f0sd": 40,
+   "dur": 4.0,
+   "syl": 6.2,
+   "cen": 1253,
+   "cheer": 57
+  },
+  {
+   "key": "gadis",
+   "voice": "id-ID-GadisNeural",
+   "label": "Gadis \u2014 penutur asli Indonesia",
+   "rate": 18,
+   "pitch": 28,
+   "file": "deliverables/voice-audition-ceria/gadis.mp3",
+   "f0": 267,
+   "f0sd": 55,
+   "dur": 5.22,
+   "syl": 4.8,
+   "cen": 1241,
+   "cheer": 54
+  },
+  {
+   "key": "yasmin",
+   "voice": "ms-MY-YasminNeural",
+   "label": "Yasmin \u2014 Melayu",
+   "rate": 18,
+   "pitch": 45,
+   "file": "deliverables/voice-audition-ceria/yasmin.mp3",
+   "f0": 262,
+   "f0sd": 54,
+   "dur": 5.46,
+   "syl": 4.6,
+   "cen": 1253,
+   "cheer": 47
+  },
+  {
+   "key": "thalita",
+   "voice": "pt-BR-ThalitaMultilingualNeural",
+   "label": "Thalita \u2014 timbre paling dekat Kuon",
+   "rate": 20,
+   "pitch": 55,
+   "file": "deliverables/voice-audition-ceria/thalita.mp3",
+   "f0": 260,
+   "f0sd": 57,
+   "dur": 3.98,
+   "syl": 6.3,
+   "cen": 1566,
+   "cheer": 85
+  }
+ ]
+}
